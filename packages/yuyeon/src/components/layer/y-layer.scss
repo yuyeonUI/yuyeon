@@ -1,0 +1,32 @@
+.y-layer-group {
+  contain: layout;
+  left: 0;
+  top: 0;
+  pointer-events: none;
+  position: absolute;
+  display: contents;
+}
+
+.y-layer {
+  border-radius: inherit;
+  display: flex;
+  inset: 0;
+  position: fixed;
+
+  &__scrim {
+    pointer-events: auto;
+    background: rgb(var(--y-layer-scrim, 0, 0, 0));
+    border-radius: inherit;
+    inset: 0;
+    opacity: 0.4;
+    position: fixed;
+  }
+
+  &__content {
+    outline: none;
+    position: absolute;
+    pointer-events: auto;
+    contain: layout;
+    transform-style: preserve-3d;
+  }
+}

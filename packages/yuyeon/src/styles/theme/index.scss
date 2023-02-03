@@ -1,0 +1,8 @@
+/*!
+ * Created by yeonyu 2022.
+ */
+
+@forward 'light';
+@forward 'dark';
+
+$basic-themes: 'light', 'dark' !default;

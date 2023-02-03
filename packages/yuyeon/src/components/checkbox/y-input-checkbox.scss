@@ -1,0 +1,86 @@
+@use '../../styles/palette';
+
+$checkbox__color: palette.$primary;
+$checkbox__border-color: #a4a4a4;
+
+.y-input--checkbox {
+  --y-checkbox__color: var(--y-palette--primary);
+
+  position: relative;
+  width: 24px;
+  height: 24px;
+  display: inline-flex;
+  flex: 0 0 auto;
+  box-sizing: border-box;
+
+  input[role='checkbox'] {
+    position: absolute;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .icon-checkbox__checkmark-path {
+    fill: none;
+    stroke: #ffffff;
+    stroke-width: 2px;
+    stroke-dashoffset: 29.7833385;
+    stroke-dasharray: 29.7833385;
+    transition: stroke-dashoffset 120ms cubic-bezier(0.4, 0, 0.6, 1);
+  }
+
+  .icon-checkbox__border-path {
+    fill: rgba($checkbox__color, 0);
+    stroke: rgba($checkbox__border-color, 0.8);
+    stroke-width: 2;
+    transition: fill 200ms 180ms ease-in;
+  }
+
+  input:checked ~ .icon-checkbox,
+  &.y-input--active .icon-checkbox {
+    .icon-checkbox__checkmark-path {
+      stroke-dashoffset: 0;
+      transition: stroke-dashoffset 120ms 140ms cubic-bezier(0.4, 0, 0.6, 1);
+    }
+
+    .icon-checkbox__border-path {
+      fill: $checkbox__color;
+      stroke: rgba($checkbox__color, 0.8);
+      transition: fill 200ms ease-in;
+    }
+  }
+
+  input:focus ~ .icon-checkbox {
+    .icon-checkbox__border-path {
+      outline: rgba($checkbox__color, 0.5) solid 4px;
+      outline-offset: -6px;
+    }
+  }
+
+  &:hover {
+    .icon-checkbox__border-path {
+      stroke: rgba($checkbox__color, 0.5);
+    }
+  }
+
+  &.y-input--active:hover {
+    .icon-checkbox__border-path {
+      fill: lighten($checkbox__color, 10);
+    }
+  }
+
+  &.y-input--indeterminate .icon-checkbox {
+    .icon-checkbox__checkmark-path {
+      stroke-dashoffset: 0;
+      d: path('M5.73,11.91 11.1,11.91 17.79,11.91');
+      transition: stroke-dashoffset 400ms ease;
+    }
+
+    .icon-checkbox__border-path {
+      fill: rgba($checkbox__border-color, 0.8);
+      stroke: rgba($checkbox__border-color, 0.8);
+    }
+  }
+}

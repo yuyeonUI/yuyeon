@@ -1,0 +1,30 @@
+@use '../../styles/palette';
+@use '../../styles/variables';
+
+$card__border-radius: variables.$border-radius-root !default;
+$card__padding: 24px;
+
+.y-card {
+  --y-card__border-radius: #{$card__border-radius};
+  --y-card__background: #fff;
+
+  background-color: var(--y-card__background);
+  border-radius: var(--y-card__border-radius, $card__border-radius);
+
+  &__header {
+    padding: $card__padding $card__padding 0;
+    display: flex;
+  }
+
+  &__body {
+    padding: 0 $card__padding;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__footer {
+    padding: 12px 24px;
+    display: flex;
+    justify-content: space-between;
+  }
+}

@@ -1,0 +1,28 @@
+:root {
+  box-sizing: border-box;
+}
+
+.fade {
+  &-enter-active, &-leave-cative {
+    transition: opacity 240ms cubic-bezier(.2,.28,.21,1);
+  }
+
+  &-fade-enter-from, &-leave-to {
+    opacity: 0;
+  }
+}
+
+.slide-fade-enter-active, .slide-fade-leave-active {
+  transition: transform 240ms cubic-bezier(.23,.3,.07,.97), opacity 240ms linear;
+}
+
+.slide-fade-enter-from,
+.slide-fade-leave-to {
+  transform: translateY(20px) rotate3d(1, 0, 0, -30deg);
+  opacity: 0;
+}
+
+.title {
+  font-size: 20px;
+  font-weight: bold;
+}

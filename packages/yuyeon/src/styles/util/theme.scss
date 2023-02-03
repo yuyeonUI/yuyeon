@@ -1,0 +1,16 @@
+@use 'sass:meta';
+@use 'sass:map';
+//
+@use '../theme';
+
+@mixin basicTheme($component) {
+  @each $theme in theme.$basic-themes {
+    $class: 'theme--#{$theme}';
+    @if map.has-key(meta.module-variables('theme'), $class) {
+      .theme--#{$theme}.#{$component} {
+        $themeMap: map.get(meta.module-variables('theme'), $class);
+        @content ($themeMap, $class);
+      }
+    }
+  }
+}

@@ -1,0 +1,48 @@
+@use '../../styles/palette';
+
+$checkbox__label-color: #585858 !default;
+
+.y-checkbox {
+  display: flex;
+  align-items: center;
+
+  &__slot {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .y-checkbox__label {
+    cursor: pointer;
+    font-weight: 400;
+    color: $checkbox__label-color;
+    font-size: 14px;
+  }
+
+  &--reverse .y-checkbox__slot {
+    flex-direction: row-reverse;
+  }
+
+  &:not(&--reverse) .y-input--checkbox {
+    margin-right: 8px;
+  }
+
+  &--reverse .y-input--checkbox {
+    margin-left: 8px;
+  }
+
+  &--readonly,
+  &--disabled {
+    .y-checkbox__label,
+    .y-input--checkbox {
+      cursor: default;
+    }
+  }
+
+  &--disabled {
+    .y-checkbox__slot {
+      filter: grayscale(1);
+      opacity: 0.4;
+    }
+  }
+}

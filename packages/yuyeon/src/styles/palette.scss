@@ -1,0 +1,94 @@
+// red
+$basic-red-900: #a60000;
+$basic-red-800: #cc1f1f;
+$basic-red-700: #ff4040;
+$basic-red-600: #ff5959;
+$basic-red-500: #ff7272;
+$basic-red-400: #ff8d8d;
+$basic-red-300: #ffa2a2;
+$basic-red-200: #ffbfbf;
+$basic-red-100: #ffd9d9;
+$basic-red-50: #fff6f6;
+
+// orange
+$basic-orange-900: #f16a24;
+$basic-orange-800: #f17738;
+$basic-orange-700: #ff9639;
+$basic-orange-600: #ffa75a;
+$basic-orange-500: #f3ae71;
+$basic-orange-400: #f3bd71;
+$basic-orange-300: #ffd00f;
+$basic-orange-200: #ffe8ba;
+$basic-orange-100: #fff1c7;
+$basic-orange-50: #fffaec;
+
+// green
+$basic-green-900: #056653;
+$basic-green-800: #0d8069;
+$basic-green-700: #1f927c;
+$basic-green-600: #4ba694;
+$basic-green-500: #5bb2a1;
+$basic-green-400: #68ccb9;
+$basic-green-300: #77d9c6;
+$basic-green-200: #8ae6d4;
+$basic-green-100: #ace6da;
+$basic-green-50: #f2fffd;
+
+// blue
+$basic-blue-900: #003a9f;
+$basic-blue-800: #0c5db9;
+$basic-blue-700: #236dc1;
+$basic-blue-600: #407fc6;
+$basic-blue-500: #4091c6;
+$basic-blue-400: #79c2f2;
+$basic-blue-300: #a6dcff;
+$basic-blue-200: #ccebff;
+$basic-blue-100: #f2faff;
+$basic-blue-50: #f6fcff;
+
+// violet
+$basic-violet-900: #460d80;
+$basic-violet-800: #581799;
+$basic-violet-700: #6b24b3;
+$basic-violet-600: #7436b3;
+$basic-violet-500: #7d47b3;
+$basic-violet-400: #9857d9;
+$basic-violet-300: #c89df2;
+$basic-violet-250: #e9dfff;
+$basic-violet-200: #f2e6ff;
+$basic-violet-100: #f9f2ff;
+$basic-violet-50: #faf8ff;
+
+// gray
+$basic-gray-900: #323232;
+$basic-gray-800: #505050;
+$basic-gray-700: #707070;
+$basic-gray-600: #939194;
+$basic-gray-500: #b4b4b4;
+$basic-gray-400: #c8c8c8;
+$basic-gray-300: #dcdcdc;
+$basic-gray-200: #f0f0f0;
+$basic-gray-100: #f5f5f5;
+$basic-gray-50: #fafafa;
+
+//
+$basic-disable: #c8bab4;
+$basic-black: #141414;
+$content-gray: #666666;
+$background-color: #f5f5ff;
+
+// Text
+$text-black: $basic-black;
+$text-white: #ffffff;
+
+// Alert
+$alert-positive: #47b267;
+$alert-negative: #ff4d4d;
+$alert-warning: #ffc70e;
+$alert-link: #4781cc;
+
+$primary: #4f97dc !default;
+
+:root {
+  --y-palette--primary: #{$primary};
+}
