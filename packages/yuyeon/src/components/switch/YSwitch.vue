@@ -45,7 +45,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue';
+import { PropType, defineComponent } from 'vue';
 
 let uidCounter = 0;
 

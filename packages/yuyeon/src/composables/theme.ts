@@ -1,4 +1,5 @@
 import { App } from 'vue';
+import bindThemeClass from "../directives/theme-class";
 
 export const Y_THEME_PREFIX = 'y-theme';
 
@@ -17,7 +18,7 @@ const defaultThemeTemplates: any = {
 
 export function bindTheme(options: any) {
   function install(app: App) {
-    //
+    app.directive('theme', bindThemeClass);
   }
   return {
     install,

@@ -32,7 +32,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, StyleValue } from 'vue';
+import { PropType, StyleValue, defineComponent } from 'vue';
+
 import { useProgress } from '../../composables/progress';
 
 export default defineComponent({
@@ -83,8 +84,8 @@ export default defineComponent({
       }
       return {
         'y-progress--no-trans': noTransition,
-        'y-progress--outlined': this.outlined,
-        'y-progress-bar--rounded': this.rounded,
+        'y-progress--outlined': !!this.outlined,
+        'y-progress-bar--rounded': !!this.rounded,
       };
     },
     styles(): StyleValue {

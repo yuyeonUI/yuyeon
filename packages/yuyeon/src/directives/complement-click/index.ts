@@ -1,4 +1,5 @@
 import { DirectiveBinding } from 'vue';
+
 import { documentRoot } from '../../util/dom';
 
 interface ComplementClickDirectiveElementImplanted {
@@ -52,10 +53,17 @@ function checkEvent(
     return false;
   }
   const root = documentRoot(element);
-  if (typeof ShadowRoot !== 'undefined' && root instanceof ShadowRoot && root.host === mouseEvent.target) {
+  if (
+    typeof ShadowRoot !== 'undefined' &&
+    root instanceof ShadowRoot &&
+    root.host === mouseEvent.target
+  ) {
     return false;
   }
-  const elements = ((typeof binding.value === 'object' && binding.value.include) || (() => []))();
+  const elements = (
+    (typeof binding.value === 'object' && binding.value.include) ||
+    (() => [])
+  )();
   elements.push(element);
   return !elements.some((el) => el?.contains(mouseEvent.target as Node));
 }

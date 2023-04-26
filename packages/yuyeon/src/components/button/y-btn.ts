@@ -1,13 +1,15 @@
-import { defineComponent, h, VNodeArrayChildren, withDirectives } from 'vue';
-import { getSlot } from "../../util/vue-component";
-import { PlateWave } from "../../directives/plate-wave";
+import type { PropType, VNodeArrayChildren } from 'vue';
+import { defineComponent, h, withDirectives } from 'vue';
+
+import { PlateWave } from '../../directives/plate-wave';
+import { isColorValue } from '../../util/ui';
+import { getSlot } from '../../util/vue-component';
+import YRingSpinner from '../ring-spinner/y-ring-spinner.vue';
 
 /**
  * Style
  */
 import './y-btn.scss';
-import YRingSpinner from '../ring-spinner/y-ring-spinner.vue';
-import { isColorValue } from '../../util/ui';
 
 const NAME = 'y-btn';
 
@@ -39,8 +41,28 @@ export default defineComponent({
     color: {
       type: String,
     },
+    noWave: {
+      type: Boolean,
+      default: false,
+    },
+    variation: {
+      type: String as PropType<string>,
+    },
   },
   computed: {
+    variations(): any[] {
+      const { variation } = this;
+      if (variation) {
+        return variation.split(',').map((value) => {
+          return value.trim();
+        });
+      }
+      return [];
+    },
+    small(): boolean {
+      return this.variations.includes('small');
+    },
+    //
     classes() {
       return {
         [`${NAME}--outlined`]: this.outlined,
@@ -49,6 +71,7 @@ export default defineComponent({
         [`${NAME}--filled`]: this.filled,
         [`${NAME}--disabled`]: this.disabled,
         [`${NAME}--text`]: this.text,
+        [`${NAME}--small`]: this.small,
       };
     },
     styles(): Record<string, any> {
@@ -66,7 +89,7 @@ export default defineComponent({
       const defaultSlot = getSlot(this, 'default');
       const children: VNodeArrayChildren = [];
       if (this.loading) {
-        children.push(h(YRingSpinner));
+        children.push(h(YRingSpinner, { width: '24', height: '24' }));
       }
       children.push(defaultSlot);
       return h('span', { class: 'y-btn__content' }, children);
@@ -83,7 +106,7 @@ export default defineComponent({
     },
   },
   render() {
-    const { onClick, styles } = this;
+    const { onClick, styles, noWave, loading } = this;
     return withDirectives(
       h(
         'button',
@@ -98,7 +121,7 @@ export default defineComponent({
         },
         this.createContent(),
       ),
-      [[PlateWave, true]],
+      [[PlateWave, !noWave && !loading]],
     );
   },
 });

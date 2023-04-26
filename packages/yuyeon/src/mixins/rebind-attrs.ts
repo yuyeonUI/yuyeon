@@ -1,7 +1,6 @@
 /*
  * Created by yuyeon-ui 2022.
  */
-
 import { defineComponent } from 'vue';
 
 export default defineComponent({

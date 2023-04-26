@@ -1,214 +1,268 @@
 /*
  * Created by yeonyu 2022.
  */
+import {
+  PropType,
+  computed,
+  defineComponent,
+  getCurrentInstance,
+  h,
+  nextTick,
+  ref,
+  watch,
+} from 'vue';
 
-import { YInput } from '../input';
-import { VNode, defineComponent, h } from 'vue';
-
-import './index.scss';
-import { getSlot } from '../../util/vue-component';
 import IconClearable from '../icons/icon-clearable';
+import { YInput, YInputProps } from '../input';
+import './index.scss';
 
 const NAME = 'y-field-input';
 
-export default defineComponent({
-  extends: YInput,
+export const YFieldInput = defineComponent({
   name: NAME,
-  inheritAttrs: false,
   props: {
-    clearable: Boolean,
-    inputAlign: String,
-    displayText: [String, Function],
-    whenInputValid: [Boolean, Number],
+    ...YInputProps,
+    clearable: Boolean as PropType<boolean>,
+    inputAlign: String as PropType<string>,
+    displayText: [String, Function] as PropType<
+      string | ((value: any) => string)
+    >,
+    whenInputValid: [Boolean, Number] as PropType<boolean | number>,
     tabindex: {
-      type: String,
+      type: String as PropType<string>,
       default: '0',
     },
   },
-  mounted() {
-    this.displayValue = this.inValue as string;
-  },
-  data() {
-    return {
-      displayValue: '' as string,
-    };
-  },
-  computed: {
-    fieldInputClasses(): Record<string, any> {
+  emits: [
+    'update:modelValue',
+    'input',
+    'change',
+    'click',
+    'mousedown',
+    'mouseup',
+    'keydown',
+    'keyup',
+    'focus',
+    'blur',
+  ],
+  setup(props, { attrs, expose, emit, slots }) {
+    const yInputRef = ref<YInput>();
+    const inputRef = ref<HTMLInputElement>();
+    const isFocused = ref(false);
+    const inValue = ref<any>('');
+    const displayValue = ref('');
+
+    const classes = computed(() => {
       return {
-        ...this.classes,
+        ...(yInputRef.value?.classes || {}),
+        'y-input--focused': isFocused.value,
         [NAME]: true,
       };
-    },
-    inputType(): string {
-      const attr = (this.$attrs.type as string) || 'text';
+    });
+
+    const inputType = computed(() => {
+      const attr = (attrs.type as string) || 'text';
       return attr;
-    },
-  },
-  methods: {
-    getClasses() {
-      return {
-        ...YInput.methods?.getClasses(),
-        ...this.fieldInputClasses,
-      };
-    },
-    createInput(): VNode {
-      const { readonly, placeholder, disabled } = this;
-      return h('input', {
-        '.value': this.displayValue,
-        '.id': this.attrId,
-        '.type': this.inputType,
-        readonly: readonly || this.loading || this.formLoading,
-        '.placeholder': placeholder,
-        '.disabled': disabled,
-        '^tabindex': this.tabindex || '0',
-        autocomplete: this.$attrs.autocomplete,
-        maxlength: this.$attrs.maxlength,
-        onInput: this.onInput,
-        onFocus: this.onFocus,
-        onBlur: this.onBlur,
-        onChange: this.onChange,
-        onKeydown: this.onKeydown,
-        onKeyup: this.onKeyup,
-        style: {
-          textAlign: this.inputAlign,
-        },
-        ref: 'input',
-      });
-    },
-    createDefaultChildren(): (VNode | undefined)[] {
-      return [
-        YInput.methods!.createLabel.call(this),
-        this.createInput.call(this),
-      ];
-    },
-    createDefault(): VNode {
-      return h(
-        'div',
-        {
-          class: `${NAME}__field`,
-          'data-id': this.attrId,
-          ref: 'field',
-        },
-        this.createDefaultChildren(),
-      );
-    },
-    createClearAppend(): VNode {
-      return h('div', { class: 'y-input__append y-input__append--clear' }, [
-        h(
-          'button',
-          {
-            class: `${NAME}__clear`,
-            onClick: this.onClickClear,
-            onKeydown: this.onKeydownClear,
-            '^tabindex': '2',
-          },
-          [h(IconClearable)],
-        ),
-      ]);
-    },
-    createAppend(): VNode[] {
-      const appends = [];
-      if (this.clearable && this.inValue) {
-        appends.push(this.createClearAppend());
-      }
-      const slot = getSlot(this, 'append');
-      if (slot) {
-        appends.push(h('div', { class: 'y-input__append' }, slot));
-      }
-      return appends;
-    },
-    //
-    onClick(event: MouseEvent) {
-      (this.$refs.input as HTMLElement).focus();
-      this.$emit('click', event);
-    },
-    onFocus(event: FocusEvent) {
-      if (this) {
-        this.isFocused = true;
-        this.displayValue = this.inValue as string;
-        this.$emit('focus', event);
-      }
-    },
-    onBlur(event: FocusEvent) {
-      this.isFocused = false;
-      this.invokeValidators();
-      this.$emit('blur', event);
-      this.changeDisplay();
-    },
-    onInput(event: InputEvent) {
+    });
+
+    const invokeValidators = () => {
+      //
+    };
+
+    function onClick(event: MouseEvent) {
+      inputRef.value?.focus();
+      emit('click', event);
+    }
+
+    function onFocus(event: FocusEvent) {
+      isFocused.value = true;
+      displayValue.value = inValue.value as string;
+      emit('focus', event);
+    }
+
+    function onBlur(event: FocusEvent) {
+      isFocused.value = false;
+      invokeValidators();
+      emit('blur', event);
+      changeDisplay();
+    }
+
+    function onInput(event: InputEvent) {
+      emit('input', event);
       const target = event.target as HTMLInputElement | null;
-      this.inValue = target?.value;
-      this.displayValue = target?.value as string;
-      if (this.whenInputValid) {
-        this.invokeValidators();
+      inValue.value = target?.value;
+      displayValue.value = target?.value as string;
+      if (props.whenInputValid) {
+        invokeValidators();
       }
-      this.$emit('update:modelValue', this.inValue);
-    },
-    onChange(event: Event) {
-      YInput.methods?.onChange.call(this, event);
-      this.$emit('change', this.inValue);
-    },
-    onKeydown(event: KeyboardEvent) {
-      this.$emit('keydown', event);
-    },
-    onKeyup(event: KeyboardEvent) {
-      this.$emit('keyup', event);
-    },
-    //
-    clear() {
-      this.inValue = '';
-      this.$emit('update:modelValue', this.inValue);
-    },
-    onClickClear(event: MouseEvent) {
-      this.clear();
-    },
-    onKeydownClear(event: KeyboardEvent) {
+    }
+
+    function onChange(event: Event) {
+      emit('change', inValue.value);
+    }
+
+    function onKeydown(event: KeyboardEvent) {
+      emit('keydown', event);
+    }
+
+    function onKeyup(event: KeyboardEvent) {
+      emit('keyup', event);
+    }
+
+    function onClickClear(event: MouseEvent) {
+      clear();
+    }
+
+    function onKeydownClear(event: KeyboardEvent) {
       if (event.code === 'Space' || event.code === 'Enter') {
-        this.clear();
+        clear();
       }
-    },
-    //
-    /**
-     * @public
-     */
-    focus() {
-      (this.$refs.input as HTMLInputElement).focus();
-    },
-    /**
-     * @public
-     */
-    select() {
-      (this.$refs.input as HTMLInputElement).select();
-    },
-    //
-    changeDisplay() {
-      const { displayText } = this;
+    }
+
+    function focus() {
+      inputRef.value?.focus();
+    }
+
+    function select() {
+      inputRef.value?.select();
+    }
+
+    function clear() {
+      inValue.value = '';
+      emit('update:modelValue', inValue.value);
+    }
+
+    function changeDisplay() {
+      const vm = getCurrentInstance();
+      const { displayText } = props;
       if (displayText !== undefined) {
-        let text = this.inValue;
+        let text = inValue.value;
         if (typeof displayText === 'string') {
           text = displayText;
         }
         if (displayText && typeof displayText === 'function') {
-          text = (displayText as any).call(this, text);
+          text = (displayText as any).call(vm, text);
         }
-        this.$nextTick(() => {
-          this.displayValue = text as string;
+        nextTick(() => {
+          displayValue.value = text as string;
         });
       }
-    },
-  },
-  watch: {
-    modelValue(neo: any) {
-      this.inValue = neo;
-      this.displayValue = neo;
-    },
-    inValue(neo: string) {
-      if (!this.isFocused) {
-        this.changeDisplay();
+    }
+
+    watch(
+      () => props.modelValue,
+      (neo: any) => {
+        inValue.value = neo;
+        displayValue.value = neo;
+      },
+      {
+        immediate: true,
+      },
+    );
+
+    watch(inValue, (neo: string) => {
+      if (!isFocused.value) {
+        changeDisplay();
       } else {
-        this.displayValue = neo;
+        displayValue.value = neo;
       }
-    },
+    });
+
+    expose({
+      focus,
+      select,
+      clear,
+      inputRef
+    })
+
+    const yInputProps = () => {
+      const ret: Record<string, any> = {};
+      for (const propKey in YInputProps) {
+        ret[propKey] = props[propKey as keyof typeof props];
+      }
+      return ret;
+    };
+
+    function onUpdateModel(value: any) {
+      emit('update:modelValue', value);
+    }
+
+    return () =>
+      h(
+        YInput,
+        {
+          class: classes.value,
+          ref: yInputRef,
+          ...yInputProps(),
+          modelValue: inValue.value,
+          'onUpdate:modelValue': onUpdateModel,
+          onClick,
+        },
+        {
+          default: (defaultProps: any) =>
+            h(
+              'div',
+              {
+                class: `${NAME}__field`,
+                'data-id': defaultProps.attrId,
+                ref: 'field',
+              },
+              [
+                YInput.methods!.createLabel.call(yInputRef),
+                h('input', {
+                  '.value': displayValue.value,
+                  '.id': defaultProps.attrId,
+                  '.type': inputType.value,
+                  readonly:
+                    props.readonly || props.loading || defaultProps.formLoading,
+                  '.placeholder': props.placeholder,
+                  '.disabled': props.disabled,
+                  '^tabindex': props.tabindex || '0',
+                  autocomplete: attrs.autocomplete,
+                  maxlength: attrs.maxlength,
+                  onInput,
+                  onFocus,
+                  onBlur,
+                  onChange,
+                  onKeydown,
+                  onKeyup,
+                  style: {
+                    textAlign: props.inputAlign,
+                  },
+                  ref: inputRef,
+                }),
+              ],
+            ),
+          append: () => {
+            const appends = [];
+            if (props.clearable && inValue.value) {
+              appends.push(
+                h('div', { class: 'y-input__append y-input__append--clear' }, [
+                  h(
+                    'button',
+                    {
+                      class: `${NAME}__clear`,
+                      onClick: onClickClear,
+                      onKeydown: onKeydownClear,
+                      '^tabindex': '2',
+                    },
+                    [h(IconClearable)],
+                  ),
+                ]),
+              );
+            }
+            const slot = slots.append;
+            if (slot) {
+              appends.push(h('div', { class: 'y-input__append' }, slot()));
+            }
+            return appends;
+          },
+          'helper-text': () => {
+            return slots['helper-text']?.();
+          }
+        },
+      );
   },
 });
+
+export type YFieldInput = InstanceType<typeof YFieldInput>;

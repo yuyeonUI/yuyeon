@@ -23,9 +23,9 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue';
-import IconCheckbox from './IconCheckbox.vue';
+import { PropType, defineComponent } from 'vue';
 
+import IconCheckbox from './IconCheckbox.vue';
 import './y-input-checkbox.scss';
 
 export default defineComponent({
@@ -44,7 +44,7 @@ export default defineComponent({
   },
   data() {
     return {
-      counterId: '',
+      counterId: this.$.uid.toString(),
       checked: false,
       focused: false,
     };
@@ -75,9 +75,7 @@ export default defineComponent({
     },
     iconComponent() {
       if (this.icon) {
-        if (this.$yeonyui.icons[this.icon]) {
-          return this.$yeonyui.icons[this.icon];
-        }
+        return IconCheckbox;
       }
       return null;
     },
@@ -101,8 +99,7 @@ export default defineComponent({
     },
   },
   created() {
-    this.checked = this.value;
-    this.counterId = this.$yeonyui.getComponentCounter().toString();
+    this.checked = !!this.value;
   },
 });
 </script>

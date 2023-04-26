@@ -3,7 +3,7 @@
 
 $button-border-radius: variables.$border-radius-root !default;
 $button-before-opacity: 0.06 !default;
-$button-disabled-background: #b3b3b3;
+$button-disabled-background: #b3b3b3 !default;
 
 .y-btn {
   --y-btn__color: var(--y-palette--primary);
@@ -27,6 +27,9 @@ $button-disabled-background: #b3b3b3;
       &--text
     ) {
     box-shadow: 1px 1px 4px 1px rgba(0, 0, 0, 0.14);
+    &:active {
+      box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 0.24);
+    }
   }
 
   &--filled {
@@ -71,9 +74,23 @@ $button-disabled-background: #b3b3b3;
 
   &--loading {
     cursor: wait;
+    .y-ring-spinner {
+      margin-right: 0.4em;
+    }
   }
 
   &:active:not(&--loading) {
     box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.14);
+  }
+
+  &--small {
+    height: 24px;
+    font-size: 0.4rem;
+  }
+
+  &--small & {
+    &__content {
+      padding: 4px 6px;
+    }
   }
 }

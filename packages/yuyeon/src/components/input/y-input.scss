@@ -206,4 +206,15 @@ $input-border-radius: variables.$border-radius-root !default;
       color: palette.$alert-negative;
     }
   }
+
+  &--success {
+    &.y-input--outlined {
+      .y-input__plate {
+        border-color: palette.$alert-positive !important;
+      }
+    }
+    .y-input__helper-text {
+      color: palette.$alert-positive;
+    }
+  }
 }

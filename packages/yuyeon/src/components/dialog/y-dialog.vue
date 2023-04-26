@@ -1,15 +1,21 @@
 <template>
-  <y-layer v-model="active" content-tag-dialog scrim>
+  <y-layer
+    v-model="active"
+    scrim
+    :classes="classes"
+    ref="layer"
+  >
     <slot name="activator"></slot>
     <slot></slot>
   </y-layer>
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, PropType, provide } from 'vue';
-import { YLayer } from '../layer';
-import { YCard } from '../card';
+import { PropType, computed, defineComponent, provide, ref, watch } from 'vue';
 
+import { bindClasses } from '../../util/vue-component';
+import { YCard } from '../card';
+import { YLayer } from '../layer';
 import './y-dialog.scss';
 
 export default defineComponent({
@@ -22,24 +28,81 @@ export default defineComponent({
     modelValue: {
       type: Boolean as PropType<boolean>,
     },
+    dialogClasses: {
+      type: [Array, String, Object] as PropType<
+        string[] | string | Record<string, any>
+      >,
+    },
   },
-  emits: {
-    'update:modelValue': (value: boolean) => true,
-  },
-  setup(props: any, { emit }) {
+  emits: ['update:modelValue'],
+  setup(props, { emit }) {
     const active = computed({
-      get: () => {
-        return props.modelValue;
+      get: (): boolean => {
+        return !!props.modelValue;
       },
       set: (v: boolean) => {
         emit('update:modelValue', v);
       },
     });
 
-    provide('poly', 'y-dialog');
+    const classes = computed(() => {
+      const boundClasses = bindClasses(props.dialogClasses);
+      return {
+        ...boundClasses,
+        'y-dialog': true,
+      };
+    });
+
+    const layer = ref<typeof YLayer>();
+
+    function onFocusin(e: FocusEvent) {
+      const prevTarget = e.relatedTarget as HTMLElement | null;
+      const target = e.target as HTMLElement | null;
+      if (
+        prevTarget !== target &&
+        layer.value?.content$ &&
+        ![document, layer.value?.content$].includes(target) &&
+        !layer.value?.content$.contains(target)
+      ) {
+        const focusableSelector =
+          'button, [href], input:not([type="hidden"]), select, textarea, [tabindex]:not([tabindex="-1"])';
+        const focusables = [
+          ...layer.value.content$.querySelectorAll(focusableSelector),
+        ].filter(
+          (el) =>
+            !el.hasAttribute('disabled') && !el.matches('[tabindex="-1"]'),
+        ) as HTMLElement[];
+        if (!focusables.length) return;
+        const firstChild = focusables[0];
+        const lastChild = focusables[focusables.length - 1];
+        if (firstChild === lastChild) {
+          lastChild.focus();
+        } else {
+          firstChild.focus();
+        }
+      }
+    }
+
+    function installFocusTrap() {
+      document.addEventListener('focusin', onFocusin);
+    }
+
+    function dismantleFocusTrap() {
+      document.removeEventListener('focusin', onFocusin);
+    }
+
+    watch(
+      () => active.value,
+      (neo) => {
+        neo ? installFocusTrap() : dismantleFocusTrap();
+      },
+      { immediate: true },
+    );
 
     return {
       active,
+      layer,
+      classes,
     };
   },
 });

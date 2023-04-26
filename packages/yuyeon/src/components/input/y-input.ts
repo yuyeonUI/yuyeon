@@ -1,58 +1,62 @@
 /*
  * Created by yeonyu 2022.
  */
-import { getSlot } from '../../util/vue-component';
-
-import './index.scss';
 import {
-  defineComponent,
-  Directive,
-  h,
   PropType,
-  resolveDirective,
   VNode,
-  withDirectives,
-} from 'vue';
-import RebindAttrs from '../../mixins/rebind-attrs';
+  defineComponent,
+  h,
+  withDirectives, resolveDirective
+} from "vue";
+
 import DiMixin from '../../mixins/di';
+import { getSlot } from '../../util/vue-component';
+import './index.scss';
 
 const NAME = 'y-input';
 let uidCounter = 0;
 
-export default defineComponent({
-  name: NAME,
-  inheritAttrs: false,
-  mixins: [RebindAttrs, DiMixin],
-  props: {
-    name: String,
-    width: {
-      type: [String, Number] as PropType<string | number>,
-    },
-    height: [Number, String],
-    displayTag: {
-      type: String as PropType<string>,
-      default: 'div',
-    },
-    outlined: Boolean as PropType<boolean>,
-    filled: {
-      type: Boolean as PropType<boolean>,
-    },
-    ceramic: Boolean as PropType<boolean>,
-    label: String as PropType<string>,
-    modelValue: { type: [String, Number] as PropType<string | number> },
-    autoSelect: {
-      type: Boolean as PropType<boolean>,
-      default: true,
-    },
-    floated: { type: Boolean as PropType<boolean>, default: () => false },
-    placeholder: String as PropType<string>,
-    loading: Boolean as PropType<boolean>,
-    // validate
-    readonly: Boolean as PropType<boolean>,
-    disabled: Boolean as PropType<boolean>,
-    error: Boolean as PropType<boolean>,
-    validators: Array as PropType<((v: any) => boolean | string)[] | string[]>,
+export const YInputProps = {
+  name: String,
+  width: {
+    type: [String, Number] as PropType<string | number>,
   },
+  height: [Number, String],
+  displayTag: {
+    type: String as PropType<string>,
+    default: 'div',
+  },
+  outlined: Boolean as PropType<boolean>,
+  filled: {
+    type: Boolean as PropType<boolean>,
+  },
+  ceramic: Boolean as PropType<boolean>,
+  label: String as PropType<string>,
+  modelValue: { type: [String, Number] as PropType<string | number> },
+  autoSelect: {
+    type: Boolean as PropType<boolean>,
+    default: true,
+  },
+  floated: { type: Boolean as PropType<boolean>, default: () => false },
+  placeholder: String as PropType<string>,
+  loading: Boolean as PropType<boolean>,
+  // validate
+  readonly: Boolean as PropType<boolean>,
+  disabled: Boolean as PropType<boolean>,
+  status: {
+    type: String as PropType<'success' | 'warning' | 'error' | undefined>,
+    validator(value: string) {
+      return ['success', 'warning', 'error'].includes(value);
+    }
+  },
+  validators: Array as PropType<((v: any) => boolean | string)[] | string[]>,
+}
+
+export const YInput = defineComponent({
+  name: NAME,
+  mixins: [DiMixin],
+  props: YInputProps,
+  emits: ['error', 'click', 'mousedown', 'mouseup', 'focus', 'blur', 'click:prepend', 'update:modelValue'],
   data() {
     const iid = uidCounter.toString();
     uidCounter += 1;
@@ -77,6 +81,7 @@ export default defineComponent({
         'y-input--has-value': !!this.inValue,
         'y-input--disabled': !!this.disabled,
         'y-input--error': this.isError,
+        'y-input--success': this.isSuccess,
       };
     },
     displayStyles(): Record<string, any> {
@@ -108,8 +113,11 @@ export default defineComponent({
       return false;
     },
     isError(): boolean {
-      return !!this.error || this.inError;
+      return this.status === 'error' || this.inError;
     },
+    isSuccess(): boolean {
+      return !this.isError && this.status === 'success';
+    }
   },
   methods: {
     createPrependOuter(): VNode | undefined {
@@ -154,16 +162,14 @@ export default defineComponent({
         this.createLabelSlot(),
       );
     },
-    createDefaultSlot(): VNode[] | string | undefined {
-      const { modelValue } = this;
-      const slotContent = getSlot(this, 'default', { modelValue });
-      return slotContent ?? modelValue?.toString();
-    },
     createDefaultChildren(): (VNode | undefined | VNode[] | string)[] {
-      return [this.createLabel(), this.createDefaultSlot()];
+      const { modelValue } = this;
+      return [this.createLabel(), modelValue?.toString()];
     },
-    createDefault(): VNode {
-      return h(
+    createDefault(): VNode[] | VNode {
+      const { modelValue, formLoading, attrId } = this;
+      const slotContent = getSlot(this, 'default', { value: modelValue, formLoading, attrId });
+      return slotContent ?? h(
         'div',
         {
           [`.${NAME}__value`]: true,
@@ -179,18 +185,17 @@ export default defineComponent({
       const slot = getSlot(this, 'prepend', { error: this.isError });
       return slot
         ? h(
-            'div',
-            {
-              class: 'y-input__prepend',
-              onClick: this.onClickPrepend,
-            },
-            slot,
-          )
+          'div',
+          {
+            class: 'y-input__prepend',
+            onClick: this.onClickPrepend,
+          },
+          slot,
+        )
         : undefined;
     },
-    createAppend(): VNode | undefined {
-      const slot = getSlot(this, 'append');
-      return slot ? h('div', { class: 'y-input__append' }, slot) : undefined;
+    createAppend(): VNode | VNode[] | undefined {
+      return getSlot(this, 'append');
     },
     getDisplayHeight() {
       const { height } = this;
@@ -206,9 +211,9 @@ export default defineComponent({
           class: {
             [`${NAME}__display`]: true,
           },
-          onClick: this.onClick,
-          onMousedown: this.onMousedown,
-          onMouseup: this.onMouseup,
+          // onClick: this.onClick,
+          // onMousedown: this.onMousedown,
+          // onMouseup: this.onMouseup,
           ref: 'display',
           style: {
             ...this.displayStyles,
@@ -224,7 +229,7 @@ export default defineComponent({
     },
     createHelperText(): VNode {
       const helperTextSlot = getSlot(this, 'helper-text', {
-        error: !!this.error || this.inError,
+        error: this.status === 'error' || this.inError,
         errorResult: this.errorResult,
       });
       const children = [];
@@ -358,11 +363,13 @@ export default defineComponent({
         this.createContent(),
       ),
       [
-        // [
-        //   resolveDirective('theme') as Directive,
-        //   (this as any).theme.dark ? 'dark' : 'light',
-        // ],
+        [
+          resolveDirective('theme'),
+          (this as any).theme.dark ? 'dark' : 'light',
+        ],
       ],
     );
   },
 });
+
+export type YInput = InstanceType<typeof YInput>;

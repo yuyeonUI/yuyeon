@@ -12,9 +12,9 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+
 import { hasOwnProperty } from '../../util/common';
 import { colorHexToRgb } from '../../util/ui';
-
 import './y-chip.scss';
 
 export default defineComponent({

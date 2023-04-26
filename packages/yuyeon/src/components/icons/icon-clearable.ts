@@ -1,4 +1,4 @@
-import { defineComponent, h, VNode } from 'vue';
+import { VNode, defineComponent, h } from 'vue';
 
 export default defineComponent({
   name: 'icon-clearable',

@@ -1,11 +1,12 @@
-import { App } from 'vue';
-import * as components from '@/components';
-import { bindTheme } from '@/composables/theme';
+import * as components from './components';
+import { bindTheme } from './composables/theme';
+//
+import './styles/base.scss';
 
 export function init(options: any) {
   const themeModule = bindTheme(options?.theme);
 
-  const install = (app: App) => {
+  const install = (app: any): void => {
     themeModule.install(app);
 
     Object.keys(components).forEach((componentName) => {

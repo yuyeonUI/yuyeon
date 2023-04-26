@@ -30,23 +30,23 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue';
-import YInputCheckbox from './YInputCheckbox.vue';
+import { PropType, defineComponent } from 'vue';
 
+import YInputCheckbox from './YInputCheckbox.vue';
 import './y-checkbox.scss';
 
 export default defineComponent({
   name: 'y-checkbox',
   components: { YInputCheckbox },
   created() {
-    this.counterId = this.$yeonyui.getComponentCounter().toString();
-    this.innerValue = this.inputValue;
+    this.innerValue = !!this.inputValue;
   },
   model: {
     prop: 'inputValue',
     event: 'change',
   },
   props: {
+    inputValue: Boolean as PropType<boolean>,
     label: String as PropType<string>,
     reverse: Boolean as PropType<boolean>,
     icon: {
@@ -65,17 +65,17 @@ export default defineComponent({
     return {
       innerValue: false,
       focused: false,
-      counterId: '',
+      counterId: this.$.uid.toString(),
     };
   },
   computed: {
     classes(): Record<string, boolean> {
       const { reverse, focused, disabled, readonly } = this;
       return {
-        'y-checkbox--reverse': reverse,
+        'y-checkbox--reverse': !!reverse,
         'y-checkbox--focused': focused,
-        'y-checkbox--disabled': disabled,
-        'y-checkbox--readonly': readonly,
+        'y-checkbox--disabled': !!disabled,
+        'y-checkbox--readonly': !!readonly,
       };
     },
     computedIcon(): string | undefined {

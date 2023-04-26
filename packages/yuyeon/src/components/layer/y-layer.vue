@@ -1,5 +1,5 @@
 <template>
-  <Teleport :to="layerGroup" :disabled="!layerGroup">
+  <Teleport :disabled="!layerGroup" :to="layerGroup">
     <template v-if="rendered">
       <div class="y-layer" :class="computedClass" :style="computedStyle">
         <Transition name="fade" appear>
@@ -7,18 +7,25 @@
             v-if="active && scrim"
             class="y-layer__scrim"
             @click="onClickScrim"
-            ref="scrimElement"
+            ref="scrim$"
           ></div>
         </Transition>
-        <Transition name="slide-fade" @after-leave="onAfterLeave" appear>
+        <PolyTransition
+          v-bind="{ ...polyTransitionBindProps }"
+          @after-leave="onAfterLeave"
+          appear
+        >
           <div
             v-show="active"
             v-complement-click="complementClickOption"
             class="y-layer__content"
+            :class="computedContentClasses"
+            :style="{ ...contentStyles }"
+            ref="content$"
           >
             <slot :active="active"></slot>
           </div>
-        </Transition>
+        </PolyTransition>
       </div>
     </template>
   </Teleport>
@@ -26,25 +33,29 @@
 
 <script lang="ts">
 import {
+  PropType,
   computed,
   defineComponent,
-  PropType,
-  inject,
   reactive,
-  ref
+  ref, Prop, CSSProperties
 } from "vue";
-import { useLayerGroup } from '../../composables/layer-group';
 
-import './y-layer.scss';
-import { useLazy } from '../../composables/lazy';
+import { useLayerGroup } from '../../composables/layer-group';
+import { useLazy } from '../../composables/timing';
 import {
   ComplementClick,
   ComplementClickBindingOptions,
 } from '../../directives/complement-click';
+import { bindClasses } from '../../util/vue-component';
+import { PolyTransition, polyTransitionPropOptions, usePolyTransition } from "../../composables/transition";
+import './y-layer.scss';
 
 export default defineComponent({
   name: 'YLayer',
   inheritAttrs: false,
+  components: {
+    PolyTransition,
+  },
   directives: {
     ComplementClick,
   },
@@ -55,53 +66,68 @@ export default defineComponent({
     scrim: {
       type: Boolean as PropType<boolean>,
     },
-    contentTagDialog: {
-      type: Boolean as PropType<boolean>,
-    },
     eager: {
       type: Boolean as PropType<boolean>,
     },
-    class: {
+    classes: {
       type: [Array, String, Object] as PropType<
-        string[] | string | Record<string, boolean>
+        string[] | string | Record<string, any>
+      >,
+    },
+    contentClasses: {
+      type: [Array, String, Object] as PropType<
+        string[] | string | Record<string, any>
       >,
     },
     closeClickScrim: {
       type: Boolean as PropType<boolean>,
     },
     persistent: Boolean as PropType<boolean>,
+    contentStyles: {
+      type: Object as PropType<CSSProperties>,
+      default: () => {},
+    },
+    ...polyTransitionPropOptions,
   },
   emits: {
     'update:modelValue': (value: boolean) => true,
     'click:complement': (mouseEvent: MouseEvent) => true,
   },
-  setup(props: any, { emit }) {
+  setup(props, { emit, expose }) {
     const { layerGroup } = useLayerGroup();
-    const active = computed({
-      get: () => {
-        return props.modelValue;
+    const { polyTransitionBindProps } = usePolyTransition(props);
+    const active = computed<boolean>({
+      get: (): boolean => {
+        return !!props.modelValue;
       },
       set: (v: boolean) => {
         emit('update:modelValue', v);
       },
     });
-    const { lazyValue, onAfterUpdate } = useLazy(props.eager, active);
-    const rendered = computed(() => lazyValue.value || active.value);
-    const poly = inject('poly');
-    const scrimElement = ref<HTMLElement | null>(null);
+    const { lazyValue, onAfterUpdate } = useLazy(!!props.eager, active);
+    const rendered = computed<boolean>(() => lazyValue.value || active.value);
+    const scrim$ = ref<HTMLElement>();
+    const content$ = ref<HTMLElement>();
+
     function onClickComplementLayer(mouseEvent: MouseEvent) {
       emit('click:complement', mouseEvent);
       if (!props.persistent) {
-        if (scrimElement.value !== null && scrimElement.value === mouseEvent.target && props.closeClickScrim) {
+        if (
+          scrim$.value !== null &&
+          scrim$.value === mouseEvent.target &&
+          props.closeClickScrim
+        ) {
           active.value = false;
         }
       } else {
         // TODO: shrug ani
       }
     }
+
     function closeConditional(): boolean {
       return active.value; // TODO: && groupTopLevel.value;
     }
+
     const complementClickOption = reactive<ComplementClickBindingOptions>({
       handler: onClickComplementLayer,
       determine: closeConditional,
@@ -109,14 +135,23 @@ export default defineComponent({
         // activatorEl.value
       ],
     });
+
+    expose({
+      scrim$,
+      content$,
+      active,
+      onAfterUpdate,
+    });
+
     return {
       complementClickOption,
       layerGroup,
       active,
       rendered,
-      onAfterUpdate,
-      poly,
-      scrimElement,
+      onAfterUpdate: onAfterUpdate as () => void,
+      scrim$,
+      content$,
+      polyTransitionBindProps,
     };
   },
   methods: {
@@ -135,10 +170,19 @@ export default defineComponent({
         zIndex: '2000',
       };
     },
-    computedClass(): any {
+    computedClass(): Record<string, boolean> {
+      const { classes } = this;
+      const boundClasses = bindClasses(classes);
       return {
-        'y-layer--active': this.active,
-        'y-dialog': this.poly === 'y-dialog',
+        ...boundClasses,
+        'y-layer--active': !!this.active,
+      };
+    },
+    computedContentClasses(): Record<string, boolean> {
+      const { contentClasses } = this;
+      const boundClasses = bindClasses(contentClasses);
+      return {
+        ...boundClasses,
       };
     },
   },

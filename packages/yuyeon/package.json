@@ -1,6 +1,6 @@
 {
   "name": "yuyeon",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Vue UI Library ",
   "repository": "git@github.com:yuyeonUI/yuyeon.git",
   "author": "yeonyu <yeonyu@yeonyu.dev>",
@@ -14,25 +14,63 @@
   "engines": {
     "node": ">=14.13"
   },
+  "scripts": {
+    "build": "vue-tsc && vite build"
+  },
+  "type": "module",
   "main": "src/index.ts",
-  "module": "src/index.mjs",
-  "files": ["src/"],
+  "files": [
+    "src/"
+  ],
   "exports": {
-    "./*": "./src/*"
+    ".": {
+      "types": "./types/index.d.ts",
+      "import": "./src/index.ts",
+      "module": "./src",
+      "default": "./src/index.ts",
+      "exclude": [
+        "./src/shims.d.ts"
+      ]
+    },
+    "./components": {
+      "module": "./src/components/index.ts",
+      "import": "./src/components/index.ts",
+      "default": "./src/components/index.ts",
+      "types": "./types/components/index.d.ts"
+    },
+    "./components/*": {
+      "module": "./src/components/*",
+      "types": "./types/components/*/*.ts"
+    },
+    "./types": {
+      "types": "./types/*"
+    },
+    "./*": "./*"
+  },
+  "dependencies": {
+    "lottie-web": "^5.10.2",
+    "motion": "^10.15.5"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.0.0",
-    "prettier": "^2.8.3",
-    "vite": "^4.0.4",
-    "vue-tsc": "^1.0.24"
+    "typescript": "^4.9.4",
+    "vite-plugin-dts": "^2.2.0",
+    "vue": "^3.2.0",
+    "vue-tsc": "^1.2.0"
   },
   "peerDependencies": {
+    "lottie-web": "^5.10.2",
+    "motion": "^10.15.5",
     "vue": "^3.2.0",
-    "vue-i18n": "^9.0.0"
+    "vue-i18n": "^9.0.0",
+    "vue-router": "4"
   },
   "peerDependenciesMeta": {
     "vue-i18n": {
       "optional": true
     }
+  },
+  "resolutions": {
+    "vite": "^4.3.2"
   }
 }

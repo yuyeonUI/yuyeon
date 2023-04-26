@@ -1,4 +1,4 @@
-# yuyeon-ui
+# yuyeon
 
 ---
 **⚠️WARNING**

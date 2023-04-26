@@ -1,6 +1,6 @@
-import './plate-wave.scss';
-
 import type { DirectiveBinding } from 'vue';
+
+import './plate-wave.scss';
 
 export interface PlateWaveBinding
   extends Omit<DirectiveBinding, 'modifiers' | 'value'> {
