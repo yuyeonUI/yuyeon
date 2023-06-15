@@ -4,7 +4,7 @@ import { useRender } from '../../composables/component';
 import { getUid } from '../../util/vue-component';
 
 import './YCheckbox.scss';
-import YInputCheckbox from './YInputCheckbox.js';
+import YInputCheckbox from './YInputCheckbox';
 
 export default defineComponent({
   name: 'YCheckbox',

@@ -26,3 +26,4 @@ types
 *.njsproj
 *.sln
 *.sw?
+.npmrc
