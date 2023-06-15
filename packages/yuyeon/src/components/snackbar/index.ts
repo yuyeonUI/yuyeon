@@ -1,3 +1,1 @@
-import YSnackbar from './YSnackbar.vue';
-
-export { YSnackbar };
+export * from './YSnackbar';

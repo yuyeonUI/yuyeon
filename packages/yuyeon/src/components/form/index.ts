@@ -1,7 +1,5 @@
-/*
- * Created by yeonyu 2022.
- */
-import YForm from './y-form';
+
+import YForm from './YForm';
 
 export { YForm };
 

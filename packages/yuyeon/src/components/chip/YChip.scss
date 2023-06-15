@@ -1,0 +1,24 @@
+@use '../../styles/variables';
+
+$chip-border-radius: variables.$border-radius-root;
+
+.y-chip {
+  display: inline-flex;
+  position: relative;
+  padding: 4px 16px;
+  background: rgba(0, 0, 0, 0.14);
+  border-radius: $chip-border-radius;
+  align-items: center;
+
+  &--clickable {
+    cursor: pointer;
+  }
+
+  &__content {
+    color: inherit;
+  }
+
+  &--clickable &__content {
+    user-select: none;
+  }
+}

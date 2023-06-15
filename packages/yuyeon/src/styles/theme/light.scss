@@ -1,32 +1,21 @@
 @use 'sass:map';
-@use '../palette';
+@use '../../styles/palette';
 @use '../util/helper';
 
 // yui theme
 $theme--light: () !default;
 $theme--light: map.deep-merge(
-  map.deep-merge(
-    (
-      'input': (
-        'fill': palette.$basic-gray-200,
-      ),
-      'fieldInput': (
-        'clear': palette.$basic-gray-400,
-      ),
-      'select': (
-        'selected': palette.$basic-black,
-        'selected-background': palette.$basic-gray-700,
-      ),
+  (
+    'input': (
+      'fill': palette.$basic-gray-200,
     ),
-    //app
-    (
-        'simpleSearch': (
-          'placeholder': palette.$basic-gray-400,
-          'prepend': palette.$basic-gray-700,
-          'border': palette.$basic-gray-700,
-          'hasValueBorder': palette.$basic-gray-400,
-        ),
-      )
+    'fieldInput': (
+      'clear': palette.$basic-gray-400,
+    ),
+    'select': (
+      'selected': palette.$basic-black,
+      'selected-background': palette.$basic-gray-700,
+    ),
   ),
   $theme--light
 );

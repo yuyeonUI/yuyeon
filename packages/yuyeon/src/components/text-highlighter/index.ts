@@ -1,3 +1,3 @@
-import YTextHighlighter from './y-text-highlighter';
+import YTextHighlighter from './YTextHighlighter';
 
 export { YTextHighlighter };

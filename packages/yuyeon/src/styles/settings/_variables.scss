@@ -1,0 +1,14 @@
+@use "sass:meta";
+@use "sass:map";
+
+$space-unit: 4px !default;
+$space-max-times: 20 !default;
+
+$space-list: () !default;
+@if (meta.type-of($space-list) == list) {
+  @for $index from 0 through $space-max-times {
+    $space-list: map.merge($space-list, ($index: $space-unit * $index));
+  }
+}
+
+$basic-transition-timing-function: cubic-bezier(0.23, 0.3, 0.07, 0.97);

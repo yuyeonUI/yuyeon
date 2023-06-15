@@ -1,0 +1,43 @@
+$side-padding: 16px !default;
+
+.y-divide-panel {
+  position: relative;
+  height: 100%;
+
+  &--resizing {
+    cursor: ns-resize;
+  }
+
+  &__divider {
+    position: absolute;
+    height: 8px;
+    cursor: ns-resize;
+    z-index: 1;
+    //margin: 0 (-1 * $side-padding);
+
+    &-line {
+      position: absolute;
+      top: 4px;
+      left: 0;
+      right: 0;
+      bottom: 4px;
+      height: 1px;
+      background: #eee;
+    }
+
+    &:hover {
+      background: rgba(var(--y-theme--primary), 0.12);
+    }
+
+    &:hover &-line {
+      background: rgba(var(--y-theme--primary), 1);
+    }
+  }
+
+  &--resizing &__divider {
+    background: rgba(var(--y-theme--primary), 0.12);
+    &-line {
+      background: rgba(var(--y-theme--primary), 1);
+    }
+  }
+}

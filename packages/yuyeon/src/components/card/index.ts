@@ -1,6 +1,6 @@
-import YCard from './y-card';
-import YCardBody from './y-card-body';
-import YCardFooter from './y-card-footer';
-import YCardHeader from './y-card-header';
+import YCard from './YCard';
+import YCardBody from './YCardBody';
+import YCardFooter from './YCardFooter';
+import YCardHeader from './YCardHeader';
 
 export { YCard, YCardHeader, YCardBody, YCardFooter };

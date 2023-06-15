@@ -1,28 +1,95 @@
+@use 'sass:list';
+@use 'settings/provided';
+@use 'settings/variables';
+@use 'palette';
+
 :root {
   box-sizing: border-box;
 }
 
-.fade {
-  &-enter-active, &-leave-cative {
-    transition: opacity 240ms cubic-bezier(.2,.28,.21,1);
-  }
-
-  &-fade-enter-from, &-leave-to {
-    opacity: 0;
-  }
+:root {
+  --y-palette--primary: #{palette.$primary};
 }
 
-.slide-fade-enter-active, .slide-fade-leave-active {
-  transition: transform 240ms cubic-bezier(.23,.3,.07,.97), opacity 240ms linear;
+.fade-enter-active,
+.fade-leave-cative {
+  transition: opacity 240ms cubic-bezier(0.2, 0.28, 0.21, 1);
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.slide-fade-enter-active,
+.slide-fade-leave-active {
+  transition: transform 240ms variables.$basic-transition-timing-function,
+    opacity 240ms linear;
 }
 
 .slide-fade-enter-from,
 .slide-fade-leave-to {
-  transform: translateY(20px) rotate3d(1, 0, 0, -30deg);
+  transform: translateY(-20px) rotate3d(1, 0, 0, 10deg);
   opacity: 0;
+}
+
+.expand-v-transition {
+  &-enter-active {
+    transition-duration: 240ms;
+    transition-timing-function: variables.$basic-transition-timing-function;
+    transition-property: height;
+  }
+  &-leave-active {
+    transition-duration: 240ms;
+    transition-timing-function: variables.$basic-transition-timing-function;
+    transition-property: height;
+  }
+}
+
+.expand-h-transition {
+  &-enter-active {
+    transition-duration: 240ms;
+    transition-timing-function: variables.$basic-transition-timing-function;
+    transition-property: width;
+  }
+  &-leave-active {
+    transition-duration: 240ms;
+    transition-timing-function: variables.$basic-transition-timing-function;
+    transition-property: width;
+  }
 }
 
 .title {
   font-size: 20px;
   font-weight: bold;
+}
+
+@each $space-type-prefix, $space-type in provided.$space-types {
+  @each $side-prefix, $sides-properties in provided.$box-side-combinations {
+    @each $space-index, $space-size in variables.$space-list {
+      .#{$space-type-prefix}#{$side-prefix}-#{$space-index} {
+        @if (list.length($sides-properties) == 0) {
+          #{$space-type}: #{$space-size};
+        } @else {
+          @each $prop in $sides-properties {
+            #{$space-type}: {
+              #{$prop}: #{$space-size};
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+@each $align in provided.$text-aligns {
+  .text-#{$align} {
+    text-align: #{$align};
+  }
+}
+
+@keyframes rotate {
+  to {
+    transform: rotate(360deg);
+  }
 }

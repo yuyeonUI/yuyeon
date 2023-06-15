@@ -1,0 +1,9 @@
+.y-plate {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  border-top: 1px solid transparent;
+  contain: paint;
+  border-radius: 8px;
+  outline: 0 solid rgba(0, 0, 0, 0);
+}

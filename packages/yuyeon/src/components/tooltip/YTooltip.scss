@@ -1,0 +1,19 @@
+.y-tooltip {
+  font-size: 0.875rem;
+
+  .y-layer__content {
+    padding: 4px 8px;
+
+    .y-plate {
+      border-radius: 6px;
+      background: rgba(0, 0, 0, 0.8);
+      position: absolute;
+      inset: 0;
+    }
+  }
+
+  &__content {
+    position: relative;
+    color: #fff;
+  }
+}

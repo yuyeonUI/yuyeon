@@ -29,6 +29,29 @@ export function getNestedValue(
     : traversObj[path[last]];
 }
 
+export function mergeDeep(source: Record<string, any> = {}, overwrite: Record<string, any> = {}, arrayFn?: (source: unknown[], overwrite: unknown[]) => unknown[]) {
+  const ret = {...source};
+  for (const key in overwrite) {
+    const sourceValue = ret[key];
+    const overwriteValue = overwrite[key];
+
+    if (Array.isArray(sourceValue) && Array.isArray(overwriteValue)) {
+      if (arrayFn) {
+        ret[key] = arrayFn(sourceValue, overwriteValue);
+        continue;
+      }
+    }
+
+    if (typeof sourceValue === 'object' && typeof overwriteValue === 'object') {
+      ret[key] = mergeDeep(sourceValue, overwriteValue, arrayFn);
+      continue;
+    }
+
+    ret[key] = overwriteValue;
+  }
+  return ret;
+}
+
 export function getObjectValueByPath(
   obj: any,
   path: string,
@@ -52,8 +75,6 @@ export function randomCharOne(str: string) {
   return '';
 }
 
-export default {
-  hasOwnProperty,
-  getNestedValue,
-  getObjectValueByPath,
-};
+export function clamp (value: number, min = 0, max = 1) {
+  return Math.max(min, Math.min(max, value))
+}

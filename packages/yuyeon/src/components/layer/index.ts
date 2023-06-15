@@ -1,3 +1,1 @@
-import YLayer from './y-layer.vue';
-
-export { YLayer };
+export * from './YLayer';

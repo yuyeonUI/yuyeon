@@ -1,7 +1,5 @@
-/*
- * Created by yeonyu at 2021-09-30
- */
-import YCheckbox from './YCheckbox.vue';
-import YInputCheckbox from './YInputCheckbox.vue';
+import YCheckbox from './YCheckbox';
+import YInputCheckbox from './YInputCheckbox';
 
-export { YCheckbox, YInputCheckbox };
+export { YCheckbox };
+export { YInputCheckbox };

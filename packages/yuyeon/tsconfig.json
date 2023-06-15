@@ -1,4 +1,5 @@
 {
+  "root": true,
   "compilerOptions": {
     "target": "ESNext",
     "useDefineForClassFields": true,
@@ -6,16 +7,19 @@
     "moduleResolution": "Node",
     "strict": true,
     "jsx": "preserve",
+    "jsxImportSource": "vue",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "esModuleInterop": true,
     "lib": ["ESNext", "DOM"],
     "skipLibCheck": true,
     "noEmit": true,
-    "paths": {
-      "@/*": ["src/*"]
-    }
+    "allowJs": true,
+    "outDir": "types"
   },
   "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
+  "vueCompilerOptions": {
+    "jsxSlots": true
+  },
   "references": [{ "path": "./tsconfig.node.json" }]
 }

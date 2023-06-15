@@ -1,0 +1,46 @@
+.y-tree-view {
+}
+
+.y-tree-view-node {
+  &__container {
+    display: flex;
+    align-items: center;
+    padding: 0 8px;
+    min-height: 2rem;
+    border-radius: 8px;
+    transition: all 180ms ease-in, border-radius 300ms 100ms ease-in-out;
+
+    &:hover {
+      background: rgba(124, 124, 124, 0.14);
+      border-radius: 4px;
+    }
+  }
+
+  &__expand-icon,
+  &__no-expand-icon {
+    display: inline-flex;
+    align-items: center;
+    width: 12px;
+    margin-right: 8px;
+  }
+
+  &__indents {
+    display: flex;
+  }
+
+  &__indent-spacer {
+    width: 1rem;
+  }
+
+  &__content {
+    font-size: 0.875rem;
+    display: flex;
+    align-items: center;
+  }
+
+  &__leading {
+    margin-right: 8px;
+    display: inline-flex;
+    align-items: center;
+  }
+}

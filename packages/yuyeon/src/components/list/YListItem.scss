@@ -1,0 +1,59 @@
+.y-list-item {
+  position: relative;
+  list-style: none;
+  padding: 8px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  transition-duration: 0.24s;
+  transition-property: color;
+  transition-timing-function: cubic-bezier(0.17, 0.67, 0.16, 0.89);
+
+  > div {
+    position: relative;
+  }
+
+  &:before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    color: inherit;
+    background-color: currentColor;
+    opacity: 0;
+  }
+
+  &:hover:before {
+    opacity: 0.14;
+  }
+
+  &--active#{&} {
+    font-weight: bold;
+
+    &:before {
+      opacity: 0.03;
+    }
+  }
+
+  &--link {
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  &--category:hover:before {
+    opacity: 0;
+  }
+
+  &__prepend {
+  }
+
+  &__content {
+    align-self: center;
+  }
+
+  &-icon {
+    width: 24px;
+    height: 24px;
+    min-width: 24px;
+  }
+}

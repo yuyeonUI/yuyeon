@@ -1,3 +1,2 @@
-import YDialog from './y-dialog.vue';
+export * from './YDialog';
 
-export { YDialog };

@@ -1,25 +1,43 @@
 import * as vue from 'vue';
 import {
-  YBtn,
-  YChip,
-  YInput,
-  YFieldInput,
-  YForm,
+  YApp,
+  YButton,
   YCard,
   YCardBody,
-  YCardHeader,
   YCardFooter,
+  YCardHeader,
+  YCheckbox,
+  YChip,
+  YDataTable,
+  YDataTableServer,
   YDialog,
+  YDividePanel,
+  YExpandHTransition,
+  YExpandVTransition,
+  YFieldInput,
+  YForm,
+  YInput,
+  YInputCheckbox,
   YLayer,
-  YSnackbar,
+  YList,
+  YListItem,
+  YMenu,
+  YPagination,
   YProgressBar,
-  YRingSpinner,
+  YSnackbar,
+  YSpinnerRing,
+  YSwitch,
+  YTable,
+  YTooltip,
+  YTreeView,
+  YTreeViewNode,
 } from 'yuyeon/types/components';
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     // @define-components
-    YBtn: typeof YBtn;
+    YApp: typeof YApp;
+    YButton: typeof YButton;
     YChip: typeof YChip;
     YInput: typeof YInput;
     YFieldInput: typeof YFieldInput;
@@ -32,6 +50,22 @@ declare module '@vue/runtime-core' {
     YLayer: typeof YLayer;
     YSnackbar: typeof YSnackbar;
     YProgressBar: typeof YProgressBar;
-    YRingSpinner: typeof YRingSpinner;
+    YSpinnerRing: typeof YSpinnerRing;
+    YTooltip: typeof YTooltip;
+    YExpandVTransition: typeof YExpandVTransition;
+    YExpandHTransition: typeof YExpandHTransition;
+    YDividePanel: typeof YDividePanel;
+    YList: typeof YList;
+    YListItem: typeof YListItem;
+    YTreeView: typeof YTreeView;
+    YTreeViewNode: typeof YTreeViewNode;
+    YDataTable: typeof YDataTable;
+    YTable: typeof YTable;
+    YDataTableServer: typeof YDataTableServer;
+    YMenu: typeof YMenu;
+    YPagination: typeof YPagination;
+    YInputCheckbox: typeof YInputCheckbox;
+    YCheckbox: typeof YCheckbox;
+    YSwitch: typeof YSwitch;
   }
 }

@@ -1,0 +1,14 @@
+y-app {
+  height: 100%;
+  display: flex;
+
+  .y-app__container {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    max-width: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+    position: relative;
+  }
+}

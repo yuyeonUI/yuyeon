@@ -1,18 +1,18 @@
-/*
- * Created by yeonyu 2022.
- */
+
 
 export function camelToPascal(str: string) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-export function camelToKebab(str: string) {
+export function toKebabCase(str: string, from: 'camel' | 'pascal' = 'camel') {
   let res = '';
   for (let index = 0; index < str.length; index += 1) {
     const char = str[index];
     const charCode = char.charCodeAt(0);
     if (charCode >= 65 && charCode <= 90) {
-      res += `-${char.toLowerCase()}`;
+      res += `${
+        index === 0 && from === 'camel' ? '' : '-'
+      }${char.toLowerCase()}`;
     } else {
       res += char;
     }

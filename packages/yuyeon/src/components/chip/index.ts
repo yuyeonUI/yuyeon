@@ -1,3 +1,3 @@
-import YChip from './y-chip.vue';
+import YChip from './YChip';
 
 export { YChip };

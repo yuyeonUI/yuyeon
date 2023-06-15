@@ -1,3 +1,1 @@
-import YBtn from './y-btn';
-
-export { YBtn };
+export * from './YButton';
