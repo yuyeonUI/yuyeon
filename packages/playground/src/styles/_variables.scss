@@ -1,0 +1,40 @@
+@use './palette';
+
+$app-background: palette.$basic-gray-100;
+$app-bar-height: 56px;
+$app-nav-width: 240px;
+$app-nav-rail-width: 96px;
+
+$basic-transition-func: cubic-bezier(.42,.5,.36,.98);
+$basic-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.16);
+$basic-border-radius: 8px;
+
+@mixin basicScrollbar($component: '', $child: false) {
+  $target: '';
+  @if($component != '') {
+    $target: #{$component};
+  }
+
+  @if ($child) {
+    $target: #{$target} + ' ';
+  }
+
+  @debug "#{$target}";
+  @at-root #{$target}::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+  }
+
+  @at-root #{$target}::-webkit-scrollbar-thumb {
+    background: #c8c8c8;
+    border-radius: 10px;
+    transition: 400ms ease;
+    background-clip: padding-box;
+    border: 2px solid transparent;
+
+    &:hover {
+      background: #9ea2ad;
+    }
+  }
+}
+

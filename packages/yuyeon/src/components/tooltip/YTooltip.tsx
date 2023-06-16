@@ -223,15 +223,13 @@ export const YTooltip = defineComponent({
       );
     });
 
-    if (import.meta.env.DEV) {
-      return {
-        base$,
-        el$,
-        baseEl,
-        coordinatesStyles,
-        baseSlot,
-        active,
-      };
-    }
+    return {
+      base$,
+      el$,
+      baseEl,
+      coordinatesStyles,
+      baseSlot,
+      active,
+    };
   },
 });

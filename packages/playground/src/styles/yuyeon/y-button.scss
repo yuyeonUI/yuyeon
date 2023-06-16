@@ -1,0 +1,41 @@
+@use '@/styles/palette.scss';
+@forward 'yuyeon/lib/components/button/YButton' with (
+  $button-border-radius: 4px,
+  $button-disabled-background: #afafaf
+);
+
+.y-button {
+  font-size: 14px;
+
+  &__content {
+    padding: 8px 16px;
+  }
+}
+
+//.zk-btn {
+//  &.y-button {
+//    --y-button__color: #{palette.$blue};
+//
+//    &--filled {
+//      border: 1px solid transparent;
+//
+//      &:hover:not(:disabled):not(.y-button--loading) {
+//        background-color: palette.$basic-blue-800;
+//        border: 1px solid palette.$basic-blue-900;
+//      }
+//
+//      &:active:not(:disabled).y-button {
+//        box-shadow: 2px 2px 8px 0 rgba(palette.$basic-blue-800, 0.2);
+//      }
+//    }
+//
+//    &--loading {
+//      --y-button__lighter-color: #{lighten(palette.$blue, 5%)};
+//      background-color: var(--y-button__lighter-color);
+//    }
+//
+//    &--disabled:not(.y-button--outlined) {
+//      color: palette.$basic-gray-700;
+//    }
+//  }
+//}

@@ -1,0 +1,15 @@
+$red: #ff4d4d;
+$green: #47b267;
+$yellow: #ffc70e;
+$blue: #4091c6;
+@use 'yuyeon/styles/palette' with (
+  $primary: #ff9639,
+);
+@forward 'yuyeon/styles/palette';
+
+.text--red {
+  color: $red;
+}
+.text--green {
+  color: $green;
+}

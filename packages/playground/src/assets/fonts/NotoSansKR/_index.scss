@@ -1,0 +1,46 @@
+$notosanskr-font-path: './' !default;
+
+@font-face {
+  font-family: Noto Sans KR;
+  font-style: normal;
+  font-weight: 300;
+  src: local('Noto Sans Light'), local('NotoSans-Light');
+  src: url(unquote($notosanskr-font-path + 'NotoSansKR-Light.woff2'))
+      format('woff2');
+}
+
+@font-face {
+  font-family: Noto Sans KR;
+  font-style: normal;
+  font-weight: 350;
+  src: local('Noto Sans DemiLight'), local('NotoSans-DemiLight');
+  src: url(unquote($notosanskr-font-path + 'NotoSansKR-Demilight.woff2'))
+      format('woff2');
+}
+
+@font-face {
+  font-family: Noto Sans KR;
+  //font-style: normal;
+  font-weight: 400;
+  src: local('Noto Sans Regular'), local('NotoSans-Regular');
+  src: url(unquote($notosanskr-font-path + 'NotoSansKR-Regular.woff2'))
+      format('woff2');
+}
+
+@font-face {
+  font-family: Noto Sans KR;
+  //font-style: normal;
+  font-weight: 500;
+  src: local('Noto Sans Medium'), local('NotoSans-Medium');
+  src: url(unquote($notosanskr-font-path + 'NotoSansKR-Medium.woff2'))
+      format('woff2');
+}
+
+@font-face {
+  font-family: Noto Sans KR;
+  font-style: normal;
+  font-weight: 700;
+  src: local('Noto Sans Bold'), local('NotoSans-Bold');
+  src: url(unquote($notosanskr-font-path + 'NotoSansKR-Bold.woff2'))
+      format('woff2');
+}

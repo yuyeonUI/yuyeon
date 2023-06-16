@@ -1,0 +1,65 @@
+@use '@/styles/variables';
+
+@forward 'y-button';
+@forward 'y-input';
+@forward 'y-dialog';
+@forward "y-field-input";
+
+.y-tree-view-node__expand-icon {
+  width: 16px;
+}
+
+.y-menu {
+  &__content {
+    box-shadow: 4px 4px 16px -4px rgba(0, 0, 0, 0.16);
+    border-radius: 8px;
+    padding: 8px;
+    border: 1px solid #C8C8C8;
+    background: rgba(var(--y-theme--base-bg), 1);
+
+    .y-list {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .y-list-item {
+      padding: 4px 8px;
+      color: var(--z-palette--desc);
+      &:hover:before {
+        opacity: 0.104;
+      }
+    }
+
+    .y-list-item-icon {
+      width: 16px;
+      height: 16px;
+      min-width: 16px;
+      margin-right: 4px;
+    }
+
+    > .y-card {
+      > .y-card__header {
+        padding: 16px 16px 8px;
+      }
+
+      > .y-card__body {
+        padding: 8px 16px 16px;
+      }
+    }
+
+    @include variables.basicScrollbar(&, true);
+
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+  }
+}
+
+.y-menu-base {
+  &--active.y-button.z-button:not(:hover) {
+    color: rgb(var(--y-button__color));
+    border-color: rgb(var(--y-button__color));
+  }
+}

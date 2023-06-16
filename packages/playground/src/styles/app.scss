@@ -1,0 +1,102 @@
+@use 'ress';
+@use 'palette';
+@use './yuyeon';
+$notosanskr-font-path: '@/assets/fonts/NotoSansKR/';
+@import '@/assets/fonts/NotoSansKR';
+
+:root {
+  font-family: 'Noto Sans KR', 'Noto Sans', Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+
+  //color-scheme: light dark;
+  //color: rgba(255, 255, 255, 0.87);
+  //background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+
+  --zerokey-primary: #{palette.$basic-orange-800};
+  //
+  --y-theme--primary: 241, 119, 56;
+  --y-theme--base-bg: 255, 255, 255;
+  --y-palette--primary: var(--zerokey-primary);
+  //
+  --z-palette--desc: #{palette.$basic-gray-700};
+  --z-palette--outline: 205, 207, 208;
+}
+
+html {
+  box-sizing: border-box;
+  overflow-y: scroll;
+}
+
+html {
+  overflow-x: hidden;
+  //min-width: 800px;
+  //min-height: 600px;
+}
+
+body {
+  user-select: none;
+  word-break: keep-all;
+}
+
+:focus {
+  outline-color: rgba(palette.$basic-orange-900, 0.8);
+}
+
+:focus:not(:focus-visible) {
+  outline: 0;
+}
+
+//@media (prefers-color-scheme: light) {
+  :root {
+    color: #323232;
+    background-color: #f0f0f0;
+  }
+//}
+
+fieldset {
+  border: none;
+}
+
+#app {
+  word-break: keep-all;
+}
+
+#ZeroKeyManager {
+  --zk-color--desc: #{palette.$basic-gray-700};
+}
+
+.zk-color {
+  &--desc {
+    color: var(--zk-color--desc);
+  }
+}
+
+/*
+  MAGIC
+*/
+.d-flex {
+  display: flex;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.justify-space-between {
+  justify-content: space-between;
+}
+
+.align-center {
+  align-items: center;
+}
+
+.w-100 {
+  width: 100%;
+}

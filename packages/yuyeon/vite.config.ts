@@ -30,6 +30,6 @@ export default defineConfig({
   plugins: [
     vue(),
     vueJsx({ optimize: false, enableObjectSlots: true }),
-    dts({ outputDir: 'types', copyDtsFiles: true }),
+    dts({ outputDir: 'types', copyDtsFiles: true, exclude: ['src/vite-env.d.ts'] }),
   ],
 });

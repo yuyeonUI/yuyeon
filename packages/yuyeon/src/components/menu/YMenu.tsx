@@ -254,15 +254,13 @@ export const YMenu = defineComponent({
       );
     });
 
-    if (import.meta.env.DEV) {
-      return {
-        base$,
-        el$,
-        baseEl,
-        coordinatesStyles: coordinateStyles,
-        baseSlot,
-      };
-    }
+    return {
+      base$,
+      el$,
+      baseEl,
+      coordinatesStyles: coordinateStyles,
+      baseSlot,
+    };
   },
 });
 
