@@ -1,5 +1,31 @@
 .y-pagination {
+
+  &__list {
+    display: flex;
+    gap: var(--y-pagination__gap);
+  }
+
   li {
     list-style: none;
+
+    .y-button {
+      min-width: 2em;
+      min-height: 0;
+      line-height: 1.715em;
+      padding: 4px 2px;
+
+      &__content {
+        padding: 2px;
+      }
+
+      svg {
+        width: 1rem;
+        height: 1rem;
+      }
+    }
+  }
+
+  &__first, &__last, &__prev, &__next {
+
   }
 }

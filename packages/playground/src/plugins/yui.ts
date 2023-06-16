@@ -1,4 +1,4 @@
-import { init } from 'yuyeon';
+import { init } from '%/yuyeon/src';
 
 import palette from '@/settings/palette';
 
