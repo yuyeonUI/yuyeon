@@ -22,6 +22,9 @@ export const YDialog = defineComponent({
         string[] | string | Record<string, any>
       >,
     },
+    persistent: {
+      type: Boolean,
+    }
   },
   emits: ['update:modelValue'],
   setup(props, { emit, slots }) {
@@ -101,6 +104,7 @@ export const YDialog = defineComponent({
             onUpdate:modelValue={onUpdate}
             scrim
             classes={classes.value}
+            persistent={props.persistent}
             ref={layer}
           >
             {{

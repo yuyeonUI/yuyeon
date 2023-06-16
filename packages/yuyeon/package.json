@@ -1,6 +1,6 @@
 {
   "name": "yuyeon",
-  "version": "0.0.2",
+  "version": "0.0.5",
   "files": [
     "dist",
     "lib",
@@ -21,6 +21,20 @@
   },
   "main": "lib/index.mjs",
   "module": "lib/index.mjs",
+  "types": "types",
+  "typesVersions": {
+    "*": {
+      "lib/index.mjs": [
+        "types/index.d.ts"
+      ],
+      "*": [
+        "*",
+        "types/*",
+        "types/*.d.ts",
+        "types/*/index.d.ts"
+      ]
+    }
+  },
   "scripts": {
     "build": "vue-tsc && vite build",
     "build:lib": "cross-env NODE_ENV=lib babel src --out-dir lib --source-maps --extensions \".ts\",\".tsx\" --copy-files --no-copy-ignored --out-file-extension .mjs"

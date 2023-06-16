@@ -2,6 +2,8 @@ import { PropType, StyleValue, defineComponent } from 'vue';
 
 import { useProgress } from '../../composables/progress';
 
+import './YProgressBar.scss';
+
 export const YProgressBar = defineComponent({
   name: 'YProgressBar',
   props: {
