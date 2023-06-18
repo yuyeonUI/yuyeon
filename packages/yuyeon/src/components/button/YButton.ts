@@ -71,18 +71,21 @@ export const YButton = defineComponent({
     icon(): boolean {
       return this.variations.includes('icon');
     },
+    variOutlined(): boolean {
+      return this.variations.includes('outlined');
+    },
     //
     classes() {
       return {
         [`${NAME}--outlined`]: this.outlined,
-        [`${NAME}--loading`]: this.loading,
         [`${NAME}--rounded`]: this.rounded,
         [`${NAME}--filled`]: this.filled,
-        [`${NAME}--disabled`]: this.disabled,
         [`${NAME}--text`]: this.text,
         [`${NAME}--small`]: this.small,
         [`${NAME}--icon`]: this.icon,
         [`${NAME}--color`]: this.color,
+        [`${NAME}--loading`]: this.loading,
+        [`${NAME}--disabled`]: this.disabled,
       };
     },
     styles(): Record<string, any> {

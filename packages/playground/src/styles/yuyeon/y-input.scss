@@ -1,5 +1,5 @@
 @use '@/styles/palette.scss';
-@forward 'yuyeon/lib/components/input/YInput' with (
+@forward 'yuyeon/src/components/input/YInput' with (
   $input-border-radius: 8px
 );
 

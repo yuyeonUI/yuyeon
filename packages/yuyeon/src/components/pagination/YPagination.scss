@@ -9,18 +9,29 @@
     list-style: none;
 
     .y-button {
-      min-width: 2em;
+      min-width: 2.2em;
       min-height: 0;
-      line-height: 1.715em;
-      padding: 4px 2px;
+      padding: 4px;
 
       &__content {
         padding: 2px;
       }
 
       svg {
-        width: 1rem;
-        height: 1rem;
+        width: 1.25rem;
+        height: 1.25rem;
+      }
+    }
+
+    .y-button.y-button--disabled {
+      background: rgba(0, 0, 0, 0.02);
+    }
+  }
+
+  &__item {
+    &--active {
+      .y-button:before {
+        opacity: 0.1;
       }
     }
   }

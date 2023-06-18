@@ -2,10 +2,10 @@ $red: #ff4d4d;
 $green: #47b267;
 $yellow: #ffc70e;
 $blue: #4091c6;
-@use 'yuyeon/styles/palette' with (
+@use 'yuyeon/src/styles/palette' with (
   $primary: #ff9639,
 );
-@forward 'yuyeon/styles/palette';
+@forward 'yuyeon/src/styles/palette';
 
 .text--red {
   color: $red;

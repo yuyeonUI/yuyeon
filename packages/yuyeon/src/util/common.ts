@@ -78,3 +78,7 @@ export function randomCharOne(str: string) {
 export function clamp (value: number, min = 0, max = 1) {
   return Math.max(min, Math.min(max, value))
 }
+
+export function getRangeArr(length: number, start = 0) {
+  return Array.from({ length }, (v, k) => start + k);
+}

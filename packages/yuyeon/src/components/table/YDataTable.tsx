@@ -7,7 +7,7 @@ import { YDataTableHead } from './YDataTableHead';
 import { YDataTableLayer } from './YDataTableLayer';
 import { YTable } from './YTable';
 import { propsFactory } from "../../util/vue-component";
-import { pressDataTablePaginationProps } from "./pagination";
+import {createPagination, pressDataTablePaginationProps} from "./pagination";
 
 export const pressDataTableProps = propsFactory({
   width: [String, Number] as PropType<string | number>,
@@ -20,9 +20,23 @@ export const YDataTable = defineComponent({
   props: {
     ...pressDataTableProps(),
   },
+  emits: {
+    'update:modelValue': (value: any[]) => true,
+    'update:page': (value: number) => true,
+    'update:pageSize': (value: number) => true,
+    'update:sortBy': (value: any) => true,
+    'update:options': (value: any) => true,
+  },
   setup(props, { slots }) {
+
+    const { page, pageSize } = createPagination(props as any);
+
     const slotProps = computed(() => {
-      return {};
+      return {
+        page: page.value,
+        pageSize: pageSize.value,
+
+      };
     });
     useRender(() => {
       return (
