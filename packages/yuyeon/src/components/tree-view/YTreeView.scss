@@ -3,6 +3,7 @@
 
 .y-tree-view-node {
   &__container {
+    position: relative;
     display: flex;
     align-items: center;
     padding: 0 8px;
@@ -20,8 +21,18 @@
   &__no-expand-icon {
     display: inline-flex;
     align-items: center;
-    width: 12px;
+    width: 16px;
+    height: 16px;
     margin-right: 8px;
+  }
+
+  &__expand-icon svg {
+    width: 10px;
+    height: 10px;
+  }
+
+  &--expanded > &__container > &__expand-icon svg {
+    transform: rotate(90deg);
   }
 
   &__indents {
@@ -42,5 +53,15 @@
     margin-right: 8px;
     display: inline-flex;
     align-items: center;
+  }
+
+  &--active > &__container {
+    color: var(--y-tree-view__active-color);
+
+    > .y-plate {
+      background: currentColor;
+      opacity: 0.08;
+      border-radius: unset;
+    }
   }
 }

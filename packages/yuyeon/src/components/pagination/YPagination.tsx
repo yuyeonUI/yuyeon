@@ -41,6 +41,10 @@ export const pressYPaginationProps = propsFactory(
     },
     color: String,
     activeColor: String,
+    firstIcon: String,
+    lastIcon: String,
+    prevIcon: String,
+    nextIcon: String,
   },
   'y-pagination',
 );
@@ -261,7 +265,7 @@ export const YPagination = defineComponent({
                   slots.first(controls.value.first)
                 ) : (
                   <YButton {...controls.value.first}>
-                    <YIconPageControl type={'first'}></YIconPageControl>
+                    <YIconPageControl type={'first'} first={props.firstIcon}></YIconPageControl>
                   </YButton>
                 )}
               </li>
@@ -271,7 +275,7 @@ export const YPagination = defineComponent({
                 slots.prev(controls.value.prev)
               ) : (
                 <YButton {...controls.value.prev}>
-                  <YIconPageControl type={'prev'}></YIconPageControl>
+                  <YIconPageControl type={'prev'} prev={props.prevIcon}></YIconPageControl>
                 </YButton>
               )}
             </li>
@@ -295,7 +299,7 @@ export const YPagination = defineComponent({
                 slots.next(controls.value.next)
               ) : (
                 <YButton {...controls.value.next}>
-                  <YIconPageControl type={'next'}></YIconPageControl>
+                  <YIconPageControl type={'next'} next={props.nextIcon}></YIconPageControl>
                 </YButton>
               )}
             </li>
@@ -305,7 +309,7 @@ export const YPagination = defineComponent({
                   slots.last(controls.value.last)
                 ) : (
                   <YButton {...controls.value.last}>
-                    <YIconPageControl type={'last'}></YIconPageControl>
+                    <YIconPageControl type={'last'} last={props.lastIcon}></YIconPageControl>
                   </YButton>
                 )}
               </li>

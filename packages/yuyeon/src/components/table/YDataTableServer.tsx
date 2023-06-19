@@ -16,6 +16,9 @@ export const pressDataTableServerProps = propsFactory(
       type: [Number, String] as PropType<number | string>,
       required: true,
     },
+    headers: {
+      type: [Array],
+    },
     ...pressDataTablePaginationProps(),
     ...pressDataTableProps(),
   },
@@ -57,11 +60,11 @@ export const YDataTableServer = defineComponent({
               ) : (
                 <>
                   <thead>
-                    <YDataTableHead v-slots={slots}></YDataTableHead>
+                    <YDataTableHead v-slots={slots} headers={props.headers}></YDataTableHead>
                   </thead>
                   {slots.thead?.(slotProps.value)}
                   <tbody>
-                    <YDataTableBody v-slots={slots}></YDataTableBody>
+                    <YDataTableBody v-slots={slots} headers={props.headers}></YDataTableBody>
                   </tbody>
                   {slots.tbody?.(slotProps.value)}
                   {slots.tfoot?.(slotProps.value)}

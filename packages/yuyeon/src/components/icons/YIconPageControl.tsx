@@ -1,10 +1,10 @@
 import { PropType, defineComponent } from 'vue';
 
 export const PageControlPaths = {
-  next: 'm12.392 26.896 7.2156-10.843-7.0545-10.948',
-  prev: 'm19.608 26.896-7.2156-10.843 7.0545-10.948',
-  last: 'm10.696 26.936 7.2156-10.843-7.0545-10.948m0 0zm10.447-0.105v21.921',
-  first: 'm21.304 26.936-7.2156-10.843 7.0545-10.948m0 0zm-10.447-0.105v21.921',
+  next: 'm12.18 23.585 7.6399-7.5489-7.4693-7.622',
+  prev: 'm19.82 23.585-7.6399-7.5489 7.4693-7.622',
+  last: 'm10.488 23.812 7.4981-7.7457-7.3307-7.8207m0 0zm10.856-0.075007v15.659',
+  first: 'm21.512 23.812-7.4981-7.7457 7.3307-7.8207m0 0zm-10.856-0.075007v15.659',
 };
 
 export const YIconPageControl = defineComponent({
@@ -14,6 +14,10 @@ export const YIconPageControl = defineComponent({
       type: String as PropType<'next' | 'prev' | 'first' | 'last'>,
       default: 'next',
     },
+    next: String,
+    prev: String,
+    last: String,
+    first: String,
   },
   render() {
     return (

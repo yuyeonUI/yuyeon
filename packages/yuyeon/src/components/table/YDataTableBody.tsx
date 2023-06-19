@@ -4,9 +4,14 @@ import { useRender } from '../../composables/component';
 
 export const YDataTableBody = defineComponent({
   name: 'YDataTableBody',
-  setup() {
+  props: {
+    headers: {
+      type: [Array],
+    },
+  },
+  setup(props, { slots }) {
     useRender(() => {
-      return <div></div>;
+      return <>{slots.body ? slots.body?.(props) : <tr></tr>}</>;
     });
   },
 });

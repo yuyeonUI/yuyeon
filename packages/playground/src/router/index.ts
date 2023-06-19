@@ -6,6 +6,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/',
     component: () => import('@/pages/DataTable.vue'),
   },
+  {
+    name: 'TreeView',
+    path: '/tree-view',
+    component: () => import('@/pages/TreeView.vue'),
+  }
 ];
 
 const router = createRouter({
