@@ -1,5 +1,6 @@
 import {
   PropType,
+  Ref,
   VNode,
   computed,
   defineComponent,
@@ -8,10 +9,16 @@ import {
   watch,
 } from 'vue';
 
+import { useModelDuplex } from '../../composables/communication';
 import { useRender } from '../../composables/component';
-import { diffrenceBetween } from '../../util/array';
-import { getObjectValueByPath, hasOwnProperty } from '../../util/common';
+import { differenceBetween } from '../../util/array';
+import {
+  deepEqual,
+  getObjectValueByPath,
+  hasOwnProperty,
+} from '../../util/common';
 import { isColorValue } from '../../util/ui';
+import { chooseProps } from '../../util/vue-component';
 import { YTreeViewNode, pressYTreeViewNodeProps } from './YTreeViewNode';
 import { getKeys } from './util';
 
@@ -27,29 +34,55 @@ export const YTreeView = defineComponent({
       type: Array as PropType<any[]>,
       default: () => [],
     },
+    expanded: {
+      type: [Array] as PropType<NodeKey[]>,
+      default: () => [],
+    },
     active: {
       type: [Array] as PropType<NodeKey[]>,
       default: () => [],
     },
-    expand: {
+    multipleActive: Boolean,
+    activeStrategy: {
+      type: String as PropType<'independent' | 'cascade'>, // TODO: 'leaf'
+      default: 'independent',
+    },
+    selected: {
       type: [Array] as PropType<NodeKey[]>,
       default: () => [],
     },
-    select: {
-      type: [Array] as PropType<NodeKey[]>,
-      default: () => [],
+    selectStrategy: {
+      type: String as PropType<'independent' | 'cascade'>, // TODO: 'leaf'
+      default: 'leaf',
     },
+    returnItem: Boolean,
     ...treeViewNodeProps,
   },
-  setup(props, { slots }) {
+  emits: ['update:expanded', 'update:active', 'update:selected'],
+  setup(props, { slots, emit }) {
     const nodes = ref<Record<NodeKey, any>>({});
 
-    const expanded = ref(new Set<number | string>());
-    const selected = ref(new Set<number | string>());
-    const active = ref(new Set<number | string>());
+    const expanded = useModelDuplex(props, 'expanded');
+    const active = useModelDuplex(props, 'active');
+    const selected = useModelDuplex(props, 'selected');
 
-    const expandedCache = ref<string[]>([]);
+    const expandedSet = ref(new Set<NodeKey>());
+    const selectedSet = ref(new Set<NodeKey>());
+    const activeSet = ref(new Set<NodeKey>());
 
+    const expandedCache = ref<NodeKey[]>([]);
+
+    // Util Methods
+    function getDescendants(key: NodeKey, descendants: NodeKey[] = []) {
+      const { childKeys } = nodes.value[key];
+      descendants.push(...childKeys);
+      for (const childKey of childKeys) {
+        descendants = getDescendants(childKey, descendants);
+      }
+      return descendants;
+    }
+
+    // State Methods
     function updateNodes(items: any[], parentKey: NodeKey | null = null) {
       for (const item of items) {
         const key = getObjectValueByPath(item, props.itemKey);
@@ -58,11 +91,11 @@ export const YTreeView = defineComponent({
         const existNode = exist
           ? nodes.value[key]
           : {
+              vnode: null,
               selected: false,
               indeterminate: false,
               active: false,
               expanded: false,
-              vnode: null,
             };
         const node: NodeState = {
           vnode: existNode.vnode,
@@ -80,10 +113,142 @@ export const YTreeView = defineComponent({
         updateNodes(children, key);
 
         nodes.value[key] = node;
+        if (nodes.value[key].expanded) {
+          expandedSet.value.add(key);
+        }
+        if (nodes.value[key].selected) {
+          expandedSet.value.add(key);
+        }
+        if (nodes.value[key].active) {
+          activeSet.value.add(key);
+        }
+
+        issueVnodeState(key);
       }
     }
 
-    updateNodes(props.items);
+    function updateExpanded(key: NodeKey, to: boolean) {
+      if (!(key in nodes.value)) return;
+      const node = nodes.value[key];
+      if (to) {
+        expandedSet.value.add(key);
+        node.expanded = true;
+      } else {
+        expandedSet.value.delete(key);
+        node.expanded = false;
+        issueVnodeState(key);
+      }
+    }
+
+    function updateActive(key: NodeKey, to: boolean) {
+      if (!(key in nodes.value)) return;
+      const node = nodes.value[key];
+      let inactiveKey = !to ? key : '';
+      if (!props.multipleActive) {
+        [inactiveKey] = activeSet.value.keys();
+      }
+      if (to) {
+        activeSet.value.add(key);
+        node.active = true;
+      }
+      if (inactiveKey && inactiveKey in nodes.value) {
+        activeSet.value.delete(inactiveKey);
+        nodes.value[inactiveKey].active = false;
+        issueVnodeState(inactiveKey);
+      }
+
+      if (props.multipleActive && props.activeStrategy === 'cascade') {
+        for (const descendant of getDescendants(key)) {
+          if (descendant in nodes.value) {
+            to
+              ? activeSet.value.add(descendant)
+              : activeSet.value.delete(descendant);
+            nodes.value[descendant].active = to;
+            issueVnodeState(descendant);
+          }
+        }
+      }
+    }
+
+    function updateSelected(key: NodeKey, to: boolean) {
+      if (!(key in nodes.value)) return;
+      const node = nodes.value[key];
+
+      if (to) {
+        selectedSet.value.add(key);
+        node.selected = true;
+      }
+
+      if (!to && key in nodes.value) {
+        selectedSet.value.delete(key);
+        nodes.value[key].selected = false;
+        issueVnodeState(key);
+      }
+
+      if (props.selectStrategy === 'cascade') {
+        for (const descendant of getDescendants(key)) {
+          if (descendant in nodes.value) {
+            to
+              ? selectedSet.value.add(descendant)
+              : selectedSet.value.delete(descendant);
+            nodes.value[descendant].selected = to;
+            issueVnodeState(descendant);
+          }
+        }
+      }
+    }
+
+    function emitExpanded() {
+      const arr = [...expandedSet.value];
+      expanded.value = props.returnItem
+        ? arr.map((key) => nodes.value[key].item)
+        : arr;
+    }
+
+    function emitActive() {
+      const arr = [...activeSet.value];
+      active.value = props.returnItem
+        ? arr.map((key) => nodes.value[key].item)
+        : arr;
+    }
+
+    function emitSelected() {
+      const arr = [...selectedSet.value];
+      selected.value = props.returnItem
+        ? arr.map((key) => nodes.value[key].item)
+        : arr;
+    }
+
+    function stateWatcher(
+      value: any[],
+      stateSet: Ref<Set<NodeKey>>,
+      updater: (key: NodeKey, to: boolean) => void,
+      emitter: () => void,
+    ) {
+      const valuesOfKey = props.returnItem
+        ? value.map((v) => getObjectValueByPath(v, props.itemKey))
+        : value;
+      const old = [...stateSet.value];
+      if (deepEqual(old, valuesOfKey)) {
+        return;
+      }
+      old.forEach((key) => updater(key, false));
+      valuesOfKey.forEach((key) => updater(key, true));
+      emitter();
+    }
+
+    watch(expanded, (neo) => {
+      stateWatcher(neo, expandedSet, updateExpanded, emitExpanded);
+    });
+
+    watch(active, (neo) => {
+      stateWatcher(neo, activeSet, updateActive, emitActive);
+    });
+
+    watch(selected, (neo) => {
+      stateWatcher(neo, selectedSet, updateSelected, emitSelected);
+    });
+
     watch(
       () => props.items,
       (neo: any[]) => {
@@ -91,21 +256,33 @@ export const YTreeView = defineComponent({
           getObjectValueByPath(nodes.value[nodeKey].item, props.itemKey),
         );
         const neoKeys = getKeys(neo, props.itemKey, props.childrenKey);
-        const diff = diffrenceBetween(oldKeys, neoKeys);
+        const diff = differenceBetween(oldKeys, neoKeys);
         if (diff.length < 1 && neoKeys.length < oldKeys.length) {
           return;
         }
         diff.forEach((k) => delete nodes.value[k]);
 
+        // init
+        const oldSelected = [...selectedSet.value];
+        selectedSet.value.clear();
+        expandedSet.value.clear();
+        activeSet.value.clear();
         updateNodes(neo);
+        if (!deepEqual(oldSelected, [...selectedSet.value])) {
+          emitSelected();
+        }
       },
       { deep: true },
     );
 
+    // Provide & Issue
     function issueVnodeState(key: NodeKey) {
       const node = nodes.value[key];
       if (node && node.vnode) {
         node.vnode.active = node.active;
+        node.vnode.selected = node.selected;
+        node.vnode.indeterminate = node.indeterminate;
+        node.vnode.expanded = node.expanded;
       }
     }
 
@@ -117,30 +294,17 @@ export const YTreeView = defineComponent({
       issueVnodeState(key);
     }
 
-    function updateExpand(key: NodeKey, to: boolean) {
-      if (!(key in nodes.value)) return;
-      const node = nodes.value[key];
-      console.log(node);
-      if (to) {
-        expanded.value.add(key);
-      } else {
-        expanded.value.delete(key);
-      }
-    }
+    updateNodes(props.items);
 
-    function updateActive(key: NodeKey, to: boolean) {
-      if (!(key in nodes.value)) return;
-      const node = nodes.value[key];
-      if (to) {
-        active.value.add(key);
-        node.active = true;
-      } else {
-        active.value.delete(key);
-        node.active = false;
-      }
-    }
-
-    provide('tree-view', { register, updateExpand, updateActive });
+    provide('tree-view', {
+      register,
+      updateExpanded,
+      updateActive,
+      updateSelected,
+      emitExpanded,
+      emitActive,
+      emitSelected,
+    });
 
     const renderLeaves = computed(() => {
       return props.items;
@@ -170,10 +334,12 @@ export const YTreeView = defineComponent({
               renderLeaves.value.map((leaf) => {
                 return (
                   <YTreeViewNode
-                    item={leaf}
-                    level={0}
                     v-slots={slots}
-                    disableTransition={props.disableTransition}
+                    {...{
+                      ...chooseProps(props, treeViewNodeProps),
+                      item: leaf,
+                      level: 0,
+                    }}
                   ></YTreeViewNode>
                 );
               })
@@ -189,7 +355,9 @@ export const YTreeView = defineComponent({
 
     return {
       nodes,
-      expanded,
+      expandedSet,
+      selectedSet,
+      activeSet,
     };
   },
 });

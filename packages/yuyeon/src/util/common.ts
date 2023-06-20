@@ -29,8 +29,12 @@ export function getNestedValue(
     : traversObj[path[last]];
 }
 
-export function mergeDeep(source: Record<string, any> = {}, overwrite: Record<string, any> = {}, arrayFn?: (source: unknown[], overwrite: unknown[]) => unknown[]) {
-  const ret = {...source};
+export function mergeDeep(
+  source: Record<string, any> = {},
+  overwrite: Record<string, any> = {},
+  arrayFn?: (source: unknown[], overwrite: unknown[]) => unknown[],
+) {
+  const ret = { ...source };
   for (const key in overwrite) {
     const sourceValue = ret[key];
     const overwriteValue = overwrite[key];
@@ -75,10 +79,27 @@ export function randomCharOne(str: string) {
   return '';
 }
 
-export function clamp (value: number, min = 0, max = 1) {
-  return Math.max(min, Math.min(max, value))
+export function clamp(value: number, min = 0, max = 1) {
+  return Math.max(min, Math.min(max, value));
 }
 
 export function getRangeArr(length: number, start = 0) {
   return Array.from({ length }, (v, k) => start + k);
+}
+
+export function deepEqual(a: any, b: any): boolean {
+  if (a === b) return true;
+
+  if (a instanceof Date && b instanceof Date && a.getTime() !== b.getTime()) {
+    return false;
+  }
+
+  if (a !== Object(a) || b !== Object(b)) {
+    return false;
+  }
+  const props = Object.keys(a);
+  if (props.length !== Object.keys(b).length) {
+    return false;
+  }
+  return props.every((p) => deepEqual(a[p], b[p]));
 }

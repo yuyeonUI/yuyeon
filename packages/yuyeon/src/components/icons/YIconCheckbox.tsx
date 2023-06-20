@@ -1,14 +1,27 @@
 import { defineComponent } from 'vue';
 
+import './YIconCheckbox.scss';
+
 export const YIconCheckbox = defineComponent({
   name: 'YIconCheckbox',
+  props: {
+    checked: Boolean,
+    immediate: Boolean,
+  },
   render() {
     return (
       <svg
-        class="y-icon-checkbox"
+        class={[
+          'y-icon-checkbox',
+          {
+            'y-icon-checkbox--checked': this.checked,
+            'y-icon-checkbox--immediate': this.immediate,
+          },
+        ]}
         xmlns="http://www.w3.org/2000/svg"
         width="24"
         height="24"
+        viewBox="0 0 24 24"
       >
         <path
           class="y-icon-checkbox__border-path"

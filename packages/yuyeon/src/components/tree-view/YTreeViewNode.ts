@@ -14,14 +14,11 @@ import { propsFactory } from '../../util/vue-component';
 import { YButton } from '../button';
 import { YPlate } from '../plate';
 
-import { YIconExpand } from '../icons';
+import { YIconCheckbox, YIconExpand } from '../icons';
 import { YExpandVTransition } from '../transitions';
 
 export const pressYTreeViewNodeProps = propsFactory(
   {
-    item: {
-      type: Object as PropType<any>,
-    },
     itemKey: {
       type: String as PropType<string>,
       default: 'id',
@@ -34,16 +31,14 @@ export const pressYTreeViewNodeProps = propsFactory(
       type: String as PropType<string>,
       default: 'children',
     },
-    level: {
-      type: Number as PropType<number>,
-      default: 0,
-    },
     disableTransition: Boolean,
+    enableActive: Boolean,
     activeClass: [String, Array],
     activeColor: {
       type: String,
       default: 'primary',
     },
+    enableSelect: Boolean,
   },
   'YTreeViewNode',
 );
@@ -54,8 +49,16 @@ export const YTreeViewNode = defineComponent({
     YButton,
     YIconExpand,
     YPlate,
+    YIconCheckbox,
   },
   props: {
+    item: {
+      type: Object as PropType<any>,
+    },
+    level: {
+      type: Number as PropType<number>,
+      default: 0,
+    },
     ...pressYTreeViewNodeProps(),
   },
   setup(props, { slots, expose }) {
@@ -70,13 +73,23 @@ export const YTreeViewNode = defineComponent({
       const to = !active.value;
       active.value = to;
       treeView.updateActive(myKey.value, to);
+      treeView.emitActive();
     }
 
     function onClickExpand(e: MouseEvent) {
       e.stopPropagation();
       const to = !expanded.value;
       expanded.value = to;
-      treeView.updateExpand(myKey.value, to);
+      treeView.updateExpanded(myKey.value, to);
+      treeView.emitExpanded();
+    }
+
+    function onClickSelect(e: MouseEvent) {
+      e.stopPropagation();
+      const to = !selected.value;
+      selected.value = to;
+      treeView.updateSelected(myKey.value, to);
+      treeView.emitSelected();
     }
 
     const children = computed(() => {
@@ -138,7 +151,8 @@ export const YTreeViewNode = defineComponent({
             'div',
             {
               class: 'y-tree-view-node__container',
-              onClick: (e: MouseEvent) => onClick(e),
+              onClick: (e: MouseEvent) =>
+                props.enableActive ? onClick(e) : void 0,
             },
             [
               h(YPlate),
@@ -159,6 +173,15 @@ export const YTreeViewNode = defineComponent({
                     ],
                   )
                 : h('i', { class: 'y-tree-view-node__no-expand-icon' }),
+              props.enableSelect &&
+                h(
+                  'div',
+                  {
+                    class: ['y-tree-view-node__select'],
+                    onClick: (e: MouseEvent) => onClickSelect(e),
+                  },
+                  [h(YIconCheckbox, { checked: selected.value })],
+                ),
               /* CONTENT */
               h('div', { class: 'y-tree-view-node__content' }, [
                 slots.leading &&
@@ -210,6 +233,14 @@ export const YTreeViewNode = defineComponent({
 
     const myKey = computed(() => {
       return getObjectValueByPath(props.item, props.itemKey);
+    });
+
+    expose({
+      myKey,
+      expanded,
+      active,
+      selected,
+      immediate,
     });
 
     return {

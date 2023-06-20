@@ -37,13 +37,26 @@ const groups = ref([
     ],
   },
 ]);
+const activeGroups = ref([]);
+const selected = ref([]);
+const opened = ref([]);
 </script>
 
 <template>
   <section>
-    <div class="pa-4" style="width: 320px">
-      <y-tree-view :items="groups"></y-tree-view>
-    </div>
+    <y-card class="pa-4 ma-1" style="width: 320px">
+      <y-tree-view
+        v-model:selected="selected"
+        v-model:expanded="opened"
+        v-model:active="activeGroups"
+        :items="groups"
+        enable-active
+        multiple-active
+        active-strategy="cascade"
+        enable-select
+        select-strategy="cascade"
+      ></y-tree-view>
+    </y-card>
   </section>
 </template>
 

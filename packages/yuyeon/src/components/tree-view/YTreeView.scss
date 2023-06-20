@@ -43,6 +43,18 @@
     width: 1rem;
   }
 
+  &__select {
+    display: inline-flex;
+    align-items: center;
+    margin-right: 4px;
+    cursor: pointer;
+
+    > * {
+      width: 20px;
+      height: 20px;
+    }
+  }
+
   &__content {
     font-size: 0.875rem;
     display: flex;

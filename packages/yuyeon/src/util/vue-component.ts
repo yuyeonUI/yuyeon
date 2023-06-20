@@ -2,13 +2,14 @@ import type { IfAny } from '@vue/shared';
 import type {
   ComponentObjectPropsOptions,
   ComponentPublicInstance,
+  ExtractPropTypes,
   Prop,
   PropType,
   VNode,
 } from 'vue';
+import { getCurrentInstance } from 'vue';
 
 import { hasOwnProperty } from './common';
-import { getCurrentInstance } from "vue";
 
 export function getSlot(
   vm: ComponentPublicInstance | any,
@@ -29,6 +30,18 @@ export function getSlot(
 export function getUid() {
   const vm = getCurrentInstance();
   return vm?.uid;
+}
+
+export function chooseProps<PropsOptions extends ComponentObjectPropsOptions>(
+  props: any,
+  target: PropsOptions,
+): ExtractPropTypes<PropsOptions> {
+  return Object.keys(target).reduce((acc, prop) => {
+    if (props && prop in props) {
+      acc[prop] = props[prop];
+    }
+    return acc;
+  }, {} as any);
 }
 
 export function bindClasses(
