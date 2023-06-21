@@ -4,6 +4,7 @@ import {
   VNode,
   computed,
   defineComponent,
+  onMounted,
   provide,
   ref,
   watch,
@@ -56,10 +57,11 @@ export const YTreeView = defineComponent({
       default: 'leaf',
     },
     returnItem: Boolean,
+    defaultExpand: [Boolean, String, Number],
     ...treeViewNodeProps,
   },
   emits: ['update:expanded', 'update:active', 'update:selected'],
-  setup(props, { slots, emit }) {
+  setup(props, { slots, emit, expose }) {
     const nodes = ref<Record<NodeKey, any>>({});
 
     const expanded = useModelDuplex(props, 'expanded');
@@ -82,8 +84,18 @@ export const YTreeView = defineComponent({
       return descendants;
     }
 
+    function getNodeKey(itemOrKey: any) {
+      return props.returnItem
+        ? getObjectValueByPath(itemOrKey, props.itemKey)
+        : itemOrKey;
+    }
+
     // State Methods
-    function updateNodes(items: any[], parentKey: NodeKey | null = null) {
+    function updateNodes(
+      items: any[],
+      parentKey: NodeKey | null = null,
+      level = 0,
+    ) {
       for (const item of items) {
         const key = getObjectValueByPath(item, props.itemKey);
         const children = getObjectValueByPath(item, props.childrenKey) ?? [];
@@ -100,6 +112,7 @@ export const YTreeView = defineComponent({
         const node: NodeState = {
           vnode: existNode.vnode,
           item,
+          level,
           parentKey,
           childKeys: children.map((child: any) =>
             getObjectValueByPath(child, props.itemKey),
@@ -110,7 +123,7 @@ export const YTreeView = defineComponent({
           selected: existNode.selected,
         };
 
-        updateNodes(children, key);
+        updateNodes(children, key, level + 1);
 
         nodes.value[key] = node;
         if (nodes.value[key].expanded) {
@@ -130,14 +143,21 @@ export const YTreeView = defineComponent({
     function updateExpanded(key: NodeKey, to: boolean) {
       if (!(key in nodes.value)) return;
       const node = nodes.value[key];
-      if (to) {
-        expandedSet.value.add(key);
-        node.expanded = true;
-      } else {
-        expandedSet.value.delete(key);
-        node.expanded = false;
+      const children = getObjectValueByPath(node.item, props.childrenKey);
+      if (Array.isArray(children) && children.length > 0) {
+        to ? expandedSet.value.add(key) : expandedSet.value.delete(key)
+        node.expanded = to;
         issueVnodeState(key);
       }
+    }
+
+    function expand(until: boolean | string | number = true) {
+      Object.entries(nodes.value).forEach(([key, node]) => {
+        if (until === true || until >= node.level) {
+          updateExpanded(key, true);
+        }
+      });
+      emitExpanded();
     }
 
     function updateActive(key: NodeKey, to: boolean) {
@@ -324,6 +344,19 @@ export const YTreeView = defineComponent({
       return {
         [`--y-tree-view__active-color`]: color,
       };
+    });
+
+    onMounted(() => {
+      if (props.defaultExpand !== undefined) {
+        expand(props.defaultExpand);
+      } else {
+        expanded.value.forEach((v: any) => updateExpanded(getNodeKey(v), true));
+        emitExpanded();
+      }
+    });
+
+    expose({
+      expand,
     });
 
     useRender(() => {

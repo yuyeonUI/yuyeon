@@ -55,6 +55,7 @@ const opened = ref([]);
         active-strategy="cascade"
         enable-select
         select-strategy="cascade"
+        default-expand="0"
       ></y-tree-view>
     </y-card>
   </section>

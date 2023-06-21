@@ -1,4 +1,4 @@
-import { ComponentPublicInstance } from "vue";
+import { ComponentPublicInstance } from 'vue';
 
 export type NodeKey = string | number;
 
@@ -7,9 +7,10 @@ export interface NodeState {
   item: any;
   parentKey: null | NodeKey;
   vnode: null | ComponentPublicInstance;
+  level: number;
   //
-  selected: false,
-  indeterminate: false,
-  active: false,
-  expanded: false,
+  selected: false;
+  indeterminate: false;
+  active: false;
+  expanded: false;
 }
