@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, shallowRef } from "vue";
+import IconPrev from '@/assets/prev.svg?component';
 
 const page = ref(1);
 const loading = shallowRef(false);
@@ -16,7 +17,11 @@ const loading = shallowRef(false);
             show-end-button
             gap="4"
             :disabled="loading"
-          ></y-pagination>
+          >
+            <template #prev-icon>
+              <IconPrev></IconPrev>
+            </template>
+          </y-pagination>
         </div>
       </template>
     </y-data-table-server>

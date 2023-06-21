@@ -41,10 +41,10 @@ export const pressYPaginationProps = propsFactory(
     },
     color: String,
     activeColor: String,
-    firstIcon: String,
-    lastIcon: String,
-    prevIcon: String,
-    nextIcon: String,
+    // firstIcon: [String],
+    // lastIcon: [String],
+    // prevIcon: [String],
+    // nextIcon: [String],
   },
   'y-pagination',
 );
@@ -265,7 +265,11 @@ export const YPagination = defineComponent({
                   slots.first(controls.value.first)
                 ) : (
                   <YButton {...controls.value.first}>
-                    <YIconPageControl type={'first'} first={props.firstIcon}></YIconPageControl>
+                    {slots['first-icon'] ? (
+                      slots['first-icon']()
+                    ) : (
+                      <YIconPageControl type={'first'}></YIconPageControl>
+                    )}
                   </YButton>
                 )}
               </li>
@@ -275,7 +279,11 @@ export const YPagination = defineComponent({
                 slots.prev(controls.value.prev)
               ) : (
                 <YButton {...controls.value.prev}>
-                  <YIconPageControl type={'prev'} prev={props.prevIcon}></YIconPageControl>
+                  {slots['prev-icon'] ? (
+                    slots['prev-icon']()
+                  ) : (
+                    <YIconPageControl type={'prev'}></YIconPageControl>
+                  )}
                 </YButton>
               )}
             </li>
@@ -289,7 +297,11 @@ export const YPagination = defineComponent({
                   ]}
                 >
                   <YButton {...item.props}>
-                    {item.props.ellipsis ? '...' : item.page}
+                    {item.props.ellipsis
+                      ? slots.ellipsis
+                        ? slots.ellipsis()
+                        : '...'
+                      : item.page}
                   </YButton>
                 </li>
               );
@@ -299,7 +311,11 @@ export const YPagination = defineComponent({
                 slots.next(controls.value.next)
               ) : (
                 <YButton {...controls.value.next}>
-                  <YIconPageControl type={'next'} next={props.nextIcon}></YIconPageControl>
+                  {slots['next-icon'] ? (
+                    slots['next-icon']()
+                  ) : (
+                    <YIconPageControl type={'next'}></YIconPageControl>
+                  )}
                 </YButton>
               )}
             </li>
@@ -309,7 +325,11 @@ export const YPagination = defineComponent({
                   slots.last(controls.value.last)
                 ) : (
                   <YButton {...controls.value.last}>
-                    <YIconPageControl type={'last'} last={props.lastIcon}></YIconPageControl>
+                    {slots['last-icon'] ? (
+                      slots['last-icon']()
+                    ) : (
+                      <YIconPageControl type={'last'}></YIconPageControl>
+                    )}
                   </YButton>
                 )}
               </li>

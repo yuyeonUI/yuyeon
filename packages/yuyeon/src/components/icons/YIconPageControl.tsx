@@ -14,10 +14,6 @@ export const YIconPageControl = defineComponent({
       type: String as PropType<'next' | 'prev' | 'first' | 'last'>,
       default: 'next',
     },
-    next: String,
-    prev: String,
-    last: String,
-    first: String,
   },
   render() {
     return (
