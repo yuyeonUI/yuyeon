@@ -72,6 +72,38 @@ export function getObjectValueByPath(
   return getNestedValue(obj, traversPath.split('.'), fallback);
 }
 
+export type SelectItemKey =
+  | boolean // Ignored
+  | string // Lookup by key, can use dot notation for nested objects
+  | (string | number)[] // Nested lookup by key, each array item is a key in the next level
+  | ((item: Record<string, any>, fallback?: any) => any)
+
+export function getPropertyFromItem (
+  item: any,
+  property: SelectItemKey,
+  fallback?: any
+): any {
+  if (property == null) return item === undefined ? fallback : item
+
+  if (item !== Object(item)) {
+    if (typeof property !== 'function') return fallback
+
+    const value = property(item, fallback)
+
+    return typeof value === 'undefined' ? fallback : value
+  }
+
+  if (typeof property === 'string') return getObjectValueByPath(item, property, fallback)
+
+  if (Array.isArray(property)) return getNestedValue(item, property, fallback)
+
+  if (typeof property !== 'function') return fallback
+
+  const value = property(item, fallback)
+
+  return typeof value === 'undefined' ? fallback : value
+}
+
 export function randomCharOne(str: string) {
   if (str) {
     return str.charAt(Math.floor(Math.random() * str.length));

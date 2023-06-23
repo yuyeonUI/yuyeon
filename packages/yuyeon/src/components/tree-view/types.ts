@@ -1,11 +1,10 @@
 import { ComponentPublicInstance } from 'vue';
-
-export type NodeKey = string | number;
+import { CandidateKey } from "../../types";
 
 export interface NodeState {
-  childKeys: NodeKey[];
+  childKeys: CandidateKey[];
   item: any;
-  parentKey: null | NodeKey;
+  parentKey: null | CandidateKey;
   vnode: null | ComponentPublicInstance;
   level: number;
   //

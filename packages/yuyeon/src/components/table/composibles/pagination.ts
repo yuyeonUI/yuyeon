@@ -1,16 +1,10 @@
-import {
-  InjectionKey,
-  PropType,
-  Ref,
-  computed,
-  inject,
-  provide,
-  watchEffect,
-} from 'vue';
+import type { InjectionKey, PropType, Ref } from 'vue';
+import { computed, inject, provide, watchEffect } from 'vue';
 
-import { useModelDuplex } from '../../composables/communication';
-import { clamp } from '../../util/common';
-import { propsFactory } from '../../util/vue-component';
+import { useModelDuplex } from '../../../composables/communication';
+import { clamp } from '../../../util/common';
+import { propsFactory } from '../../../util/vue-component';
+import { DataTableProvidePaginationData } from "../types";
 
 export const Y_DATA_TABLE_PAGINATION_KEY: InjectionKey<{
   page: Ref<number>;
@@ -36,7 +30,7 @@ export const pressDataTablePaginationProps = propsFactory(
       default: 10,
     },
   },
-  'YDataTable__pagination',
+  'YDataTable--pagination',
 );
 
 type PaginationProps = {
@@ -110,7 +104,7 @@ export function providePagination(options: {
     page.value = clamp(value, 1, pageLength.value);
   }
 
-  const data = {
+  const data: DataTableProvidePaginationData = {
     page,
     pageSize,
     startIndex,
@@ -130,6 +124,8 @@ export function providePagination(options: {
 
 export function usePagination() {
   const data = inject(Y_DATA_TABLE_PAGINATION_KEY);
-  if (!data) throw new Error('Missing pagination!');
+  if (!data) {
+    throw new Error(`Not provided: ${Y_DATA_TABLE_PAGINATION_KEY.description}`);
+  }
   return data;
 }

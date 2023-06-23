@@ -59,3 +59,11 @@ $table-cell-padding: 0 16px !default;
     }
   }
 }
+
+.y-data-table-header--select {
+  > .y-icon-checkbox {
+    &:not(&--disabled) {
+      cursor: pointer;
+    }
+  }
+}

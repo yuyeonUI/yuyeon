@@ -23,8 +23,9 @@ import { chooseProps } from '../../util/vue-component';
 import { YTreeViewNode, pressYTreeViewNodeProps } from './YTreeViewNode';
 import { getKeys } from './util';
 
+import { CandidateKey } from '../../types';
 import './YTreeView.scss';
-import { NodeKey, NodeState } from './types';
+import { NodeState } from './types';
 
 const treeViewNodeProps = pressYTreeViewNodeProps();
 
@@ -36,11 +37,11 @@ export const YTreeView = defineComponent({
       default: () => [],
     },
     expanded: {
-      type: [Array] as PropType<NodeKey[]>,
+      type: [Array] as PropType<CandidateKey[]>,
       default: () => [],
     },
     active: {
-      type: [Array] as PropType<NodeKey[]>,
+      type: [Array] as PropType<CandidateKey[]>,
       default: () => [],
     },
     multipleActive: Boolean,
@@ -49,7 +50,7 @@ export const YTreeView = defineComponent({
       default: 'independent',
     },
     selected: {
-      type: [Array] as PropType<NodeKey[]>,
+      type: [Array] as PropType<CandidateKey[]>,
       default: () => [],
     },
     selectStrategy: {
@@ -62,20 +63,20 @@ export const YTreeView = defineComponent({
   },
   emits: ['update:expanded', 'update:active', 'update:selected'],
   setup(props, { slots, emit, expose }) {
-    const nodes = ref<Record<NodeKey, any>>({});
+    const nodes = ref<Record<CandidateKey, any>>({});
 
     const expanded = useModelDuplex(props, 'expanded');
     const active = useModelDuplex(props, 'active');
     const selected = useModelDuplex(props, 'selected');
 
-    const expandedSet = ref(new Set<NodeKey>());
-    const selectedSet = ref(new Set<NodeKey>());
-    const activeSet = ref(new Set<NodeKey>());
+    const expandedSet = ref(new Set<CandidateKey>());
+    const selectedSet = ref(new Set<CandidateKey>());
+    const activeSet = ref(new Set<CandidateKey>());
 
-    const expandedCache = ref<NodeKey[]>([]);
+    const expandedCache = ref<CandidateKey[]>([]);
 
     // Util Methods
-    function getDescendants(key: NodeKey, descendants: NodeKey[] = []) {
+    function getDescendants(key: CandidateKey, descendants: CandidateKey[] = []) {
       const { childKeys } = nodes.value[key];
       descendants.push(...childKeys);
       for (const childKey of childKeys) {
@@ -93,7 +94,7 @@ export const YTreeView = defineComponent({
     // State Methods
     function updateNodes(
       items: any[],
-      parentKey: NodeKey | null = null,
+      parentKey: CandidateKey | null = null,
       level = 0,
     ) {
       for (const item of items) {
@@ -140,12 +141,12 @@ export const YTreeView = defineComponent({
       }
     }
 
-    function updateExpanded(key: NodeKey, to: boolean) {
+    function updateExpanded(key: CandidateKey, to: boolean) {
       if (!(key in nodes.value)) return;
       const node = nodes.value[key];
       const children = getObjectValueByPath(node.item, props.childrenKey);
       if (Array.isArray(children) && children.length > 0) {
-        to ? expandedSet.value.add(key) : expandedSet.value.delete(key)
+        to ? expandedSet.value.add(key) : expandedSet.value.delete(key);
         node.expanded = to;
         issueVnodeState(key);
       }
@@ -160,7 +161,7 @@ export const YTreeView = defineComponent({
       emitExpanded();
     }
 
-    function updateActive(key: NodeKey, to: boolean) {
+    function updateActive(key: CandidateKey, to: boolean) {
       if (!(key in nodes.value)) return;
       const node = nodes.value[key];
       let inactiveKey = !to ? key : '';
@@ -190,7 +191,7 @@ export const YTreeView = defineComponent({
       }
     }
 
-    function updateSelected(key: NodeKey, to: boolean) {
+    function updateSelected(key: CandidateKey, to: boolean) {
       if (!(key in nodes.value)) return;
       const node = nodes.value[key];
 
@@ -241,8 +242,8 @@ export const YTreeView = defineComponent({
 
     function stateWatcher(
       value: any[],
-      stateSet: Ref<Set<NodeKey>>,
-      updater: (key: NodeKey, to: boolean) => void,
+      stateSet: Ref<Set<CandidateKey>>,
+      updater: (key: CandidateKey, to: boolean) => void,
       emitter: () => void,
     ) {
       const valuesOfKey = props.returnItem
@@ -296,7 +297,7 @@ export const YTreeView = defineComponent({
     );
 
     // Provide & Issue
-    function issueVnodeState(key: NodeKey) {
+    function issueVnodeState(key: CandidateKey) {
       const node = nodes.value[key];
       if (node && node.vnode) {
         node.vnode.active = node.active;
@@ -306,7 +307,7 @@ export const YTreeView = defineComponent({
       }
     }
 
-    function register(key: NodeKey, vnode: VNode) {
+    function register(key: CandidateKey, vnode: VNode) {
       if (nodes.value[key]) {
         nodes.value[key].vnode = vnode;
       }

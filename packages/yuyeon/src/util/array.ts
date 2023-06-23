@@ -7,3 +7,7 @@ export function differenceBetween(inspect: any[], exclude: any[]) {
   }
   return ret;
 }
+
+export function wrapInArray(arrOrNot: any | any[]) {
+  return Array.isArray(arrOrNot) ? arrOrNot : [arrOrNot];
+}

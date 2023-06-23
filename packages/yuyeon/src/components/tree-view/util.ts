@@ -1,9 +1,8 @@
 import { getObjectValueByPath } from '../../util/common';
-
-import { NodeKey } from './types';
+import { CandidateKey } from "../../types";
 
 export function getKeys(items: any[], itemKey: string, childrenKey: string) {
-  const keys: NodeKey[] = [];
+  const keys: CandidateKey[] = [];
   for (const item of items) {
     const key = getObjectValueByPath(item, itemKey);
     keys.push(key);

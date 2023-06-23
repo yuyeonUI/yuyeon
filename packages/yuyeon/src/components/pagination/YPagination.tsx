@@ -41,6 +41,7 @@ export const pressYPaginationProps = propsFactory(
     },
     color: String,
     activeColor: String,
+    buttonVariations: [String],
     // firstIcon: [String],
     // lastIcon: [String],
     // prevIcon: [String],
@@ -110,6 +111,7 @@ export const YPagination = defineComponent({
       return {
         first: {
           disabled: prevDisabled,
+          variation: props.buttonVariations,
           onClick: (e: MouseEvent) => {
             e.preventDefault();
             page.value = 1;
@@ -118,6 +120,7 @@ export const YPagination = defineComponent({
         },
         prev: {
           disabled: prevDisabled,
+          variation: props.buttonVariations,
           onClick: (e: MouseEvent) => {
             e.preventDefault();
             const to = Math.max(1, page.value - 1);
@@ -127,6 +130,7 @@ export const YPagination = defineComponent({
         },
         next: {
           disabled: nextDisabled,
+          variation: props.buttonVariations,
           onClick: (e: MouseEvent) => {
             e.preventDefault();
             const to = Math.min(+length.value, page.value + 1);
@@ -136,6 +140,7 @@ export const YPagination = defineComponent({
         },
         last: {
           disabled: nextDisabled,
+          variation: props.buttonVariations,
           onClick: (e: MouseEvent) => {
             e.preventDefault();
             const to = +length.value;
@@ -228,6 +233,7 @@ export const YPagination = defineComponent({
               ellipsis: false,
               disabled: !!props.disabled || +props.length < 2,
               color: active ? props.activeColor : props.color,
+              variation: props.buttonVariations,
               onClick: (e: MouseEvent) => changePage(e, item),
             },
           };

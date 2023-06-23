@@ -1,23 +1,37 @@
-import { computed, defineComponent, PropType } from "vue";
+import { PropType, computed, defineComponent } from 'vue';
 
 import { useRender } from '../../composables/component';
+import { propsFactory } from '../../util/vue-component';
 import { YDataTableBody } from './YDataTableBody';
 import { YDataTableControl } from './YDataTableControl';
 import { YDataTableHead } from './YDataTableHead';
 import { YDataTableLayer } from './YDataTableLayer';
 import { YTable } from './YTable';
-import { propsFactory } from "../../util/vue-component";
-import {createPagination, pressDataTablePaginationProps} from "./pagination";
+import { pressDataTableHeader } from './composibles/header';
+import {
+  createPagination,
+  pressDataTablePaginationProps,
+} from './composibles/pagination';
+import { pressDataTableSortProps } from './composibles/sorting';
+import { pressDataTableSelectionProps } from "./composibles/selection";
+import { pressDataTableItemsProps } from "./composibles/items";
 
-export const pressDataTableProps = propsFactory({
-  width: [String, Number] as PropType<string | number>,
-  search: String as PropType<string>,
-  ...pressDataTablePaginationProps(),
-}, 'YDataTable')
+export const pressDataTableProps = propsFactory(
+  {
+    width: [String, Number] as PropType<string | number>,
+    search: String as PropType<string>,
+    ...pressDataTableHeader(),
+    ...pressDataTableItemsProps(),
+    ...pressDataTableSortProps(),
+    ...pressDataTableSelectionProps(),
+  },
+  'YDataTable',
+);
 
 export const YDataTable = defineComponent({
   name: 'YDataTable',
   props: {
+    ...pressDataTablePaginationProps(),
     ...pressDataTableProps(),
   },
   emits: {
@@ -28,14 +42,12 @@ export const YDataTable = defineComponent({
     'update:options': (value: any) => true,
   },
   setup(props, { slots }) {
-
     const { page, pageSize } = createPagination(props as any);
 
     const slotProps = computed(() => {
       return {
         page: page.value,
         pageSize: pageSize.value,
-
       };
     });
     useRender(() => {

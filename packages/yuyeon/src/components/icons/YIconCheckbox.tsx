@@ -6,7 +6,8 @@ export const YIconCheckbox = defineComponent({
   name: 'YIconCheckbox',
   props: {
     checked: Boolean,
-    immediate: Boolean,
+    indeterminate: Boolean,
+    disabled: Boolean,
   },
   render() {
     return (
@@ -15,7 +16,8 @@ export const YIconCheckbox = defineComponent({
           'y-icon-checkbox',
           {
             'y-icon-checkbox--checked': this.checked,
-            'y-icon-checkbox--immediate': this.immediate,
+            'y-icon-checkbox--indeterminate': this.indeterminate,
+            'y-icon-checkbox--disabled': this.disabled,
           },
         ]}
         xmlns="http://www.w3.org/2000/svg"

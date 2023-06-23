@@ -1,10 +1,11 @@
-import { PropType, defineComponent, computed, CSSProperties } from "vue";
+import { CSSProperties, PropType, computed, defineComponent } from 'vue';
 
 import { useRender } from '../../composables/component';
-import { toStyleSizeValue } from "../../util/ui";
+import { toStyleSizeValue } from '../../util/ui';
 
 export const YDataTableCell = defineComponent({
   name: 'YDataTableCell',
+  functional: true,
   props: {
     type: {
       type: String as PropType<'head' | 'data'>,
@@ -17,10 +18,18 @@ export const YDataTableCell = defineComponent({
       type: Number as PropType<number>,
     },
     width: {
-      type: [Number, String] as PropType<string | number>
-    }
+      type: [Number, String] as PropType<string | number>,
+    },
+    height: {
+      type: [Number, String] as PropType<string | number>,
+    },
+    align: {
+      type: String as PropType<'start' | 'center' | 'end'>,
+      default: 'start',
+    },
   },
-  setup(props, { slots, attrs }) {
+  emits: ['click'],
+  setup(props, { slots, emit, attrs }) {
     const offsetStyle = computed(() => {
       const ret: CSSProperties = {};
       if (props.fixed && props.fixedOffset !== undefined) {
@@ -30,8 +39,8 @@ export const YDataTableCell = defineComponent({
           ret['right'] = toStyleSizeValue(props.fixedOffset);
         }
       }
-      return ret
-    })
+      return ret;
+    });
 
     useRender(() => {
       const ElTag = props.type === 'head' ? 'th' : 'td';
@@ -39,6 +48,7 @@ export const YDataTableCell = defineComponent({
         <ElTag
           class={[
             'y-data-table__cell',
+            `y-data-table__cell--${ElTag}`,
             'y-data-table-cell',
             {
               'y-data-table-cell--fixed': props.fixed,
@@ -47,9 +57,11 @@ export const YDataTableCell = defineComponent({
           ]}
           style={{
             width: toStyleSizeValue(props.width),
-            ...offsetStyle.value
+            height: toStyleSizeValue(props.height),
+            ...offsetStyle.value,
           }}
           {...attrs}
+          onClick={(e) => emit('click', e)}
         >
           {slots.default?.()}
         </ElTag>

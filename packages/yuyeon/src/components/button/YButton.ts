@@ -3,7 +3,7 @@ import { defineComponent, h, withDirectives } from 'vue';
 
 import { PlateWave } from '../../directives/plate-wave';
 import { isColorValue } from '../../util/ui';
-import { getSlot } from '../../util/vue-component';
+import { getSlot, propsFactory } from '../../util/vue-component';
 import { YSpinnerRing } from '../loading/YSpinnerRing';
 
 /**
@@ -13,39 +13,44 @@ import './YButton.scss';
 
 const NAME = 'y-button';
 
-export const buttonProps = {
-  loading: Boolean,
-  outlined: {
-    type: Boolean,
-    default: false,
+export const pressYButtonProps = propsFactory(
+  {
+    loading: Boolean,
+    disabled: {
+      type: Boolean,
+    },
+    //
+    variation: {
+      type: String as PropType<string>,
+    },
+    small: Boolean,
+    icon: Boolean,
+    outlined: {
+      type: Boolean,
+      default: false,
+    },
+    rounded: {
+      type: Boolean,
+      default: false,
+    },
+    filled: {
+      type: Boolean,
+      default: false,
+    },
+    text: {
+      type: Boolean,
+    },
+    //
+    color: {
+      type: String,
+    },
+    noWave: {
+      type: Boolean,
+      default: false,
+    },
   },
-  rounded: {
-    type: Boolean,
-    default: false,
-  },
-  filled: {
-    type: Boolean,
-    default: false,
-  },
-  disabled: {
-    type: Boolean,
-  },
-  text: {
-    type: Boolean,
-  },
-  color: {
-    type: String,
-  },
-  noWave: {
-    type: Boolean,
-    default: false,
-  },
-  variation: {
-    type: String as PropType<string>,
-  },
-} as const;
-
-export type Props = ExtractPropTypes<typeof buttonProps>;
+  'YButton',
+);
 
 export const YButton = defineComponent({
   name: 'YButton',
@@ -53,7 +58,7 @@ export const YButton = defineComponent({
     PlateWave,
   },
   props: {
-    ...buttonProps,
+    ...pressYButtonProps(),
   },
   computed: {
     variations(): any[] {
@@ -65,24 +70,16 @@ export const YButton = defineComponent({
       }
       return [];
     },
-    small(): boolean {
-      return this.variations.includes('small');
-    },
-    icon(): boolean {
-      return this.variations.includes('icon');
-    },
-    variOutlined(): boolean {
-      return this.variations.includes('outlined');
-    },
     //
     classes() {
+      const { variations, outlined, rounded, filled, text, small, icon } = this;
       return {
-        [`${NAME}--outlined`]: this.outlined,
-        [`${NAME}--rounded`]: this.rounded,
-        [`${NAME}--filled`]: this.filled,
-        [`${NAME}--text`]: this.text,
-        [`${NAME}--small`]: this.small,
-        [`${NAME}--icon`]: this.icon,
+        [`${NAME}--outlined`]: variations.includes('outlined') || outlined,
+        [`${NAME}--rounded`]: variations.includes('rounded') || rounded,
+        [`${NAME}--filled`]: variations.includes('filled') || filled,
+        [`${NAME}--text`]: variations.includes('text') || text,
+        [`${NAME}--small`]: variations.includes('small') || small,
+        [`${NAME}--icon`]: variations.includes('icon') || icon,
         [`${NAME}--color`]: this.color,
         [`${NAME}--loading`]: this.loading,
         [`${NAME}--disabled`]: this.disabled,

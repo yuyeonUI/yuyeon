@@ -38,10 +38,10 @@ export function chooseProps<PropsOptions extends ComponentObjectPropsOptions>(
 ): ExtractPropTypes<PropsOptions> {
   return Object.keys(target).reduce((acc, prop) => {
     if (props && prop in props) {
-      acc[prop] = props[prop];
+      acc[prop as keyof ExtractPropTypes<PropsOptions>] = props[prop];
     }
     return acc;
-  }, {} as any);
+  }, {} as ExtractPropTypes<PropsOptions>);
 }
 
 export function bindClasses(

@@ -1,23 +1,32 @@
-import { PropType, computed, defineComponent } from 'vue';
+import { toRef } from '@vue/runtime-core';
+import { PropType, computed, defineComponent, provide } from 'vue';
 
 import { useRender } from '../../composables/component';
-import { propsFactory } from '../../util/vue-component';
+import { chooseProps, propsFactory } from '../../util/vue-component';
 import { pressDataTableProps } from './YDataTable';
 import { YDataTableBody } from './YDataTableBody';
 import { YDataTableControl } from './YDataTableControl';
 import { YDataTableHead } from './YDataTableHead';
 import { YDataTableLayer } from './YDataTableLayer';
 import { YTable } from './YTable';
-import { pressDataTablePaginationProps } from './pagination';
+import { createHeader } from './composibles/header';
+import {
+  createPagination,
+  pressDataTablePaginationProps,
+  providePagination,
+} from './composibles/pagination';
+import { provideSelection } from './composibles/selection';
+import { createSorting, provideSorting } from './composibles/sorting';
+
+import { useItems } from './composibles/items';
+import { useOptions } from './composibles/options';
+import { YDataTableSlotProps } from './types';
 
 export const pressDataTableServerProps = propsFactory(
   {
     total: {
       type: [Number, String] as PropType<number | string>,
       required: true,
-    },
-    headers: {
-      type: [Array],
     },
     ...pressDataTablePaginationProps(),
     ...pressDataTableProps(),
@@ -37,11 +46,79 @@ export const YDataTableServer = defineComponent({
   props: {
     ...pressDataTableServerProps(),
   },
-  setup(props, { slots }) {
-    const slotProps = computed(() => {
-      return {};
+  emits: {
+    'update:modelValue': (value: any[]) => true,
+    'update:page': (page: number) => true,
+    'update:pageSize': (pageSize: number) => true,
+    'update:sortBy': (sortBy: any) => true,
+    'update:options': (options: any) => true,
+    'click:row': (e: Event, value: { row: any }) => true,
+  },
+  setup(props, { slots, emit }) {
+    const { page, pageSize } = createPagination(props);
+    const { sortBy, multiSort } = createSorting(props);
+    const total = computed(() => parseInt(props.total as string));
+    const { columns, headers } = createHeader(props, {
+      enableSelect: toRef(props, 'enableSelect'),
     });
+    const { items } = useItems(props, columns);
+
+    const { toggleSort } = provideSorting({ sortBy, multiSort, page });
+    const { pageLength, setPageSize } = providePagination({
+      page,
+      pageSize,
+      total,
+    });
+    const {
+      isSelected,
+      select,
+      selectAll,
+      toggleSelect,
+      someSelected,
+      allSelected,
+    } = provideSelection(props, { allItems: items, pageItems: items });
+
+    useOptions(
+      {
+        page,
+        pageSize,
+        search: toRef(props, 'search'),
+        sortBy,
+      },
+      emit,
+    );
+
+    provide('y-data-table', {
+      toggleSort,
+      sortBy,
+    });
+
+    const slotProps = computed<YDataTableSlotProps>(() => {
+      return {
+        // pagination
+        page: page.value,
+        pageSize: pageSize.value,
+        pageLength: pageLength.value,
+        setPageSize,
+        // sorting
+        sortBy: sortBy.value,
+        toggleSort,
+        // selection
+        someSelected: someSelected.value,
+        allSelected: allSelected.value,
+        isSelected,
+        select,
+        selectAll,
+        toggleSelect,
+        //
+        items: items.value,
+        columns: columns.value,
+        headers: headers.value,
+      };
+    });
+
     useRender(() => {
+      const yDataTableHeadProps = chooseProps(props, YDataTableHead.props);
       return (
         <YTable class={['y-data-table']}>
           {{
@@ -60,11 +137,14 @@ export const YDataTableServer = defineComponent({
               ) : (
                 <>
                   <thead>
-                    <YDataTableHead v-slots={slots} headers={props.headers}></YDataTableHead>
+                    <YDataTableHead
+                      v-slots={slots}
+                      {...yDataTableHeadProps}
+                    ></YDataTableHead>
                   </thead>
                   {slots.thead?.(slotProps.value)}
                   <tbody>
-                    <YDataTableBody v-slots={slots} headers={props.headers}></YDataTableBody>
+                    <YDataTableBody v-slots={slots}></YDataTableBody>
                   </tbody>
                   {slots.tbody?.(slotProps.value)}
                   {slots.tfoot?.(slotProps.value)}
