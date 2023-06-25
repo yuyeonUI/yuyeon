@@ -9,10 +9,10 @@ lerna-debug.log*
 
 node_modules
 
-dist
-dist-ssr
-lib
-types
+/dist/
+/dist-ssr/
+/lib/
+/types/
 
 *.local
 
@@ -27,3 +27,4 @@ types
 *.sln
 *.sw?
 .npmrc
+
