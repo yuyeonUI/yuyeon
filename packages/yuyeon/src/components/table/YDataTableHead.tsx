@@ -3,7 +3,6 @@ import { CSSProperties, defineComponent } from 'vue';
 import { useRender } from '../../composables/component';
 import { toStyleSizeValue } from '../../util/ui';
 import { propsFactory } from '../../util/vue-component';
-import { YInputCheckbox } from '../checkbox';
 import { YDataTableCell } from './YDataTableCell';
 import { useHeader } from './composibles/header';
 import { useSelection } from './composibles/selection';
@@ -75,6 +74,13 @@ export const YDataTableHead = defineComponent({
         <YDataTableCell
           type="head"
           align={column.align}
+          fixed={
+            column.fixed
+                ? column.lastFixed
+                    ? 'trail'
+                    : 'lead'
+                : undefined
+          }
           class={[
             'y-data-table-header',
             {
@@ -131,7 +137,9 @@ export const YDataTableHead = defineComponent({
               return (
                 <div class="y-data-table-header__content">
                   <span class="y-data-table-header__text">{column.text}</span>
-                  <span class="y-data-table-header__sorting-icon"></span>
+                  <span class="y-data-table-header__sorting-icon">
+
+                  </span>
                 </div>
               );
             },

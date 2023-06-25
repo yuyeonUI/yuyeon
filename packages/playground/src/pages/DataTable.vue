@@ -9,7 +9,34 @@ const headers = computed(() => {
   return dataTableHeaders;
 });
 const items = computed(() => {
-  //
+  return [
+    {
+      id: '00001',
+      registerDate: 1687708312497,
+      os: 'Windows 10',
+      user: {
+        name: 'Joe'
+      },
+      computer: {
+        name: 'HELLO-DESKTOP',
+        cpu: 'mt-1000000',
+        memSize: 25769803776,
+      }
+    },
+    {
+      id: '00002',
+      registerDate: 1687708312497,
+      os: 'Windows 11',
+      user: {
+        name: 'Henry'
+      },
+      computer: {
+        name: 'OHLLE-DESKTOP',
+        cpu: 'mt-2000001',
+        memSize: 12884901888,
+      }
+    }
+  ]
 })
 </script>
 
@@ -19,24 +46,27 @@ const items = computed(() => {
       :total="124"
       :headers="headers"
       :height="150"
+      :items="items"
       flex-height
       fixed-head
       enable-select
     >
       <template #bottom>
-        <div class="ph-6 pv-4">
-          <y-pagination
-            v-model="page"
-            :length="10"
-            show-end-button
-            gap="4"
-            :disabled="loading"
-            button-variations="outlined"
-          >
-            <template #prev-icon>
-              <IconPrev></IconPrev>
-            </template>
-          </y-pagination>
+        <div class="ph-6 pv-4" style="display: flex; justify-content: center">
+         <div>
+           <y-pagination
+               v-model="page"
+               :length="10"
+               show-end-button
+               gap="4"
+               :disabled="loading"
+               button-variations="outlined"
+           >
+             <template #prev-icon>
+               <IconPrev></IconPrev>
+             </template>
+           </y-pagination>
+         </div>
         </div>
       </template>
     </y-data-table-server>

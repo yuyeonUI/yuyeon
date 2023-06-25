@@ -40,6 +40,7 @@ $button-disabled-background: #d3d3d3 !default;
       &--text
     ):not(&--icon) {
     box-shadow: 1px 1px 4px 1px rgba(0, 0, 0, 0.14);
+
     &:active {
       box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 0.24);
     }
@@ -50,8 +51,8 @@ $button-disabled-background: #d3d3d3 !default;
     color: #ffffff;
   }
 
-  &:not(&--outlined):disabled,
-  &--disabled:not(&--outlined) {
+  &:disabled,
+  &--disabled {
     background-color: $button-disabled-background;
     opacity: 0.4;
     cursor: default;
