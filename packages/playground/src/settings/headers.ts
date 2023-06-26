@@ -2,6 +2,7 @@ export const dataTableHeaders = [
   {
     key: "sequence",
     text: "번호",
+    sortable: false,
   },
   {
     key: "os",
@@ -26,6 +27,7 @@ export const dataTableHeaders = [
   {
     key: "computer.memSize",
     text: "메모리 용량",
+    align: 'end'
   },
   {
     key: "registerDate",

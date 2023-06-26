@@ -9,6 +9,10 @@
 
 :root {
   --y-palette--primary: #{palette.$primary};
+  //--y-theme--primary: 79, 151, 220;
+  //--y-theme--base-bg: 255, 255, 255;
+  //--y-line-color: 0, 0, 0;
+  //--y-line-opacity: 0.14;
 }
 
 .fade-enter-active,
@@ -62,6 +66,10 @@
 .title {
   font-size: 20px;
   font-weight: bold;
+}
+
+.contain-paint {
+  contain: paint;
 }
 
 @each $space-type-prefix, $space-type in provided.$space-types {

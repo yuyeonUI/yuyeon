@@ -4,23 +4,28 @@ import { useRender } from '../../composables/component';
 import { useResizeObserver } from '../../composables/resize-observer';
 import { toStyleSizeValue } from '../../util/ui';
 import './YTable.scss';
+import { propsFactory } from "../../util/vue-component";
+
+export const pressYTableProps = propsFactory({
+  tag: {
+    type: String as PropType<string>,
+    default: 'div',
+  },
+  fixedHead: {
+    type: Boolean as PropType<boolean>,
+  },
+  height: {
+    type: [Number, String] as PropType<number | string>,
+  },
+  flexHeight: {
+    type: Boolean as PropType<boolean>,
+  },
+}, 'YTable')
 
 export const YTable = defineComponent({
   name: 'YTable',
   props: {
-    tag: {
-      type: String as PropType<string>,
-      default: 'div',
-    },
-    fixedHead: {
-      type: Boolean as PropType<boolean>,
-    },
-    height: {
-      type: [Number, String] as PropType<number | string>,
-    },
-    flexHeight: {
-      type: Boolean as PropType<boolean>,
-    },
+    ...pressYTableProps(),
   },
   setup(props, { slots }) {
     const { resizeObservedRef, contentRect } = useResizeObserver();

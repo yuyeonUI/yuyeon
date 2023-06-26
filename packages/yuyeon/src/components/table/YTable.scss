@@ -34,6 +34,8 @@ $table-cell-padding: 0 16px !default;
 
   &__container {
     > table {
+      font-size: 0.875rem;
+
       > thead,
       > tbody,
       > tfoot {
@@ -48,10 +50,17 @@ $table-cell-padding: 0 16px !default;
         > th {
           height: 56px;
           text-align: left;
+          border-bottom: thin solid rgba(var(--y-line-color), var(--y-line-opacity));
+          user-select: none;
         }
       }
 
       > tbody > tr {
+        &:not(:last-child) {
+          > td {
+            border-bottom: thin solid rgba(var(--y-line-color), var(--y-line-opacity));
+          }
+        }
         > td {
           height: 54px;
         }
@@ -60,7 +69,43 @@ $table-cell-padding: 0 16px !default;
   }
 }
 
-.y-data-table-header--select {
+.y-data-table-cell {
+  &--align-end {
+    text-align: end;
+
+    .y-data-table-header__content {
+      justify-content: flex-end;
+    }
+  }
+
+}
+
+.y-data-table-header {
+  &__content {
+    display: flex;
+    align-items: center;
+  }
+
+  &__sorting-icon {
+    display: inline-flex;
+    width: 1em;
+    height: 1em;
+    margin-left: 4px;
+    cursor: pointer;
+
+    svg {
+      width: 1em;
+      height: 1em;
+    }
+
+    &--disabled {
+      opacity: 0.08;
+      cursor: default;
+    }
+  }
+}
+
+.y-data-table-header--select, .y-data-table-data--select {
   > .y-icon-checkbox {
     &:not(&--disabled) {
       cursor: pointer;

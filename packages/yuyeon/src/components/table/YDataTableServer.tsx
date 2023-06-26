@@ -120,8 +120,9 @@ export const YDataTableServer = defineComponent({
     useRender(() => {
       const yDataTableHeadProps = chooseProps(props, YDataTableHead.props);
       const yDataTableBodyProps = chooseProps(props, YDataTableBody.props);
+      const yTableProps = chooseProps(props, YTable.props);
       return (
-        <YTable class={['y-data-table']}>
+        <YTable class={['y-data-table']} {...yTableProps}>
           {{
             top: () => slots.top?.(slotProps.value),
             leading: () =>

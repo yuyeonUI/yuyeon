@@ -44,6 +44,12 @@ export const YDataTableRow = defineComponent({
                 }
                 fixedOffset={column.fixedOffset}
                 width={column.width}
+                class={[
+                  'y-data-table-data',
+                  {
+                    'y-data-table-data--select': column.key === 'data-table-select',
+                  },
+                ]}
               >
                 {{
                   default: () => {

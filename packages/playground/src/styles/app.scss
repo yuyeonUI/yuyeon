@@ -24,6 +24,8 @@ $notosanskr-font-path: '@/assets/fonts/NotoSansKR/';
   --y-theme--primary: 241, 119, 56;
   --y-theme--base-bg: 255, 255, 255;
   --y-palette--primary: var(--zerokey-primary);
+  --y-line-color: 0, 0, 0;
+  --y-line-opacity: 0.14;
   //
   --z-palette--desc: #{palette.$basic-gray-700};
   --z-palette--outline: 205, 207, 208;
@@ -41,7 +43,7 @@ html {
 }
 
 body {
-  user-select: none;
+  //user-select: none;
   word-break: keep-all;
 }
 
@@ -99,4 +101,8 @@ fieldset {
 
 .w-100 {
   width: 100%;
+}
+
+.h-100 {
+  height: 100%;
 }

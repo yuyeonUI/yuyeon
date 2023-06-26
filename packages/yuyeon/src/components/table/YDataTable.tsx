@@ -4,9 +4,9 @@ import { useRender } from '../../composables/component';
 import { propsFactory } from '../../util/vue-component';
 import { YDataTableBody } from './YDataTableBody';
 import { YDataTableControl } from './YDataTableControl';
-import { YDataTableHead } from './YDataTableHead';
+import { pressYDataTableHeadProps, YDataTableHead } from "./YDataTableHead";
 import { YDataTableLayer } from './YDataTableLayer';
-import { YTable } from './YTable';
+import { pressYTableProps, YTable } from "./YTable";
 import { pressDataTableHeader } from './composibles/header';
 import {
   createPagination,
@@ -24,8 +24,10 @@ export const pressDataTableProps = propsFactory(
     ...pressDataTableItemsProps(),
     ...pressDataTableSortProps(),
     ...pressDataTableSelectionProps(),
+    ...pressYDataTableHeadProps(),
+    ...pressYTableProps(),
   },
-  'YDataTable',
+  'DataTable',
 );
 
 export const YDataTable = defineComponent({

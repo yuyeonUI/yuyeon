@@ -47,12 +47,12 @@ export const YDataTableCell = defineComponent({
       return (
         <ElTag
           class={[
-            'y-data-table__cell',
-            `y-data-table__cell--${ElTag}`,
+            `y-data-table__${ElTag}`,
             'y-data-table-cell',
             {
               'y-data-table-cell--fixed': props.fixed,
               [`y-data-table-cell--fixed-${props.fixed}`]: props.fixed,
+              [`y-data-table-cell--align-${props.align}`]: props.align,
             },
           ]}
           style={{

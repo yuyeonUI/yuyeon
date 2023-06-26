@@ -36,9 +36,7 @@ $button-disabled-background: #d3d3d3 !default;
     opacity: 0.06;
   }
 
-  &:not(&--disabled):not(&--outlined):not(&--loading):not(&--filled):not(
-      &--text
-    ):not(&--icon) {
+  & {
     box-shadow: 1px 1px 4px 1px rgba(0, 0, 0, 0.14);
 
     &:active {
@@ -51,11 +49,16 @@ $button-disabled-background: #d3d3d3 !default;
     color: #ffffff;
   }
 
+  &--text {
+    box-shadow: none;
+  }
+
   &:disabled,
   &--disabled {
     background-color: $button-disabled-background;
     opacity: 0.4;
     cursor: default;
+    box-shadow: none;
   }
 
   &--rounded {
@@ -63,10 +66,11 @@ $button-disabled-background: #d3d3d3 !default;
   }
 
   &--outlined {
-    color: rgba(var(--y-button__color), 1);
+    //color: rgba(var(--y-button__color), 1);
     border-width: 1px;
     border-style: solid;
     border-color: currentColor;
+    box-shadow: none;
   }
 
   &--color:not(&--filled) {
@@ -75,6 +79,8 @@ $button-disabled-background: #d3d3d3 !default;
 
   &--loading {
     cursor: wait;
+    box-shadow: none;
+
     .y-spinner-ring {
       margin-right: 0.4em;
     }

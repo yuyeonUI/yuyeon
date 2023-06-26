@@ -1,0 +1,23 @@
+.y-icon-sort {
+  &__asc, &__desc {
+    opacity: 0.24;
+  }
+
+  &--asc & {
+    &__desc {
+      opacity: 0.1;
+    }
+    &__asc {
+      opacity: 0.8;
+    }
+  }
+
+  &--desc & {
+    &__asc {
+      opacity: 0.1;
+    }
+    &__desc {
+      opacity: 0.8;
+    }
+  }
+}

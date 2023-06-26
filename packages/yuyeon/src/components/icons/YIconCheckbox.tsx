@@ -32,7 +32,11 @@ export const YIconCheckbox = defineComponent({
         <path
           class="y-icon-checkbox__checkmark-path"
           fill="none"
-          d="M5.73,11.91 11.1,16.28 17.79,7.59"
+          d={
+            this.indeterminate
+              ? 'M5.73,11.91 11.1,11.91 17.79,11.91'
+              : 'M5.73,11.91 11.1,16.28 17.79,7.59'
+          }
         ></path>
       </svg>
     );
