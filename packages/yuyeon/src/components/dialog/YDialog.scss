@@ -2,4 +2,16 @@
   justify-content: center;
   align-items: center;
   backdrop-filter: blur(0.8px) saturate(0.4);
+
+  .y-layer {
+    &__content > .y-card {
+      position: relative;
+    }
+  }
+
+  &.y-layer--finish {
+    .y-layer__content > .y-card > .y-card__footer {
+      position: relative;
+    }
+  }
 }

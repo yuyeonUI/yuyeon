@@ -23,6 +23,7 @@ export default defineComponent({
     classes() {
       return {
         'y-chip': true,
+        'y-chip--small': this.small,
         'y-chip--clickable': this.clickable,
       };
     },

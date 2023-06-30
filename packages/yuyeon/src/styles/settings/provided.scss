@@ -28,8 +28,6 @@ $space-types: (
   'p': 'padding',
 );
 
-$text-aligns: (
-  'center',
-  'left',
-  'right',
-)
+$text-aligns: ('center', 'left', 'right');
+
+$font-weights: (100, 200, 300, 400, 500, 600, 700, 800, 900);

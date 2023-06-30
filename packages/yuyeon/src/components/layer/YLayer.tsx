@@ -1,15 +1,17 @@
+import type { CSSProperties, PropType } from 'vue';
 import {
-  CSSProperties,
-  Prop,
-  PropType,
   Teleport,
   Transition,
   computed,
   defineComponent,
+  mergeProps,
+  nextTick,
   reactive,
   ref,
   toRef,
-} from 'vue';
+  watch,
+  watchEffect, shallowRef
+} from "vue";
 
 import { useRender } from '../../composables/component';
 import { useLayerGroup } from '../../composables/layer-group';
@@ -23,9 +25,46 @@ import {
   ComplementClick,
   ComplementClickBindingOptions,
 } from '../../directives/complement-click';
-import { bindClasses } from '../../util/vue-component';
+import { bindClasses, propsFactory } from "../../util/vue-component";
 
 import './YLayer.scss';
+import { pressCoordinateProps, useCoordinate } from "../../composables/coordinate";
+
+export const pressYLayerProps = propsFactory({
+  modelValue: {
+    type: Boolean as PropType<boolean>,
+  },
+  scrim: {
+    type: Boolean as PropType<boolean>,
+  },
+  eager: {
+    type: Boolean as PropType<boolean>,
+  },
+  classes: {
+    type: [Array, String, Object] as PropType<
+      string[] | string | Record<string, any>
+    >,
+  },
+  contentClasses: {
+    type: [Array, String, Object] as PropType<
+      string[] | string | Record<string, any>
+    >,
+  },
+  closeClickScrim: {
+    type: Boolean as PropType<boolean>,
+  },
+  persistent: Boolean as PropType<boolean>,
+  contentStyles: {
+    type: Object as PropType<CSSProperties>,
+    default: () => {},
+  },
+  disabled: {
+    type: Boolean as PropType<boolean>,
+    default: false,
+  },
+  ...polyTransitionPropOptions,
+  ...pressCoordinateProps(),
+}, 'YLayer');
 
 export const YLayer = defineComponent({
   name: 'YLayer',
@@ -37,44 +76,21 @@ export const YLayer = defineComponent({
     ComplementClick,
   },
   props: {
-    modelValue: {
-      type: Boolean as PropType<boolean>,
-    },
-    scrim: {
-      type: Boolean as PropType<boolean>,
-    },
-    eager: {
-      type: Boolean as PropType<boolean>,
-    },
-    classes: {
-      type: [Array, String, Object] as PropType<
-        string[] | string | Record<string, any>
-      >,
-    },
-    contentClasses: {
-      type: [Array, String, Object] as PropType<
-        string[] | string | Record<string, any>
-      >,
-    },
-    closeClickScrim: {
-      type: Boolean as PropType<boolean>,
-    },
-    persistent: Boolean as PropType<boolean>,
-    contentStyles: {
-      type: Object as PropType<CSSProperties>,
-      default: () => {},
-    },
-    disabled: {
-      type: Boolean as PropType<boolean>,
-      default: false,
-    },
-    ...polyTransitionPropOptions,
+    ...pressYLayerProps(),
   },
   emits: {
     'update:modelValue': (value: boolean) => true,
     'click:complement': (mouseEvent: MouseEvent) => true,
+    'afterLeave': () => true,
   },
   setup(props, { emit, expose, attrs, slots }) {
+    const el$ = ref<typeof YLayer>();
+    const base$ = ref();
+    const scrim$ = ref<HTMLElement>();
+    const content$ = ref<HTMLElement>();
+    const baseSlot = ref();
+    const baseEl = ref<HTMLElement>();
+
     const { layerGroup } = useLayerGroup();
     const { polyTransitionBindProps } = usePolyTransition(props);
     const active = computed<boolean>({
@@ -85,13 +101,19 @@ export const YLayer = defineComponent({
         emit('update:modelValue', v);
       },
     });
+    const finish = shallowRef(false);
+
     const disabled = toRef(props, 'disabled');
     const { lazyValue, onAfterUpdate } = useLazy(!!props.eager, active);
     const rendered = computed<boolean>(
       () => !disabled.value && (lazyValue.value || active.value),
     );
-    const scrim$ = ref<HTMLElement>();
-    const content$ = ref<HTMLElement>();
+
+
+    const { coordinate, coordinateStyles, updateCoordinate } = useCoordinate(
+      props,
+      { contentEl: content$, baseEl, active },
+    );
 
     function onClickComplementLayer(mouseEvent: MouseEvent) {
       emit('click:complement', mouseEvent);
@@ -115,24 +137,17 @@ export const YLayer = defineComponent({
     const complementClickOption = reactive<ComplementClickBindingOptions>({
       handler: onClickComplementLayer,
       determine: closeConditional,
-      include: () => [
-        // activatorEl.value
-      ],
-    });
-
-    expose({
-      scrim$,
-      content$,
-      active,
-      onAfterUpdate,
+      include: () => [],
     });
 
     function onAfterEnter() {
-      // console.log('after')
+      finish.value = true;
     }
 
     function onAfterLeave() {
       onAfterUpdate();
+      finish.value = false;
+      emit('afterLeave')
     }
 
     function onClickScrim() {
@@ -140,6 +155,19 @@ export const YLayer = defineComponent({
         active.value = false;
       }
     }
+
+    const baseFromSlotEl = computed(() => {
+      return baseSlot.value?.[0]?.el;
+    });
+
+    watchEffect(() => {
+      if (!base$.value) {
+        baseEl.value = baseFromSlotEl.value;
+        return;
+      }
+      const base = base$.value;
+      baseEl.value = base$.value?.$el ? base$.value?.$el : base;
+    });
 
     const computedStyle = computed(() => {
       return {
@@ -163,46 +191,70 @@ export const YLayer = defineComponent({
       };
     });
 
+    expose({
+      scrim$,
+      base$,
+      content$,
+      baseEl,
+      active,
+      onAfterUpdate,
+      updateCoordinate,
+    });
+
     useRender(() => {
+      const slotBase = slots.base?.({
+        active: active.value,
+        props: mergeProps({
+          ref: base$,
+          class: {
+            'y-layer-base': true,
+            'y-layer-base--active': active.value,
+          },
+        }),
+      });
+      baseSlot.value = slotBase;
       return (
-        <Teleport disabled={!layerGroup.value} to={layerGroup.value as any}>
-          {rendered.value && (
-            <div
-              class={{ 'y-layer': true, ...computedClass.value }}
-              style={computedStyle.value}
-              {...attrs}
-            >
-              <Transition name="fade" appear>
-                {active.value && props.scrim && (
-                  <div
-                    class="y-layer__scrim"
-                    onClick={onClickScrim}
-                    ref="scrim$"
-                  ></div>
-                )}
-              </Transition>
-              <PolyTransition
-                onAfterEnter={onAfterEnter}
-                onAfterLeave={onAfterLeave}
-                appear
-                {...polyTransitionBindProps.value}
+        <>
+          {slotBase}
+          <Teleport disabled={!layerGroup.value} to={layerGroup.value as any}>
+            {rendered.value && (
+              <div
+                class={{ 'y-layer': true, 'y-layer--finish': finish.value, ...computedClass.value }}
+                style={computedStyle.value}
+                {...attrs}
               >
-                <div
-                  v-show={active.value}
-                  v-complement-click={{ ...complementClickOption }}
-                  class={{
-                    'y-layer__content': true,
-                    ...computedContentClasses.value,
-                  }}
-                  style={props.contentStyles}
-                  ref="content$"
+                <Transition name="fade" appear>
+                  {active.value && props.scrim && (
+                    <div
+                      class="y-layer__scrim"
+                      onClick={onClickScrim}
+                      ref="scrim$"
+                    ></div>
+                  )}
+                </Transition>
+                <PolyTransition
+                  onAfterEnter={onAfterEnter}
+                  onAfterLeave={onAfterLeave}
+                  appear
+                  {...polyTransitionBindProps.value}
                 >
-                  {slots.default?.({ active: active.value })}
-                </div>
-              </PolyTransition>
-            </div>
-          )}
-        </Teleport>
+                  <div
+                    v-show={active.value}
+                    v-complement-click={{ ...complementClickOption }}
+                    class={{
+                      'y-layer__content': true,
+                      ...computedContentClasses.value,
+                    }}
+                    style={[{...coordinateStyles.value, ...props.contentStyles}]}
+                    ref={content$}
+                  >
+                    {slots.default?.({ active: active.value })}
+                  </div>
+                </PolyTransition>
+              </div>
+            )}
+          </Teleport>
+        </>
       );
     });
 
@@ -215,6 +267,7 @@ export const YLayer = defineComponent({
       scrim$,
       content$,
       polyTransitionBindProps,
+      coordinateStyles,
     };
   },
 });

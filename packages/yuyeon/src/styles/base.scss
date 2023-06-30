@@ -96,6 +96,12 @@
   }
 }
 
+@each $weight in provided.$font-weights {
+  .font-weight-#{$weight} {
+    font-weight: $weight;
+  }
+}
+
 @keyframes rotate {
   to {
     transform: rotate(360deg);

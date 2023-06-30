@@ -59,6 +59,7 @@ export const YDataTableRow = defineComponent({
                       index: props.index,
                       item: props.item,
                       columns: columns.value,
+                      value: getPropertyFromItem(item.columns, column.key),
                       isSelected,
                       toggleSelect,
                     };
@@ -84,7 +85,7 @@ export const YDataTableRow = defineComponent({
                       );
                     }
 
-                    return getPropertyFromItem(item.columns, column.key);
+                    return slotProps.value;
                   },
                 }}
               </YDataTableCell>

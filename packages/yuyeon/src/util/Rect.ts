@@ -42,3 +42,16 @@ export class MutableRect implements Rect {
     return this.x + this.width;
   }
 }
+
+export function getOverflow (a: MutableRect, b: MutableRect) {
+  return {
+    x: {
+      before: Math.max(0, b.left - a.left),
+      after: Math.max(0, a.right - b.right),
+    },
+    y: {
+      before: Math.max(0, b.top - a.top),
+      after: Math.max(0, a.bottom - b.bottom),
+    },
+  }
+}

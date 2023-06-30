@@ -64,7 +64,7 @@ export const YDataTableServer = defineComponent({
     const { items } = useItems(props, columns);
 
     const { toggleSort } = provideSorting({ sortBy, multiSort, page });
-    const { pageLength, setPageSize } = providePagination({
+    const { pageLength, setPageSize, setPage } = providePagination({
       page,
       pageSize,
       total,
@@ -100,6 +100,7 @@ export const YDataTableServer = defineComponent({
         pageSize: pageSize.value,
         pageLength: pageLength.value,
         setPageSize,
+        setPage,
         // sorting
         sortBy: sortBy.value,
         toggleSort,

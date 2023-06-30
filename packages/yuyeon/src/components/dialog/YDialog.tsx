@@ -1,4 +1,5 @@
-import { PropType, computed, defineComponent, provide, ref, watch } from 'vue';
+import type { PropType } from 'vue';
+import { computed, defineComponent, ref, watch } from 'vue';
 
 import { useRender } from '../../composables/component';
 import { bindClasses } from '../../util/vue-component';
@@ -6,6 +7,7 @@ import { YCard } from '../card';
 import { YLayer } from '../layer';
 
 import './YDialog.scss';
+import { useModelDuplex } from "../../composables/communication";
 
 export const YDialog = defineComponent({
   name: 'YDialog',
@@ -17,25 +19,19 @@ export const YDialog = defineComponent({
     modelValue: {
       type: Boolean as PropType<boolean>,
     },
+    persistent: {
+      type: Boolean,
+    },
     dialogClasses: {
       type: [Array, String, Object] as PropType<
         string[] | string | Record<string, any>
       >,
     },
-    persistent: {
-      type: Boolean,
-    }
+    disabled: Boolean,
   },
   emits: ['update:modelValue'],
   setup(props, { emit, slots }) {
-    const active = computed({
-      get: (): boolean => {
-        return !!props.modelValue;
-      },
-      set: (v: boolean) => {
-        emit('update:modelValue', v);
-      },
-    });
+    const active = useModelDuplex(props);
 
     const classes = computed(() => {
       const boundClasses = bindClasses(props.dialogClasses);
@@ -87,6 +83,21 @@ export const YDialog = defineComponent({
       active.value = v;
     }
 
+    function onClick(e: MouseEvent) {
+      const currentActive = active.value;
+      if (!props.disabled) {
+        active.value = !currentActive;
+      }
+    }
+
+    watch(() => layer.value?.baseEl, (neo, old) => {
+      if (neo) {
+        neo.addEventListener('click', onClick);
+      } else if (old) {
+        old.removeEventListener('click', onClick);
+      }
+    });
+
     watch(
       () => active.value,
       (neo) => {
@@ -98,10 +109,8 @@ export const YDialog = defineComponent({
     useRender(() => {
       return (
         <>
-          {slots.base?.()}
           <YLayer
-            model-value={active.value}
-            onUpdate:modelValue={onUpdate}
+            v-model={active.value}
             scrim
             classes={classes.value}
             persistent={props.persistent}
@@ -109,6 +118,7 @@ export const YDialog = defineComponent({
           >
             {{
               default: (...args: any[]) => slots.default?.(...args),
+              base: slots.base
             }}
           </YLayer>
         </>

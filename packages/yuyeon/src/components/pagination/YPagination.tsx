@@ -1,5 +1,6 @@
 import {
   ComponentPublicInstance,
+  PropType,
   computed,
   defineComponent,
   shallowRef,
@@ -42,6 +43,10 @@ export const pressYPaginationProps = propsFactory(
     color: String,
     activeColor: String,
     buttonVariations: [String],
+    align: {
+      type: String as PropType<'start' | 'center' | 'end'>,
+      default: 'center',
+    },
     // firstIcon: [String],
     // lastIcon: [String],
     // prevIcon: [String],
@@ -59,7 +64,7 @@ export const YPagination = defineComponent({
     ...pressYPaginationProps(),
   },
   emits: {
-    'update:modelValue': (value: number) => true,
+    'update:model-value': (value: number) => true,
     change: (value: number, control?: string) => true,
   },
   setup(props, { slots, emit }) {
@@ -88,14 +93,13 @@ export const YPagination = defineComponent({
 
     function calcItemCount(listWidth: number, itemWidth: number) {
       const fixedCount = props.showEndButton ? 5 : 3;
-      const fixedWidth = itemWidth * fixedCount;
       const gap = +(props.gap ?? 4);
-      return Math.max(
+      const fixedWidth = (itemWidth + gap) * fixedCount - gap;
+      const count = Math.max(
         0,
-        Math.floor(
-          +((listWidth - fixedWidth - gap) / (itemWidth + gap)).toFixed(2),
-        ),
+        Math.floor(+((listWidth - fixedWidth) / (itemWidth + gap)).toFixed(2)),
       );
+      return count;
     }
 
     const totalVisible = computed(() => {
@@ -156,9 +160,12 @@ export const YPagination = defineComponent({
         length.value <= 0 ||
         isNaN(length.value) ||
         length.value > Number.MAX_SAFE_INTEGER
-      )
+      ) {
         return [];
-      if (totalVisible.value <= 1) return [page.value];
+      }
+      if (totalVisible.value <= 1) {
+        return [page.value];
+      }
       if (length.value <= totalVisible.value) {
         return getRangeArr(length.value, start.value);
       }
@@ -259,7 +266,10 @@ export const YPagination = defineComponent({
     useRender(() => {
       return (
         <div
-          class={['y-pagination']}
+          class={[
+            'y-pagination',
+            { [`y-pagination--align-${props.align}`]: props.align !== 'start' },
+          ]}
           role={'navigation'}
           style={styles.value}
           ref={resizeObservedRef}

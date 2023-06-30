@@ -9,6 +9,7 @@ $chip-border-radius: variables.$border-radius-root;
   background: rgba(0, 0, 0, 0.14);
   border-radius: $chip-border-radius;
   align-items: center;
+  align-self: center;
 
   &--clickable {
     cursor: pointer;
@@ -20,5 +21,11 @@ $chip-border-radius: variables.$border-radius-root;
 
   &--clickable &__content {
     user-select: none;
+  }
+
+  &--small {
+    font-size: 0.75rem;
+    padding: 3px 8px;
+    border-radius: $chip-border-radius * 0.75;
   }
 }

@@ -23,6 +23,8 @@ const pressYDataTableBodyProps = propsFactory(
     },
     rowHeight: Number,
     'onClick:row': Function as PropType<(e: Event, value: any) => void>,
+    'onDblclick:row': Function as PropType<(e: Event, value: any) => void>,
+    'onContextmenu:row': Function as PropType<(e: Event, value: any) => void>,
   },
   'YDataTableBody',
 );
@@ -72,7 +74,17 @@ export const YDataTableBody = defineComponent({
                     key: `item__${item.value}`,
                     onClick: props['onClick:row']
                       ? (event: Event) => {
-                          props['onClick:row']?.(event, { item });
+                          props['onClick:row']?.(event, { ...stateProps });
+                        }
+                      : undefined,
+                    onDblclick: props['onDblclick:row']
+                      ? (event: Event) => {
+                          props['onDblclick:row']?.(event, { ...stateProps });
+                        }
+                      : undefined,
+                    onContextmenu: props['onContextmenu:row']
+                      ? (event: Event) => {
+                          props['onContextmenu:row']?.(event, { ...stateProps });
                         }
                       : undefined,
                     index,
@@ -87,7 +99,7 @@ export const YDataTableBody = defineComponent({
                     ) : (
                       <YDataTableRow
                         v-slots={slots}
-                        {...slotProps.props }
+                        {...slotProps.props}
                       ></YDataTableRow>
                     )}
                   </>
@@ -98,7 +110,7 @@ export const YDataTableBody = defineComponent({
     });
 
     // end
-    return {}
+    return {};
   },
 });
 

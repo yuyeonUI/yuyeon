@@ -1,8 +1,17 @@
 .y-pagination {
 
   &__list {
-    display: flex;
+    display: inline-flex;
+    width: 100%;
     gap: var(--y-pagination__gap);
+  }
+
+  &--align-end &__list {
+    justify-content: flex-end;
+  }
+
+  &--align-center &__list {
+    justify-content: center;
   }
 
   li {
