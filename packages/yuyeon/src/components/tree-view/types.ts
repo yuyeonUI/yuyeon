@@ -13,3 +13,5 @@ export interface NodeState {
   active: false;
   expanded: false;
 }
+
+export type TreeviewFilterFn = (item: any, search: string, textKey: string) => boolean;

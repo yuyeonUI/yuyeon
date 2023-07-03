@@ -9,7 +9,7 @@ import {
 
 import DiMixin from '../../mixins/di';
 import { getSlot } from '../../util/vue-component';
-import './index.scss';
+import './YInput.scss';
 
 const NAME = 'y-input';
 let uidCounter = 0;

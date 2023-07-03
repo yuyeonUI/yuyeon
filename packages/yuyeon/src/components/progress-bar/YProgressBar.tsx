@@ -31,6 +31,7 @@ export const YProgressBar = defineComponent({
     outlineColor: {
       type: String as PropType<string>,
     },
+    indeterminate: Boolean,
   },
   setup(props) {
     const { numValue } = useProgress(props);

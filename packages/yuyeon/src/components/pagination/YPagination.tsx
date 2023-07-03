@@ -64,7 +64,7 @@ export const YPagination = defineComponent({
     ...pressYPaginationProps(),
   },
   emits: {
-    'update:model-value': (value: number) => true,
+    'update:modelValue': (value: number) => true,
     change: (value: number, control?: string) => true,
   },
   setup(props, { slots, emit }) {

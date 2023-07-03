@@ -7,7 +7,9 @@ import {
   onMounted,
   provide,
   ref,
+  shallowRef,
   watch,
+  watchEffect,
 } from 'vue';
 
 import { useModelDuplex } from '../../composables/communication';
@@ -18,14 +20,16 @@ import {
   getObjectValueByPath,
   hasOwnProperty,
 } from '../../util/common';
+import { debounce } from '../../util/debounce';
 import { isColorValue } from '../../util/ui';
 import { chooseProps } from '../../util/vue-component';
 import { YTreeViewNode, pressYTreeViewNodeProps } from './YTreeViewNode';
-import { getKeys } from './util';
+import { filterTreeItem, filterTreeItems, getKeys } from './util';
 
 import { CandidateKey } from '../../types';
 import './YTreeView.scss';
-import { NodeState } from './types';
+import { NodeState, TreeviewFilterFn } from './types';
+import { YProgressBar } from "../progress-bar";
 
 const treeViewNodeProps = pressYTreeViewNodeProps();
 
@@ -59,6 +63,11 @@ export const YTreeView = defineComponent({
     },
     returnItem: Boolean,
     defaultExpand: [Boolean, String, Number],
+    filter: Function as PropType<TreeviewFilterFn>,
+    searchDebounceWait: {
+      type: Number as PropType<number>,
+      default: 700,
+    },
     ...treeViewNodeProps,
   },
   emits: ['update:expanded', 'update:active', 'update:selected'],
@@ -72,11 +81,42 @@ export const YTreeView = defineComponent({
     const expandedSet = ref(new Set<CandidateKey>());
     const selectedSet = ref(new Set<CandidateKey>());
     const activeSet = ref(new Set<CandidateKey>());
+    const excludedSet = ref(new Set<CandidateKey>());
+    const filterItemsFn = shallowRef(debounce(excludeItem, props.searchDebounceWait));
+    const searchLoading = shallowRef(false);
+    function excludeItem(items: any[], search = '', filter = filterTreeItem) {
+      const excluded = new Set<CandidateKey>();
+      if (!search) {
+        searchLoading.value = false;
+        excludedSet.value = excluded;
+      }
+      for (const item of items) {
+        filterTreeItems(
+          filter,
+          item,
+          search ?? '',
+          props.itemKey,
+          props.textKey,
+          props.childrenKey,
+          excluded,
+        );
+      }
+      excludedSet.value = excluded;
+      searchLoading.value = false;
+    }
+
+    watchEffect(() => {
+      searchLoading.value = true;
+      filterItemsFn.value(props.items, props.search, props.filter);
+    });
 
     const expandedCache = ref<CandidateKey[]>([]);
 
     // Util Methods
-    function getDescendants(key: CandidateKey, descendants: CandidateKey[] = []) {
+    function getDescendants(
+      key: CandidateKey,
+      descendants: CandidateKey[] = [],
+    ) {
       const { childKeys } = nodes.value[key];
       descendants.push(...childKeys);
       for (const childKey of childKeys) {
@@ -161,7 +201,7 @@ export const YTreeView = defineComponent({
       emitExpanded();
     }
 
-    function updateActive(key: CandidateKey, to: boolean) {
+    function updateActive(key: CandidateKey, to: boolean, event?: MouseEvent) {
       if (!(key in nodes.value)) return;
       const node = nodes.value[key];
       let inactiveKey = !to ? key : '';
@@ -176,6 +216,13 @@ export const YTreeView = defineComponent({
         activeSet.value.delete(inactiveKey);
         nodes.value[inactiveKey].active = false;
         issueVnodeState(inactiveKey);
+      }
+
+      if (
+        props.activeSingleModifier &&
+        event?.getModifierState(props.activeSingleModifier)
+      ) {
+        return;
       }
 
       if (props.multipleActive && props.activeStrategy === 'cascade') {
@@ -296,6 +343,11 @@ export const YTreeView = defineComponent({
       { deep: true },
     );
 
+    // Search
+    function isExcluded(key: CandidateKey) {
+      return !!props.search && excludedSet.value.has(key);
+    }
+
     // Provide & Issue
     function issueVnodeState(key: CandidateKey) {
       const node = nodes.value[key];
@@ -325,6 +377,7 @@ export const YTreeView = defineComponent({
       emitExpanded,
       emitActive,
       emitSelected,
+      isExcluded,
     });
 
     const renderLeaves = computed(() => {
@@ -364,8 +417,13 @@ export const YTreeView = defineComponent({
       return (
         <>
           <div class={classes.value} style={styles.value} role="tree">
+            {
+              searchLoading.value && <YProgressBar indeterminate />
+            }
             {renderLeaves.value.length > 0 ? (
-              renderLeaves.value.map((leaf) => {
+              renderLeaves.value.filter((leaf) => {
+                return !isExcluded(getObjectValueByPath(leaf, props.itemKey));
+              }).map((leaf) => {
                 return (
                   <YTreeViewNode
                     v-slots={slots}
@@ -392,6 +450,8 @@ export const YTreeView = defineComponent({
       expandedSet,
       selectedSet,
       activeSet,
+      excludedSet,
+      searchLoading
     };
   },
 });

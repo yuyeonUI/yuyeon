@@ -149,7 +149,7 @@ export const YMenu = defineComponent({
               default: (...args: any) => {
                 return <>{slots.default?.(...args) ?? ''}</>;
               },
-              base: () => slots.base?.(),
+              base: (...args: any[]) => slots.base?.(...args),
             }}
           </YLayer>
         </>

@@ -76,32 +76,33 @@ export type SelectItemKey =
   | boolean // Ignored
   | string // Lookup by key, can use dot notation for nested objects
   | (string | number)[] // Nested lookup by key, each array item is a key in the next level
-  | ((item: Record<string, any>, fallback?: any) => any)
+  | ((item: Record<string, any>, fallback?: any) => any);
 
-export function getPropertyFromItem (
+export function getPropertyFromItem(
   item: any,
   property: SelectItemKey,
-  fallback?: any
+  fallback?: any,
 ): any {
-  if (property == null) return item === undefined ? fallback : item
+  if (property == null) return item === undefined ? fallback : item;
 
   if (item !== Object(item)) {
-    if (typeof property !== 'function') return fallback
+    if (typeof property !== 'function') return fallback;
 
-    const value = property(item, fallback)
+    const value = property(item, fallback);
 
-    return typeof value === 'undefined' ? fallback : value
+    return typeof value === 'undefined' ? fallback : value;
   }
 
-  if (typeof property === 'string') return getObjectValueByPath(item, property, fallback)
+  if (typeof property === 'string')
+    return getObjectValueByPath(item, property, fallback);
 
-  if (Array.isArray(property)) return getNestedValue(item, property, fallback)
+  if (Array.isArray(property)) return getNestedValue(item, property, fallback);
 
-  if (typeof property !== 'function') return fallback
+  if (typeof property !== 'function') return fallback;
 
-  const value = property(item, fallback)
+  const value = property(item, fallback);
 
-  return typeof value === 'undefined' ? fallback : value
+  return typeof value === 'undefined' ? fallback : value;
 }
 
 export function randomCharOne(str: string) {
@@ -134,4 +135,9 @@ export function deepEqual(a: any, b: any): boolean {
     return false;
   }
   return props.every((p) => deepEqual(a[p], b[p]));
+}
+
+export function isObject(obj: unknown) {
+  const type = typeof obj;
+  return obj !== null && (type === 'object' || type === 'function');
 }

@@ -13,12 +13,14 @@ import { getObjectValueByPath } from '../../util/common';
 import { propsFactory } from '../../util/vue-component';
 import { YButton } from '../button';
 import { YPlate } from '../plate';
+import YTextHighlighter from '../text-highlighter/YTextHighlighter';
 
 import { YIconCheckbox, YIconExpand } from '../icons';
 import { YExpandVTransition } from '../transitions';
 
 export const pressYTreeViewNodeProps = propsFactory(
   {
+    search: String,
     itemKey: {
       type: String as PropType<string>,
       default: 'id',
@@ -34,6 +36,7 @@ export const pressYTreeViewNodeProps = propsFactory(
     disableTransition: Boolean,
     enableActive: Boolean,
     activeClass: [String, Array],
+    activeSingleModifier: String,
     activeColor: {
       type: String,
       default: 'primary',
@@ -72,7 +75,7 @@ export const YTreeViewNode = defineComponent({
     function onClick(e: MouseEvent) {
       const to = !active.value;
       active.value = to;
-      treeView.updateActive(myKey.value, to);
+      treeView.updateActive(myKey.value, to, e);
       treeView.emitActive();
     }
 
@@ -125,13 +128,17 @@ export const YTreeViewNode = defineComponent({
     });
 
     useRender(() => {
-      const leaves = children.value.map((item: any) => {
-        return h(
-          YTreeViewNode,
-          { ...props, level: (props.level ?? 0) + 1, item },
-          slots,
-        );
-      });
+      const leaves = children.value
+        .filter((leaf: any) => {
+          return !treeView.isExcluded(getObjectValueByPath(leaf, props.itemKey));
+        })
+        .map((item: any) => {
+          return h(
+            YTreeViewNode,
+            { ...props, level: (props.level ?? 0) + 1, item },
+            slots,
+          );
+        });
       const indentSpacer: VNodeArrayChildren = [];
       for (let i = 0; i < props.level; i += 1) {
         indentSpacer.push(
@@ -158,7 +165,7 @@ export const YTreeViewNode = defineComponent({
               h(YPlate),
               h('div', { class: 'y-tree-view-node__indents' }, indentSpacer),
               /* EXPAND */
-              !imLeaf.value
+              !imLeaf.value && leaves.length > 0
                 ? h(
                     YButton,
                     {
@@ -197,6 +204,11 @@ export const YTreeViewNode = defineComponent({
                     ? slots.default?.({
                         text: contentText.value,
                         item: props.item,
+                      })
+                    : props.search
+                    ? h(YTextHighlighter, {
+                        text: contentText.value,
+                        keyword: props.search,
                       })
                     : contentText.value,
                 ),
