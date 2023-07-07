@@ -1,51 +1,108 @@
 import { PropType, defineComponent } from 'vue';
 
+import { pressItemsPropsOptions } from '../../abstract/items';
+import { useModelDuplex } from '../../composables/communication';
 import { useRender } from '../../composables/component';
+import { pressCoordinateProps } from '../../composables/coordinate';
+import { getObjectValueByPath, omit } from '../../util/common';
 import { propsFactory } from '../../util/vue-component';
 import { YButton } from '../button';
 import { YCard } from '../card';
-import { YList } from '../list';
+import { YIconDropdown } from '../icons/YIconDropdown';
+import { YList, YListItem } from '../list';
 import { YMenu } from '../menu';
 
-export interface YDropdownOption {
-  key: string;
-  value: string;
-  text: string;
-}
+import './YDropdown.scss';
 
 export const pressYDropdownPropsOptions = propsFactory(
   {
-    options: {
-      type: Array as PropType<YDropdownOption[]>,
-      default: () => [],
-    },
+    modelValue: Boolean as PropType<boolean>,
+    variation: String as PropType<string>,
+    color: String as PropType<string>,
+    ...omit(pressCoordinateProps({ position: 'bottom' as 'bottom' }), [
+      'coordinateStrategy',
+    ]),
+    ...pressItemsPropsOptions(),
   },
   'YDropdown',
 );
 
 export const YDropdown = defineComponent({
   name: 'YDropdown',
+  inheritAttrs: false,
   components: {
     YMenu,
   },
-  props: {},
-  setup(props, { slots }) {
+  props: {
+    ...pressYDropdownPropsOptions(),
+  },
+  emits: ['update:modelValue', 'click'],
+  setup(props, { slots, attrs, emit }) {
+    const active = useModelDuplex(props);
+
+    function onClickItem(item: any) {
+      active.value = false;
+      emit('click', item);
+    }
+
     useRender(() => {
       return (
         <>
-          <YMenu>
+          <YMenu
+            v-model={active.value}
+            position={props.position}
+            content-classes={['y-dropdown__content']}
+          >
             {{
-              base: slots.base ? (
-                (...args: any[]) => slots.base?.(...args)
-              ) : (
-                <YButton></YButton>
-              ),
+              base: (...args: any[]) =>
+                slots.base ? (
+                  slots.base?.(...args)
+                ) : (
+                  <YButton
+                    variation={props.variation}
+                    color={props.color}
+                    class={[
+                      'y-dropdown',
+                      { 'y-dropdown--active': active.value },
+                    ]}
+                    {...attrs}
+                  >
+                    {
+                      <span class="y-dropdown__default">
+                        {slots.default?.()}
+                      </span>
+                    }
+                    {slots['expand-icon'] ? (
+                      slots['expand-icon']()
+                    ) : (
+                      <i class="y-dropdown__icon">
+                        <YIconDropdown></YIconDropdown>
+                      </i>
+                    )}
+                  </YButton>
+                ),
               default: () =>
-                slots.default ? (
-                  slots.default()
+                slots.menu ? (
+                  slots.menu()
                 ) : (
                   <YCard>
-                    <YList></YList>
+                    {Array.isArray(props.items) && props.items.length > 0 ? (
+                      <YList>
+                        {props.items.map((item) => {
+                          const text = getObjectValueByPath(
+                            item,
+                            props.textKey,
+                          );
+                          return (
+                            <YListItem onClick={(e) => onClickItem(item)}>
+                              {text}
+                            </YListItem>
+                          );
+                        })}
+                      </YList>
+                    ) : (
+                      <div class="pa-4">항목이 없습니다.</div>
+                    )}
                   </YCard>
                 ),
             }}

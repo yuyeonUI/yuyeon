@@ -105,13 +105,6 @@ export function getPropertyFromItem(
   return typeof value === 'undefined' ? fallback : value;
 }
 
-export function randomCharOne(str: string) {
-  if (str) {
-    return str.charAt(Math.floor(Math.random() * str.length));
-  }
-  return '';
-}
-
 export function clamp(value: number, min = 0, max = 1) {
   return Math.max(min, Math.min(max, value));
 }
@@ -140,4 +133,10 @@ export function deepEqual(a: any, b: any): boolean {
 export function isObject(obj: unknown) {
   const type = typeof obj;
   return obj !== null && (type === 'object' || type === 'function');
+}
+
+export function omit<T extends object, U extends Extract<keyof T, string>>(obj: T, excludes: U[]): Omit<T, U> {
+  const ret = { ...obj };
+  excludes.forEach(prop => delete ret[prop]);
+  return ret;
 }

@@ -3,6 +3,8 @@
 @use 'settings/variables';
 @use 'palette';
 
+@use 'elevation';
+
 :root {
   box-sizing: border-box;
 }
@@ -13,6 +15,9 @@
   //--y-theme--base-bg: 255, 255, 255;
   //--y-line-color: 0, 0, 0;
   //--y-line-opacity: 0.14;
+  --y-elevation-color: 0, 0, 0;
+
+  @include elevation.styles();
 }
 
 .fade-enter-active,

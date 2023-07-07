@@ -1,9 +1,9 @@
 import { defineComponent } from 'vue';
 
 import { hasOwnProperty } from '../../util/common';
-import { colorHexToRgb } from '../../util/ui';
 
 import './YChip.scss';
+import { colorHexToRgb } from "../../util/color";
 
 export default defineComponent({
   name: 'y-chip',

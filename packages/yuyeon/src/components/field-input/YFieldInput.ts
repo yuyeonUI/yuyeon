@@ -11,16 +11,19 @@ import {
 } from 'vue';
 
 import { YIconClear } from '../icons/YIconClear';
-import { YInput, YInputProps } from '../input';
+import { YInput, pressYInputPropsOptions } from '../input';
 
 import './YFieldInput.scss';
+import { chooseProps } from "../../util/vue-component";
 
 const NAME = 'y-field-input';
 
 export const YFieldInput = defineComponent({
   name: 'YFieldInput',
   props: {
-    ...YInputProps,
+    ...pressYInputPropsOptions({
+      // ceramic: true,
+    }),
     clearable: Boolean as PropType<boolean>,
     inputAlign: String as PropType<string>,
     displayText: [String, Function] as PropType<
@@ -58,7 +61,6 @@ export const YFieldInput = defineComponent({
 
     const classes = computed(() => {
       return {
-        ...(yInputRef.value?.classes || {}),
         'y-input--focused': isFocused.value,
         [NAME]: true,
       };
@@ -175,14 +177,6 @@ export const YFieldInput = defineComponent({
       inputRef,
     });
 
-    const yInputProps = () => {
-      const ret: Record<string, any> = {};
-      for (const propKey in YInputProps) {
-        ret[propKey] = props[propKey as keyof typeof props];
-      }
-      return ret;
-    };
-
     function onUpdateModel(value: any) {
       emit('update:modelValue', value);
     }
@@ -193,7 +187,7 @@ export const YFieldInput = defineComponent({
         {
           class: classes.value,
           ref: yInputRef,
-          ...yInputProps(),
+          ...chooseProps(props, YInput.props),
           modelValue: inValue.value,
           'onUpdate:modelValue': onUpdateModel,
           onClick,

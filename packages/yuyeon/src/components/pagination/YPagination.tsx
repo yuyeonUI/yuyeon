@@ -52,7 +52,7 @@ export const pressYPaginationProps = propsFactory(
     // prevIcon: [String],
     // nextIcon: [String],
   },
-  'y-pagination',
+  'YPagination',
 );
 
 export const YPagination = defineComponent({

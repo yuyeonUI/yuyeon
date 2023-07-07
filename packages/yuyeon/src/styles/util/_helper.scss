@@ -1,0 +1,12 @@
+@use 'sass:string';
+
+@function deepGet($map, $keys...) {
+  @each $key in $keys {
+    $map: map-get($map, $key);
+  }
+  @return $map;
+}
+
+@function hasPrefix($string, $prefix) {
+  @return string.slice($string, 1, string.length($prefix)) == $prefix;
+}

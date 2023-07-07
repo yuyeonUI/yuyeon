@@ -1,63 +1,48 @@
 <script setup lang="ts">
-import DataTableBottom from "@/pages/data-table/DataTableBottom.vue";
-import { dataTableHeaders } from "@/settings/headers.ts";
-import { computed, ref, shallowRef } from "vue";
-
-const props = defineProps({
-  bottomProps: Object,
-});
+import { ref, shallowRef } from "vue";
 
 const showDialog = ref(false);
 
-const page = ref(1);
-const loading = shallowRef(false);
-const headers = computed(() => {
-  return dataTableHeaders;
-});
-const items = computed(() => {
-  return [
-    {
-      id: "00001",
-      registerDate: 1687708312497,
-      os: "Windows 10",
-      user: {
-        name: "Joe",
-      },
-      computer: {
-        name: "HELLO-DESKTOP",
-        username: "jojo",
-        cpu: "mt-1000000",
-        memSize: 25769803776,
-      },
-    },
-    {
-      id: "00002",
-      registerDate: 1687708312497,
-      os: "Windows 11",
-      user: {
-        name: "Henry",
-      },
-      computer: {
-        name: "OHLLE-DESKTOP",
-        username: "Hen",
-        cpu: "mt-2000001",
-        memSize: 12884901888,
-      },
-    },
-  ];
-});
+const progress0 = ref(40);
+const progress0Reverse = shallowRef(false);
+const chipsSectionIndeterminate = shallowRef(false);
+
+const dropdownItems = [
+  {
+    key: "cut",
+    text: "잘라내기",
+  },
+  {
+    key: "copy",
+    text: "복사하기",
+  },
+];
 </script>
 
 <template>
   <div class="pa-4">
-    <section class="pv-2" style="height: 80vh">
+    <section class="pv-2" style="height: 300px">
       <y-card class="h-100 contain-paint">
-        <y-card-header> SHOWCASE </y-card-header>
+        <y-progress-bar
+          :reverse="progress0Reverse"
+          :value="progress0"
+        ></y-progress-bar>
+        <y-card-header> LAYER BASE </y-card-header>
         <y-card-body class="pt-4">
           <div>
-            <y-menu position="bottom" offset="8">
-              <template #base>
-                <y-button class="mr-2"> MENU </y-button>
+            <y-menu position="bottom" offset="8" height="80">
+              <template #base="{ props: menuProps }">
+                <y-tooltip position="top">
+                  <template #base="{ props: tooltipProps }">
+                    <y-button
+                      class="mr-2"
+                      v-bind="{ ...tooltipProps, ...menuProps }"
+                    >
+                      MENU
+                    </y-button>
+                  </template>
+                  <span>menu + tooltip</span>
+                </y-tooltip>
               </template>
               <y-card>
                 <y-card-body> YMenu! </y-card-body>
@@ -101,32 +86,41 @@ const items = computed(() => {
               </template>
               <span>어서와 처음이지?</span>
             </y-tooltip>
-          </div>
-          <div class="pv-4">
-            <y-chip small class="mr-2 font-weight-700">LABEL</y-chip>
-            <y-chip :color="'#1489ce'" class="mr-2">CHIP</y-chip>
+            <!--  -->
+            <y-dropdown
+              :items="dropdownItems"
+              class="ml-2 elevation-1"
+              variation="filled"
+              color="primary"
+              style="width: 160px"
+            >
+              드롭다운
+            </y-dropdown>
+
+            <y-field-input theme="dark" outlined></y-field-input>
           </div>
         </y-card-body>
       </y-card>
     </section>
-    <section class="pv-2" style="height: 80vh">
+    <section class="pv-2" style="height: 200px">
       <y-card class="h-100 contain-paint">
-        <y-data-table-server
-          :total="124"
-          :headers="headers"
-          :height="150"
-          :items="items"
-          flex-height
-          fixed-head
-          enable-select
-        >
-          <template #item.sequence="{ index }">
-            {{ index + 1 }}
-          </template>
-          <template #bottom="bottomProps">
-            <DataTableBottom :bottom-props="bottomProps"></DataTableBottom>
-          </template>
-        </y-data-table-server>
+        <y-progress-bar
+          reverse
+          :indeterminate="chipsSectionIndeterminate"
+        ></y-progress-bar>
+        <y-card-header> CHIPS </y-card-header>
+        <y-card-body class="pt-4">
+          <div class="pv-4">
+            <y-chip small class="mr-2 font-weight-700">LABEL</y-chip>
+            <y-chip :color="'#1489ce'" class="mr-2">CHIP</y-chip>
+            <y-chip
+              :color="'#1489ce'"
+              class="mr-2"
+              @click="chipsSectionIndeterminate = !chipsSectionIndeterminate"
+              >INDETERMINATE Toggle</y-chip
+            >
+          </div>
+        </y-card-body>
       </y-card>
     </section>
   </div>

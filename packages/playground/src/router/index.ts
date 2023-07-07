@@ -4,7 +4,12 @@ const routes: Array<RouteRecordRaw> = [
   {
     name: 'Main',
     path: '/',
-    component: () => import('@/pages/DataTable.vue'),
+    component: () => import('@/pages/ControlProps.vue'),
+  },
+  {
+    name: 'DataTableServer',
+    path: '/data-table-server',
+    component: () => import('@/pages/DataTableServer.vue'),
   },
   {
     name: 'TreeView',

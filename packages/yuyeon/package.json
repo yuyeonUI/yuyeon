@@ -1,6 +1,16 @@
 {
   "name": "yuyeon",
   "version": "0.0.14",
+  "keywords": [
+    "UI Library", "Vue"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yuyeonUI/yuyeon",
+    "directory": "packages/yuyeon"
+  },
+  "author": "yeonyew",
+  "license": "Apache-2.0",
   "files": [
     "dist",
     "lib",

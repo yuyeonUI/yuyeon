@@ -12,6 +12,7 @@ import {
   YDataTableServer,
   YDialog,
   YDividePanel,
+  YDropdown,
   YExpandHTransition,
   YExpandVTransition,
   YFieldInput,
@@ -67,5 +68,6 @@ declare module '@vue/runtime-core' {
     YInputCheckbox: typeof YInputCheckbox;
     YCheckbox: typeof YCheckbox;
     YSwitch: typeof YSwitch;
+    YDropdown: typeof YDropdown;
   }
 }

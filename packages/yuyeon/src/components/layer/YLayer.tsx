@@ -5,15 +5,22 @@ import {
   computed,
   defineComponent,
   mergeProps,
-  nextTick,
   reactive,
   ref,
+  shallowRef,
   toRef,
-  watch,
-  watchEffect, shallowRef
-} from "vue";
+  watchEffect,
+} from 'vue';
 
 import { useRender } from '../../composables/component';
+import {
+  pressCoordinateProps,
+  useCoordinate,
+} from '../../composables/coordinate';
+import {
+  pressDimensionPropsOptions,
+  useDimension,
+} from '../../composables/dimension';
 import { useLayerGroup } from '../../composables/layer-group';
 import { useLazy } from '../../composables/timing';
 import {
@@ -25,46 +32,49 @@ import {
   ComplementClick,
   ComplementClickBindingOptions,
 } from '../../directives/complement-click';
-import { bindClasses, propsFactory } from "../../util/vue-component";
+import { bindClasses, propsFactory } from '../../util/vue-component';
 
 import './YLayer.scss';
-import { pressCoordinateProps, useCoordinate } from "../../composables/coordinate";
 
-export const pressYLayerProps = propsFactory({
-  modelValue: {
-    type: Boolean as PropType<boolean>,
+export const pressYLayerProps = propsFactory(
+  {
+    modelValue: {
+      type: Boolean as PropType<boolean>,
+    },
+    scrim: {
+      type: Boolean as PropType<boolean>,
+    },
+    eager: {
+      type: Boolean as PropType<boolean>,
+    },
+    classes: {
+      type: [Array, String, Object] as PropType<
+        string[] | string | Record<string, any>
+      >,
+    },
+    contentClasses: {
+      type: [Array, String, Object] as PropType<
+        string[] | string | Record<string, any>
+      >,
+    },
+    closeClickScrim: {
+      type: Boolean as PropType<boolean>,
+    },
+    modal: Boolean as PropType<boolean>,
+    contentStyles: {
+      type: Object as PropType<CSSProperties>,
+      default: () => {},
+    },
+    disabled: {
+      type: Boolean as PropType<boolean>,
+      default: false,
+    },
+    ...polyTransitionPropOptions,
+    ...pressCoordinateProps(),
+    ...pressDimensionPropsOptions(),
   },
-  scrim: {
-    type: Boolean as PropType<boolean>,
-  },
-  eager: {
-    type: Boolean as PropType<boolean>,
-  },
-  classes: {
-    type: [Array, String, Object] as PropType<
-      string[] | string | Record<string, any>
-    >,
-  },
-  contentClasses: {
-    type: [Array, String, Object] as PropType<
-      string[] | string | Record<string, any>
-    >,
-  },
-  closeClickScrim: {
-    type: Boolean as PropType<boolean>,
-  },
-  persistent: Boolean as PropType<boolean>,
-  contentStyles: {
-    type: Object as PropType<CSSProperties>,
-    default: () => {},
-  },
-  disabled: {
-    type: Boolean as PropType<boolean>,
-    default: false,
-  },
-  ...polyTransitionPropOptions,
-  ...pressCoordinateProps(),
-}, 'YLayer');
+  'YLayer',
+);
 
 export const YLayer = defineComponent({
   name: 'YLayer',
@@ -81,10 +91,9 @@ export const YLayer = defineComponent({
   emits: {
     'update:modelValue': (value: boolean) => true,
     'click:complement': (mouseEvent: MouseEvent) => true,
-    'afterLeave': () => true,
+    afterLeave: () => true,
   },
   setup(props, { emit, expose, attrs, slots }) {
-    const el$ = ref<typeof YLayer>();
     const base$ = ref();
     const scrim$ = ref<HTMLElement>();
     const content$ = ref<HTMLElement>();
@@ -93,6 +102,7 @@ export const YLayer = defineComponent({
 
     const { layerGroup } = useLayerGroup();
     const { polyTransitionBindProps } = usePolyTransition(props);
+    const { dimensionStyles } = useDimension(props);
     const active = computed<boolean>({
       get: (): boolean => {
         return !!props.modelValue;
@@ -109,7 +119,6 @@ export const YLayer = defineComponent({
       () => !disabled.value && (lazyValue.value || active.value),
     );
 
-
     const { coordinate, coordinateStyles, updateCoordinate } = useCoordinate(
       props,
       { contentEl: content$, baseEl, active },
@@ -117,7 +126,7 @@ export const YLayer = defineComponent({
 
     function onClickComplementLayer(mouseEvent: MouseEvent) {
       emit('click:complement', mouseEvent);
-      if (!props.persistent) {
+      if (!props.modal) {
         if (
           scrim$.value !== null &&
           scrim$.value === mouseEvent.target &&
@@ -147,7 +156,7 @@ export const YLayer = defineComponent({
     function onAfterLeave() {
       onAfterUpdate();
       finish.value = false;
-      emit('afterLeave')
+      emit('afterLeave');
     }
 
     function onClickScrim() {
@@ -219,7 +228,11 @@ export const YLayer = defineComponent({
           <Teleport disabled={!layerGroup.value} to={layerGroup.value as any}>
             {rendered.value && (
               <div
-                class={{ 'y-layer': true, 'y-layer--finish': finish.value, ...computedClass.value }}
+                class={{
+                  'y-layer': true,
+                  'y-layer--finish': finish.value,
+                  ...computedClass.value,
+                }}
                 style={computedStyle.value}
                 {...attrs}
               >
@@ -245,7 +258,13 @@ export const YLayer = defineComponent({
                       'y-layer__content': true,
                       ...computedContentClasses.value,
                     }}
-                    style={[{...coordinateStyles.value, ...props.contentStyles}]}
+                    style={[
+                      {
+                        ...dimensionStyles.value,
+                        ...coordinateStyles.value,
+                        ...props.contentStyles,
+                      },
+                    ]}
                     ref={content$}
                   >
                     {slots.default?.({ active: active.value })}

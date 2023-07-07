@@ -19,7 +19,7 @@ export const YDialog = defineComponent({
     modelValue: {
       type: Boolean as PropType<boolean>,
     },
-    persistent: {
+    modal: {
       type: Boolean,
     },
     dialogClasses: {
@@ -113,7 +113,7 @@ export const YDialog = defineComponent({
             v-model={active.value}
             scrim
             classes={classes.value}
-            persistent={props.persistent}
+            modal={props.modal}
             ref={layer}
           >
             {{

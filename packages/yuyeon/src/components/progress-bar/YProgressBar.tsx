@@ -1,8 +1,8 @@
 import { PropType, StyleValue, defineComponent } from 'vue';
 
 import { useProgress } from '../../composables/progress';
-
 import './YProgressBar.scss';
+import { isColorValue } from "../../util/color";
 
 export const YProgressBar = defineComponent({
   name: 'YProgressBar',
@@ -25,6 +25,10 @@ export const YProgressBar = defineComponent({
     innerText: {
       type: Boolean as PropType<boolean>,
     },
+    color: {
+      type: String as PropType<string>,
+      default: 'primary',
+    },
     textColor: {
       type: String as PropType<string>,
     },
@@ -32,6 +36,7 @@ export const YProgressBar = defineComponent({
       type: String as PropType<string>,
     },
     indeterminate: Boolean,
+    reverse: Boolean,
   },
   setup(props) {
     const { numValue } = useProgress(props);
@@ -54,8 +59,17 @@ export const YProgressBar = defineComponent({
       return {
         'y-progress--no-trans': noTransition,
         'y-progress--outlined': !!this.outlined,
+        'y-progress--indeterminate': !!this.indeterminate,
         'y-progress-bar--rounded': !!this.rounded,
+        'y-progress-bar--reverse': !!this.reverse,
       };
+    },
+    leadColor(): string {
+      let color = this.color ?? '';
+      if (!isColorValue(color)) {
+        color = `rgba(var(--y-theme--${color}), 1)`;
+      }
+      return color;
     },
     styles(): StyleValue {
       let minWidth;
@@ -91,6 +105,7 @@ export const YProgressBar = defineComponent({
             height !== undefined ? `${height}px` : undefined,
           '--y-progress-bar__outline-color':
             outlineColor !== undefined ? outlineColor : undefined,
+          '--y-progress-bar__color': this.leadColor,
         }}
       >
         <div class="y-progress__track"></div>

@@ -1,20 +1,13 @@
 import type { PropType } from 'vue';
-import {
-  computed,
-  defineComponent,
-  ref,
-  watch,
-} from 'vue';
+import { computed, defineComponent, ref, watch } from 'vue';
 
 import { useModelDuplex } from '../../composables/communication';
 import { useRender } from '../../composables/component';
-import {
-  pressCoordinateProps,
-} from '../../composables/coordinate';
+import { pressCoordinateProps } from '../../composables/coordinate';
 import { polyTransitionPropOptions } from '../../composables/transition';
 import { toKebabCase } from '../../util/string';
-import { bindClasses, chooseProps } from "../../util/vue-component";
-import { YLayer } from '../layer';
+import { bindClasses, chooseProps } from '../../util/vue-component';
+import { YLayer, pressYLayerProps } from '../layer';
 
 import './YMenu.scss';
 
@@ -22,18 +15,10 @@ const NAME = 'YMenu';
 const CLASS_NAME = toKebabCase(NAME);
 
 export const YMenuPropOptions = {
-  modelValue: {
-    type: Boolean as PropType<boolean>,
-    default: false,
-  },
   menuClasses: {
     type: [Array, String, Object] as PropType<
       string[] | string | Record<string, any>
     >,
-  },
-  disabled: {
-    type: Boolean as PropType<boolean>,
-    default: false,
   },
   openOnHover: {
     type: Boolean as PropType<boolean>,
@@ -46,7 +31,7 @@ export const YMenuPropOptions = {
     type: Boolean as PropType<boolean>,
     default: true,
   },
-  ...pressCoordinateProps({
+  ...pressYLayerProps({
     coordinateStrategy: 'levitation',
   }),
 };
@@ -121,14 +106,24 @@ export const YMenu = defineComponent({
       el.removeEventListener('mouseleave', onMouseleave);
     }
 
-    watch(() => el$.value?.baseEl, (neo, old) => {
-      if (neo) {
-        bindHover(neo);
-        neo.addEventListener('click', onClick);
-      } else if (old) {
-        unbindHover(old);
-        old.removeEventListener('click', onClick);
-      }
+    watch(
+      () => el$.value?.baseEl,
+      (neo, old) => {
+        if (neo) {
+          bindHover(neo);
+          neo.addEventListener('click', onClick);
+        } else if (old) {
+          unbindHover(old);
+          old.removeEventListener('click', onClick);
+        }
+      },
+    );
+
+    const computedContentClasses = computed<Record<string, boolean>>(() => {
+      const boundClasses = bindClasses(props.contentClasses);
+      return {
+        ...boundClasses,
+      };
     });
 
     useRender(() => {
@@ -136,13 +131,17 @@ export const YMenu = defineComponent({
         <>
           <YLayer
             ref={el$}
-            classes={classes.value}
-            scrim={false}
-            disabled={props.disabled}
-            content-classes={['y-menu__content']}
             transition={props.transition}
             onClick:complement={onComplementClick}
-            {...chooseProps(props, YLayer.props)}
+            {...{
+              ...chooseProps(props, YLayer.props),
+              classes: classes.value,
+              scrim: false,
+              contentClasses: {
+                'y-menu__content': true,
+                ...computedContentClasses.value,
+              },
+            }}
             v-model={active.value}
           >
             {{
@@ -158,6 +157,7 @@ export const YMenu = defineComponent({
 
     return {
       el$,
+      classes,
     };
   },
 });

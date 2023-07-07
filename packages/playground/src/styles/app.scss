@@ -19,11 +19,10 @@ $notosanskr-font-path: '@/assets/fonts/NotoSansKR/';
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
 
-  --zerokey-primary: #{palette.$basic-orange-800};
   //
   --y-theme--primary: 241, 119, 56;
   --y-theme--base-bg: 255, 255, 255;
-  --y-palette--primary: var(--zerokey-primary);
+  --y-palette--primary: #496dcd;
   --y-line-color: 0, 0, 0;
   --y-line-opacity: 0.14;
   //

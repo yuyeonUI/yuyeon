@@ -10,8 +10,8 @@
     "<THIRD_PARTY_MODULES>",
     "^%/(.*)$",
     "^@/(.*)$",
-    "^[./](.*)[^.scss]$",
-    "^[./](.*)[.scss]$"
+    "^[./](.*)\\.[^(scss)$]",
+    "^[./](.*)\\.(scss)$"
   ],
   "importOrderSeparation": true,
   "importOrderSortSpecifiers": true

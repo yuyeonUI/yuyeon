@@ -8,13 +8,14 @@ import {
 } from "vue";
 
 import DiMixin from '../../mixins/di';
-import { getSlot } from '../../util/vue-component';
+import { getSlot, propsFactory } from "../../util/vue-component";
 import './YInput.scss';
+import { pressThemePropsOptions, useLocalTheme } from "../../composables/theme";
 
 const NAME = 'y-input';
 let uidCounter = 0;
 
-export const YInputProps = {
+export const pressYInputPropsOptions = propsFactory({
   name: String,
   width: {
     type: [String, Number] as PropType<string | number>,
@@ -48,12 +49,15 @@ export const YInputProps = {
     }
   },
   validators: Array as PropType<((v: any) => boolean | string)[] | string[]>,
-}
+}, 'YInput');
 
 export const YInput = defineComponent({
   name: NAME,
   mixins: [DiMixin],
-  props: YInputProps,
+  props: {
+    ...pressThemePropsOptions(),
+    ...pressYInputPropsOptions(),
+  },
   emits: ['error', 'click', 'mousedown', 'mouseup', 'focus', 'blur', 'click:prepend', 'update:modelValue'],
   data() {
     const iid = uidCounter.toString();
@@ -80,6 +84,7 @@ export const YInput = defineComponent({
         'y-input--disabled': !!this.disabled,
         'y-input--error': this.isError,
         'y-input--success': this.isSuccess,
+        [this.themeClasses as string]: true,
       };
     },
     displayStyles(): Record<string, any> {
@@ -351,21 +356,19 @@ export const YInput = defineComponent({
   created() {
     this.inValue = this.modelValue;
   },
+  setup(props) {
+    const { themeClasses } = useLocalTheme(props);
+    return {
+      themeClasses
+    }
+  },
   render(): VNode {
-    return withDirectives(
-      h(
-        'div',
-        {
-          class: { ...this.getClasses(), [`${NAME}`]: true },
-        },
-        this.createContent(),
-      ),
-      [
-        [
-          resolveDirective('theme'),
-          (this as any)?.theme?.dark ? 'dark' : 'light',
-        ],
-      ],
+    return h(
+      'div',
+      {
+        class: { ...this.getClasses(), [`${NAME}`]: true },
+      },
+      this.createContent(),
     );
   },
 });

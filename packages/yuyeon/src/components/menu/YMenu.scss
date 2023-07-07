@@ -1,7 +1,13 @@
 .y-menu {
   font-size: 0.875rem;
+  $elevation-fallback: 1px 1px 8px -1px rgba(0, 0, 0, 0.14), 4px 4px 24px -4px rgba(0, 0, 0, 0.28), -2px -2px 8px -2px rgba(0, 0, 0, 0.14);
+
+  --y-menu__border-radius: 8px;
+  --y-menu__elevation: var(--y-elevation--level2);
 
   &__content {
-    //
+    box-shadow: var(--y-menu__elevation, #{$elevation-fallback});
+    border-radius: var(--y-menu__border-radius);
+    background: rgba(var(--y-theme--base-bg), 1);
   }
 }

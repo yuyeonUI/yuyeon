@@ -1,5 +1,5 @@
 export const MAIN_PALETTE = {
-  primary: '#ff9639',
+  primary: '#f17738',
   'basic-black': '#262626',
   'basic-disable': '#C8BAB4',
   'basic-red-500': '#FF7272',

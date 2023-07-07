@@ -127,10 +127,16 @@ export const YTreeViewNode = defineComponent({
       };
     });
 
+    const searchLoading = computed(() => {
+      return treeView.searchLoading.value;
+    });
+
     useRender(() => {
       const leaves = children.value
         .filter((leaf: any) => {
-          return !treeView.isExcluded(getObjectValueByPath(leaf, props.itemKey));
+          return !treeView.isExcluded(
+            getObjectValueByPath(leaf, props.itemKey),
+          );
         })
         .map((item: any) => {
           return h(
@@ -205,7 +211,7 @@ export const YTreeViewNode = defineComponent({
                         text: contentText.value,
                         item: props.item,
                       })
-                    : props.search
+                    : props.search && !searchLoading.value
                     ? h(YTextHighlighter, {
                         text: contentText.value,
                         keyword: props.search,

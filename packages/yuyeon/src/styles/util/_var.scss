@@ -1,0 +1,18 @@
+@use 'sass:string';
+@use './helper';
+
+@function create($name, $fallback: null) {
+  $name: createName($name);
+  @if fallback == null {
+    @return var(#{$name});
+  }
+
+  @return var(#{$name}, $fallback);
+}
+
+@function createName($name) {
+  @if helper.hasPrefix($name, '--') {
+    @return $name;
+  }
+  @return string.unquote('--y-#{$name}');
+}

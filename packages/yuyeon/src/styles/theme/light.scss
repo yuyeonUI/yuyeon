@@ -15,7 +15,7 @@ $theme--light: map.deep-merge(
     'select': (
       'selected': palette.$basic-black,
       'selected-background': palette.$basic-gray-700,
-    ),
+    )
   ),
   $theme--light
 );

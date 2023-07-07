@@ -3,7 +3,7 @@ import type { App } from 'vue';
 import { nextTick, reactive } from "vue";
 
 import * as components from './components';
-import { createThemeModule } from './composables/theme';
+import { createThemeModule, YUYEON_THEME_KEY } from "./composables/theme";
 import PlateWave from './directives/plate-wave';
 import { YUYEON_LOGO } from './etc';
 //
@@ -39,7 +39,7 @@ export function init(options: any = defaultOptions) {
 
     app.directive('plate-wave', PlateWave);
 
-    app.provide('theme', yuyeon.theme);
+    app.provide(YUYEON_THEME_KEY, yuyeon.theme);
 
     app.config.globalProperties.$yuyeon = yuyeon;
 

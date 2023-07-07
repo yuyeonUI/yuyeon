@@ -35,3 +35,10 @@ export function kebabToCamel(str: string) {
   }
   return res;
 }
+
+export function randomCharOne(str: string) {
+  if (str) {
+    return str.charAt(Math.floor(Math.random() * str.length));
+  }
+  return '';
+}

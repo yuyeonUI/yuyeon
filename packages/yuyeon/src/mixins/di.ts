@@ -6,9 +6,6 @@ import { defineComponent } from 'vue';
 export default defineComponent({
   name: 'DiMixin',
   inject: {
-    theme: {
-      from: 'theme',
-    },
     form$: {
       default: null,
     },
