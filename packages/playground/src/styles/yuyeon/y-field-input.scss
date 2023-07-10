@@ -1,11 +1,6 @@
 @use '../palette';
 
 .y-field-input {
-  &.y-input--filled .y-input__plate {
-    background: #fff;
-  }
-
-
   .y-field-input__field > input {
     padding-top: 7px;
     padding-bottom: 7px;

@@ -29,7 +29,7 @@ const dropdownItems = [
         ></y-progress-bar>
         <y-card-header> LAYER BASE </y-card-header>
         <y-card-body class="pt-4">
-          <div>
+          <div class="d-flex align-center">
             <y-menu position="bottom" offset="8" height="80">
               <template #base="{ props: menuProps }">
                 <y-tooltip position="top">
@@ -96,8 +96,13 @@ const dropdownItems = [
             >
               드롭다운
             </y-dropdown>
-
-            <y-field-input theme="dark" outlined></y-field-input>
+          </div>
+          <div class="d-flex pt-2">
+            <div style="flex: 0 0 50%">
+              <y-field-input theme="dark" variation="outlined"></y-field-input>
+            </div>
+            <y-field-input></y-field-input>
+            <y-select></y-select>
           </div>
         </y-card-body>
       </y-card>

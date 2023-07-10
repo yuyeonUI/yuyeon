@@ -10,37 +10,44 @@ import {
   watch,
 } from 'vue';
 
+import { useRender } from '../../composables/component';
+import { useFocus } from '../../composables/focus';
+import { chooseProps, propsFactory } from "../../util/vue-component";
 import { YIconClear } from '../icons/YIconClear';
 import { YInput, pressYInputPropsOptions } from '../input';
 
 import './YFieldInput.scss';
-import { chooseProps } from "../../util/vue-component";
 
 const NAME = 'y-field-input';
+
+export const pressYFieldInputPropsOptions = propsFactory({
+  clearable: Boolean as PropType<boolean>,
+  inputAlign: String as PropType<string>,
+  displayText: [String, Function] as PropType<
+    string | ((value: any) => string)
+  >,
+  whenInputValid: [Boolean, Number] as PropType<boolean | number>,
+  tabindex: {
+    type: String as PropType<string>,
+    default: '0',
+  },
+  type: {
+    type: String as PropType<string>,
+    default: 'text',
+  },
+  ...pressYInputPropsOptions({
+    variation: 'filled',
+  }),
+}, 'YFieldInput');
 
 export const YFieldInput = defineComponent({
   name: 'YFieldInput',
   props: {
-    ...pressYInputPropsOptions({
-      // ceramic: true,
-    }),
-    clearable: Boolean as PropType<boolean>,
-    inputAlign: String as PropType<string>,
-    displayText: [String, Function] as PropType<
-      string | ((value: any) => string)
-    >,
-    whenInputValid: [Boolean, Number] as PropType<boolean | number>,
-    tabindex: {
-      type: String as PropType<string>,
-      default: '0',
-    },
-    type: {
-      type: String as PropType<string>,
-      default: 'text',
-    },
+    ...pressYFieldInputPropsOptions(),
   },
   emits: [
     'update:modelValue',
+    'update:focused',
     'input',
     'change',
     'click',
@@ -50,18 +57,18 @@ export const YFieldInput = defineComponent({
     'keyup',
     'focus',
     'blur',
+    'mousedown:display',
   ],
   setup(props, { attrs, expose, emit, slots }) {
     const yInputRef = ref<YInput>();
     const inputRef = ref<HTMLInputElement>();
-    const isFocused = ref(false);
+    const { focused, whenFocus, whenBlur } = useFocus(props, 'y-field-input');
     const inValue = ref<any>('');
     const displayValue = ref('');
     const inputType = toRef(props, 'type');
 
     const classes = computed(() => {
       return {
-        'y-input--focused': isFocused.value,
         [NAME]: true,
       };
     });
@@ -76,13 +83,13 @@ export const YFieldInput = defineComponent({
     }
 
     function onFocus(event: FocusEvent) {
-      isFocused.value = true;
+      whenFocus();
       displayValue.value = inValue.value as string;
       emit('focus', event);
     }
 
     function onBlur(event: FocusEvent) {
-      isFocused.value = false;
+      whenBlur();
       invokeValidators();
       emit('blur', event);
       changeDisplay();
@@ -163,7 +170,7 @@ export const YFieldInput = defineComponent({
     );
 
     watch(inValue, (neo: string) => {
-      if (!isFocused.value) {
+      if (!focused.value) {
         changeDisplay();
       } else {
         displayValue.value = neo;
@@ -181,7 +188,7 @@ export const YFieldInput = defineComponent({
       emit('update:modelValue', value);
     }
 
-    return () =>
+    useRender(() =>
       h(
         YInput,
         {
@@ -191,6 +198,8 @@ export const YFieldInput = defineComponent({
           modelValue: inValue.value,
           'onUpdate:modelValue': onUpdateModel,
           onClick,
+          focused: focused.value,
+          "onMousedown:display": ($event) => emit('mousedown:display', $event),
         },
         {
           prepend: slots.prepend
@@ -267,7 +276,12 @@ export const YFieldInput = defineComponent({
             return slots['helper-text']?.();
           },
         },
-      );
+      ),
+    );
+
+    return {
+      focused,
+    };
   },
 });
 

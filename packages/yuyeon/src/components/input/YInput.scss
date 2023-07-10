@@ -38,7 +38,7 @@ $input-border-radius: variables.$border-radius-root !default;
   &__plate {
     position: absolute;
     inset: 0;
-    border-top: 1px solid transparent;
+    border-bottom: 1px solid transparent;
     contain: paint;
     border-radius: $input-border-radius;
     outline: 0 solid rgba(0, 0, 0, 0);

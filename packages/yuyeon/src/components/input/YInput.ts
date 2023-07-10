@@ -11,6 +11,7 @@ import DiMixin from '../../mixins/di';
 import { getSlot, propsFactory } from "../../util/vue-component";
 import './YInput.scss';
 import { pressThemePropsOptions, useLocalTheme } from "../../composables/theme";
+import { pressFocusPropsOptions, useFocus } from "../../composables/focus";
 
 const NAME = 'y-input';
 let uidCounter = 0;
@@ -25,11 +26,6 @@ export const pressYInputPropsOptions = propsFactory({
     type: String as PropType<string>,
     default: 'div',
   },
-  outlined: Boolean as PropType<boolean>,
-  filled: {
-    type: Boolean as PropType<boolean>,
-  },
-  ceramic: Boolean as PropType<boolean>,
   label: String as PropType<string>,
   modelValue: { type: [String, Number] as PropType<string | number> },
   autoSelect: {
@@ -39,6 +35,11 @@ export const pressYInputPropsOptions = propsFactory({
   floated: { type: Boolean as PropType<boolean>, default: () => false },
   placeholder: String as PropType<string>,
   loading: Boolean as PropType<boolean>,
+  // variations
+  variation: String as PropType<string>,
+  outlined: Boolean as PropType<boolean>,
+  filled: Boolean as PropType<boolean>,
+  ceramic: Boolean as PropType<boolean>,
   // validate
   readonly: Boolean as PropType<boolean>,
   disabled: Boolean as PropType<boolean>,
@@ -49,21 +50,21 @@ export const pressYInputPropsOptions = propsFactory({
     }
   },
   validators: Array as PropType<((v: any) => boolean | string)[] | string[]>,
+  ...pressFocusPropsOptions(),
 }, 'YInput');
 
 export const YInput = defineComponent({
-  name: NAME,
-  mixins: [DiMixin],
+  name: 'YInput',
+
   props: {
     ...pressThemePropsOptions(),
     ...pressYInputPropsOptions(),
   },
-  emits: ['error', 'click', 'mousedown', 'mouseup', 'focus', 'blur', 'click:prepend', 'update:modelValue'],
+  emits: ['error', 'click', 'mousedown', 'mouseup', 'focus', 'blur', 'mousedown:display', 'mouseup:display', 'click:prepend', 'update:modelValue', 'update:focused'],
   data() {
     const iid = uidCounter.toString();
     uidCounter += 1;
     return {
-      isFocused: false,
       iid,
       lazyValue: undefined as string | undefined,
       inValue: '' as string | number | undefined,
@@ -75,10 +76,10 @@ export const YInput = defineComponent({
   computed: {
     classes(): Record<string, boolean> {
       return {
-        'y-input--outlined': !this.ceramic && !!this.outlined,
-        'y-input--filled': !!this.filled,
-        'y-input--focused': this.isFocused,
         'y-input--ceramic': !!this.ceramic,
+        'y-input--outlined': !this.ceramic && (this.variations.includes('outlined') || !!this.outlined),
+        'y-input--filled': this.variations.includes('filled') || !!this.filled,
+        'y-input--focused': this.isFocused,
         'y-input--readonly': !!this.readonly,
         'y-input--has-value': !!this.inValue,
         'y-input--disabled': !!this.disabled,
@@ -109,10 +110,11 @@ export const YInput = defineComponent({
       );
     },
     formLoading(): boolean {
-      const form$ = (this as any).form$ as any;
-      if (form$) {
-        return form$.loading;
-      }
+      // TODO: composable `form` binding
+      // const form$ = (this as any)?.form$ as any;
+      // if (form$) {
+      //   return form$.loading;
+      // }
       return false;
     },
     isError(): boolean {
@@ -120,6 +122,15 @@ export const YInput = defineComponent({
     },
     isSuccess(): boolean {
       return !this.isError && this.status === 'success';
+    },
+    variations(): string[] {
+      const { variation } = this;
+      if (variation) {
+        return variation.split(',').map((value) => {
+          return value.trim();
+        });
+      }
+      return [];
     }
   },
   methods: {
@@ -215,8 +226,8 @@ export const YInput = defineComponent({
             [`${NAME}__display`]: true,
           },
           // onClick: this.onClick,
-          // onMousedown: this.onMousedown,
-          // onMouseup: this.onMouseup,
+          onMousedown: this.onMousedown,
+          onMouseup: this.onMouseup,
           ref: 'display',
           style: {
             ...this.displayStyles,
@@ -274,18 +285,18 @@ export const YInput = defineComponent({
     },
     onMousedown(e: Event) {
       this.hasMouseDown = true;
-      this.$emit('mousedown', e);
+      this.$emit('mousedown:display', e);
     },
     onMouseup(e: Event) {
       this.hasMouseDown = false;
-      this.$emit('mouseup', e);
+      this.$emit('mouseup:display', e);
     },
     onFocus(event: FocusEvent) {
-      this.isFocused = true;
+      this.whenFocus();
       this.$emit('focus', event);
     },
     onBlur(event: FocusEvent) {
-      this.isFocused = false;
+      this.whenBlur();
       this.invokeValidators();
       this.$emit('blur', event);
     },
@@ -358,8 +369,13 @@ export const YInput = defineComponent({
   },
   setup(props) {
     const { themeClasses } = useLocalTheme(props);
+    const { focused: isFocused, focusedClasses, whenFocus, whenBlur } = useFocus(props, 'y-input');
     return {
-      themeClasses
+      themeClasses,
+      isFocused,
+      focusedClasses,
+      whenFocus,
+      whenBlur,
     }
   },
   render(): VNode {

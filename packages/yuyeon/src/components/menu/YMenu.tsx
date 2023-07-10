@@ -24,6 +24,10 @@ export const YMenuPropOptions = {
     type: Boolean as PropType<boolean>,
     default: false,
   },
+  openOnClickBase: {
+    type: Boolean as PropType<boolean>,
+    default: true,
+  },
   closeOnClick: {
     type: Boolean,
   },
@@ -84,13 +88,17 @@ export const YMenu = defineComponent({
     }
 
     function onClick(e: MouseEvent) {
+      e.stopPropagation();
+      if (!props.openOnClickBase) {
+        return;
+      }
       const currentActive = active.value;
       if (!props.disabled) {
         active.value = !currentActive;
       }
     }
 
-    function onComplementClick(e: MouseEvent) {
+    function onComplementClick(e: Event) {
       if (active.value) {
         active.value = false;
       }

@@ -22,3 +22,4 @@ export * from './checkbox';
 export * from './pagination';
 export * from './loading';
 export * from './dropdown';
+export * from './select';

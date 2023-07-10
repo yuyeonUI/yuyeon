@@ -19,7 +19,7 @@ declare global {
 export interface ComplementClickBindingOptions {
   handler: (mouseEvent: MouseEvent) => void;
   determine?: (event: Event) => boolean;
-  include?: () => HTMLElement[];
+  include?: () => (HTMLElement | undefined)[];
 }
 
 export interface ComplementClickBinding extends DirectiveBinding {

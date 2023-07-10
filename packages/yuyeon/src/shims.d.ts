@@ -32,6 +32,7 @@ import {
   YTooltip,
   YTreeView,
   YTreeViewNode,
+  YSelect,
 } from 'yuyeon/types/components';
 
 declare module '@vue/runtime-core' {
@@ -69,5 +70,6 @@ declare module '@vue/runtime-core' {
     YCheckbox: typeof YCheckbox;
     YSwitch: typeof YSwitch;
     YDropdown: typeof YDropdown;
+    YSelect: typeof YSelect;
   }
 }

@@ -146,7 +146,7 @@ export const YLayer = defineComponent({
     const complementClickOption = reactive<ComplementClickBindingOptions>({
       handler: onClickComplementLayer,
       determine: closeConditional,
-      include: () => [],
+      include: () => [baseEl.value],
     });
 
     function onAfterEnter() {
@@ -285,6 +285,7 @@ export const YLayer = defineComponent({
       onAfterUpdate: onAfterUpdate as () => void,
       scrim$,
       content$,
+      baseEl,
       polyTransitionBindProps,
       coordinateStyles,
     };
