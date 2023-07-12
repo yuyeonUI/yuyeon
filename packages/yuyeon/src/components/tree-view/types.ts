@@ -14,4 +14,4 @@ export interface NodeState {
   expanded: false;
 }
 
-export type TreeviewFilterFn = (item: any, search: string, textKey: string) => boolean;
+export type TreeviewFilterFn = (item: any, search: string, itemText: string) => boolean;

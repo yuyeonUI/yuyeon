@@ -38,10 +38,10 @@ export const YDropdown = defineComponent({
   },
   emits: ['update:modelValue', 'click'],
   setup(props, { slots, attrs, emit }) {
-    const active = useModelDuplex(props);
+    const opened = useModelDuplex(props);
 
     function onClickItem(item: any) {
-      active.value = false;
+      opened.value = false;
       emit('click', item);
     }
 
@@ -49,7 +49,7 @@ export const YDropdown = defineComponent({
       return (
         <>
           <YMenu
-            v-model={active.value}
+            v-model={opened.value}
             position={props.position}
             content-classes={['y-dropdown__content']}
           >
@@ -63,7 +63,7 @@ export const YDropdown = defineComponent({
                     color={props.color}
                     class={[
                       'y-dropdown',
-                      { 'y-dropdown--active': active.value },
+                      { 'y-dropdown--opened': opened.value },
                     ]}
                     {...attrs}
                   >
@@ -91,7 +91,7 @@ export const YDropdown = defineComponent({
                         {props.items.map((item) => {
                           const text = getObjectValueByPath(
                             item,
-                            props.textKey,
+                            props.itemText,
                           );
                           return (
                             <YListItem onClick={(e) => onClickItem(item)}>

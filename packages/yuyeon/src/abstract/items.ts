@@ -12,9 +12,13 @@ export const pressItemsPropsOptions = propsFactory(
       type: String as PropType<string>,
       default: 'key',
     },
-    textKey: {
+    itemText: {
       type: String as PropType<string>,
       default: 'text',
+    },
+    itemChildren: {
+      type: [Boolean, String] as PropType<boolean | string>,
+      default: 'children',
     },
   },
   'abstract.items',

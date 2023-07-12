@@ -1,5 +1,5 @@
+import type { PropType } from 'vue';
 import {
-  PropType,
   computed,
   defineComponent,
   getCurrentInstance,
@@ -12,7 +12,7 @@ import {
 
 import { useRender } from '../../composables/component';
 import { useFocus } from '../../composables/focus';
-import { chooseProps, propsFactory } from "../../util/vue-component";
+import { chooseProps, propsFactory } from '../../util/vue-component';
 import { YIconClear } from '../icons/YIconClear';
 import { YInput, pressYInputPropsOptions } from '../input';
 
@@ -20,25 +20,28 @@ import './YFieldInput.scss';
 
 const NAME = 'y-field-input';
 
-export const pressYFieldInputPropsOptions = propsFactory({
-  clearable: Boolean as PropType<boolean>,
-  inputAlign: String as PropType<string>,
-  displayText: [String, Function] as PropType<
-    string | ((value: any) => string)
-  >,
-  whenInputValid: [Boolean, Number] as PropType<boolean | number>,
-  tabindex: {
-    type: String as PropType<string>,
-    default: '0',
+export const pressYFieldInputPropsOptions = propsFactory(
+  {
+    enableClear: Boolean as PropType<boolean>,
+    inputAlign: String as PropType<string>,
+    displayText: [String, Function] as PropType<
+      string | ((value: any) => string)
+    >,
+    whenInputValid: [Boolean, Number] as PropType<boolean | number>,
+    tabindex: {
+      type: String as PropType<string>,
+      default: '0',
+    },
+    type: {
+      type: String as PropType<string>,
+      default: 'text',
+    },
+    ...pressYInputPropsOptions({
+      variation: 'filled',
+    }),
   },
-  type: {
-    type: String as PropType<string>,
-    default: 'text',
-  },
-  ...pressYInputPropsOptions({
-    variation: 'filled',
-  }),
-}, 'YFieldInput');
+  'YFieldInput',
+);
 
 export const YFieldInput = defineComponent({
   name: 'YFieldInput',
@@ -199,19 +202,19 @@ export const YFieldInput = defineComponent({
           'onUpdate:modelValue': onUpdateModel,
           onClick,
           focused: focused.value,
-          "onMousedown:display": ($event) => emit('mousedown:display', $event),
+          'onMousedown:display': ($event) => emit('mousedown:display', $event),
         },
         {
-          prepend: slots.prepend
+          leading: slots.leading
             ? (...args: any[]) => {
-                const prepends = [];
-                const slot = slots.prepend?.(...args);
+                const leadingChildren = [];
+                const slot = slots.leading?.(...args);
                 if (slot) {
-                  prepends.push(slot);
+                  leadingChildren.push(slot);
                 } else {
                   return undefined;
                 }
-                return prepends;
+                return leadingChildren;
               }
             : undefined,
           default: (defaultProps: any) =>
@@ -224,6 +227,7 @@ export const YFieldInput = defineComponent({
               },
               [
                 YInput.methods!.createLabel.call(yInputRef),
+                slots.default?.(),
                 h('input', {
                   '.value': displayValue.value,
                   '.id': defaultProps.attrId,
@@ -248,29 +252,35 @@ export const YFieldInput = defineComponent({
                 }),
               ],
             ),
-          append: () => {
-            const appends = [];
-            if (props.clearable && inValue.value) {
-              appends.push(
-                h('div', { class: 'y-input__append y-input__append--clear' }, [
-                  h(
-                    'button',
-                    {
-                      class: `${NAME}__clear`,
-                      onClick: onClickClear,
-                      onKeydown: onKeydownClear,
-                      '^tabindex': '2',
-                    },
-                    [h(YIconClear)],
-                  ),
-                ]),
+          trailing: () => {
+            const trailingChildren = [];
+            if (props.enableClear && inValue.value) {
+              trailingChildren.push(
+                h(
+                  'div',
+                  { class: 'y-input__trailing y-input__trailing--clear' },
+                  [
+                    h(
+                      'button',
+                      {
+                        class: `${NAME}__clear`,
+                        onClick: onClickClear,
+                        onKeydown: onKeydownClear,
+                        '^tabindex': '2',
+                      },
+                      [h(YIconClear)],
+                    ),
+                  ],
+                ),
               );
             }
-            const slot = slots.append;
+            const slot = slots.trailing;
             if (slot) {
-              appends.push(h('div', { class: 'y-input__append' }, slot()));
+              trailingChildren.push(
+                h('div', { class: 'y-input__trailing' }, slot()),
+              );
             }
-            return appends;
+            return trailingChildren;
           },
           'helper-text': () => {
             return slots['helper-text']?.();

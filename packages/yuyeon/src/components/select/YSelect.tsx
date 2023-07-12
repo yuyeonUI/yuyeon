@@ -1,21 +1,66 @@
+import { shallowRef } from '@vue/runtime-core';
 import type { PropType } from 'vue';
-import { defineComponent, mergeProps, ref } from 'vue';
+import { computed, defineComponent, mergeProps, ref } from 'vue';
 
-import { pressItemsPropsOptions } from '../../abstract/items';
 import { useModelDuplex } from '../../composables/communication';
 import { useRender } from '../../composables/component';
 import { pressCoordinateProps } from '../../composables/coordinate';
-import { getObjectValueByPath, omit } from '../../util/common';
+import {
+  ListItem,
+  pressListItemsPropsOptions,
+  useItems,
+} from '../../composables/list-items';
+import { wrapInArray } from '../../util/array';
+import { deepEqual, getObjectValueByPath, omit } from '../../util/common';
 import { propsFactory } from '../../util/vue-component';
 import { YCard } from '../card';
 import { YFieldInput, pressYFieldInputPropsOptions } from '../field-input';
+import { YIconDropdown } from '../icons/YIconDropdown';
 import { YList, YListItem } from '../list';
 import { YMenu } from '../menu';
 
-export const pressYSelectPropsOptions = propsFactory(
+import './YSelect.scss';
+
+export type SelectEquals = (
+  optionsItem: any,
+  valueItem: any,
+  valueKey?: string,
+) => boolean;
+
+export function returnItemEquals(
+  optionsItem: any,
+  valueItem: any,
+  valueKey = 'value',
+) {
+  const valueItemType = typeof valueItem;
+  const itemValue =
+    valueItemType === 'string' || valueItemType === 'number'
+      ? getObjectValueByPath(optionsItem, valueKey)
+      : optionsItem;
+  return deepEqual(itemValue, valueItem);
+}
+
+export const pressSelectPropsOptions = propsFactory(
   {
     opened: Boolean as PropType<boolean>,
-    ...pressItemsPropsOptions(),
+    multiple: Boolean,
+    weakEquals: Boolean,
+    valueEquals: {
+      type: Function as PropType<SelectEquals>,
+      default: deepEqual,
+    },
+    ...pressListItemsPropsOptions(),
+  },
+  'Select',
+);
+
+export const pressYSelectPropsOptions = propsFactory(
+  {
+    maxHeight: {
+      type: [Number, String],
+      default: 310,
+    },
+    ...pressSelectPropsOptions(),
     ...pressYFieldInputPropsOptions(),
     ...omit(pressCoordinateProps({ position: 'bottom' as 'bottom' }), [
       'coordinateStrategy',
@@ -30,14 +75,42 @@ export const YSelect = defineComponent({
     ...pressYSelectPropsOptions(),
   },
   emits: {
+    'update:modelValue': (value: any) => true,
     'update:opened': (opened: boolean) => true,
   },
   setup(props, { slots }) {
-    const opened = useModelDuplex(props, 'opened');
-
-    const menuRef = ref();
     const fieldInputRef = ref();
+    const menuRef = ref();
+    const listRef = ref<InstanceType<typeof YList>>();
 
+    const opened = useModelDuplex(props, 'opened');
+    const focused = shallowRef(false);
+
+    const { items, toRefineItems, toEmitItems } = useItems(props);
+    const model = useModelDuplex(
+      props,
+      'modelValue',
+      [],
+      (v) => toRefineItems(v === null ? [null] : wrapInArray(v)),
+      (v) => {
+        const emitValue = toEmitItems(wrapInArray(v));
+        return props.multiple ? emitValue : emitValue[0] ?? null;
+      },
+    );
+
+    const selections = computed<ListItem[]>(() => {
+      return model.value.map((v: any) => {
+        return items.value.find((item) => {
+          return props.valueEquals(item.value, v.value);
+        });
+      });
+    });
+
+    const selected = computed(() => {
+      return selections.value.map((selection) => selection.props.value);
+    });
+
+    // Field
     function onMousedownDisplay(event: MouseEvent) {
       if (props.disabled) {
         return;
@@ -45,9 +118,40 @@ export const YSelect = defineComponent({
       opened.value = !opened.value;
     }
 
-    function onClickItem(item: any) {
-      //
+    function onBlur(event: FocusEvent) {
+      if (listRef.value?.$el.contains(event.relatedTarget)) {
+        opened.value = false;
+      }
     }
+
+    // Menu Contents
+    function onClickItem(item: ListItem) {
+      select(item);
+      if (!props.multiple) {
+        opened.value = false;
+      }
+    }
+
+    function onAfterLeave() {
+      if (focused.value) {
+        fieldInputRef.value?.focus();
+      }
+    }
+
+    function select(item: ListItem) {
+      if (props.multiple) {
+        //
+      } else {
+        model.value = [item];
+      }
+    }
+
+    const displayText = computed(() => {
+      if (props.multiple) {
+        return selections.value.map((item) => item.text).join(', ');
+      }
+      return selections.value?.[0]?.text ?? '';
+    });
 
     useRender(() => {
       return (
@@ -56,8 +160,9 @@ export const YSelect = defineComponent({
           ref={menuRef}
           position={props.position}
           content-classes={['y-select__content']}
-          maxHeight={ 310 }
+          maxHeight={props.maxHeight}
           open-on-click-base={false}
+          onAfterLeave={onAfterLeave}
         >
           {{
             base: (...args: any[]) =>
@@ -65,24 +170,46 @@ export const YSelect = defineComponent({
                 slots.base?.(...args)
               ) : (
                 <YFieldInput
-                  class={['y-select', { 'y-select--opened': opened.value }]}
-                  onMousedown:display={onMousedownDisplay}
-                  readonly
                   {...mergeProps({ ...args[0].props }, { ref: fieldInputRef })}
-                ></YFieldInput>
+                  onMousedown:display={onMousedownDisplay}
+                  onBlur={onBlur}
+                  readonly
+                  class={['y-select', { 'y-select--opened': opened.value }]}
+                  v-model:focused={focused.value}
+                >
+                  {{
+                    default: () => {
+                      return (
+                        <div class={['y-select__selection']}>
+                          {slots.selection
+                            ? slots.selection?.()
+                            : displayText.value}
+                        </div>
+                      );
+                    },
+                    trailing: (...args: any[]) => {
+                      return slots['expand-icon'] ? (
+                        slots['expand-icon']()
+                      ) : (
+                        <i class="y-select__icon">
+                          <YIconDropdown></YIconDropdown>
+                        </i>
+                      );
+                    },
+                  }}
+                </YFieldInput>
               ),
             default: () =>
               slots.menu ? (
                 slots.menu()
               ) : (
                 <YCard>
-                  {Array.isArray(props.items) && props.items.length > 0 ? (
-                    <YList>
-                      {props.items.map((item) => {
-                        const text = getObjectValueByPath(item, props.textKey);
+                  {items.value.length > 0 ? (
+                    <YList ref={listRef}>
+                      {items.value.map((item) => {
                         return (
                           <YListItem onClick={(e) => onClickItem(item)}>
-                            {text}
+                            {item.text}
                           </YListItem>
                         );
                       })}
@@ -99,6 +226,8 @@ export const YSelect = defineComponent({
 
     return {
       fieldInputRef,
+      model,
+      selections,
     };
   },
 });

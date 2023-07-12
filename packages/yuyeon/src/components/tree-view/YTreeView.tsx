@@ -36,10 +36,6 @@ const treeViewNodeProps = pressYTreeViewNodeProps();
 export const YTreeView = defineComponent({
   name: 'YTreeView',
   props: {
-    items: {
-      type: Array as PropType<any[]>,
-      default: () => [],
-    },
     expanded: {
       type: [Array] as PropType<CandidateKey[]>,
       default: () => [],
@@ -108,8 +104,8 @@ export const YTreeView = defineComponent({
           item,
           search ?? '',
           props.itemKey,
-          props.textKey,
-          props.childrenKey,
+          props.itemText,
+          props.itemChildren as string,
           excluded,
         );
       }
@@ -150,7 +146,7 @@ export const YTreeView = defineComponent({
     ) {
       for (const item of items) {
         const key = getObjectValueByPath(item, props.itemKey);
-        const children = getObjectValueByPath(item, props.childrenKey) ?? [];
+        const children = getObjectValueByPath(item, props.itemChildren as string) ?? [];
         const exist = hasOwnProperty(nodes.value, key);
         const existNode = exist
           ? nodes.value[key]
@@ -195,7 +191,7 @@ export const YTreeView = defineComponent({
     function updateExpanded(key: CandidateKey, to: boolean) {
       if (!(key in nodes.value)) return;
       const node = nodes.value[key];
-      const children = getObjectValueByPath(node.item, props.childrenKey);
+      const children = getObjectValueByPath(node.item, props.itemChildren as string);
       if (Array.isArray(children) && children.length > 0) {
         to ? expandedSet.value.add(key) : expandedSet.value.delete(key);
         node.expanded = to;
@@ -341,7 +337,7 @@ export const YTreeView = defineComponent({
         const oldKeys = Object.keys(nodes.value).map((nodeKey) =>
           getObjectValueByPath(nodes.value[nodeKey].item, props.itemKey),
         );
-        const neoKeys = getKeys(neo, props.itemKey, props.childrenKey);
+        const neoKeys = getKeys(neo, props.itemKey, props.itemChildren as string);
         const diff = differenceBetween(oldKeys, neoKeys);
         if (diff.length < 1 && neoKeys.length < oldKeys.length) {
           return;

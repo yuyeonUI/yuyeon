@@ -49,12 +49,12 @@ export const YListItem = defineComponent({
           ]}
           onClick={onClick}
         >
-          {slots.prepend && (
-            <div class={'y-list-item__prepend'}>{slots.prepend()}</div>
+          {slots.leading && (
+            <div class={'y-list-item__leading'}>{slots.leading()}</div>
           )}
           <div class={'y-list-item__content'}>{slots.default?.()}</div>
-          {slots.append && (
-            <div class={'y-list-item__append'}>{slots.append()}</div>
+          {slots.trailing && (
+            <div class={'y-list-item__trailing'}>{slots.trailing()}</div>
           )}
         </ElTag>
       );

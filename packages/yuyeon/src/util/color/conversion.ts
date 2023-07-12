@@ -22,6 +22,18 @@ export function colorHexToRgb(color: string): number[] | undefined {
   return undefined;
 }
 
+export function hexFromRgb(red: number, green: number, blue: number) {
+  const hex = (
+      (((red & 255) << 16) | ((green & 255) << 8) | (blue & 255)) >>>
+      0
+  ).toString(16);
+  return `#${hex}`;
+}
+
+export function rgbHexFromArgb(argb: number) {
+  return `#${((argb & (16777215))).toString(16)}`
+}
+
 /**
  * Converts a color from RGB components to ARGB format.
  */

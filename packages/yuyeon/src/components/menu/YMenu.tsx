@@ -52,7 +52,7 @@ export const YMenu = defineComponent({
       default: 'fade',
     },
   },
-  emits: ['update:modelValue'],
+  emits: ['update:modelValue', 'afterLeave'],
   setup(props, { slots, emit, expose }) {
     const el$ = ref<typeof YLayer>();
 
@@ -141,6 +141,7 @@ export const YMenu = defineComponent({
             ref={el$}
             transition={props.transition}
             onClick:complement={onComplementClick}
+            onAfterLeave={() => emit('afterLeave')}
             {...{
               ...chooseProps(props, YLayer.props),
               classes: classes.value,

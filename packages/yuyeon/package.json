@@ -2,7 +2,8 @@
   "name": "yuyeon",
   "version": "0.0.14",
   "keywords": [
-    "UI Library", "Vue"
+    "UI Library",
+    "Vue"
   ],
   "repository": {
     "type": "git",

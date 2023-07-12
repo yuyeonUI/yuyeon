@@ -7,6 +7,10 @@ export const ThemeScheme = {
   dark: 'dark',
 } as const;
 
+export const defaultTonalLuminance = [
+  0, 10, 20, 25, 30, 35, 40, 50, 60, 70, 80, 90, 95, 98, 99, 100,
+];
+
 export const defaultPalette: PaletteOption = {
   scaleMethod: 'tonal',
   colors: {

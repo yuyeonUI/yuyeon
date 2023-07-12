@@ -60,7 +60,7 @@ export const YInput = defineComponent({
     ...pressThemePropsOptions(),
     ...pressYInputPropsOptions(),
   },
-  emits: ['error', 'click', 'mousedown', 'mouseup', 'focus', 'blur', 'mousedown:display', 'mouseup:display', 'click:prepend', 'update:modelValue', 'update:focused'],
+  emits: ['error', 'click', 'mousedown', 'mouseup', 'focus', 'blur', 'mousedown:display', 'mouseup:display', 'click:leading', 'update:modelValue', 'update:focused'],
   data() {
     const iid = uidCounter.toString();
     uidCounter += 1;
@@ -134,16 +134,16 @@ export const YInput = defineComponent({
     }
   },
   methods: {
-    createPrependOuter(): VNode | undefined {
-      const slot = getSlot(this, 'prepend-outer');
+    createPrepend(): VNode | undefined {
+      const slot = getSlot(this, 'prepend');
       return slot
-        ? h('div', { class: `${NAME}__prepend-outer` }, slot)
+        ? h('div', { class: `${NAME}__prepend` }, slot)
         : undefined;
     },
-    createAppendOuter(): VNode | undefined {
-      const slot = getSlot(this, 'append-outer');
+    createAppend(): VNode | undefined {
+      const slot = getSlot(this, 'append');
       return slot
-        ? h('div', { class: `${NAME}__append-outer` }, slot)
+        ? h('div', { class: `${NAME}__append` }, slot)
         : undefined;
     },
     createLabelSlot(): (VNode | string | VNode[])[] {
@@ -195,21 +195,21 @@ export const YInput = defineComponent({
         this.createDefaultChildren(),
       );
     },
-    createPrepend(): VNode | undefined {
-      const slot = getSlot(this, 'prepend', { error: this.isError });
+    createLeading(): VNode | undefined {
+      const slot = getSlot(this, 'leading', { error: this.isError });
       return slot
         ? h(
           'div',
           {
-            class: 'y-input__prepend',
-            onClick: this.onClickPrepend,
+            class: 'y-input__leading',
+            onClick: this.onClickLeading,
           },
           slot,
         )
         : undefined;
     },
-    createAppend(): VNode | VNode[] | undefined {
-      return getSlot(this, 'append');
+    createTrailing(): VNode | VNode[] | undefined {
+      return getSlot(this, 'trailing');
     },
     getDisplayHeight() {
       const { height } = this;
@@ -235,9 +235,9 @@ export const YInput = defineComponent({
         },
         [
           h('div', { class: `${NAME}__plate` }),
-          this.createPrepend(),
+          this.createLeading(),
           this.createDefault(),
-          this.createAppend(),
+          this.createTrailing(),
         ],
       );
     },
@@ -269,9 +269,9 @@ export const YInput = defineComponent({
     },
     createContent(): (VNode | undefined)[] {
       return [
-        this.createPrependOuter(),
+        this.createPrepend(),
         this.createStack(),
-        this.createAppendOuter(),
+        this.createAppend(),
       ];
     },
     //
@@ -300,8 +300,8 @@ export const YInput = defineComponent({
       this.invokeValidators();
       this.$emit('blur', event);
     },
-    onClickPrepend(event: MouseEvent) {
-      this.$emit('click:prepend', event);
+    onClickLeading(event: MouseEvent) {
+      this.$emit('click:leading', event);
     },
     onChange(event?: Event) {
       this.invokeValidators();

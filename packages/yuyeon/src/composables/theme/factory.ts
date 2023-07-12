@@ -1,8 +1,9 @@
 import { ThemeDefinition } from './types';
 
-import { argbFromRgb, colorHexToRgb, rgbaFromArgb } from "../../util/color";
+import {argbFromRgb, colorHexToRgb, hexFromRgb, rgbaFromArgb, rgbHexFromArgb} from "../../util/color";
 import { APCAcontrast, sRGBtoY } from '../../util/color/apca';
 import { TonalPalette } from '../../util/color/palettes/tonal_palette';
+import {defaultTonalLuminance} from "./setting";
 
 export function createThemes(options: Record<string, any>) {
   const acc: Record<'light' | 'dark' | string, ThemeDefinition> = {};
@@ -16,10 +17,17 @@ export function createThemes(options: Record<string, any>) {
     });
 
     const keyColor = TonalPalette.fromInt(
-      argbFromRgb(...(colorHexToRgb('#FF62a1') as [number, number, number])),
+      argbFromRgb(...(colorHexToRgb('#6750A4') as [number, number, number])),
       //#d09220
     );
-    console.log(rgbaFromArgb(keyColor.tone(40)));
+    const rgba = rgbaFromArgb(keyColor.tone(60));
+    // const hctPrime = keyColor.getHct(50);
+    console.log(rgba, hexFromRgb(rgba.r, rgba.g, rgba.b), rgbHexFromArgb(TonalPalette.fromHueAndChroma(keyColor.hue, 2.0).tone(40)));
+    const scales: string[] = [];
+    defaultTonalLuminance.forEach((tone) => {
+      scales.push(rgbHexFromArgb(keyColor.tone(tone)));
+    })
+    console.log(scales);
 
     for (const color of Object.keys(theme.colors)) {
       if (/^on-[a-z]/.test(color) || theme.colors[`on-${color}`]) continue;
@@ -44,10 +52,6 @@ export function createThemes(options: Record<string, any>) {
 
   return acc;
 }
-
-const defaultLuminance = [
-  0, 10, 20, 25, 30, 35, 40, 50, 60, 70, 80, 90, 95, 98, 99, 100,
-];
 
 export function createPalette(options: Record<string, string | any>) {
   const acc: Record<string, string> = {};

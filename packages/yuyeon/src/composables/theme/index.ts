@@ -68,7 +68,7 @@ export function createThemeModule(options: ThemeOptions) {
   });
 
   const styles = computed(() => {
-    computedThemes.value;
+    computedPalette.value;
     return ':root { --y-theme-test: 0,0,0; }';
   });
 
@@ -165,7 +165,7 @@ export function useLocalTheme(props: { theme?: string }) {
     null,
   );
 
-  if (!themeModule) throw new Error('Not found "Theme" Module');
+  if (!themeModule) throw new Error('Not found provided "ThemeModule"');
 
   const palette = themeModule.computedPalette;
 
@@ -181,11 +181,8 @@ export function useLocalTheme(props: { theme?: string }) {
           return props.theme;
       }
     }
-    console.log(palette);
     return unref(themeModule.currentThemeKey);
   });
-
-
 
   const themeClasses = computed(() => `y-theme--${currentThemeKey.value}`);
 
@@ -205,7 +202,7 @@ export function useTheme() {
 
   const theme = inject<ThemeModuleInstance | null>(YUYEON_THEME_KEY, null);
 
-  if (!theme) throw new Error('Not found "Theme" Provide');
+  if (!theme) throw new Error('Not found provided "ThemeModule"');
 
   return theme;
 }

@@ -97,12 +97,12 @@ const dropdownItems = [
               드롭다운
             </y-dropdown>
           </div>
-          <div class="d-flex pt-2">
+          <div class="d-flex pt-2" style="gap: 8px;">
             <div style="flex: 0 0 50%">
               <y-field-input theme="dark" variation="outlined"></y-field-input>
             </div>
             <y-field-input></y-field-input>
-            <y-select></y-select>
+            <y-select :items="dropdownItems"></y-select>
           </div>
         </y-card-body>
       </y-card>

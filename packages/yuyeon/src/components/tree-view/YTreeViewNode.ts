@@ -17,22 +17,11 @@ import YTextHighlighter from '../text-highlighter/YTextHighlighter';
 
 import { YIconCheckbox, YIconExpand } from '../icons';
 import { YExpandVTransition } from '../transitions';
+import { pressItemsPropsOptions } from "../../abstract/items";
 
 export const pressYTreeViewNodeProps = propsFactory(
   {
     search: String,
-    itemKey: {
-      type: String as PropType<string>,
-      default: 'id',
-    },
-    textKey: {
-      type: String as PropType<string>,
-      default: 'text',
-    },
-    childrenKey: {
-      type: String as PropType<string>,
-      default: 'children',
-    },
     disableTransition: Boolean,
     enableActive: Boolean,
     activeClass: [String, Array],
@@ -42,6 +31,9 @@ export const pressYTreeViewNodeProps = propsFactory(
       default: 'primary',
     },
     enableSelect: Boolean,
+    ...pressItemsPropsOptions({
+      itemKey: 'id',
+    }),
   },
   'YTreeViewNode',
 );
@@ -96,7 +88,7 @@ export const YTreeViewNode = defineComponent({
     }
 
     const children = computed(() => {
-      return props.item?.[props.childrenKey] ?? [];
+      return props.item?.[props.itemChildren as string] ?? [];
     });
 
     const imLeaf = computed(() => children.value.length < 1);
@@ -117,7 +109,7 @@ export const YTreeViewNode = defineComponent({
     });
 
     const contentText = computed(() => {
-      return getObjectValueByPath(props.item, props.textKey) ?? '';
+      return getObjectValueByPath(props.item, props.itemText) ?? '';
     });
 
     const slotProps = computed(() => {

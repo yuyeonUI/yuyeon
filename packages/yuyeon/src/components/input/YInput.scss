@@ -12,8 +12,8 @@ $input-border-radius: variables.$border-radius-root !default;
   letter-spacing: normal;
   text-align: left;
 
-  &__prepend-outer,
-  &__append-outer {
+  &__prepend,
+  &__append {
     height: 100%;
   }
 
@@ -108,7 +108,7 @@ $input-border-radius: variables.$border-radius-root !default;
     }
   }
 
-  &__prepend {
+  &__leading {
     position: relative;
     display: inline-flex;
     margin-top: 10px;
@@ -122,7 +122,7 @@ $input-border-radius: variables.$border-radius-root !default;
     }
   }
 
-  &__append {
+  &__trailing {
     position: relative;
     display: inline-flex;
     justify-content: center;
@@ -188,7 +188,7 @@ $input-border-radius: variables.$border-radius-root !default;
       outline: 1px solid rgba(var(--y-palette--primary, #4f97dc), 0.1);
     }
 
-    .y-input__prepend {
+    .y-input__leading {
       color: currentColor;
     }
   }
