@@ -31,8 +31,8 @@
  * and a difference of 50 guarantees a contrast ratio >= 4.5.
  */
 import { Cam16 } from './cam16';
-import { HctSolver } from './hct_solver';
-import { ViewingConditions } from './viewing_conditions';
+import { HctSolver } from './hct-solver';
+import { ViewingConditions } from './viewing-conditions';
 import { lstarFromArgb, lstarFromY } from "../conversion";
 
 /**

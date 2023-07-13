@@ -1,10 +1,9 @@
 import { ThemeScheme } from "./setting";
 
 export interface ThemeOptions {
-  mode: 'manual'; // TODO: 'auto' => apply [prefers-color-scheme]
-  scheme: 'light' | 'dark' | 'normal';
-  theme: string | [string, string];
-  themes: any;
+  scheme: 'light' | 'dark' | 'auto';
+  theme: [string, string?];
+  themes: Record<string, ThemeDefinition>;
   palette?: PaletteOption;
   cspNonce?: string;
 }
@@ -28,7 +27,7 @@ export type PaletteLumaColorOption = {
 }
 
 export interface ThemeDefinition {
-  scheme: keyof typeof ThemeScheme | 'normal';
+  isDark: boolean;
   colors: Record<string, string>;
   variables: Record<string, string>;
 }

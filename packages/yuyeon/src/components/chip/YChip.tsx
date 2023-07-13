@@ -3,7 +3,7 @@ import { defineComponent } from 'vue';
 import { hasOwnProperty } from '../../util/common';
 
 import './YChip.scss';
-import { colorHexToRgb } from "../../util/color";
+import { rgbFromHex } from "../../util/color";
 
 export default defineComponent({
   name: 'y-chip',
@@ -41,7 +41,7 @@ export default defineComponent({
   methods: {
     colorRgb(color: string): string {
       if (color?.startsWith('#')) {
-        return colorHexToRgb(color)?.join(',') || '';
+        return rgbFromHex(color)?.join(',') || '';
       }
       const RGBA_REGEX = /rgb(a?)\((?<v>.*)\)/;
       if (RGBA_REGEX.test(color)) {

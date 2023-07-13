@@ -88,7 +88,7 @@ export const YButton = defineComponent({
     styles(): Record<string, any> {
       let { color } = this;
       if (color && !isColorValue(color)) {
-        color = `rgba(var(--y-theme--${color}), 1)`;
+        color = `rgba(var(--y-theme-${color}), 1)`;
       }
       return {
         [`--y-button__color`]: color,

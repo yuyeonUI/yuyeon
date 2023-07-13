@@ -1,8 +1,8 @@
 import { SRGB_TO_XYZ, WHITE_POINT_D65, XYZ_TO_SRGB } from './const';
 import { Rgba } from './types';
-import * as mathUtils from './utils/math_utils';
+import * as mathUtils from './utils/math-utils';
 
-export function colorHexToRgb(color: string): number[] | undefined {
+export function rgbFromHex(color: string): number[] | undefined {
   if (color && color[0] === '#') {
     const hexCodeStr = color.substring(1, color.length);
     const hexCodeLength = hexCodeStr.length;
@@ -24,14 +24,16 @@ export function colorHexToRgb(color: string): number[] | undefined {
 
 export function hexFromRgb(red: number, green: number, blue: number) {
   const hex = (
-      (((red & 255) << 16) | ((green & 255) << 8) | (blue & 255)) >>>
-      0
-  ).toString(16);
+    (((red & 255) << 16) | ((green & 255) << 8) | (blue & 255)) >>>
+    0
+  )
+    .toString(16)
+    .padStart(6, '0');
   return `#${hex}`;
 }
 
-export function rgbHexFromArgb(argb: number) {
-  return `#${((argb & (16777215))).toString(16)}`
+export function hexFromArgb(argb: number) {
+  return `#${(argb & 16777215).toString(16)}`;
 }
 
 /**

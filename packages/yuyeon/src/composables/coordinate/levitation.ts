@@ -1,7 +1,7 @@
 import type { CSSProperties, Ref } from 'vue';
 import { computed, nextTick, onScopeDispose, ref, watch } from "vue";
 
-import { MutableRect, Rect, getOverflow } from '../../util/Rect';
+import { MutableRect, Rect, getOverflow } from '../../util/rect';
 import { $computed } from '../../util/reactivity';
 import { getScrollParents } from '../../util/scroll';
 import { getBoundingPureRect, pixelCeil, pixelRound, toStyleSizeValue } from "../../util/ui";

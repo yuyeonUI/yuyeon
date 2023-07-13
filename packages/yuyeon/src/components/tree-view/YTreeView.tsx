@@ -410,7 +410,7 @@ export const YTreeView = defineComponent({
     const styles = computed(() => {
       let color = props.activeColor;
       if (props.activeColor && !isColorValue(props.activeColor)) {
-        color = `rgba(var(--y-theme--${props.activeColor}), 1)`;
+        color = `rgba(var(--y-theme-${props.activeColor}), 1)`;
       }
       return {
         [`--y-tree-view__active-color`]: color,

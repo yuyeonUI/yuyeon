@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, shallowRef } from "vue";
+import { useTheme } from "yuyeon";
 
 const showDialog = ref(false);
 
@@ -17,6 +18,17 @@ const dropdownItems = [
     text: "복사하기",
   },
 ];
+const theme = useTheme();
+function toggleThemeMode() {
+  console.log(theme);
+  if (theme) {
+    theme.scheme === "auto"
+      ? (theme.scheme = "light")
+      : theme.scheme === "light"
+      ? (theme.scheme = "dark")
+      : (theme.scheme = "auto");
+  }
+}
 </script>
 
 <template>
@@ -97,12 +109,18 @@ const dropdownItems = [
               드롭다운
             </y-dropdown>
           </div>
-          <div class="d-flex pt-2" style="gap: 8px;">
+          <div class="d-flex pt-2" style="gap: 8px">
             <div style="flex: 0 0 50%">
               <y-field-input theme="dark" variation="outlined"></y-field-input>
             </div>
             <y-field-input></y-field-input>
             <y-select :items="dropdownItems"></y-select>
+          </div>
+
+          <div>
+            <y-button @click="toggleThemeMode">
+              THEME: {{ theme.scheme === "auto" ? "AUTO" : theme.scheme }}
+            </y-button>
           </div>
         </y-card-body>
       </y-card>

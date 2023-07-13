@@ -2,7 +2,7 @@
 
 .y-progress {
   --y-progress-bar__height: 4px;
-  --y-progress-bar__color: var(--y-palette--primary);
+  --y-progress-bar__color: var(--y-theme-primary);
 
   display: flex;
   position: relative;
@@ -14,7 +14,7 @@
   }
 
   &--outlined {
-    --y-progress-bar__outline-color: var(--y-palette--primary);
+    --y-progress-bar__outline-color: var(--y-theme-primary);
     border: 1px solid var(--y-progress-bar__outline-color);
   }
 

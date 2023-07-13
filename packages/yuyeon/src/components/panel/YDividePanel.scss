@@ -26,18 +26,18 @@ $side-padding: 16px !default;
     }
 
     &:hover {
-      background: rgba(var(--y-theme--primary), 0.12);
+      background: rgba(var(--y-theme-primary), 0.12);
     }
 
     &:hover &-line {
-      background: rgba(var(--y-theme--primary), 1);
+      background: rgba(var(--y-theme-primary), 1);
     }
   }
 
   &--resizing &__divider {
-    background: rgba(var(--y-theme--primary), 0.12);
+    background: rgba(var(--y-theme-primary), 0.12);
     &-line {
-      background: rgba(var(--y-theme--primary), 1);
+      background: rgba(var(--y-theme-primary), 1);
     }
   }
 }

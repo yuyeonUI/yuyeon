@@ -1,9 +1,7 @@
 import { ThemeDefinition } from './types';
 
-import {argbFromRgb, colorHexToRgb, hexFromRgb, rgbaFromArgb, rgbHexFromArgb} from "../../util/color";
 import { APCAcontrast, sRGBtoY } from '../../util/color/apca';
-import { TonalPalette } from '../../util/color/palettes/tonal_palette';
-import {defaultTonalLuminance} from "./setting";
+import { rgbFromHex } from '../../util/color/conversion';
 
 export function createThemes(options: Record<string, any>) {
   const acc: Record<'light' | 'dark' | string, ThemeDefinition> = {};
@@ -14,39 +12,35 @@ export function createThemes(options: Record<string, any>) {
       colors: {
         ...themeOptions.colors,
       },
+      variables: {
+        ...themeOptions.variables,
+      },
     });
 
-    const keyColor = TonalPalette.fromInt(
-      argbFromRgb(...(colorHexToRgb('#6750A4') as [number, number, number])),
-      //#d09220
-    );
-    const rgba = rgbaFromArgb(keyColor.tone(60));
-    // const hctPrime = keyColor.getHct(50);
-    console.log(rgba, hexFromRgb(rgba.r, rgba.g, rgba.b), rgbHexFromArgb(TonalPalette.fromHueAndChroma(keyColor.hue, 2.0).tone(40)));
-    const scales: string[] = [];
-    defaultTonalLuminance.forEach((tone) => {
-      scales.push(rgbHexFromArgb(keyColor.tone(tone)));
-    })
-    console.log(scales);
+    for (const colorName of Object.keys(theme.colors)) {
+      if (/^on-[a-z]/.test(colorName) || theme.colors[`on-${colorName}`])
+        continue;
 
-    for (const color of Object.keys(theme.colors)) {
-      if (/^on-[a-z]/.test(color) || theme.colors[`on-${color}`]) continue;
-
-      const onColor = `on-${color}`;
-      const colorVal = sRGBtoY(
-        colorHexToRgb(theme.colors[color]!) ?? [0, 0, 0],
-      );
+      const onColor = `on-${colorName}`;
+      const color = theme.colors[colorName];
+      const colorY = sRGBtoY(rgbFromHex(color!) ?? [0, 0, 0]);
 
       const blackContrast = Math.abs(
-        APCAcontrast(sRGBtoY([0, 0, 0]), colorVal) as number,
+        APCAcontrast(sRGBtoY([0, 0, 0]), colorY) as number,
       );
       const whiteContrast = Math.abs(
-        APCAcontrast(sRGBtoY([255, 255, 255]), colorVal) as number,
+        APCAcontrast(sRGBtoY([255, 255, 255]), colorY) as number,
       );
+
+      if (/^#([0-9a-f]{3}|[0-9a-f]{6}|[0-9a-f]{8})/i.test(color)) {
+        theme.colors[colorName] = rgbFromHex(color)?.join(', ');
+      }
 
       // Prefer white text if both have an acceptable contrast ratio
       theme.colors[onColor] =
-        whiteContrast > Math.min(blackContrast, 50) ? '#fff' : '#000';
+        whiteContrast > Math.min(blackContrast, 50)
+          ? '0, 0, 0'
+          : '255, 255, 255';
     }
   }
 

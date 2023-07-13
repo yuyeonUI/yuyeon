@@ -14,9 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-import * as math from '../utils/math_utils';
-import { whitePointD65, yFromLstar } from "../conversion";
+import { whitePointD65, yFromLstar } from '../conversion';
+import * as math from '../utils/math-utils';
 
 /**
  * In traditional color spaces, a color can be identified solely by the
@@ -59,19 +58,23 @@ export class ViewingConditions {
    */
   static make(
     whitePoint = whitePointD65(),
-    adaptingLuminance = (200.0 / Math.PI) * yFromLstar(50.0) / 100.0,
-    backgroundLstar = 50.0, surround = 2.0,
-    discountingIlluminant = false): ViewingConditions {
+    adaptingLuminance = ((200.0 / Math.PI) * yFromLstar(50.0)) / 100.0,
+    backgroundLstar = 50.0,
+    surround = 2.0,
+    discountingIlluminant = false,
+  ): ViewingConditions {
     const xyz = whitePoint;
     const rW = xyz[0] * 0.401288 + xyz[1] * 0.650173 + xyz[2] * -0.051461;
     const gW = xyz[0] * -0.250268 + xyz[1] * 1.204414 + xyz[2] * 0.045854;
     const bW = xyz[0] * -0.002079 + xyz[1] * 0.048952 + xyz[2] * 0.953127;
     const f = 0.8 + surround / 10.0;
-    const c = f >= 0.9 ? math.lerp(0.59, 0.69, (f - 0.9) * 10.0) :
-      math.lerp(0.525, 0.59, (f - 0.8) * 10.0);
-    let d = discountingIlluminant ?
-      1.0 :
-      f * (1.0 - (1.0 / 3.6) * Math.exp((-adaptingLuminance - 42.0) / 92.0));
+    const c =
+      f >= 0.9
+        ? math.lerp(0.59, 0.69, (f - 0.9) * 10.0)
+        : math.lerp(0.525, 0.59, (f - 0.8) * 10.0);
+    let d = discountingIlluminant
+      ? 1.0
+      : f * (1.0 - (1.0 / 3.6) * Math.exp((-adaptingLuminance - 42.0) / 92.0));
     d = d > 1.0 ? 1.0 : d < 0.0 ? 0.0 : d;
     const nc = f;
     const rgbD = [
@@ -82,7 +85,8 @@ export class ViewingConditions {
     const k = 1.0 / (5.0 * adaptingLuminance + 1.0);
     const k4 = k * k * k * k;
     const k4F = 1.0 - k4;
-    const fl = k4 * adaptingLuminance +
+    const fl =
+      k4 * adaptingLuminance +
       0.1 * k4F * k4F * Math.cbrt(5.0 * adaptingLuminance);
     const n = yFromLstar(backgroundLstar) / whitePoint[1];
     const z = 1.48 + Math.sqrt(n);
@@ -100,7 +104,17 @@ export class ViewingConditions {
     ];
     const aw = (2.0 * rgbA[0] + rgbA[1] + 0.05 * rgbA[2]) * nbb;
     return new ViewingConditions(
-      n, aw, nbb, ncb, c, nc, rgbD, fl, Math.pow(fl, 0.25), z);
+      n,
+      aw,
+      nbb,
+      ncb,
+      c,
+      nc,
+      rgbD,
+      fl,
+      Math.pow(fl, 0.25),
+      z,
+    );
   }
 
   /**
@@ -111,8 +125,15 @@ export class ViewingConditions {
    * a color science textbook, such as Fairchild's Color Appearance Models.
    */
   private constructor(
-    public n: number, public aw: number, public nbb: number,
-    public ncb: number, public c: number, public nc: number,
-    public rgbD: number[], public fl: number, public fLRoot: number,
-    public z: number) {}
+    public n: number,
+    public aw: number,
+    public nbb: number,
+    public ncb: number,
+    public c: number,
+    public nc: number,
+    public rgbD: number[],
+    public fl: number,
+    public fLRoot: number,
+    public z: number,
+  ) {}
 }

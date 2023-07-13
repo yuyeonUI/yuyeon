@@ -6,7 +6,7 @@ $button-before-opacity: 0.06 !default;
 $button-disabled-background: #d3d3d3 !default;
 
 .y-button {
-  --y-button__color: var(--y-theme--primary);
+  --y-button__color: var(--y-theme-primary);
 
   cursor: pointer;
   display: inline-flex;

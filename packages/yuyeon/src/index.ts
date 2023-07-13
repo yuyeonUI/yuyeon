@@ -1,14 +1,18 @@
-import { Component, ComponentInternalInstance } from "@vue/runtime-core";
-import type { App } from 'vue';
-import { nextTick, reactive } from "vue";
-
 import * as components from './components';
-import { createThemeModule, YUYEON_THEME_KEY } from "./composables/theme";
-import PlateWave from './directives/plate-wave';
 import { YUYEON_LOGO } from './etc';
+import { Component, ComponentInternalInstance } from '@vue/runtime-core';
+import type { App } from 'vue';
+import { nextTick, reactive } from 'vue';
+
+import {
+  YUYEON_THEME_KEY,
+  createThemeModule,
+  useTheme,
+} from './composables/theme';
+import PlateWave from './directives/plate-wave';
+
 //
 import './styles/base.scss';
-
 
 const defaultOptions = {
   credit: true,
@@ -62,7 +66,7 @@ export function init(options: any = defaultOptions) {
       unmount();
       themeModule.scope.stop();
       app.unmount = unmount;
-    }
+    };
   };
 
   return {
@@ -70,3 +74,5 @@ export function init(options: any = defaultOptions) {
     // theme: themeModule,
   };
 }
+
+export { useTheme };

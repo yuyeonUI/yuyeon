@@ -1,7 +1,8 @@
-import type { Directive, PropType, VNode } from "vue";
+import type { Directive, PropType, VNode } from 'vue';
 import { defineComponent, h, withDirectives } from 'vue';
 
 import ThemeClass from '../../directives/theme-class';
+
 import './YCard.scss';
 
 export default defineComponent({

@@ -1,4 +1,5 @@
 import { createPalette, createThemes } from './factory';
+import { cssClass, cssVariables } from './helper';
 import { ThemeScheme, configureOptions } from './setting';
 import type { ThemeOptions } from './types';
 import type { App, ComputedRef, Ref } from 'vue';
@@ -9,6 +10,7 @@ import {
   inject,
   provide,
   reactive,
+  readonly,
   ref,
   unref,
   watch,
@@ -22,23 +24,25 @@ export type { ThemeOptions };
 export const Y_THEME_PREFIX = 'y-theme';
 
 export interface ThemeModuleInstance {
-  // 'manual', 'auto'
-  readonly mode: string;
-  // 'dark', 'light', 'normal'
-  readonly scheme: keyof typeof ThemeScheme | 'normal';
-  // currentTheme [lightTheme, darkTheme]
-  readonly theme: Readonly<Ref<string | [string, string]>>;
-  // theme values for theme strategy
+  scheme: keyof typeof ThemeScheme | 'auto';
+  theme: Ref<[string, string?]>;
+  // theme values(schemes) for colors & variables
   readonly themes: any;
   readonly global: {
-    readonly scheme: keyof typeof ThemeScheme | 'normal';
-    readonly theme: Ref<string | [string, string]>;
+    // currentThemeKeys: [lightThemeKey, darkThemeKey]
+    // If used manually, fix the scheme to 'light' and have a [lightThemeKey] value.
+    // Use the appropriate default theme scheme if it does not match the themeKey
+    scheme: keyof typeof ThemeScheme | 'auto';
+    theme: Ref<[string, string?]>;
   };
   /* computed */
   readonly currentThemeKey: Readonly<ComputedRef<string>>;
   readonly themeClasses: Readonly<ComputedRef<string | undefined>>;
   readonly computedThemes: Readonly<ComputedRef<any>>;
   readonly computedPalette: Readonly<ComputedRef<any>>;
+  /* */
+  readonly supportedAutoMode: Readonly<Ref<boolean>>;
+  readonly preferColorScheme: Readonly<Ref<'light' | 'dark'>>;
 }
 
 export const YUYEON_THEME_KEY = Symbol.for('yuyeon.theme');
@@ -50,14 +54,53 @@ export const pressThemePropsOptions = propsFactory(
   'theme',
 );
 
+export function isDarkMode() {
+  return window.matchMedia('(prefers-color-scheme: dark)').matches;
+}
+
+export function isSupportAutoScheme() {
+  return window.matchMedia('(prefers-color-scheme)').media !== 'not all';
+}
+
 export function createThemeModule(options: ThemeOptions) {
   const appMountedScope = effectScope();
   const config = reactive(configureOptions(options));
-  const scheme = ref(config.scheme);
-  const mode = ref(config.mode);
-  const theme = ref<string | [string, string]>(config.theme);
+  const scheme = ref<string>(config.scheme);
+  const theme = ref<[string, string]>(config.theme);
   const themes = ref(config.themes);
   const palette = ref(config.palette);
+  const supportedAutoMode = ref(true);
+  const preferColorScheme = ref('');
+
+  function darkModeWatcher(
+    mediaQueryList: MediaQueryListEvent | MediaQueryList,
+  ) {
+    preferColorScheme.value = mediaQueryList.matches ? 'dark' : 'light';
+  }
+
+  const currentColorScheme = computed<'light' | 'dark'>(() => {
+    if (scheme.value === 'auto') {
+      return preferColorScheme.value as 'light' | 'dark';
+    }
+    if (scheme.value === 'dark') {
+      return 'dark';
+    }
+    return 'light';
+  });
+
+  const currentThemeKey = computed(() => {
+    if (typeof theme.value === 'string') {
+      if (theme.value in computedThemes) {
+        return theme.value;
+      }
+    }
+    if (Array.isArray(theme.value)) {
+      return currentColorScheme.value === 'dark'
+        ? theme.value?.[1] ?? 'dark'
+        : theme.value?.[0] ?? 'light';
+    }
+    return currentColorScheme.value;
+  });
 
   const computedPalette = computed(() => {
     return createPalette(palette.value);
@@ -68,8 +111,44 @@ export function createThemeModule(options: ThemeOptions) {
   });
 
   const styles = computed(() => {
-    computedPalette.value;
-    return ':root { --y-theme-test: 0,0,0; }';
+    const lines = [];
+    lines.push(
+      ...cssClass(':root', cssVariables(computedPalette.value, 'palette')),
+    );
+    for (const [themeKey, themeDefs] of Object.entries(computedThemes.value)) {
+      const { colors, variables, isDark } = themeDefs;
+      const records: Record<string, string> = {
+        ...colors,
+        ...variables,
+      };
+      // if (currentThemeKey.value === themeKey) {
+      //   lines.push(...cssClass(':root', cssVariables(records, 'theme')));
+      // }
+      const themeScheme = isDark ? 'dark' : 'light';
+      if (scheme.value === 'auto') {
+        lines.push(
+          ...cssClass(
+            `@media (prefers-color-scheme: ${themeScheme})`,
+            cssClass(
+              `[data-theme-scheme='auto'][data-${themeScheme}-theme='${themeKey}']`,
+              cssVariables(records, 'theme'),
+            ),
+          ),
+        );
+      } else {
+        lines.push(
+          ...cssClass(
+            `[data-theme-scheme='${themeScheme}'][data-${themeScheme}-theme='${themeKey}']`,
+            cssVariables(records, 'theme'),
+          ),
+        );
+      }
+
+      lines.push(
+        ...cssClass(`.y-theme--${themeKey}`, cssVariables(records, 'theme')),
+      );
+    }
+    return lines.join('');
   });
 
   function install(app: App) {
@@ -95,6 +174,12 @@ export function createThemeModule(options: ThemeOptions) {
   }
 
   function bindTheme(yuyeon: any) {
+    supportedAutoMode.value = isSupportAutoScheme();
+    if (supportedAutoMode.value) {
+      const mql = window.matchMedia('(prefers-color-scheme: dark)');
+      darkModeWatcher(mql);
+      mql.addEventListener('change' as 'change', darkModeWatcher);
+    }
     watch(
       theme,
       (neo) => {
@@ -105,11 +190,14 @@ export function createThemeModule(options: ThemeOptions) {
       { immediate: true },
     );
     watch(
-      scheme,
-      (neo: string) => {
-        yuyeon.root.setAttribute('data-theme-scheme', neo);
-      },
-      { immediate: true },
+        scheme,
+        (neo) => {
+          yuyeon.root.setAttribute(
+              'data-theme-scheme',
+              neo === 'auto' ? 'auto' : currentColorScheme.value,
+          );
+        },
+        { immediate: true },
     );
   }
 
@@ -118,21 +206,6 @@ export function createThemeModule(options: ThemeOptions) {
       bindTheme(yuyeon);
     });
   }
-
-  const currentThemeKey = computed(() => {
-    if (scheme.value === 'normal') {
-      if (Array.isArray(theme.value)) {
-        return theme.value?.[0] ?? 'light';
-      }
-      return theme.value;
-    }
-    if (Array.isArray(theme.value)) {
-      return scheme.value === 'dark'
-        ? theme.value?.[1] ?? 'dark'
-        : theme.value?.[0] ?? 'light';
-    }
-    return 'light';
-  });
 
   const themeClasses = computed(() => `y-theme--${currentThemeKey.value}`);
 
@@ -145,7 +218,6 @@ export function createThemeModule(options: ThemeOptions) {
         scheme,
         theme,
       },
-      mode,
       themes,
       scheme,
       theme,
@@ -153,6 +225,8 @@ export function createThemeModule(options: ThemeOptions) {
       themeClasses,
       computedThemes,
       computedPalette,
+      supportedAutoMode: readonly(supportedAutoMode),
+      preferColorScheme: readonly(preferColorScheme),
     },
   };
 }

@@ -10,12 +10,8 @@
 }
 
 :root {
-  --y-palette--primary: #{palette.$primary};
-  //--y-theme--primary: 79, 151, 220;
-  //--y-theme--base-bg: 255, 255, 255;
-  //--y-line-color: 0, 0, 0;
-  //--y-line-opacity: 0.14;
-  --y-elevation-color: 0, 0, 0;
+  --default-shadow: 0, 0, 0;
+  --y-elevation-color: var(--y-theme-shadow, var(--default-shadow));
 
   @include elevation.styles();
 }

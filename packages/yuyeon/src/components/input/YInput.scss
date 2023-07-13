@@ -185,7 +185,7 @@ $input-border-radius: variables.$border-radius-root !default;
     }
 
     .y-input__plate {
-      outline: 1px solid rgba(var(--y-palette--primary, #4f97dc), 0.1);
+      outline: 1px solid rgba(var(--y-theme-primary, #4f97dc), 0.1);
     }
 
     .y-input__leading {

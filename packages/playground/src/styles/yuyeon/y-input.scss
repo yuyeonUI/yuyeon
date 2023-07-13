@@ -7,12 +7,12 @@
   &--outlined:hover,
   &--focused {
     .y-input__plate {
-      border-color: rgb(var(--y-theme--primary));
+      border-color: rgb(var(--y-theme-primary));
     }
   }
 
   &--focused &__plate {
-    box-shadow: 0 0 4px 0 rgba(var(--y-theme--primary), 0.4);
+    box-shadow: 0 0 4px 0 rgba(var(--y-theme-primary), 0.4);
   }
 
   &--focused.y-input--error &__plate {

@@ -1,4 +1,4 @@
-import { MutableRect } from '../../../util/Rect';
+import { MutableRect } from '../../../util/rect';
 import { ParsedAnchor } from '../../../util/anchor';
 
 type Point = { x: number; y: number };

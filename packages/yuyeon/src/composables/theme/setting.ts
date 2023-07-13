@@ -1,4 +1,4 @@
-import { PaletteOption, ThemeOptions } from "./types";
+import { PaletteOption, ThemeOptions } from './types';
 
 import { mergeDeep } from '../../util/common';
 
@@ -18,15 +18,15 @@ export const defaultPalette: PaletteOption = {
     secondary: '#6251a6',
     tertiary: '#3c691b',
     neutral: '#5d5e61',
-    positive: '#42ba1a',
+    positive: '#3da919',
     negative: '#ba1a1a',
     warning: '#d09220',
-  }
+  },
 };
 
 export const defaultThemesValues: any = {
   light: {
-    scheme: ThemeScheme.light,
+    isDark: false,
     colors: {
       primary: '#0062a1',
       secondary: '#6251a6',
@@ -36,14 +36,16 @@ export const defaultThemesValues: any = {
       'surface-variant': '#dfe3eb',
       outline: '#73777f',
       error: '#ba1a1a',
+      shadow: '#000000',
     },
     variables: {
+      'outline-opacity': 0.14,
       'base-shadow-opacity': 0.14,
       'base-font': '#141414',
     },
   },
   dark: {
-    scheme: ThemeScheme.dark,
+    isDark: true,
     colors: {
       primary: '#9ccaff',
       secondary: '#cbbeff',
@@ -53,8 +55,10 @@ export const defaultThemesValues: any = {
       'surface-variant': '#42474e',
       outline: '#8c9199',
       error: '#ffb4ab',
+      shadow: '#000000',
     },
     variables: {
+      'outline-opacity': 0.14,
       'base-shadow-opacity': 0.14,
       'base-font': '#fff',
     },

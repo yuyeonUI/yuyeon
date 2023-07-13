@@ -1,7 +1,7 @@
 import type { EffectScope, PropType, Ref } from 'vue';
 import { effectScope, nextTick, onScopeDispose, watchEffect } from 'vue';
 
-import { FrameScheduler } from '../../util/FrameScheduler';
+import { FrameScheduler } from '../../util/frame-scheduler';
 import { getScrollParents, hasScrollbar } from '../../util/scroll';
 import { toStyleSizeValue } from '../../util/ui';
 import { propsFactory } from '../../util/vue-component';
