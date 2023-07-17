@@ -9,6 +9,8 @@
     box-shadow: var(--y-menu__elevation, #{$elevation-fallback});
     border-radius: var(--y-menu__border-radius);
     background: rgba(var(--y-theme-surface), 1);
+    display: flex;
+    flex-direction: column;
 
     > .y-card {
       background: rgb(var(--y-theme-surface));

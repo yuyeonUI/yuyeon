@@ -282,9 +282,9 @@ export const YFieldInput = defineComponent({
             }
             return trailingChildren;
           },
-          'helper-text': () => {
+          'helper-text': slots['helper-text'] ? () => {
             return slots['helper-text']?.();
-          },
+          } : undefined,
         },
       ),
     );

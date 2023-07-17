@@ -12,6 +12,8 @@ $input-border-radius: variables.$border-radius-root !default;
   letter-spacing: normal;
   text-align: left;
 
+  --y-input-focused-color: var(--y-theme-primary);
+
   &__prepend,
   &__append {
     height: 100%;
@@ -135,26 +137,46 @@ $input-border-radius: variables.$border-radius-root !default;
   }
 
   &--filled {
-    .y-input__plate {
-      background: #f2f2f2;
-    }
+    --y-input-default-filled: 242, 242, 242;
+    --y-input-filled-opacity: 0.04;
+    --y-input-filled-opacity-hover: 0.08;
 
-    .y-input__prepend {
-      padding-left: 12px;
+    .y-input {
+      &__prepend {
+        padding-left: 12px;
+      }
+      //
+      &__plate {
+        background: rgba(var(--y-theme-on-surface, var(--y-input-default-filled)), var(--y-input-filled-opacity));
+      }
+
+      &__display:hover {
+        --y-input-filled-opacity: var(--y-input-filled-opacity-hover);
+      }
     }
   }
 
   &--outlined {
-    .y-input__plate {
-      border: 1px solid #a4a4a4;
-      box-sizing: border-box;
-      inset: 0;
-    }
-    .y-input__plate:before {
-      top: 0;
-      height: 100%;
-      background: transparent;
-      border-radius: inherit;
+    --y-input-outlined-opacity: 0.64;
+    --y-input-outlined-opacity-hover: 0.87;
+
+    .y-input {
+      &__plate {
+        border: 1px solid rgba(var(--y-theme-outline), var(--y-input-outlined-opacity));
+        box-sizing: border-box;
+        inset: 0;
+
+        &:before {
+          top: 0;
+          height: 100%;
+          background: transparent;
+          border-radius: inherit;
+        }
+      }
+
+      &__display:hover {
+        --y-input-outlined-opacity: var(--y-input-outlined-opacity-hover);
+      }
     }
   }
 
@@ -186,10 +208,15 @@ $input-border-radius: variables.$border-radius-root !default;
 
     .y-input__plate {
       outline: 1px solid rgba(var(--y-theme-primary, #4f97dc), 0.1);
+      border-color: rgba(var(--y-input-focused-color), 1);
     }
 
     .y-input__leading {
       color: currentColor;
+    }
+
+    &.y-input--outlined {
+      //
     }
   }
 

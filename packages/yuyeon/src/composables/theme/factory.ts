@@ -1,7 +1,6 @@
-import { ThemeDefinition } from './types';
-
 import { APCAcontrast, sRGBtoY } from '../../util/color/apca';
 import { rgbFromHex } from '../../util/color/conversion';
+import { ThemeDefinition } from './types';
 
 export function createThemes(options: Record<string, any>) {
   const acc: Record<'light' | 'dark' | string, ThemeDefinition> = {};
@@ -18,11 +17,15 @@ export function createThemes(options: Record<string, any>) {
     });
 
     for (const colorName of Object.keys(theme.colors)) {
+      const color = theme.colors[colorName];
+      if (/^#([0-9a-f]{3}|[0-9a-f]{6}|[0-9a-f]{8})/i.test(color)) {
+        theme.colors[colorName] = rgbFromHex(color)?.join(', ');
+      }
+
       if (/^on-[a-z]/.test(colorName) || theme.colors[`on-${colorName}`])
         continue;
 
       const onColor = `on-${colorName}`;
-      const color = theme.colors[colorName];
       const colorY = sRGBtoY(rgbFromHex(color!) ?? [0, 0, 0]);
 
       const blackContrast = Math.abs(
@@ -32,15 +35,11 @@ export function createThemes(options: Record<string, any>) {
         APCAcontrast(sRGBtoY([255, 255, 255]), colorY) as number,
       );
 
-      if (/^#([0-9a-f]{3}|[0-9a-f]{6}|[0-9a-f]{8})/i.test(color)) {
-        theme.colors[colorName] = rgbFromHex(color)?.join(', ');
-      }
-
       // Prefer white text if both have an acceptable contrast ratio
       theme.colors[onColor] =
         whiteContrast > Math.min(blackContrast, 50)
-          ? '0, 0, 0'
-          : '255, 255, 255';
+          ? '255, 255, 255'
+          : '0, 0, 0';
     }
   }
 

@@ -16,6 +16,11 @@
   @include elevation.styles();
 }
 
+.y-root {
+  background: rgba(var(--y-theme-background), 1);
+  color: rgba(var(--y-theme-on-background), 1);
+}
+
 .fade-enter-active,
 .fade-leave-cative {
   transition: opacity 240ms cubic-bezier(0.2, 0.28, 0.21, 1);

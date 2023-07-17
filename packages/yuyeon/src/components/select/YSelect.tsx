@@ -12,7 +12,7 @@ import {
 } from '../../composables/list-items';
 import { wrapInArray } from '../../util/array';
 import { deepEqual, getObjectValueByPath, omit } from '../../util/common';
-import { propsFactory } from '../../util/vue-component';
+import { chooseProps, propsFactory } from '../../util/vue-component';
 import { YCard } from '../card';
 import { YFieldInput, pressYFieldInputPropsOptions } from '../field-input';
 import { YIconDropdown } from '../icons/YIconDropdown';
@@ -154,6 +154,7 @@ export const YSelect = defineComponent({
     });
 
     useRender(() => {
+      const fieldInputProps = chooseProps(props, YFieldInput.props);
       return (
         <YMenu
           v-model={opened.value}
@@ -170,7 +171,10 @@ export const YSelect = defineComponent({
                 slots.base?.(...args)
               ) : (
                 <YFieldInput
-                  {...mergeProps({ ...args[0].props }, { ref: fieldInputRef })}
+                  {...{
+                    ...fieldInputProps,
+                    ...mergeProps({ ...args[0].props }, { ref: fieldInputRef }),
+                  }}
                   onMousedown:display={onMousedownDisplay}
                   onBlur={onBlur}
                   readonly
@@ -187,6 +191,9 @@ export const YSelect = defineComponent({
                         </div>
                       );
                     },
+                    leading: slots.leading
+                      ? (...args: any[]) => slots.leading?.(...args)
+                      : undefined,
                     trailing: (...args: any[]) => {
                       return slots['expand-icon'] ? (
                         slots['expand-icon']()
@@ -196,6 +203,9 @@ export const YSelect = defineComponent({
                         </i>
                       );
                     },
+                    'helper-text': slots['helper-text']
+                      ? slots['helper-text']?.()
+                      : undefined,
                   }}
                 </YFieldInput>
               ),

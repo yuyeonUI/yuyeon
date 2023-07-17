@@ -12,6 +12,7 @@
   display: flex;
   inset: 0;
   position: fixed;
+  color: rgba(var(--y-theme-on-background), 1);
 
   &__scrim {
     pointer-events: auto;

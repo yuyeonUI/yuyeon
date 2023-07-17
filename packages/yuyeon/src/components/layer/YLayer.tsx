@@ -22,6 +22,7 @@ import {
   useDimension,
 } from '../../composables/dimension';
 import { useLayerGroup } from '../../composables/layer-group';
+import { pressThemePropsOptions, useLocalTheme } from '../../composables/theme';
 import { useLazy } from '../../composables/timing';
 import {
   PolyTransition,
@@ -69,6 +70,7 @@ export const pressYLayerProps = propsFactory(
       type: Boolean as PropType<boolean>,
       default: false,
     },
+    ...pressThemePropsOptions(),
     ...polyTransitionPropOptions,
     ...pressCoordinateProps(),
     ...pressDimensionPropsOptions(),
@@ -100,6 +102,7 @@ export const YLayer = defineComponent({
     const baseSlot = ref();
     const baseEl = ref<HTMLElement>();
 
+    const { themeClasses } = useLocalTheme(props);
     const { layerGroup } = useLayerGroup();
     const { polyTransitionBindProps } = usePolyTransition(props);
     const { dimensionStyles } = useDimension(props);
@@ -232,6 +235,7 @@ export const YLayer = defineComponent({
                   'y-layer': true,
                   'y-layer--finish': finish.value,
                   ...computedClass.value,
+                  [themeClasses.value ?? '']: true,
                 }}
                 style={computedStyle.value}
                 {...attrs}

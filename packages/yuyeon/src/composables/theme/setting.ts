@@ -1,6 +1,5 @@
-import { PaletteOption, ThemeOptions } from './types';
-
 import { mergeDeep } from '../../util/common';
+import { PaletteOption, ThemeOptions } from './types';
 
 export const ThemeScheme = {
   light: 'light',
@@ -32,9 +31,13 @@ export const defaultThemesValues: any = {
       secondary: '#6251a6',
       tertiary: '#3c691b',
       background: '#fdfbff',
+      'on-background': '#1a1c1e',
       surface: '#fdfbff',
+      'on-surface': '#1a1c1e',
       'surface-variant': '#dfe3eb',
+      'on-surface-variant': '#42474e',
       outline: '#73777f',
+      'outline-variant': '#c2c7cf',
       error: '#ba1a1a',
       shadow: '#000000',
     },
@@ -48,19 +51,27 @@ export const defaultThemesValues: any = {
     isDark: true,
     colors: {
       primary: '#9ccaff',
+      'on-primary': '#003257',
       secondary: '#cbbeff',
+      'on-secondary': '#332074',
       tertiary: '#a1d57a',
-      background: '#001b3d',
-      surface: '#001b3d',
+      'on-tertiary': '#173800',
+      background: '#1a1c1e',
+      'on-background': '#e2e2e6',
+      surface: '#1a1c1e',
+      'on-surface': '#e2e2e6',
       'surface-variant': '#42474e',
+      'on-surface-variant': '#c2c7cf',
       outline: '#8c9199',
+      'outline-variant': '#42474e',
       error: '#ffb4ab',
+      'on-error': '#690005',
       shadow: '#000000',
     },
     variables: {
       'outline-opacity': 0.14,
       'base-shadow-opacity': 0.14,
-      'base-font': '#fff',
+      'base-font': '#f5f5f5',
     },
   },
 };

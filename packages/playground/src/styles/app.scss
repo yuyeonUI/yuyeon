@@ -44,12 +44,10 @@ body {
   outline: 0;
 }
 
-//@media (prefers-color-scheme: light) {
-  :root {
-    color: #323232;
-    background-color: #f1f1f1;
-  }
-//}
+
+:root {
+  color: #323232;
+}
 
 fieldset {
   border: none;

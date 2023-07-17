@@ -4,26 +4,20 @@
 );
 
 .y-input {
-  &--outlined:hover,
-  &--focused {
-    .y-input__plate {
-      border-color: rgb(var(--y-theme-primary));
-    }
-  }
 
-  &--focused &__plate {
-    box-shadow: 0 0 4px 0 rgba(var(--y-theme-primary), 0.4);
-  }
-
-  &--focused.y-input--error &__plate {
-    box-shadow: 0 0 4px 0 rgba(palette.$alert-negative, 0.4);
-  }
-
-  &__helper-text {
-    font-size: 10px;
-    font-weight: 600;
-    &:has(> *), &:has(#text) {
-      padding-top: 4px;
-    }
-  }
+  //&--focused &__plate {
+  //  box-shadow: 0 0 4px 0 rgba(var(--y-theme-primary), 0.4);
+  //}
+  //
+  //&--focused.y-input--error &__plate {
+  //  box-shadow: 0 0 4px 0 rgba(palette.$alert-negative, 0.4);
+  //}
+  //
+  //&__helper-text {
+  //  font-size: 10px;
+  //  font-weight: 600;
+  //  &:has(> *), &:has(#text) {
+  //    padding-top: 4px;
+  //  }
+  //}
 }

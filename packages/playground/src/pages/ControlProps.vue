@@ -121,6 +121,7 @@ function toggleThemeMode() {
             <y-button @click="toggleThemeMode">
               THEME: {{ theme.scheme === "auto" ? "AUTO" : theme.scheme }}
             </y-button>
+            <y-select :items="dropdownItems" variation="outlined"></y-select>
           </div>
         </y-card-body>
       </y-card>

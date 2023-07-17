@@ -1,7 +1,3 @@
-import { createPalette, createThemes } from './factory';
-import { cssClass, cssVariables } from './helper';
-import { ThemeScheme, configureOptions } from './setting';
-import type { ThemeOptions } from './types';
 import type { App, ComputedRef, Ref } from 'vue';
 import {
   computed,
@@ -18,6 +14,10 @@ import {
 
 import bindThemeClass from '../../directives/theme-class';
 import { propsFactory } from '../../util/vue-component';
+import { createPalette, createThemes } from './factory';
+import { cssClass, cssVariables } from './helper';
+import { ThemeScheme, configureOptions } from './setting';
+import type { ThemeOptions } from './types';
 
 export type { ThemeOptions };
 
@@ -163,7 +163,7 @@ export function createThemeModule(options: ThemeOptions) {
         const el = document.createElement('style');
         el.type = 'text/css';
         el.id = 'yuyeon-theme-palette';
-        if (options.cspNonce) el.setAttribute('nonce', options.cspNonce);
+        if (options?.cspNonce) el.setAttribute('nonce', options.cspNonce);
         styleEl = el;
         document.head.appendChild(styleEl);
       }
@@ -190,14 +190,14 @@ export function createThemeModule(options: ThemeOptions) {
       { immediate: true },
     );
     watch(
-        scheme,
-        (neo) => {
-          yuyeon.root.setAttribute(
-              'data-theme-scheme',
-              neo === 'auto' ? 'auto' : currentColorScheme.value,
-          );
-        },
-        { immediate: true },
+      scheme,
+      (neo) => {
+        yuyeon.root.setAttribute(
+          'data-theme-scheme',
+          neo === 'auto' ? 'auto' : currentColorScheme.value,
+        );
+      },
+      { immediate: true },
     );
   }
 
