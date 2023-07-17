@@ -1,11 +1,11 @@
-import { PropType, defineComponent } from 'vue';
+import { PropType, defineComponent, mergeProps } from 'vue';
 
 import { pressItemsPropsOptions } from '../../abstract/items';
 import { useModelDuplex } from '../../composables/communication';
 import { useRender } from '../../composables/component';
 import { pressCoordinateProps } from '../../composables/coordinate';
 import { getObjectValueByPath, omit } from '../../util/common';
-import { propsFactory } from '../../util/vue-component';
+import { chooseProps, propsFactory } from '../../util/vue-component';
 import { YButton } from '../button';
 import { YCard } from '../card';
 import { YIconDropdown } from '../icons/YIconDropdown';
@@ -46,11 +46,12 @@ export const YDropdown = defineComponent({
     }
 
     useRender(() => {
+      const menuProps = chooseProps(props, YMenu.props);
       return (
         <>
           <YMenu
+            {...menuProps}
             v-model={opened.value}
-            position={props.position}
             content-classes={['y-dropdown__content']}
           >
             {{

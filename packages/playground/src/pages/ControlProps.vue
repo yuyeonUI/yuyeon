@@ -114,7 +114,7 @@ function toggleThemeMode() {
               <y-field-input theme="dark" variation="outlined"></y-field-input>
             </div>
             <y-field-input></y-field-input>
-            <y-select :items="dropdownItems"></y-select>
+            <y-select :items="dropdownItems" offset="8"></y-select>
           </div>
 
           <div>

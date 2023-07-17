@@ -159,7 +159,9 @@ export const YSelect = defineComponent({
         <YMenu
           v-model={opened.value}
           ref={menuRef}
+          offset={props.offset}
           position={props.position}
+          origin={props.origin}
           content-classes={['y-select__content']}
           maxHeight={props.maxHeight}
           open-on-click-base={false}
