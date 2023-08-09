@@ -44,6 +44,7 @@ $input-border-radius: variables.$border-radius-root !default;
     contain: paint;
     border-radius: $input-border-radius;
     outline: 0 solid rgba(0, 0, 0, 0);
+    transition: 140ms ease;
   }
 
   &__value {

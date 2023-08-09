@@ -9,10 +9,9 @@ import {
   watchEffect,
 } from 'vue';
 
+import { getRangeArr } from '../../../util/common';
 import { propsFactory } from '../../../util/vue-component';
-
 import { DataTableHeader, InternalDataTableHeader } from '../types';
-import { getRangeArr } from "../../../util/common";
 
 export const pressDataTableHeader = propsFactory(
   {
@@ -80,30 +79,36 @@ export function createHeader(
       }
     }
 
-    const fixedRows: InternalDataTableHeader[][] = getRangeArr(rowCount).map(() => []);
+    const fixedRows: InternalDataTableHeader[][] = getRangeArr(rowCount).map(
+      () => [],
+    );
     const fixedOffsets = getRangeArr(rowCount).fill(0);
 
     flat.forEach(({ column, rowIndex }) => {
       const { key } = column;
-      for (let i = rowIndex; i <= rowIndex + (column.rowspan ?? 1) - 1; i += 1) {
+      for (
+        let i = rowIndex;
+        i <= rowIndex + (column.rowspan ?? 1) - 1;
+        i += 1
+      ) {
         fixedRows[i].push({
           ...column,
           key,
           fixedOffset: fixedOffsets[i],
           sortable: column.sortable ?? !!key,
-        })
+        });
         fixedOffsets[i] += Number(column.width ?? 0);
       }
     });
 
     fixedRows.forEach((row) => {
-      for (let i = row.length; i -= 1; i >= 0) {
+      for (let i = row.length; (i -= 1); i >= 0) {
         if (row[i].fixed) {
           row[i].lastFixed = true;
           return;
         }
       }
-    })
+    });
 
     const seen = new Set();
     headers.value = fixedRows.map((row) => {

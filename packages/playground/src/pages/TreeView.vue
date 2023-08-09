@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { ref } from "vue";
 
 const groups = ref([
   {
@@ -37,8 +37,8 @@ const groups = ref([
     ],
   },
 ]);
-const activeGroups = ref([]);
-const selected = ref([]);
+const activeGroups = ref(["1-1", "1-3"]);
+const selected = ref(["2", "1-1"]);
 const opened = ref([]);
 const search = ref("");
 </script>

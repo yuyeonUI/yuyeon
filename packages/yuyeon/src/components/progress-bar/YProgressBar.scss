@@ -3,6 +3,7 @@
 .y-progress {
   --y-progress-bar__height: 4px;
   --y-progress-bar__color: var(--y-theme-primary);
+  --y-progress-bar__track-color: rgba(var(--y-theme-surface-variant), 0.74);
 
   display: flex;
   position: relative;
@@ -37,7 +38,7 @@
   }
 
   &__track {
-    background-color: #f0f0f0;
+    background-color: var(--y-progress-bar__track-color);
     position: absolute;
     inset: 0;
     border-radius: inherit;

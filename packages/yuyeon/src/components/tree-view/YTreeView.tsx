@@ -383,6 +383,14 @@ export const YTreeView = defineComponent({
 
     updateNodes(props.items);
 
+    for (const activeValue of props.active.map(getNodeKey)) {
+      updateActive(activeValue, true);
+    }
+
+    for (const selectedValue of props.selected.map(getNodeKey)) {
+      updateSelected(selectedValue, true);
+    }
+
     provide('tree-view', {
       register,
       updateExpanded,
