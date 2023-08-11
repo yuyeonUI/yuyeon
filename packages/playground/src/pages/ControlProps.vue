@@ -1,8 +1,18 @@
 <script setup lang="ts">
+import VueSvg from "@/assets/vue.svg?component";
 import { ref, shallowRef } from "vue";
 import { useTheme } from "yuyeon";
 
 const showDialog = ref(false);
+
+const loadingButton = ref(false);
+
+function onClickLoadingButton() {
+  loadingButton.value = true;
+  setTimeout(() => {
+    loadingButton.value = false;
+  }, 5000);
+}
 
 const progress0 = ref(40);
 const progress0Reverse = shallowRef(false);
@@ -33,6 +43,43 @@ function toggleThemeMode() {
 
 <template>
   <div class="pa-4">
+    <section class="pv-2" style="height: 200px">
+      <y-card class="h-100 contain-paint">
+        <y-card-header> BUTTONS </y-card-header>
+        <y-card-body class="pt-4">
+          <div class="d-flex" style="gap: 4px">
+            <y-button loading outlined> 계속 로딩 </y-button>
+            <y-button
+                @click="onClickLoadingButton"
+                :loading="loadingButton"
+                outlined
+                filled
+                color="primary"
+            >
+              <VueSvg
+                  v-if="!loadingButton"
+                  class="mr-2"
+                  style="width: 20px; height: 20px"
+              ></VueSvg>
+              새로고침
+            </y-button>
+            <y-button @click="toggleThemeMode" style="width: 130px">
+              THEME: {{ theme.scheme }}
+            </y-button>
+          </div>
+        </y-card-body>
+      </y-card>
+    </section>
+    <section class="py-2">
+      <y-card class="pa-2">
+        <div class="d-flex pt-2" style="gap: 8px">
+          <div style="flex: 0 0 50%">
+            <y-field-input theme="dark" variation="outlined"></y-field-input>
+          </div>
+          <y-field-input></y-field-input>
+        </div>
+      </y-card>
+    </section>
     <section class="pv-2" style="height: 300px">
       <y-card class="h-100 contain-paint">
         <y-progress-bar
@@ -41,7 +88,7 @@ function toggleThemeMode() {
         ></y-progress-bar>
         <y-card-header> LAYER BASE </y-card-header>
         <y-card-body class="pt-4">
-          <div class="d-flex align-center">
+          <div class="d-flex align-center" style="gap: 8px">
             <y-menu position="bottom" offset="8" height="80">
               <template #base="{ props: menuProps }">
                 <y-tooltip position="top">
@@ -108,19 +155,10 @@ function toggleThemeMode() {
             >
               드롭다운
             </y-dropdown>
-          </div>
-          <div class="d-flex pt-2" style="gap: 8px">
-            <div style="flex: 0 0 50%">
-              <y-field-input theme="dark" variation="outlined"></y-field-input>
-            </div>
-            <y-field-input></y-field-input>
+            <!--  -->
             <y-select :items="dropdownItems" offset="8"></y-select>
           </div>
-
-          <div>
-            <y-button @click="toggleThemeMode">
-              THEME: {{ theme.scheme === "auto" ? "AUTO" : theme.scheme }}
-            </y-button>
+          <div class="mv-3">
             <y-select :items="dropdownItems" variation="outlined"></y-select>
           </div>
         </y-card-body>

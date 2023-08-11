@@ -7,6 +7,7 @@ $button-disabled-background: #d3d3d3 !default;
 
 .y-button {
   --y-button__color: var(--y-theme-primary);
+  --y-button__text-color: var(--y-theme-on-primary);
 
   cursor: pointer;
   display: inline-flex;
@@ -46,7 +47,7 @@ $button-disabled-background: #d3d3d3 !default;
 
   &--filled {
     background-color: var(--y-button__color);
-    color: #ffffff;
+    color: var(--y-button__text-color);
   }
 
   &--text {
@@ -83,6 +84,8 @@ $button-disabled-background: #d3d3d3 !default;
 
     .y-spinner-ring {
       margin-right: 0.4em;
+      width: 1em;
+      height: 1em;
     }
   }
 

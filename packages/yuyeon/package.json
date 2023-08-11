@@ -13,15 +13,20 @@
   "author": "yeonyew",
   "license": "Apache-2.0",
   "files": [
-    "dist",
-    "lib",
-    "types"
+    "dist/",
+    "lib/",
+    "types/"
   ],
+  "type": "module",
   "exports": {
     ".": {
+      "types": "./types/index.d.ts",
       "default": "./lib/index.mjs"
     },
     "./styles/*": "./lib/styles/*",
+    "./lib": {
+      "types": "./types/index.d.ts"
+    },
     "./components": {
       "types": "./types/components/index.d.ts",
       "module": "./lib/components/index.mjs"
@@ -32,7 +37,7 @@
   },
   "main": "lib/index.mjs",
   "module": "lib/index.mjs",
-  "types": "types",
+  "types": "types/index.d.ts",
   "typesVersions": {
     "*": {
       "lib/index.mjs": [

@@ -1,7 +1,8 @@
-import type { ExtractPropTypes, PropType, VNodeArrayChildren } from 'vue';
+import type { PropType, VNodeArrayChildren } from 'vue';
 import { defineComponent, h, withDirectives } from 'vue';
 
 import { PlateWave } from '../../directives/plate-wave';
+import { isColorValue } from '../../util/color';
 import { getSlot, propsFactory } from '../../util/vue-component';
 import { YSpinnerRing } from '../loading/YSpinnerRing';
 
@@ -9,7 +10,6 @@ import { YSpinnerRing } from '../loading/YSpinnerRing';
  * Style
  */
 import './YButton.scss';
-import { isColorValue } from "../../util/color";
 
 const NAME = 'y-button';
 
@@ -87,11 +87,14 @@ export const YButton = defineComponent({
     },
     styles(): Record<string, any> {
       let { color } = this;
+      let textColor: string | undefined;
       if (color && !isColorValue(color)) {
         color = `rgba(var(--y-theme-${color}), 1)`;
+        textColor = `rgba(var(--y-theme-on-${this.color}), 1)`;
       }
       return {
         [`--y-button__color`]: color,
+        [`--y-button__text-color`]: textColor,
       };
     },
   },

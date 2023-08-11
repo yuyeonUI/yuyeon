@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { PropType, ref, defineProps } from "vue";
+import { PropType, ref } from "vue";
 import IconPrev from "@/assets/prev.svg?component";
 
 const props = defineProps({
@@ -16,7 +16,7 @@ const props = defineProps({
 });
 
 const page = ref(props.bottomProps?.page ?? 0);
-const pageSize = ref(props.bottomProps?.pageSize ?? 30);
+// const pageSize = ref(props.bottomProps?.pageSize ?? 30);
 </script>
 
 <template>
