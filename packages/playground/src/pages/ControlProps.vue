@@ -104,7 +104,16 @@ function toggleThemeMode() {
                 </y-tooltip>
               </template>
               <y-card>
-                <y-card-body> YMenu! </y-card-body>
+                <y-card-body>
+                  <y-menu>
+                    <template #base>
+                      <y-button>hello</y-button>
+                    </template>
+                    <y-card>
+                      <div>menu 1</div>
+                    </y-card>
+                  </y-menu>
+                </y-card-body>
               </y-card>
             </y-menu>
             <!-- -->
@@ -132,7 +141,17 @@ function toggleThemeMode() {
                 <y-card-header>
                   <div class="y-card-title">당신은 타입스크립트 장인</div>
                 </y-card-header>
-                <y-card-body class="pv-8">Sure?</y-card-body>
+                <y-card-body class="pv-8">
+                  Sure?
+                  <y-menu >
+                    <template #base>
+                      <y-button>hello</y-button>
+                    </template>
+                    <y-card>
+                      <div>menu 1</div>
+                    </y-card>
+                  </y-menu>
+                </y-card-body>
                 <y-card-footer style="justify-content: flex-end">
                   <y-button @click="showDialog = false">close</y-button>
                 </y-card-footer>
