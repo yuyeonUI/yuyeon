@@ -28,8 +28,9 @@ export const YMenuPropOptions = {
     type: Boolean as PropType<boolean>,
     default: true,
   },
-  closeOnClick: {
-    type: Boolean,
+  closeCondition: {
+    type: [Boolean, Function],
+    default: undefined,
   },
   preventClip: {
     type: Boolean as PropType<boolean>,
@@ -99,6 +100,15 @@ export const YMenu = defineComponent({
     }
 
     function onComplementClick(e: Event) {
+      if (props.closeCondition === false) {
+        return;
+      }
+      if (typeof props.closeCondition === 'function') {
+        if (props.closeCondition(e) === false) {
+          active.value = false;
+        }
+        return;
+      }
       if (active.value) {
         active.value = false;
       }

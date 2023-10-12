@@ -39,6 +39,12 @@ function toggleThemeMode() {
       : (theme.scheme = "auto");
   }
 }
+
+const innerMenu = shallowRef(false);
+
+function onCloseMenuIn() {
+  return innerMenu.value;
+}
 </script>
 
 <template>
@@ -50,16 +56,16 @@ function toggleThemeMode() {
           <div class="d-flex" style="gap: 4px">
             <y-button loading outlined> 계속 로딩 </y-button>
             <y-button
-                @click="onClickLoadingButton"
-                :loading="loadingButton"
-                outlined
-                filled
-                color="primary"
+              @click="onClickLoadingButton"
+              :loading="loadingButton"
+              outlined
+              filled
+              color="primary"
             >
               <VueSvg
-                  v-if="!loadingButton"
-                  class="mr-2"
-                  style="width: 20px; height: 20px"
+                v-if="!loadingButton"
+                class="mr-2"
+                style="width: 20px; height: 20px"
               ></VueSvg>
               새로고침
             </y-button>
@@ -89,7 +95,12 @@ function toggleThemeMode() {
         <y-card-header> LAYER BASE </y-card-header>
         <y-card-body class="pt-4">
           <div class="d-flex align-center" style="gap: 8px">
-            <y-menu position="bottom" offset="8" height="80">
+            <y-menu
+              position="bottom"
+              offset="8"
+              height="80"
+              :close-condition="onCloseMenuIn"
+            >
               <template #base="{ props: menuProps }">
                 <y-tooltip position="top">
                   <template #base="{ props: tooltipProps }">
@@ -104,7 +115,16 @@ function toggleThemeMode() {
                 </y-tooltip>
               </template>
               <y-card>
-                <y-card-body> YMenu! </y-card-body>
+                <y-card-body>
+                  <y-menu v-model="innerMenu" height="80">
+                    <template #base>
+                      <y-button>hello</y-button>
+                    </template>
+                    <y-card>
+                      <div>menu 1</div>
+                    </y-card>
+                  </y-menu>
+                </y-card-body>
               </y-card>
             </y-menu>
             <!-- -->
@@ -132,7 +152,17 @@ function toggleThemeMode() {
                 <y-card-header>
                   <div class="y-card-title">당신은 타입스크립트 장인</div>
                 </y-card-header>
-                <y-card-body class="pv-8">Sure?</y-card-body>
+                <y-card-body class="pv-8">
+                  Sure?
+                  <y-menu>
+                    <template #base>
+                      <y-button>hello</y-button>
+                    </template>
+                    <y-card>
+                      <div>menu 1</div>
+                    </y-card>
+                  </y-menu>
+                </y-card-body>
                 <y-card-footer style="justify-content: flex-end">
                   <y-button @click="showDialog = false">close</y-button>
                 </y-card-footer>
