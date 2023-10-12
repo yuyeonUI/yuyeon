@@ -30,6 +30,7 @@ export const YMenuPropOptions = {
   },
   closeCondition: {
     type: [Boolean, Function],
+    default: undefined,
   },
   preventClip: {
     type: Boolean as PropType<boolean>,
@@ -108,7 +109,6 @@ export const YMenu = defineComponent({
         }
         return;
       }
-
       if (active.value) {
         active.value = false;
       }
