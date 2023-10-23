@@ -21,16 +21,20 @@ import {
 
 import { wrapInArray } from '../util/array';
 import { deepEqual } from '../util/common';
-import { getUid, propsFactory } from '../util/vue-component';
+import {
+  findChildrenWithProvide,
+  getUid,
+  propsFactory,
+} from '../util/vue-component';
 import { useModelDuplex } from './communication';
 
-export interface GroupItem {
+export interface ChoiceItem {
   id: number;
   value: Ref<unknown>;
   disabled: Ref<boolean | undefined>;
 }
 
-export interface GroupProps {
+export interface ChoiceProps {
   disabled: boolean;
   modelValue: unknown;
   multiple?: boolean;
@@ -40,8 +44,8 @@ export interface GroupProps {
   'onUpdate:modelValue': ((value: unknown) => void) | undefined;
 }
 
-export interface GroupProvide {
-  register: (item: GroupItem, instance: ComponentInternalInstance) => void;
+export interface ChoiceProvide {
+  register: (item: ChoiceItem, instance: ComponentInternalInstance) => void;
   unregister: (id: number) => void;
   select: (id: number, value: boolean) => void;
   selected: Ref<Readonly<number[]>>;
@@ -56,7 +60,7 @@ export interface GroupProvide {
   >;
 }
 
-export interface GroupItemProvide {
+export interface ChoiceItemProvide {
   id: number;
   isSelected: Ref<boolean>;
   toggle: () => void;
@@ -64,10 +68,10 @@ export interface GroupItemProvide {
   selectedClass: Ref<(string | undefined)[] | false>;
   value: Ref<unknown>;
   disabled: Ref<boolean | undefined>;
-  group: GroupProvide;
+  provider: ChoiceProvide;
 }
 
-export const pressGroupPropsOptions = propsFactory(
+export const pressChoicePropsOptions = propsFactory(
   {
     modelValue: {
       type: null,
@@ -79,64 +83,64 @@ export const pressGroupPropsOptions = propsFactory(
     selectedClass: String,
     disabled: Boolean,
   },
-  'group',
+  'choice',
 );
 
-export const pressGroupItemPropsOptions = propsFactory(
+export const pressChoiceItemPropsOptions = propsFactory(
   {
     value: null,
     disabled: Boolean,
     selectedClass: String,
   },
-  'group-item',
+  'choice-item',
 );
 
-export interface GroupItemProps
-  extends ExtractPropTypes<ReturnType<typeof pressGroupItemPropsOptions>> {
-  'onGroup:selected': ((val: { value: boolean }) => void) | undefined;
+export interface ChoiceItemProps
+  extends ExtractPropTypes<ReturnType<typeof pressChoiceItemPropsOptions>> {
+  'onChoice:selected': ((val: { value: boolean }) => void) | undefined;
 }
 
-export function useGroupItem(
-  props: GroupItemProps,
-  injectKey: InjectionKey<GroupProvide>,
+export function useChoiceItem(
+  props: ChoiceItemProps,
+  injectKey: InjectionKey<ChoiceProvide>,
   required?: true,
-): GroupItemProvide;
-export function useGroupItem(
-  props: GroupItemProps,
-  injectKey: InjectionKey<GroupProvide>,
+): ChoiceItemProvide;
+export function useChoiceItem(
+  props: ChoiceItemProps,
+  injectKey: InjectionKey<ChoiceProvide>,
   required: false,
-): GroupItemProvide | null;
-export function useGroupItem(
-  props: GroupItemProps,
-  injectKey: InjectionKey<GroupProvide>,
+): ChoiceItemProvide | null;
+export function useChoiceItem(
+  props: ChoiceItemProps,
+  injectKey: InjectionKey<ChoiceProvide>,
   required = true,
-): GroupItemProvide | null {
+): ChoiceItemProvide | null {
   const vm = getCurrentInstance();
 
   if (!vm) {
     throw new Error(
-      'useGroupItem composable must be used inside a component setup function',
+      '"useChoiceItem" must be used inside a component setup function',
     );
   }
 
-  const id = getUid();
+  const id = getUid() as number;
 
   provide(Symbol.for(`${injectKey.description}:id`), id);
 
-  const group = inject(injectKey, null);
+  const choiceProvider = inject(injectKey, null);
 
-  if (!group) {
-    if (!required) return group;
+  if (!choiceProvider) {
+    if (!required) return choiceProvider as null;
 
-    throw new Error(
-      `[Vuetify] Could not find useGroup injection with symbol ${injectKey.description}`,
-    );
+    throw new Error(`Not found provider`);
   }
 
   const value = toRef(props, 'value');
-  const disabled = computed(() => !!(group.disabled.value || props.disabled));
+  const disabled = computed(
+    () => !!(choiceProvider.disabled.value || props.disabled),
+  );
 
-  group.register(
+  choiceProvider.register(
     {
       id,
       value,
@@ -146,15 +150,19 @@ export function useGroupItem(
   );
 
   onBeforeUnmount(() => {
-    group.unregister(id);
+    choiceProvider.unregister(id);
   });
 
   const isSelected = computed(() => {
-    return group.isSelected(id);
+    return choiceProvider.isSelected(id);
   });
 
   const selectedClass = computed(
-    () => isSelected.value && [group.selectedClass.value, props.selectedClass],
+    () =>
+      isSelected.value && [
+        choiceProvider.selectedClass.value,
+        props.selectedClass,
+      ],
   );
 
   watch(isSelected, (value) => {
@@ -164,21 +172,21 @@ export function useGroupItem(
   return {
     id,
     isSelected,
-    toggle: () => group.select(id, !isSelected.value),
-    select: (value: boolean) => group.select(id, value),
+    toggle: () => choiceProvider.select(id, !isSelected.value),
+    select: (value: boolean) => choiceProvider.select(id, value),
     selectedClass,
     value,
     disabled,
-    group,
+    provider: choiceProvider,
   };
 }
 
-export function useGroup(
-  props: GroupProps,
-  injectKey: InjectionKey<GroupProvide>,
+export function useChoice(
+  props: ChoiceProps,
+  injectKey: InjectionKey<ChoiceProvide>,
 ) {
   let isUnmounted = false;
-  const items = reactive<GroupItem[]>([]);
+  const items = reactive<ChoiceItem[]>([]);
   const selected = useModelDuplex(
     props,
     'modelValue',
@@ -197,9 +205,8 @@ export function useGroup(
 
   const groupVm = getCurrentInstance();
 
-  function register(item: GroupItem, vm: ComponentInternalInstance) {
-    // Is there a better way to fix this typing?
-    const unwrapped = item as unknown as UnwrapRef<GroupItem>;
+  function register(item: ChoiceItem, vm: ComponentInternalInstance) {
+    const unwrapped = item as unknown as UnwrapRef<ChoiceItem>;
 
     const key = Symbol.for(`${injectKey.description}:id`);
     const children = findChildrenWithProvide(key, groupVm?.vnode);
@@ -240,17 +247,10 @@ export function useGroup(
 
     if (props.multiple) {
       const internalValue = selected.value.slice();
-      const index = internalValue.findIndex((v) => v === id);
+      const index = internalValue.findIndex((v: any) => v === id);
       const isSelected = ~index;
       value = value ?? !isSelected;
-
-      // We can't remove value if group is
-      // mandatory, value already exists,
-      // and it is the only value
       if (isSelected && props.mandatory && internalValue.length <= 1) return;
-
-      // We can't add value if it would
-      // cause max limit to be exceeded
       if (
         !isSelected &&
         props.max != null &&
@@ -295,7 +295,7 @@ export function useGroup(
     }
   }
 
-  const state: GroupProvide = {
+  const state: ChoiceProvide = {
     register,
     unregister,
     selected,
@@ -314,7 +314,7 @@ export function useGroup(
   return state;
 }
 
-function getItemIndex(items: UnwrapRef<GroupItem[]>, value: unknown) {
+function getItemIndex(items: UnwrapRef<ChoiceItem[]>, value: unknown) {
   const ids = getIds(items, [value]);
 
   if (!ids.length) return -1;
@@ -322,7 +322,7 @@ function getItemIndex(items: UnwrapRef<GroupItem[]>, value: unknown) {
   return items.findIndex((item) => item.id === ids[0]);
 }
 
-function getIds(items: UnwrapRef<GroupItem[]>, modelValue: any[]) {
+function getIds(items: UnwrapRef<ChoiceItem[]>, modelValue: any[]) {
   const ids: number[] = [];
 
   modelValue.forEach((value) => {
@@ -339,7 +339,7 @@ function getIds(items: UnwrapRef<GroupItem[]>, modelValue: any[]) {
   return ids;
 }
 
-function getValues(items: UnwrapRef<GroupItem[]>, ids: any[]) {
+function getValues(items: UnwrapRef<ChoiceItem[]>, ids: any[]) {
   const values: unknown[] = [];
 
   ids.forEach((id) => {
