@@ -121,6 +121,16 @@ function onCloseMenuIn() {
     </section>
     <section class="pv-2" style="height: 200px">
       <y-card class="h-100 contain-paint">
+        <y-card-header> TABS </y-card-header>
+        <y-card-body class="pt-4">
+          <y-tabs>
+
+          </y-tabs>
+        </y-card-body>
+      </y-card>
+    </section>
+    <section class="pv-2" style="height: 200px">
+      <y-card class="h-100 contain-paint">
         <y-card-header> BUTTONS </y-card-header>
         <y-card-body class="pt-4">
           <div class="d-flex" style="gap: 4px">

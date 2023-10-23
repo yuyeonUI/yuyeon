@@ -1,10 +1,18 @@
 import { PropType, defineComponent, ref } from 'vue';
 
+import { pressChoicePropsOptions } from '../../composables/choice';
 import { useRender } from '../../composables/component';
 import { useResizeObserver } from '../../composables/resize-observer';
 import { propsFactory } from '../../util/vue-component';
 
-export const pressYTabsPropOptions = propsFactory({}, 'YTabs');
+export const pressYTabsPropOptions = propsFactory(
+  {
+    ...pressChoicePropsOptions({
+      selectedClass: 'y-tab--active',
+    }),
+  },
+  'YTabs',
+);
 
 export const YTabs = defineComponent({
   name: 'YTabs',
@@ -13,6 +21,7 @@ export const YTabs = defineComponent({
       type: String as PropType<'div' | 'nav' | 'ol' | 'ul'>,
       default: 'div',
     },
+    ...pressYTabsPropOptions(),
   },
   setup(props, { slots }) {
     const { resizeObservedRef: container$, contentRect: containerRect } =
@@ -21,12 +30,8 @@ export const YTabs = defineComponent({
 
     useRender(() => {
       return (
-        <props.tag class={['y-tabs']}>
-          <div
-            key="container"
-            ref={container$}
-            class={['y-tabs__container']}
-          >
+        <props.tag class={['y-tabs']} role="tablist">
+          <div key="container" ref={container$} class={['y-tabs__container']}>
             <div key="content" ref={content$}>
               {slots.default?.()}
             </div>

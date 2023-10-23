@@ -1,11 +1,14 @@
+import { ComponentInternalInstance } from '@vue/runtime-core';
 import type { IfAny } from '@vue/shared';
 import type {
   ComponentObjectPropsOptions,
   ComponentPublicInstance,
   ExtractPropTypes,
+  InjectionKey,
   Prop,
   PropType,
   VNode,
+  VNodeChild,
 } from 'vue';
 import { getCurrentInstance } from 'vue';
 
@@ -70,6 +73,29 @@ export function getHtmlElement<N extends object | undefined>(
   return node && hasOwnProperty(node, '$el')
     ? ((node as ComponentPublicInstance).$el as HTMLElement)
     : (node as HTMLElement);
+}
+
+export function findChildrenWithProvide(
+    key: InjectionKey<any> | symbol,
+    vnode?: VNodeChild,
+): ComponentInternalInstance[] {
+  if (!vnode || typeof vnode !== 'object') {
+    return [];
+  }
+
+  if (Array.isArray(vnode)) {
+    return vnode.map(child => findChildrenWithProvide(key, child)).flat(1)
+  } else if (Array.isArray(vnode.children)) {
+    return vnode.children.map(child => findChildrenWithProvide(key, child)).flat(1)
+  } else if (vnode.component) {
+    if (Object.getOwnPropertySymbols((vnode.component as any).provides).includes(key as symbol)) {
+      return [vnode.component]
+    } else if (vnode.component.subTree) {
+      return findChildrenWithProvide(key, vnode.component.subTree).flat(1)
+    }
+  }
+
+  return []
 }
 
 export function propsFactory<PropsOptions extends ComponentObjectPropsOptions>(
