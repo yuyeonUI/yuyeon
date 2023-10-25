@@ -70,6 +70,18 @@ export const pressYLayerProps = propsFactory(
       type: Boolean as PropType<boolean>,
       default: false,
     },
+    openOnHover: {
+      type: Boolean as PropType<boolean>,
+      default: false,
+    },
+    openDelay: {
+      type: Number as PropType<number>,
+      default: 200,
+    },
+    closeDelay: {
+      type: Number as PropType<number>,
+      default: 200,
+    },
     ...pressThemePropsOptions(),
     ...polyTransitionPropOptions,
     ...pressCoordinateProps(),
@@ -117,7 +129,10 @@ export const YLayer = defineComponent({
     const finish = shallowRef(false);
 
     const disabled = toRef(props, 'disabled');
-    const { lazyValue, onAfterUpdate } = useLazy(!!props.eager, active);
+    const { lazyValue, onAfterUpdate } = useLazy(
+      !!toRef(props, 'eager'),
+      active,
+    );
     const rendered = computed<boolean>(
       () => !disabled.value && (lazyValue.value || active.value),
     );
@@ -143,7 +158,10 @@ export const YLayer = defineComponent({
     }
 
     function closeConditional(): boolean {
-      return active.value; // TODO: && groupTopLevel.value;
+      return (
+        (!props.openOnHover || (props.openOnHover && !hovered.value)) &&
+        active.value
+      ); // TODO: && groupTopLevel.value;
     }
 
     const complementClickOption = reactive<ComplementClickBindingOptions>({
@@ -203,6 +221,16 @@ export const YLayer = defineComponent({
       };
     });
 
+    const hovered = ref(false);
+
+    function onMouseenter(event: Event) {
+      hovered.value = true;
+    }
+
+    function onMouseleave(event: Event) {
+      hovered.value = false;
+    }
+
     expose({
       scrim$,
       base$,
@@ -211,6 +239,7 @@ export const YLayer = defineComponent({
       active,
       onAfterUpdate,
       updateCoordinate,
+      hovered,
     });
 
     useRender(() => {
@@ -237,6 +266,8 @@ export const YLayer = defineComponent({
                   ...computedClass.value,
                   [themeClasses.value ?? '']: true,
                 }}
+                onMouseenter={onMouseenter}
+                onMouseleave={onMouseleave}
                 style={computedStyle.value}
                 {...attrs}
               >
@@ -286,6 +317,7 @@ export const YLayer = defineComponent({
       layerGroup,
       active,
       rendered,
+      lazyValue,
       onAfterUpdate: onAfterUpdate as () => void,
       scrim$,
       content$,
