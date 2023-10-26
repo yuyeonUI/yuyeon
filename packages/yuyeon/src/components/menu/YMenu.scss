@@ -8,7 +8,7 @@
   &__content {
     box-shadow: var(--y-menu__elevation, #{$elevation-fallback});
     border-radius: var(--y-menu__border-radius);
-    background: rgba(var(--y-theme-surface), 1);
+    background: var(--y-theme-surface);
     display: flex;
     flex-direction: column;
 

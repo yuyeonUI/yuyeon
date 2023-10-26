@@ -32,7 +32,7 @@
   }
 
   .y-card__footer {
-    background-color: rgba(var(--y-theme-outline), var(--y-theme-outline-opacity));
+    background-color: rgba(var(--y-theme-outline-rgb), 0.14);
     border-bottom-left-radius: inherit;
     border-bottom-right-radius: inherit;
     padding: 12px 21px;

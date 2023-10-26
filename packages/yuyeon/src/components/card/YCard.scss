@@ -6,10 +6,10 @@ $card__padding: 24px;
 
 .y-card {
   --y-card__border-radius: #{$card__border-radius};
-  --y-card__default-background: 255, 255, 255;
+  --y-card__default-background: #ffffff;
   --y-card__background: var(--y-theme-surface, var(--y-card__default-background));
 
-  background-color: rgba(var(--y-card__background), 1);
+  background-color: var(--y-card__background);
   border-radius: var(--y-card__border-radius, $card__border-radius);
 
   &__header {

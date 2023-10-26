@@ -148,7 +148,7 @@ $input-border-radius: variables.$border-radius-root !default;
       }
       //
       &__plate {
-        background: rgba(var(--y-theme-on-surface, var(--y-input-default-filled)), var(--y-input-filled-opacity));
+        background: rgba(var(--y-theme-on-surface-rgb, var(--y-input-default-filled)), var(--y-input-filled-opacity));
       }
 
       &__display:hover {
@@ -163,7 +163,7 @@ $input-border-radius: variables.$border-radius-root !default;
 
     .y-input {
       &__plate {
-        border: 1px solid rgba(var(--y-theme-outline), var(--y-input-outlined-opacity));
+        border: 1px solid rgba(var(--y-theme-outline-rgb), var(--y-input-outlined-opacity));
         box-sizing: border-box;
         inset: 0;
 
@@ -209,7 +209,7 @@ $input-border-radius: variables.$border-radius-root !default;
 
     .y-input__plate {
       outline: 1px solid rgba(var(--y-theme-primary, #4f97dc), 0.1);
-      border-color: rgba(var(--y-input-focused-color), 1);
+      border-color: var(--y-input-focused-color);
     }
 
     .y-input__leading {
@@ -224,22 +224,22 @@ $input-border-radius: variables.$border-radius-root !default;
   &--error {
     &.y-input--outlined {
       .y-input__plate {
-        border-color: palette.$alert-negative !important;
+        border-color: var(--y-palette-negative) !important;
       }
     }
     .y-input__helper-text {
-      color: palette.$alert-negative;
+      color: var(--y-palette-negative);
     }
   }
 
   &--success {
     &.y-input--outlined {
       .y-input__plate {
-        border-color: palette.$alert-positive !important;
+        border-color: var(--y-palette-positive) !important;
       }
     }
     .y-input__helper-text {
-      color: palette.$alert-positive;
+      color: var(--y-palette-positive);
     }
   }
 }

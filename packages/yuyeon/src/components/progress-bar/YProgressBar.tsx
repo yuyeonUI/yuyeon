@@ -67,7 +67,7 @@ export const YProgressBar = defineComponent({
     leadColor(): string {
       let color = this.color ?? '';
       if (!isColorValue(color)) {
-        color = `rgba(var(--y-theme-${color}), 1)`;
+        color = `var(--y-theme-${color})`;
       }
       return color;
     },

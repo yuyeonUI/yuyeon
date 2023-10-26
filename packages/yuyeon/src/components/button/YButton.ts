@@ -89,8 +89,8 @@ export const YButton = defineComponent({
       let { color } = this;
       let textColor: string | undefined;
       if (color && !isColorValue(color)) {
-        color = `rgba(var(--y-theme-${color}), 1)`;
-        textColor = `rgba(var(--y-theme-on-${this.color}), 1)`;
+        color = `var(--y-theme-${color})`;
+        textColor = `var(--y-theme-on-${this.color})`;
       }
       return {
         [`--y-button__color`]: color,
