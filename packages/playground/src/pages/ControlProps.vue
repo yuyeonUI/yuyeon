@@ -96,10 +96,13 @@ function onCloseMenuIn() {
         <y-card-body class="pt-4">
           <div class="d-flex align-center" style="gap: 8px">
             <y-menu
-              position="bottom"
+              position="right top"
               offset="8"
               height="80"
+              eager
+              open-on-hover
               :close-condition="onCloseMenuIn"
+              prevent-close-bubble
             >
               <template #base="{ props: menuProps }">
                 <y-tooltip position="top">
@@ -122,6 +125,15 @@ function onCloseMenuIn() {
                     </template>
                     <y-card>
                       <div>menu 1</div>
+                    </y-card>
+                  </y-menu>
+
+                  <y-menu height="80" open-on-hover>
+                    <template #base>
+                      <y-button>prevent bubble</y-button>
+                    </template>
+                    <y-card>
+                      <div>menu 0</div>
                     </y-card>
                   </y-menu>
                 </y-card-body>

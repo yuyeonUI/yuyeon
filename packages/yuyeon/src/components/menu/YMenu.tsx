@@ -1,5 +1,5 @@
 import type { PropType } from 'vue';
-import { computed, defineComponent, ref, watch } from 'vue';
+import {computed, defineComponent, ref, toRef, watch} from 'vue';
 
 import { useModelDuplex } from '../../composables/communication';
 import { useRender } from '../../composables/component';
@@ -8,8 +8,11 @@ import { polyTransitionPropOptions } from '../../composables/transition';
 import { toKebabCase } from '../../util/string';
 import { bindClasses, chooseProps } from '../../util/vue-component';
 import { YLayer, pressYLayerProps } from '../layer';
+import { useDelay } from '../layer/active-delay';
 
 import './YMenu.scss';
+import {useActiveStack} from "../layer/active-stack";
+import {hasElementMouseEvent} from "../../util/dom";
 
 const NAME = 'YMenu';
 const CLASS_NAME = toKebabCase(NAME);
@@ -19,10 +22,6 @@ export const YMenuPropOptions = {
     type: [Array, String, Object] as PropType<
       string[] | string | Record<string, any>
     >,
-  },
-  openOnHover: {
-    type: Boolean as PropType<boolean>,
-    default: false,
   },
   openOnClickBase: {
     type: Boolean as PropType<boolean>,
@@ -39,6 +38,7 @@ export const YMenuPropOptions = {
   ...pressYLayerProps({
     coordinateStrategy: 'levitation',
   }),
+  preventCloseBubble: Boolean as PropType<boolean>,
 };
 
 /**
@@ -76,17 +76,36 @@ export const YMenu = defineComponent({
       },
     });
 
+    const hovered = computed(() => !!el$.value?.hovered);
+    const { children, parent } = useActiveStack(el$, active, toRef(props, 'preventCloseBubble'));
+    const { startOpenDelay, startCloseDelay } = useDelay(
+      props,
+      (changeActive) => {
+        if (!changeActive && props.openOnHover && !hovered.value && children.value.length === 0) {
+          active.value = false;
+        } else if (changeActive) {
+          active.value = true;
+        }
+      },
+    );
+
     function onMouseenter(e: MouseEvent) {
       if (props.openOnHover) {
-        active.value = true;
+        startOpenDelay();
       }
     }
 
     function onMouseleave(e: MouseEvent) {
       if (props.openOnHover) {
-        active.value = false;
+        startCloseDelay();
       }
     }
+
+    watch(hovered, (value) => {
+      if (!value) {
+        startCloseDelay();
+      }
+    });
 
     function onClick(e: MouseEvent) {
       e.stopPropagation();
@@ -110,7 +129,11 @@ export const YMenu = defineComponent({
         return;
       }
       if (active.value) {
+        const parentContent = parent?.$el.value?.content$;
         active.value = false;
+        if (!(parentContent && !hasElementMouseEvent(e, parentContent))) {
+          parent?.clear();
+        }
       }
     }
 
