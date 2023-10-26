@@ -202,6 +202,7 @@ export const YTreeViewNode = defineComponent({
                     ? slots.default?.({
                         text: contentText.value,
                         item: props.item,
+                        ...slotProps.value
                       })
                     : props.search && !searchLoading.value
                     ? h(YTextHighlighter, {
