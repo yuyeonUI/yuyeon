@@ -1,57 +1,63 @@
-
 import {
   PropType,
   VNode,
   defineComponent,
   h,
-  withDirectives, resolveDirective
-} from "vue";
+  resolveDirective,
+  withDirectives,
+} from 'vue';
 
+import { pressFocusPropsOptions, useFocus } from '../../composables/focus';
+import { pressThemePropsOptions, useLocalTheme } from '../../composables/theme';
 import DiMixin from '../../mixins/di';
-import { getSlot, propsFactory } from "../../util/vue-component";
+import { getSlot, propsFactory } from '../../util/vue-component';
+
 import './YInput.scss';
-import { pressThemePropsOptions, useLocalTheme } from "../../composables/theme";
-import { pressFocusPropsOptions, useFocus } from "../../composables/focus";
 
 const NAME = 'y-input';
 let uidCounter = 0;
 
-export const pressYInputPropsOptions = propsFactory({
-  name: String,
-  width: {
-    type: [String, Number] as PropType<string | number>,
+export const pressYInputPropsOptions = propsFactory(
+  {
+    name: String,
+    width: {
+      type: [String, Number] as PropType<string | number>,
+    },
+    height: [Number, String],
+    displayTag: {
+      type: String as PropType<string>,
+      default: 'div',
+    },
+    label: String as PropType<string>,
+    modelValue: { type: [String, Number] as PropType<string | number> },
+    autoSelect: {
+      type: Boolean as PropType<boolean>,
+      default: true,
+    },
+    floating: { type: Boolean as PropType<boolean>, default: false },
+    floated: { type: Boolean as PropType<boolean>, default: () => false },
+    placeholder: String as PropType<string>,
+    required: Boolean as PropType<boolean>,
+    loading: Boolean as PropType<boolean>,
+    // variations
+    variation: String as PropType<string>,
+    outlined: Boolean as PropType<boolean>,
+    filled: Boolean as PropType<boolean>,
+    ceramic: Boolean as PropType<boolean>,
+    // validate
+    readonly: Boolean as PropType<boolean>,
+    disabled: Boolean as PropType<boolean>,
+    status: {
+      type: String as PropType<'success' | 'warning' | 'error' | undefined>,
+      validator(value: string) {
+        return ['success', 'warning', 'error'].includes(value);
+      },
+    },
+    validators: Array as PropType<((v: any) => boolean | string)[] | string[]>,
+    ...pressFocusPropsOptions(),
   },
-  height: [Number, String],
-  displayTag: {
-    type: String as PropType<string>,
-    default: 'div',
-  },
-  label: String as PropType<string>,
-  modelValue: { type: [String, Number] as PropType<string | number> },
-  autoSelect: {
-    type: Boolean as PropType<boolean>,
-    default: true,
-  },
-  floated: { type: Boolean as PropType<boolean>, default: () => false },
-  placeholder: String as PropType<string>,
-  loading: Boolean as PropType<boolean>,
-  // variations
-  variation: String as PropType<string>,
-  outlined: Boolean as PropType<boolean>,
-  filled: Boolean as PropType<boolean>,
-  ceramic: Boolean as PropType<boolean>,
-  // validate
-  readonly: Boolean as PropType<boolean>,
-  disabled: Boolean as PropType<boolean>,
-  status: {
-    type: String as PropType<'success' | 'warning' | 'error' | undefined>,
-    validator(value: string) {
-      return ['success', 'warning', 'error'].includes(value);
-    }
-  },
-  validators: Array as PropType<((v: any) => boolean | string)[] | string[]>,
-  ...pressFocusPropsOptions(),
-}, 'YInput');
+  'YInput',
+);
 
 export const YInput = defineComponent({
   name: 'YInput',
@@ -60,7 +66,19 @@ export const YInput = defineComponent({
     ...pressThemePropsOptions(),
     ...pressYInputPropsOptions(),
   },
-  emits: ['error', 'click', 'mousedown', 'mouseup', 'focus', 'blur', 'mousedown:display', 'mouseup:display', 'click:leading', 'update:modelValue', 'update:focused'],
+  emits: [
+    'error',
+    'click',
+    'mousedown',
+    'mouseup',
+    'focus',
+    'blur',
+    'mousedown:display',
+    'mouseup:display',
+    'click:leading',
+    'update:modelValue',
+    'update:focused',
+  ],
   data() {
     const iid = uidCounter.toString();
     uidCounter += 1;
@@ -77,7 +95,9 @@ export const YInput = defineComponent({
     classes(): Record<string, boolean> {
       return {
         'y-input--ceramic': !!this.ceramic,
-        'y-input--outlined': !this.ceramic && (this.variations.includes('outlined') || !!this.outlined),
+        'y-input--outlined':
+          !this.ceramic &&
+          (this.variations.includes('outlined') || !!this.outlined),
         'y-input--filled': this.variations.includes('filled') || !!this.filled,
         'y-input--focused': this.isFocused,
         'y-input--readonly': !!this.readonly,
@@ -131,26 +151,25 @@ export const YInput = defineComponent({
         });
       }
       return [];
-    }
+    },
   },
   methods: {
     createPrepend(): VNode | undefined {
       const slot = getSlot(this, 'prepend');
-      return slot
-        ? h('div', { class: `${NAME}__prepend` }, slot)
-        : undefined;
+      return slot ? h('div', { class: `${NAME}__prepend` }, slot) : undefined;
     },
     createAppend(): VNode | undefined {
       const slot = getSlot(this, 'append');
-      return slot
-        ? h('div', { class: `${NAME}__append` }, slot)
-        : undefined;
+      return slot ? h('div', { class: `${NAME}__append` }, slot) : undefined;
     },
-    createLabelSlot(): (VNode | string | VNode[])[] {
+    createLabelSlot(): (VNode | string | VNode[] | undefined)[] {
       const slot: VNode[] | undefined = getSlot(this, 'label');
       if (!slot) {
         if (this.label) {
-          return [this.label];
+          return [
+            this.label,
+            this.required ? h('span', { class: 'y-input__required-mark' }, '*') : undefined,
+          ];
         }
         if (this.placeholder && !this.inValue) {
           return [this.placeholder];
@@ -169,7 +188,9 @@ export const YInput = defineComponent({
         {
           class: {
             [`${NAME}__label`]: true,
-            'y-input__label--floated': this.isFloatedLabel,
+            'y-input__floating-label': this.floating,
+            'y-input__floating-label--floated':
+              this.floating && this.isFloatedLabel,
           },
           '.for': this.attrId,
         },
@@ -178,34 +199,44 @@ export const YInput = defineComponent({
     },
     createDefaultChildren(): (VNode | undefined | VNode[] | string)[] {
       const { modelValue } = this;
-      return [this.createLabel(), modelValue?.toString()];
+      return [
+        this.floating ? this.createLabel() : undefined,
+        modelValue?.toString(),
+      ];
     },
     createDefault(): VNode[] | VNode {
       const { modelValue, formLoading, attrId } = this;
-      const slotContent = getSlot(this, 'default', { value: modelValue, formLoading, attrId });
-      return slotContent ?? h(
-        'div',
-        {
-          [`.${NAME}__value`]: true,
-          '.data-id': this.attrId,
-          '.tabindex': 0,
-          onFocus: this.onFocus,
-          onBlur: this.onBlur,
-        },
-        this.createDefaultChildren(),
+      const slotContent = getSlot(this, 'default', {
+        value: modelValue,
+        formLoading,
+        attrId,
+      });
+      return (
+        slotContent ??
+        h(
+          'div',
+          {
+            [`.${NAME}__value`]: true,
+            '.data-id': this.attrId,
+            '.tabindex': 0,
+            onFocus: this.onFocus,
+            onBlur: this.onBlur,
+          },
+          this.createDefaultChildren(),
+        )
       );
     },
     createLeading(): VNode | undefined {
       const slot = getSlot(this, 'leading', { error: this.isError });
       return slot
         ? h(
-          'div',
-          {
-            class: 'y-input__leading',
-            onClick: this.onClickLeading,
-          },
-          slot,
-        )
+            'div',
+            {
+              class: 'y-input__leading',
+              onClick: this.onClickLeading,
+            },
+            slot,
+          )
         : undefined;
     },
     createTrailing(): VNode | VNode[] | undefined {
@@ -254,8 +285,12 @@ export const YInput = defineComponent({
       }
       return h('div', { class: `${NAME}__helper-text` }, children);
     },
-    createStackChildren(): VNode[] {
-      return [this.createDisplay(), this.createHelperText()];
+    createStackChildren(): (VNode | undefined)[] {
+      return [
+        !this.floating ? this.createLabel() : undefined,
+        this.createDisplay(),
+        this.createHelperText(),
+      ];
     },
     createStack(): VNode {
       return h(
@@ -268,11 +303,7 @@ export const YInput = defineComponent({
       );
     },
     createContent(): (VNode | undefined)[] {
-      return [
-        this.createPrepend(),
-        this.createStack(),
-        this.createAppend(),
-      ];
+      return [this.createPrepend(), this.createStack(), this.createAppend()];
     },
     //
     onClick(event: MouseEvent) {
@@ -369,14 +400,19 @@ export const YInput = defineComponent({
   },
   setup(props) {
     const { themeClasses } = useLocalTheme(props);
-    const { focused: isFocused, focusedClasses, whenFocus, whenBlur } = useFocus(props, 'y-input');
+    const {
+      focused: isFocused,
+      focusedClasses,
+      whenFocus,
+      whenBlur,
+    } = useFocus(props, 'y-input');
     return {
       themeClasses,
       isFocused,
       focusedClasses,
       whenFocus,
       whenBlur,
-    }
+    };
   },
   render(): VNode {
     return h(

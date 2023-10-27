@@ -226,7 +226,10 @@ export const YFieldInput = defineComponent({
                 ref: 'field',
               },
               [
-                YInput.methods!.createLabel.call(yInputRef),
+                props.floating
+                  ? yInputRef.value &&
+                    YInput.methods!.createLabel.call(yInputRef.value)
+                  : undefined,
                 slots.default?.(),
                 h('input', {
                   '.value': displayValue.value,
@@ -282,9 +285,12 @@ export const YFieldInput = defineComponent({
             }
             return trailingChildren;
           },
-          'helper-text': slots['helper-text'] ? () => {
-            return slots['helper-text']?.();
-          } : undefined,
+          label: slots['label']?.(),
+          'helper-text': slots['helper-text']
+            ? () => {
+                return slots['helper-text']?.();
+              }
+            : undefined,
         },
       ),
     );

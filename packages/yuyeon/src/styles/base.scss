@@ -113,3 +113,7 @@
     transform: rotate(360deg);
   }
 }
+
+.text-color--error {
+  color: var(--y-theme-error);
+}
