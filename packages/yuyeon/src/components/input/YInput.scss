@@ -13,6 +13,7 @@ $input-border-radius: variables.$border-radius-root !default;
   text-align: left;
 
   --y-input-focused-color: var(--y-theme-primary);
+  --y-input-label-color: var(--y-theme-on-surface-variant);
 
   &__prepend,
   &__append {
@@ -68,7 +69,7 @@ $input-border-radius: variables.$border-radius-root !default;
     }
     100% {
       opacity: 1;
-      transform: translateY(-26px) scale(0.74);
+      transform: translateY(-26px) scale(0.94);
     }
   }
 
@@ -91,13 +92,19 @@ $input-border-radius: variables.$border-radius-root !default;
   }
 
   &__label {
+    color: var(--y-input-label-color);
+    padding-bottom: 4px;
+    font-weight: 500;
+  }
+
+  &__floating-label {
     position: absolute;
-    color: #5e5e5e;
     max-width: 90%;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     pointer-events: none;
+    padding-bottom: unset;
     left: 0;
     top: 6px;
     transform-origin: left center;
@@ -123,6 +130,10 @@ $input-border-radius: variables.$border-radius-root !default;
       height: 24px;
       user-select: none;
     }
+  }
+
+  &__required-mark {
+    color: var(--y-theme-error);
   }
 
   &__trailing {

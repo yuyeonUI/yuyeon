@@ -78,12 +78,36 @@ function onCloseMenuIn() {
     </section>
     <section class="py-2">
       <y-card class="pa-2">
-        <div class="d-flex pt-2" style="gap: 8px">
-          <div style="flex: 0 0 50%">
-            <y-field-input theme="dark" variation="outlined"></y-field-input>
+        <y-card-header>INPUTS</y-card-header>
+        <y-card-body class="pt-2">
+          <div class="d-flex gap-2">
+            <y-field-input
+              label="이름"
+              placeholder="이름을 입력하세요"
+              required
+            ></y-field-input>
+            <y-field-input
+              variation="outlined"
+              label="label slot"
+              placeholder="variation outlined"
+            >
+            </y-field-input>
+            <y-field-input
+                label="ceramic"
+                ceramic
+                placeholder="ceramic"
+                required
+            ></y-field-input>
           </div>
-          <y-field-input></y-field-input>
-        </div>
+          <div class="d-flex pt-8 gap-2">
+            <y-field-input label="floating" floating></y-field-input>
+            <y-field-input
+              label="floating"
+              floating
+              placeholder="floating with placeholder"
+            ></y-field-input>
+          </div>
+        </y-card-body>
       </y-card>
     </section>
     <section class="pv-2" style="height: 300px">
@@ -198,7 +222,11 @@ function onCloseMenuIn() {
               드롭다운
             </y-dropdown>
             <!--  -->
-            <y-select :items="dropdownItems" offset="8"></y-select>
+            <y-select
+              :items="dropdownItems"
+              :label="'y-select'"
+              offset="8"
+            ></y-select>
           </div>
           <div class="mv-3">
             <y-select :items="dropdownItems" variation="outlined"></y-select>
@@ -236,5 +264,8 @@ function onCloseMenuIn() {
 }
 .playground-dialog--showcase {
   filter: drop-shadow(4px 4px 12px rgba(0, 0, 0, 0.4));
+}
+.gap-2 {
+  gap: 8px;
 }
 </style>
