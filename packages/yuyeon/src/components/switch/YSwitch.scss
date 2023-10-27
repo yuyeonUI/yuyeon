@@ -2,7 +2,7 @@
 @use '../../styles/variables';
 
 .y-switch {
-  --y-switch__color: rgba(var(--y-theme-primary), 1);
+  --y-switch__color: var(--y-theme-primary);
   font-size: 1rem;
 
   &__slot {

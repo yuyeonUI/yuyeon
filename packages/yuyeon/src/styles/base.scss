@@ -17,8 +17,8 @@
 }
 
 .y-root {
-  background: rgba(var(--y-theme-background), 1);
-  color: rgba(var(--y-theme-on-background), 1);
+  background: var(--y-theme-background);
+  color: var(--y-theme-on-background);
 }
 
 .fade-enter-active,

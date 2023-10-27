@@ -19,7 +19,8 @@ export function createThemes(options: Record<string, any>) {
     for (const colorName of Object.keys(theme.colors)) {
       const color = theme.colors[colorName];
       if (/^#([0-9a-f]{3}|[0-9a-f]{6}|[0-9a-f]{8})/i.test(color)) {
-        theme.colors[colorName] = rgbFromHex(color)?.join(', ');
+        theme.colors[colorName] = color;
+        theme.colors[`${colorName}-rgb`] = rgbFromHex(color)?.join(', ');
       }
 
       if (/^on-[a-z]/.test(colorName) || theme.colors[`on-${colorName}`])
@@ -37,6 +38,8 @@ export function createThemes(options: Record<string, any>) {
 
       // Prefer white text if both have an acceptable contrast ratio
       theme.colors[onColor] =
+        whiteContrast > Math.min(blackContrast, 50) ? '#ffffff' : '#000000';
+      theme.colors[`${onColor}-rgb`] =
         whiteContrast > Math.min(blackContrast, 50)
           ? '255, 255, 255'
           : '0, 0, 0';

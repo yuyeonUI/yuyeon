@@ -29,7 +29,7 @@ $table-cell-padding: 0 16px !default;
 
   &--fixed-head.y-table > &__container > table > thead > tr > th {
     z-index: 1;
-    background: rgba(var(--y-theme-panel, 250, 250, 250), 1);
+    background: var(--y-theme-panel, 250, 250, 250);
   }
 
   &__container {
