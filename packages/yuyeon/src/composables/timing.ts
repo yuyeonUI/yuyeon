@@ -1,24 +1,24 @@
 import { Ref, computed, ref, watch } from 'vue';
 
-export function useLazy(eager: boolean, updated: Ref<any>) {
+export function useLazy(eager: Ref<boolean | undefined>, updated: Ref<any>) {
   const tick = ref(false);
   const tack = ref();
   tack.value = updated.value;
   const lazyValue = computed(() => {
-    if (eager) return updated.value;
+    if (eager.value) return updated.value;
     return tack.value;
   });
   watch(updated, () => {
     if (!tick.value) {
       tack.value = updated.value;
     }
-    if (!eager) {
+    if (!eager.value) {
       tick.value = true;
     }
   });
   function onAfterUpdate() {
     tack.value = updated.value;
-    if (!eager) {
+    if (!eager.value) {
       tick.value = false;
     }
   }

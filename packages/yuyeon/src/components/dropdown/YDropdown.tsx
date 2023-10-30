@@ -102,7 +102,7 @@ export const YDropdown = defineComponent({
                         })}
                       </YList>
                     ) : (
-                      <div class="pa-4">항목이 없습니다.</div>
+                      <div class="y-dropdown__no-options">항목이 없습니다.</div>
                     )}
                   </YCard>
                 ),
