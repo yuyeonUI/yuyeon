@@ -9,7 +9,7 @@ import {
   ref,
   shallowRef,
   toRef,
-  watchEffect,
+  watchEffect, watch,
 } from 'vue';
 
 import { useRender } from '../../composables/component';
@@ -130,7 +130,7 @@ export const YLayer = defineComponent({
 
     const disabled = toRef(props, 'disabled');
     const { lazyValue, onAfterUpdate } = useLazy(
-      !!toRef(props, 'eager'),
+      toRef(props, 'eager'),
       active,
     );
     const rendered = computed<boolean>(
