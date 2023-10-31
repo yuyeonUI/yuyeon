@@ -227,7 +227,7 @@ export const YSelect = defineComponent({
                       })}
                     </YList>
                   ) : (
-                    <div class="pa-4">항목이 없습니다.</div>
+                    <div class="y-select__no-options">항목이 없습니다.</div>
                   )}
                 </YCard>
               ),
