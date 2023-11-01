@@ -1,7 +1,3 @@
-@use '../../styles/palette';
-
-$checkbox__label-color: #585858 !default;
-
 .y-checkbox {
   display: flex;
   align-items: center;
@@ -15,7 +11,7 @@ $checkbox__label-color: #585858 !default;
   .y-checkbox__label {
     cursor: pointer;
     font-weight: 400;
-    color: $checkbox__label-color;
+    color: var(--y-theme-on-surface-variant);
     font-size: 14px;
   }
 
@@ -25,6 +21,10 @@ $checkbox__label-color: #585858 !default;
 
   &:not(&--reverse) .y-input--checkbox {
     margin-right: 8px;
+  }
+
+  .y-input--checkbox {
+    cursor: pointer;
   }
 
   &--reverse .y-input--checkbox {

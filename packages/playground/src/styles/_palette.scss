@@ -2,14 +2,13 @@ $red: #ff4d4d;
 $green: #47b267;
 $yellow: #ffc70e;
 $blue: #4091c6;
-@use 'yuyeon/src/styles/palette' with (
-  $primary: #ff9639,
-);
-@forward 'yuyeon/src/styles/palette';
-
+$basic-gray-100: #b8bcbd;
+$basic-gray-700: #818181;
+$basic-gray-800: #6e6e6e;
 .text--red {
   color: $red;
 }
+
 .text--green {
   color: $green;
 }

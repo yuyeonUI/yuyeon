@@ -2,7 +2,6 @@
 @use 'settings/provided';
 @use 'settings/variables';
 @use 'palette';
-
 @use 'elevation';
 
 :root {
@@ -116,4 +115,8 @@
 
 .text-color--error {
   color: var(--y-theme-error);
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
 }
