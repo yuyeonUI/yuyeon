@@ -1,7 +1,6 @@
 <script setup lang="ts">
+import AlertCircleOutlineSvg from "@/assets/alert-circle-outline.svg?component";
 import VueSvg from "@/assets/vue.svg?component";
-import AlertCircleOutlineSvg from '@/assets/alert-circle-outline.svg?component';
-
 import { ref, shallowRef } from "vue";
 import { useTheme } from "yuyeon";
 
@@ -52,58 +51,69 @@ function onCloseMenuIn() {
 <template>
   <div class="pa-4">
     <y-alert class="mb-4">
-      <template #title>
-        Alert!!
-      </template>
-      <template #default>
-        Alert Alert Alert Alert!
-      </template>
+      <template #title> Alert!! </template>
+      <template #default> Alert Alert Alert Alert! </template>
     </y-alert>
     <section class="py-2">
       <y-card>
-        <y-card-header>
-          ALERTS
-        </y-card-header>
-        <y-card-body class="pv-4" >
-          <div class="d-flex flex-wrap" style="gap: 10px;">
+        <y-card-header> ALERTS </y-card-header>
+        <y-card-body class="pv-4">
+          <div class="d-flex flex-wrap" style="gap: 10px">
             <y-alert :semantic="'info'" style="width: 40%">
               <template #leading>
-                <AlertCircleOutlineSvg style="width: 24px; height: 24px"></AlertCircleOutlineSvg>
+                <AlertCircleOutlineSvg
+                  style="width: 24px; height: 24px"
+                ></AlertCircleOutlineSvg>
               </template>
               다음 안내 사항을 따르시기 바랍니다. 달이 떴다고 전화를 주시다니요
-              이 밤 너무나 신나고 근사해요
-              내 마음에도 생전 처음 보는
-              환한 달이 떠오르고
-              산 아래 작은 마을이 그려집니다.
+              이 밤 너무나 신나고 근사해요 내 마음에도 생전 처음 보는 환한 달이
+              떠오르고 산 아래 작은 마을이 그려집니다.
               <template #trailing>
                 <y-button>닫기</y-button>
               </template>
             </y-alert>
             <y-alert :semantic="'warning'" style="width: 40%">
               <template #leading>
-                <AlertCircleOutlineSvg style="width: 24px; height: 24px"></AlertCircleOutlineSvg>
+                <AlertCircleOutlineSvg
+                  style="width: 24px; height: 24px"
+                ></AlertCircleOutlineSvg>
               </template>
-              Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
+              Lorem Ipsum is simply dummy text of the printing and typesetting
+              industry. Lorem Ipsum has been the industry's standard dummy text
+              ever since the 1500s, when an unknown printer took a galley of
+              type and scrambled it to make a type specimen book.
             </y-alert>
             <y-alert :semantic="'error'" style="width: 40%">
               <template #leading>
-                <AlertCircleOutlineSvg style="width: 24px; height: 24px"></AlertCircleOutlineSvg>
+                <AlertCircleOutlineSvg
+                  style="width: 24px; height: 24px"
+                ></AlertCircleOutlineSvg>
               </template>
-              <template #title>
-                Alert!!
-              </template>
-              자정 넘으면
-              낯설음도 뼈아픔도 다 설원인데
-              단풍잎 같은 몇 잎의 차장을 달고
-              밤열차는 또 어디로 흘러가는지
+              <template #title> Alert!! </template>
+              자정 넘으면 낯설음도 뼈아픔도 다 설원인데 단풍잎 같은 몇 잎의
+              차장을 달고 밤열차는 또 어디로 흘러가는지
             </y-alert>
-            <y-alert :semantic="'success'" style="width: 40%">
-              별 하나에 추억과
-              별 하나에 사랑과
-              별 하나에 쓸쓸함과
-              별 하나에 동경과
-              별 하나에 시와
-              별 하나에 어머니, 어머니,
+            <y-alert
+              :semantic="'success'"
+              variation="outlined"
+              style="width: 40%"
+            >
+              별 하나에 추억과 별 하나에 사랑과 별 하나에 쓸쓸함과 별 하나에
+              동경과 별 하나에 시와 별 하나에 어머니, 어머니,
+            </y-alert>
+            <y-alert
+              :semantic="'success'"
+              variation="filled, outlined"
+              color="transparent"
+              :text-color="'#03838d'"
+              style="width: 40%"
+            >
+              별 하나에 추억과 별 하나에 사랑과 별 하나에 쓸쓸함과 별 하나에
+              동경과 별 하나에 시와 별 하나에 어머니, 어머니,
+            </y-alert>
+            <y-alert :color="'#6f038d'" variation="outlined" style="width: 40%">
+              별 하나에 추억과 별 하나에 사랑과 별 하나에 쓸쓸함과 별 하나에
+              동경과 별 하나에 시와 별 하나에 어머니, 어머니,
             </y-alert>
           </div>
         </y-card-body>
@@ -154,10 +164,10 @@ function onCloseMenuIn() {
             >
             </y-field-input>
             <y-field-input
-                label="ceramic"
-                ceramic
-                placeholder="ceramic"
-                required
+              label="ceramic"
+              ceramic
+              placeholder="ceramic"
+              required
             ></y-field-input>
           </div>
           <div class="d-flex pt-8 gap-2">

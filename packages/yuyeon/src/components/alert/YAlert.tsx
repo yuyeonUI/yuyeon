@@ -1,4 +1,4 @@
-import { PropType, defineComponent, ref } from 'vue';
+import { PropType, computed, defineComponent, ref } from 'vue';
 
 import { useRender } from '../../composables/component';
 import { toKebabCase } from '../../util/string';
@@ -27,16 +27,57 @@ export const YAlert = defineComponent({
   props: {
     ...YAlertPropOptions,
   },
-  setup(looseProps, { slots }) {
+  setup(props, { slots }) {
     const el$ = ref<HTMLElement>();
+
+    const variations = computed(() => {
+      const { variation } = props;
+      if (variation) {
+        return variation
+          .split(',')
+          .map((value) => {
+            return value.trim();
+          })
+          .filter((v) => !!v);
+      }
+      return [];
+    });
+
+    const cssVariables = computed(() => {
+      const ret: Record<string, string | number> = {};
+
+      if (props.color) {
+        ret['--y-alert-surface-color'] = props.color;
+        if (variations.value.includes('filled')) {
+          ret['--y-alert-surface-opacity'] = 1;
+        } else {
+          ret['--y-alert-text-color'] = props.color;
+        }
+        if (props.textColor) {
+          ret['--y-alert-text-color'] = props.textColor;
+        }
+        if (!props.outlineColor && !props.semantic) {
+          ret['--y-alert-outline-color'] = props.color;
+        }
+      }
+      if (props.outlineColor) {
+        ret['--y-alert-outline-color'] = props.outlineColor;
+      }
+      return ret;
+    })
 
     useRender(() => (
       <div
         ref={el$}
         class={[
           KEBAB_NAME,
-          { [`y-alert--${looseProps.semantic}`]: looseProps.semantic },
+          {
+            [`y-alert--${props.semantic}`]: props.semantic,
+            'y-alert--filled': variations.value.includes('filled'),
+            'y-alert--outlined': variations.value.includes('outlined'),
+          },
         ]}
+        style={cssVariables.value}
         v-theme
       >
         <YPlate></YPlate>
