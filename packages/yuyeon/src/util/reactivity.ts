@@ -1,6 +1,10 @@
 import type { ComputedGetter } from 'vue';
 import { computed, reactive, toRefs, watchEffect } from 'vue';
 
+/**
+ * For Destructuring assignment
+ * @param getter
+ */
 export function $computed<T extends object>(getter: ComputedGetter<T>) {
   const refs = reactive({}) as T;
   const base = computed(getter);
