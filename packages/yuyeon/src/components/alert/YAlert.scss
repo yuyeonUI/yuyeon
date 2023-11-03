@@ -1,0 +1,76 @@
+.y-alert {
+  --y-alert-text-color: var(--y-theme-base-font);
+  --y-alert-surface-color: var(--y-theme-base-font);
+  --y-alert-surface-opacity: var(--y-theme-outline-opacity);
+  --y-alert-outline-color: var(--y-theme-outline);
+
+  display: flex;
+  position: relative;
+  padding: 16px 24px;
+  color: var(--y-alert-text-color);
+  align-self: flex-start;
+
+  &__title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    line-height: 1.74;
+    padding-bottom: 0.12rem;
+    margin-top: -2px;
+  }
+
+  &__content {
+    flex: 1 1;
+    min-width: 0;
+    padding-top: 2px;
+    position: relative;
+  }
+
+  &__leading, &__trailing {
+    flex: 0 0 auto;
+    position: relative;
+  }
+
+  &__leading {
+    padding-right: 12px;
+    margin-top: 0.2rem;
+  }
+
+  &__trailing {
+    padding-left: 12px;
+  }
+
+  .y-plate {
+    &:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      background: var(--y-alert-surface-color);
+      opacity: var(--y-alert-surface-opacity);
+    }
+  }
+
+  &--outlined {
+    .y-plate {
+      border: 1px solid var(--y-alert-outline-color);
+    }
+  }
+
+  $semantics: ('info', 'success', 'warning', 'error');
+
+  @mixin defineSemantic($name) {
+    &--#{$name} {
+      --y-alert-text-color: var(--y-theme-#{$name});
+      --y-alert-surface-color: var(--y-theme-#{$name});
+      --y-alert-outline-color: var(--y-theme-#{$name});
+    }
+  }
+
+  @each $name in $semantics {
+    @include defineSemantic($name);
+  }
+
+
+}

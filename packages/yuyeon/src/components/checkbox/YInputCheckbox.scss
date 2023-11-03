@@ -1,6 +1,6 @@
-@use '../../styles/palette';
 
-$checkbox__color: palette.$primary;
+
+$checkbox__color: var(--y-theme-primary);
 $checkbox__border-color: #a4a4a4;
 
 .y-input--checkbox {
@@ -67,7 +67,7 @@ $checkbox__border-color: #a4a4a4;
 
   &.y-input--active:hover {
     .y-icon-checkbox__border-path {
-      fill: lighten($checkbox__color, 10);
+      filter: brightness(1.1);
     }
   }
 

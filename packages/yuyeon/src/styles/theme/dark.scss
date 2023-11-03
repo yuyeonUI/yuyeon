@@ -1,21 +1,11 @@
 @use 'sass:map';
-@use '../../styles/palette';
+
 @use '../util/helper';
 
 // yui/app theme
 $theme--dark: () !default;
 $theme--dark: map.deep-merge(
   (
-    'input': (
-      'fill': palette.$basic-gray-200,
-    ),
-    'fieldInput': (
-      'clear': palette.$basic-gray-400,
-    ),
-    'select': (
-      'selected': palette.$basic-black,
-      'selected-background': palette.$basic-gray-700,
-    ),
   ),
   $theme--dark
 );

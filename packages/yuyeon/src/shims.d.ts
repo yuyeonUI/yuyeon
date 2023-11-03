@@ -33,6 +33,7 @@ import {
   YTreeView,
   YTreeViewNode,
   YSelect,
+  YAlert,
 } from 'yuyeon/types/components';
 
 declare module '@vue/runtime-core' {
@@ -71,5 +72,6 @@ declare module '@vue/runtime-core' {
     YSwitch: typeof YSwitch;
     YDropdown: typeof YDropdown;
     YSelect: typeof YSelect;
+    YAlert: typeof YAlert;
   }
 }
