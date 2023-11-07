@@ -100,8 +100,8 @@ export default defineComponent({
 
     useRender(() => {
       return (
-        <div class={classes}>
-          <slot name="prepend"></slot>
+        <div class={[{...classes.value}]}>
+          {slots.leading?.()}
           <div class="y-checkbox__slot">
             <YInputCheckbox
               onClick={(e: Event, ...args: any[]) => {
@@ -110,7 +110,7 @@ export default defineComponent({
               }}
               onFocus={onFocus}
               onBlur={onBlur}
-              id={'counterId'}
+              id={counterId}
               value={innerValue.value}
               icon={computedIcon.value}
               color={props.color}
@@ -129,7 +129,7 @@ export default defineComponent({
               {slots.label ? slots.label?.() : props.label}
             </label>
           </div>
-          {slots.append?.()}
+          {slots.trailing?.()}
         </div>
       );
     });

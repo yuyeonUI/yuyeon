@@ -52,7 +52,7 @@ export function useModelDuplex(
     set(value) {
       const neo = setOut(value);
       const current = toRaw(isDefinedProp.value ? getProp() : txValue.value);
-      if (current === neo || setOut(current) === value) {
+      if (current === neo || getIn(current) === value) {
         return;
       }
       txValue.value = neo;

@@ -1,11 +1,14 @@
+import { ComponentInternalInstance, capitalize } from '@vue/runtime-core';
 import type { IfAny } from '@vue/shared';
 import type {
   ComponentObjectPropsOptions,
   ComponentPublicInstance,
   ExtractPropTypes,
+  InjectionKey,
   Prop,
   PropType,
   VNode,
+  VNodeChild,
 } from 'vue';
 import { getCurrentInstance } from 'vue';
 
@@ -72,6 +75,35 @@ export function getHtmlElement<N extends object | undefined>(
     : (node as HTMLElement);
 }
 
+export function findChildrenWithProvide(
+  key: InjectionKey<any> | symbol,
+  vnode?: VNodeChild,
+): ComponentInternalInstance[] {
+  if (!vnode || typeof vnode !== 'object') {
+    return [];
+  }
+
+  if (Array.isArray(vnode)) {
+    return vnode.map((child) => findChildrenWithProvide(key, child)).flat(1);
+  } else if (Array.isArray(vnode.children)) {
+    return vnode.children
+      .map((child) => findChildrenWithProvide(key, child))
+      .flat(1);
+  } else if (vnode.component) {
+    if (
+      Object.getOwnPropertySymbols((vnode.component as any).provides).includes(
+        key as symbol,
+      )
+    ) {
+      return [vnode.component];
+    } else if (vnode.component.subTree) {
+      return findChildrenWithProvide(key, vnode.component.subTree).flat(1);
+    }
+  }
+
+  return [];
+}
+
 export function propsFactory<PropsOptions extends ComponentObjectPropsOptions>(
   props: PropsOptions,
   source: string,
@@ -101,6 +133,17 @@ export function propsFactory<PropsOptions extends ComponentObjectPropsOptions>(
   };
 }
 
+export function hasEventProp(props: Record<string, any>, type: string) {
+  const onType = `on${capitalize(type)}`;
+  return !!(
+    props[onType] ||
+    props[`${onType}Once`] ||
+    props[`${onType}Capture`] ||
+    props[`${onType}OnceCapture`] ||
+    props[`${onType}CaptureOnce`]
+  );
+}
+
 type OverwrittenPropOptions<
   T extends ComponentObjectPropsOptions,
   D extends PartialKeys<T>,
@@ -109,11 +152,11 @@ type OverwrittenPropOptions<
     ? T[P]
     : T[P] extends Record<string, unknown>
     ? Omit<T[P], 'type' | 'default'> & {
-        type: FollowPropType<Pick<T[P], 'type'>, T[P], D[P]>;
+        type: PropType<MergeDefault<T[P], D[P]>>;
         default: MergeDefault<T[P], D[P]>;
       }
     : {
-        type: PropType<MergeDefault<P, D>>;
+        type: PropType<MergeDefault<T[P], D[P]>>;
         default: MergeDefault<T[P], D[P]>;
       };
 };
@@ -151,3 +194,10 @@ type InferPropType<T> = [T] extends [null]
     ? IfAny<V, V, D>
     : V
   : T;
+
+export type EventProp<T extends any[] = any[], F = (...args: T) => any> =
+  | F
+  | F[];
+
+export const EventPropOption = <T extends any[] = any[]>() =>
+  [Function, Array] as PropType<EventProp<T>>;

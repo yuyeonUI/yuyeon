@@ -1,0 +1,59 @@
+@use '../../styles/variables';
+
+.y-tab {
+  --y-tab-color: var(--y-theme-on-surface);
+  --y-tab-active-color: var(--y-theme-primary);
+
+  --y-tab-indicator-width: 2.7px;
+  --y-tab-indicator-color: inherit;
+  --y-tab-active-indicator-color: var(--y-theme-primary);
+  --y-tab-hover-indicator-color: var(--y-theme-outline);
+
+  box-shadow: none;
+  border-radius: 0;
+  font-size: 1rem;
+  padding: 4px 8px 12px;
+  color: var(--y-tab-color);
+
+  &:before {
+    background: radial-gradient(currentColor 50%, transparent);
+  }
+
+  &__indicator {
+    height: var(--y-tab-indicator-width);
+    position: absolute;
+    left: 4px;
+    right: 4px;
+    bottom: 0;
+    background-color: currentColor;
+    border-top-left-radius: 4444px;
+    border-top-right-radius: 4444px;
+    transform: scaleY(0);
+    transform-origin: bottom center;
+    transition-timing-function: variables.$basic-transition-timing-function;
+    transition-duration: 200ms;
+    transition-property: all;
+    will-change: transform;
+  }
+
+  .y-button {
+    &__content {
+      padding: 0;
+    }
+  }
+
+  &--active {
+    font-weight: 700;
+    color: var(--y-tab-active-color);
+  }
+
+  &:hover:not(&--active) &__indicator {
+    transform: scaleY(1);
+    color: var(--y-tab-hover-indicator-color);
+  }
+
+  &--active &__indicator {
+    color: var(--y-tab-active-indicator-color);
+    transform: scaleY(1);
+  }
+}
