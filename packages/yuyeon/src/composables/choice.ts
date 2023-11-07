@@ -40,7 +40,7 @@ export interface ChoiceProps {
   multiple?: boolean;
   mandatory?: boolean | 'force' | undefined;
   max?: number | undefined;
-  selectedClass: string | undefined;
+  selectedClass?: string | undefined;
   'onUpdate:modelValue': ((value: unknown) => void) | undefined;
 }
 
@@ -80,7 +80,7 @@ export const pressChoicePropsOptions = propsFactory(
     multiple: Boolean,
     mandatory: [Boolean, String] as PropType<boolean | 'force'>,
     max: Number,
-    selectedClass: String,
+    selectedClass: String as PropType<string>,
     disabled: Boolean,
   },
   'choice',
@@ -166,7 +166,7 @@ export function useChoiceItem(
   );
 
   watch(isSelected, (value) => {
-    vm.emit('group:selected', { value });
+    vm.emit('choice:selected', { value });
   });
 
   return {
@@ -265,7 +265,6 @@ export function useChoice(
     } else {
       const isSelected = selected.value.includes(id);
       if (props.mandatory && isSelected) return;
-
       selected.value = value ?? !isSelected ? [id] : [];
     }
   }
@@ -341,7 +340,6 @@ function getIds(items: UnwrapRef<ChoiceItem[]>, modelValue: any[]) {
 
 function getValues(items: UnwrapRef<ChoiceItem[]>, ids: any[]) {
   const values: unknown[] = [];
-
   ids.forEach((id) => {
     const itemIndex = items.findIndex((item) => item.id === id);
     if (~itemIndex) {

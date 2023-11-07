@@ -14,7 +14,9 @@ import {
 
 import { useModelDuplex } from '../../composables/communication';
 import { useRender } from '../../composables/component';
+import { CandidateKey } from '../../types';
 import { differenceBetween } from '../../util/array';
+import { isColorValue } from '../../util/color';
 import {
   deepEqual,
   getObjectValueByPath,
@@ -24,12 +26,10 @@ import { debounce } from '../../util/debounce';
 import { chooseProps } from '../../util/vue-component';
 import { YProgressBar } from '../progress-bar';
 import { YTreeViewNode, pressYTreeViewNodeProps } from './YTreeViewNode';
+import { NodeState, TreeviewFilterFn } from './types';
 import { filterTreeItem, filterTreeItems, getKeys } from './util';
 
-import { CandidateKey } from '../../types';
 import './YTreeView.scss';
-import { NodeState, TreeviewFilterFn } from './types';
-import { isColorValue } from "../../util/color";
 
 const treeViewNodeProps = pressYTreeViewNodeProps();
 
@@ -89,7 +89,9 @@ export const YTreeView = defineComponent({
       if (!search) {
         searchLoading.value = false;
         excludedSet.value = excluded;
-        const diff = differenceBetween(expandedCache.value, [...expandedSet.value]);
+        const diff = differenceBetween(expandedCache.value, [
+          ...expandedSet.value,
+        ]);
         diff.forEach((key) => {
           updateExpanded(key, false);
         });
@@ -146,7 +148,8 @@ export const YTreeView = defineComponent({
     ) {
       for (const item of items) {
         const key = getObjectValueByPath(item, props.itemKey);
-        const children = getObjectValueByPath(item, props.itemChildren as string) ?? [];
+        const children =
+          getObjectValueByPath(item, props.itemChildren as string) ?? [];
         const exist = hasOwnProperty(nodes.value, key);
         const existNode = exist
           ? nodes.value[key]
@@ -191,7 +194,10 @@ export const YTreeView = defineComponent({
     function updateExpanded(key: CandidateKey, to: boolean) {
       if (!(key in nodes.value)) return;
       const node = nodes.value[key];
-      const children = getObjectValueByPath(node.item, props.itemChildren as string);
+      const children = getObjectValueByPath(
+        node.item,
+        props.itemChildren as string,
+      );
       if (Array.isArray(children) && children.length > 0) {
         to ? expandedSet.value.add(key) : expandedSet.value.delete(key);
         node.expanded = to;
@@ -199,11 +205,15 @@ export const YTreeView = defineComponent({
       }
     }
 
-    watch(expandedSet, (neo) => {
-      if (!props.search) {
-        expandedCache.value = [...neo];
-      }
-    }, { deep: true })
+    watch(
+      expandedSet,
+      (neo) => {
+        if (!props.search) {
+          expandedCache.value = [...neo];
+        }
+      },
+      { deep: true },
+    );
 
     function expand(until: boolean | string | number = true) {
       Object.entries(nodes.value).forEach(([key, node]) => {
@@ -337,7 +347,11 @@ export const YTreeView = defineComponent({
         const oldKeys = Object.keys(nodes.value).map((nodeKey) =>
           getObjectValueByPath(nodes.value[nodeKey].item, props.itemKey),
         );
-        const neoKeys = getKeys(neo, props.itemKey, props.itemChildren as string);
+        const neoKeys = getKeys(
+          neo,
+          props.itemKey,
+          props.itemChildren as string,
+        );
         const diff = differenceBetween(oldKeys, neoKeys);
         if (diff.length < 1 && neoKeys.length < oldKeys.length) {
           return;

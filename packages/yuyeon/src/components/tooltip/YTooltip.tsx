@@ -121,6 +121,8 @@ export const YTooltip = defineComponent({
               left = rect.right;
               left -= $content.clientWidth;
             }
+          } else if (position === 'left' || position === 'right') {
+
           }
         }
 

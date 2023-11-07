@@ -46,6 +46,8 @@ const innerMenu = shallowRef(false);
 function onCloseMenuIn() {
   return innerMenu.value;
 }
+
+const tab = ref();
 </script>
 
 <template>
@@ -121,21 +123,23 @@ function onCloseMenuIn() {
     </section>
     <section class="pv-2" style="height: 200px">
       <y-card class="h-100 contain-paint">
-        <y-card-header> TABS </y-card-header>
+        <y-card-header
+          ><y-tabs
+            v-model="tab"
+            :items="[
+              { text: '첫번째', value: 'first' },
+              { text: '두번째', value: 'second' },
+            ]"
+          ></y-tabs
+        ></y-card-header>
         <y-card-body class="pt-4">
-          <y-tabs>
-
-          </y-tabs>
-        </y-card-body>
-      </y-card>
-    </section>
-    <section class="pv-2" style="height: 200px">
-      <y-card class="h-100 contain-paint">
-        <y-card-header> TABS </y-card-header>
-        <y-card-body class="pt-4">
-          <y-tabs>
-
-          </y-tabs>
+          <y-tabs
+            v-model="tab"
+            :items="[
+              { text: '첫번째', value: 'first' },
+              { text: '두번째', value: 'second' },
+            ]"
+          ></y-tabs>
         </y-card-body>
       </y-card>
     </section>

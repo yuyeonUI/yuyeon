@@ -1,4 +1,5 @@
 $table-cell-padding: 0 16px !default;
+$table-head-background: var(--y-theme-surface-variant, #dfe3eb) !default;
 
 .y-table {
   display: flex;
@@ -29,7 +30,7 @@ $table-cell-padding: 0 16px !default;
 
   &--fixed-head.y-table > &__container > table > thead > tr > th {
     z-index: 1;
-    background: var(--y-them-surface-variant, #dfe3eb);
+    background: $table-head-background;
   }
 
   .y-table__container {
