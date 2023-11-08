@@ -8,16 +8,15 @@ import {
   ref,
 } from 'vue';
 
+import { pressItemsPropsOptions } from '../../abstract/items';
 import { useRender } from '../../composables/component';
 import { getObjectValueByPath } from '../../util/common';
 import { propsFactory } from '../../util/vue-component';
 import { YButton } from '../button';
+import { YIconCheckbox, YIconExpand } from '../icons';
 import { YPlate } from '../plate';
 import YTextHighlighter from '../text-highlighter/YTextHighlighter';
-
-import { YIconCheckbox, YIconExpand } from '../icons';
 import { YExpandVTransition } from '../transitions';
-import { pressItemsPropsOptions } from "../../abstract/items";
 
 export const pressYTreeViewNodeProps = propsFactory(
   {
@@ -133,7 +132,12 @@ export const YTreeViewNode = defineComponent({
         .map((item: any) => {
           return h(
             YTreeViewNode,
-            { ...props, level: (props.level ?? 0) + 1, item },
+            {
+              ...props,
+              level: (props.level ?? 0) + 1,
+              item,
+              key: getObjectValueByPath(item, props.itemKey),
+            },
             slots,
           );
         });
@@ -202,7 +206,7 @@ export const YTreeViewNode = defineComponent({
                     ? slots.default?.({
                         text: contentText.value,
                         item: props.item,
-                        ...slotProps.value
+                        ...slotProps.value,
                       })
                     : props.search && !searchLoading.value
                     ? h(YTextHighlighter, {
