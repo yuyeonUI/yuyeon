@@ -5,6 +5,18 @@ const routes: Array<RouteRecordRaw> = [
     name: 'Main',
     path: '/',
     component: () => import('@/pages/ControlProps.vue'),
+    children: [
+      {
+        name: 'MainTabFirst',
+        path: 'first',
+        component: () => import('@/pages/main/MainTabFirst.vue'),
+      },
+      {
+        name: 'MainTabSecond',
+        path: 'second',
+        component: () => import('@/pages/main/MainTabSecond.vue'),
+      }
+    ]
   },
   {
     name: 'DataTableServer',

@@ -7,23 +7,30 @@
   --y-tab-indicator-width: 2.7px;
   --y-tab-indicator-color: inherit;
   --y-tab-active-indicator-color: var(--y-theme-primary);
-  --y-tab-hover-indicator-color: var(--y-theme-outline);
+  --y-tab-hover-indicator-color: var(--y-theme-outline-variant);
+  --y-tab-indicator-side-offset: 4px;
 
-  box-shadow: none;
   border-radius: 0;
-  font-size: 1rem;
-  padding: 4px 8px 12px;
   color: var(--y-tab-color);
 
-  &:before {
-    background: radial-gradient(currentColor 50%, transparent);
+  &.y-button {
+    font-size: 1rem;
+    padding: 4px 8px 12px;
+    box-shadow: none;
+
+    &:before {
+      left: var(--y-tab-indicator-side-offset);
+      right: var(--y-tab-indicator-side-offset);
+      background: radial-gradient(currentColor, transparent 80%),
+        linear-gradient(0deg, currentColor, transparent 70%);
+    }
   }
 
   &__indicator {
     height: var(--y-tab-indicator-width);
     position: absolute;
-    left: 4px;
-    right: 4px;
+    left: var(--y-tab-indicator-side-offset);
+    right: var(--y-tab-indicator-side-offset);
     bottom: 0;
     background-color: currentColor;
     border-top-left-radius: 4444px;
@@ -45,6 +52,10 @@
   &--active {
     font-weight: 700;
     color: var(--y-tab-active-color);
+
+    &:before {
+      opacity: 0.04;
+    }
   }
 
   &:hover:not(&--active) &__indicator {

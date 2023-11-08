@@ -48,7 +48,6 @@ export const YTab = defineComponent({
 
     useRender(() => {
       const yButtonProps = chooseProps(props, YButton.props);
-      console.log(props, yButtonProps);
       return (
         <>
           <YButton
