@@ -5,6 +5,7 @@ import {
   pressChoiceItemPropsOptions,
   useChoiceItem,
 } from '../../composables/choice';
+import { useChoiceByLink } from '../../composables/choice-link';
 import { useRender } from '../../composables/component';
 import {
   pressVueRouterPropsOptions,
@@ -72,6 +73,7 @@ export const YButton = defineComponent({
   setup(props, { attrs, slots }) {
     const choice = useChoiceItem(props, props.injectSymbol, false);
     const link = useLink(props, attrs);
+    useChoiceByLink(link, choice?.select);
 
     const isActive = computed(() => {
       if (props.active !== undefined) {
@@ -123,19 +125,37 @@ export const YButton = defineComponent({
       };
     });
 
+    const isDisabled = computed(() => {
+      return choice?.disabled.value || props.disabled;
+    });
+
     /// Events
     function onClick(e: MouseEvent) {
-      e.preventDefault();
-      if (props.loading) {
+      function guardEvent(e: MouseEvent) {
+        // don't redirect with control keys
+        if (e.metaKey || e.altKey || e.ctrlKey || e.shiftKey) return;
+        // don't redirect when preventDefault called
+        if (e.defaultPrevented) return;
+        // don't redirect on right click
+        if (e.button !== undefined && e.button !== 0) return;
+        // don't redirect if `target="_blank"`
+        if (/\b_blank\b/i.test(attrs.target as string)) {
+          return;
+        }
+        return true;
+      }
+      if (!guardEvent(e) || props.loading || isDisabled.value) {
         return;
       }
       link.navigate?.(e);
+      if (e.preventDefault) e.preventDefault();
       choice?.toggle();
     }
 
     useRender(() => {
+      const Tag = link.isLink.value ? 'a' : 'button';
       return (
-        <button
+        <Tag
           class={[
             `${NAME}`,
             choice?.selectedClass.value,
@@ -143,6 +163,7 @@ export const YButton = defineComponent({
               ...classes.value,
             },
           ]}
+          href={link.href.value}
           style={styles.value}
           onClick={onClick}
           disabled={props.disabled ? true : undefined}
@@ -157,9 +178,13 @@ export const YButton = defineComponent({
             {slots.default?.()}
           </span>
           {slots.append?.()}
-        </button>
+        </Tag>
       );
     });
+
+    return {
+      link,
+    };
   },
 });
 
