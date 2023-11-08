@@ -136,10 +136,15 @@ const tab = ref();
           <y-tabs
             v-model="tab"
             :items="[
-              { text: '첫번째', value: 'first' },
-              { text: '두번째', value: 'second' },
+              { text: '첫번째', value: 'first', to: '/first' },
+              { text: '두번째', value: 'second', to: '/second' },
             ]"
           ></y-tabs>
+          <router-view></router-view>
+          <span v-if="$route.path === '/'">
+            Tab not selected yet.
+            Consider using vue-router redirect.
+          </span>
         </y-card-body>
       </y-card>
     </section>

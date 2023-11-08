@@ -1,5 +1,6 @@
 import * as vue from 'vue';
 import {
+  YAlert,
   YApp,
   YButton,
   YCard,
@@ -25,15 +26,16 @@ import {
   YMenu,
   YPagination,
   YProgressBar,
+  YSelect,
   YSnackbar,
   YSpinnerRing,
   YSwitch,
+  YTab,
   YTable,
+  YTabs,
   YTooltip,
   YTreeView,
   YTreeViewNode,
-  YSelect,
-  YAlert,
 } from 'yuyeon/types/components';
 
 declare module '@vue/runtime-core' {
@@ -73,5 +75,7 @@ declare module '@vue/runtime-core' {
     YDropdown: typeof YDropdown;
     YSelect: typeof YSelect;
     YAlert: typeof YAlert;
+    YTabs: typeof YTabs;
+    YTab: typeof YTab;
   }
 }

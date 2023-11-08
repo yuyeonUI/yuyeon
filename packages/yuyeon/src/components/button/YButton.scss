@@ -17,6 +17,7 @@ $button-disabled-background: #d3d3d3 !default;
   border-radius: $button-border-radius;
   font-weight: 500;
   transition: all 240ms cubic-bezier(0.42, 0.5, 0.51, 1.02);
+  text-decoration: none;
 
   &:before {
     background-color: currentColor;
