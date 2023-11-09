@@ -23,7 +23,7 @@ export const pressDataTablePaginationProps = propsFactory(
   {
     page: {
       type: [Number, String] as PropType<number | string>,
-      default: 0,
+      default: 1,
     },
     pageSize: {
       type: [Number, String] as PropType<number | string>,
@@ -63,7 +63,6 @@ export function providePagination(options: {
   total: Ref<number>;
 }) {
   const { page, pageSize, total } = options;
-
   const startIndex = computed(() => {
     if (pageSize.value === -1) return 0;
 
@@ -128,4 +127,20 @@ export function usePagination() {
     throw new Error(`Not provided: ${Y_DATA_TABLE_PAGINATION_KEY.description}`);
   }
   return data;
+}
+
+export function usePaginatedItems <T> (options: {
+  items: Ref<readonly (T)[]>
+  startIndex: Ref<number>
+  endIndex: Ref<number>
+  pageSize: Ref<number>
+}) {
+  const { items, startIndex, endIndex, pageSize } = options
+  const paginatedItems = computed(() => {
+    if (pageSize.value <= 0) return items.value
+
+    return items.value.slice(startIndex.value, endIndex.value)
+  })
+
+  return { paginatedItems }
 }
