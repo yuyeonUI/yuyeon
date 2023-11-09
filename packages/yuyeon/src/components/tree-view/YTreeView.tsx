@@ -462,6 +462,7 @@ export const YTreeView = defineComponent({
                 return (
                   <YTreeViewNode
                     v-slots={slots}
+                    key={getObjectValueByPath(leaf, props.itemKey)}
                     {...{
                       ...chooseProps(props, treeViewNodeProps),
                       item: leaf,

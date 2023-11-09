@@ -23,7 +23,7 @@ export function filterTreeItem(
 ): boolean {
   const text = getObjectValueByPath(item, textKey);
 
-  return text.toLocaleLowerCase().indexOf(search.toLocaleLowerCase()) > -1;
+  return text?.toLocaleLowerCase().indexOf(search.toLocaleLowerCase()) > -1;
 }
 
 export function filterTreeItems(
