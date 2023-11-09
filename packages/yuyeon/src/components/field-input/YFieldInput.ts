@@ -242,6 +242,8 @@ export const YFieldInput = defineComponent({
                   '^tabindex': props.tabindex || '0',
                   autocomplete: attrs.autocomplete,
                   maxlength: attrs.maxlength,
+                  min: attrs.min,
+                  max: attrs.max,
                   onInput,
                   onFocus,
                   onBlur,

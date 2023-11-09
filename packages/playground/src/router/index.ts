@@ -19,6 +19,11 @@ const routes: Array<RouteRecordRaw> = [
     ]
   },
   {
+    name: 'DataTable',
+    path: '/data-table',
+    component: () => import('@/pages/DataTable.vue'),
+  },
+  {
     name: 'DataTableServer',
     path: '/data-table-server',
     component: () => import('@/pages/DataTableServer.vue'),
