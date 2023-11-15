@@ -1,8 +1,10 @@
 import { PropType, computed, defineComponent, provide, toRef } from 'vue';
 
 import { useRender } from '../../composables/component';
+import { useResizeObserver } from '../../composables/resize-observer';
+import { toStyleSizeValue } from '../../util';
 import { chooseProps, propsFactory } from '../../util/vue-component';
-import { YDataTableBody } from './YDataTableBody';
+import { YDataTableBody, pressYDataTableBodyProps } from './YDataTableBody';
 import { YDataTableControl } from './YDataTableControl';
 import { YDataTableHead, pressYDataTableHeadProps } from './YDataTableHead';
 import { YDataTableLayer } from './YDataTableLayer';
@@ -29,6 +31,7 @@ import { YDataTableSlotProps } from './types';
 
 export const pressDataTableProps = propsFactory(
   {
+    ...pressYDataTableBodyProps(),
     width: [String, Number] as PropType<string | number>,
     search: String as PropType<string>,
     ...pressDataTableHeader(),
@@ -86,6 +89,9 @@ export const YDataTable = defineComponent({
       allSelected,
     } = provideSelection(props, { allItems: items, pageItems: items });
 
+    const { resizeObservedRef: headObserveRef, contentRect: headRect } =
+      useResizeObserver();
+
     useOptions(
       {
         page,
@@ -99,6 +105,7 @@ export const YDataTable = defineComponent({
     provide('y-data-table', {
       toggleSort,
       sortBy,
+      headRect,
     });
 
     const slotProps = computed<YDataTableSlotProps>(() => {
@@ -125,12 +132,19 @@ export const YDataTable = defineComponent({
         headers: headers.value,
       };
     });
-    const yDataTableHeadProps = chooseProps(props, YDataTableHead.props);
-    const yDataTableBodyProps = chooseProps(props, YDataTableBody.props);
-    const yTableProps = chooseProps(props, YTable.props);
+
     useRender(() => {
+      const yDataTableHeadProps = chooseProps(props, YDataTableHead.props);
+      const yDataTableBodyProps = chooseProps(props, YDataTableBody.props);
+      const yTableProps = chooseProps(props, YTable.props);
       return (
-        <YTable class={['y-data-table']} {...yTableProps}>
+        <YTable
+          class={['y-data-table']}
+          {...yTableProps}
+          style={{
+            '--y-table-head-height': toStyleSizeValue(headRect.value?.height),
+          }}
+        >
           {{
             top: () => slots.top?.(slotProps.value),
             leading: () =>
@@ -138,7 +152,10 @@ export const YDataTable = defineComponent({
                 slots.leading(slotProps.value)
               ) : (
                 <>
-                  <YDataTableLayer v-slots={slots}></YDataTableLayer>
+                  <YDataTableLayer
+                    v-slots={slots}
+                    slot-props={slotProps.value}
+                  ></YDataTableLayer>
                 </>
               ),
             default: () =>
@@ -146,7 +163,7 @@ export const YDataTable = defineComponent({
                 slots.default(slotProps.value)
               ) : (
                 <>
-                  <thead>
+                  <thead ref={headObserveRef}>
                     <YDataTableHead
                       v-slots={slots}
                       {...yDataTableHeadProps}
@@ -180,7 +197,7 @@ export const YDataTable = defineComponent({
         </YTable>
       );
     });
-    return {paginatedItems}
+    return { paginatedItems };
   },
 });
 

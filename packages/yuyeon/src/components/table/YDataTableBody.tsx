@@ -5,10 +5,9 @@ import { propsFactory } from '../../util/vue-component';
 import { YDataTableRow } from './YDataTableRow';
 import { useHeader } from './composibles/header';
 import { useSelection } from './composibles/selection';
-
 import { DataTableItem } from './types';
 
-const pressYDataTableBodyProps = propsFactory(
+export const pressYDataTableBodyProps = propsFactory(
   {
     items: {
       type: Array as PropType<readonly DataTableItem[]>,
@@ -40,10 +39,12 @@ export const YDataTableBody = defineComponent({
     const { isSelected, toggleSelect } = useSelection();
 
     useRender(() => {
-      if (props.loading && slots.loading) {
+      if (props.loading) {
         return (
           <tr>
-            <td colspan={columns.value.length}>{slots.loading()}</td>
+            <td colspan={columns.value.length} class={'y-data-table__loading'}>
+              {slots.loading ? slots.loading() : <div>{props.loadingText}</div>}
+            </td>
           </tr>
         );
       }
@@ -84,7 +85,9 @@ export const YDataTableBody = defineComponent({
                       : undefined,
                     onContextmenu: props['onContextmenu:row']
                       ? (event: Event) => {
-                          props['onContextmenu:row']?.(event, { ...stateProps });
+                          props['onContextmenu:row']?.(event, {
+                            ...stateProps,
+                          });
                         }
                       : undefined,
                     index,

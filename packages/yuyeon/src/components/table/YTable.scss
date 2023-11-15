@@ -1,11 +1,14 @@
 $table-cell-padding: 0 16px !default;
 $table-head-background: var(--y-theme-surface-variant, #dfe3eb) !default;
+$table-cell-border-bottom-color: rgba(var(--y-theme-outline-rgb), var(--y-theme-outline-opacity)) !default;
 
 .y-table {
+  --y-table-border-bottom-color: #{$table-cell-border-bottom-color};
+
   display: flex;
   flex-direction: column;
 
-  &--fixed-height > &__container {
+  &--fixed-height &__container > &__wrapper {
     overflow-y: auto;
   }
 
@@ -16,24 +19,25 @@ $table-head-background: var(--y-theme-surface-variant, #dfe3eb) !default;
 
   &--flex-height > &__container {
     flex: 1 1;
+    min-height: 0;
   }
 
-  &__container > table {
+  &__wrapper > table {
     width: 100%;
     border-spacing: 0;
   }
 
-  &--fixed-head > &__container > table > thead > tr > th {
+  &--fixed-head &__container > &__wrapper > table > thead > tr > th {
     position: sticky;
     top: 0;
   }
 
-  &--fixed-head.y-table > &__container > table > thead > tr > th {
+  &--fixed-head.y-table &__container &__wrapper > table > thead > tr > th {
     z-index: 1;
     background: $table-head-background;
   }
 
-  .y-table__container {
+  .y-table__wrapper {
     > table {
       font-size: 0.875rem;
 
@@ -51,7 +55,7 @@ $table-head-background: var(--y-theme-surface-variant, #dfe3eb) !default;
         > th {
           height: 56px;
           text-align: left;
-          border-bottom: thin solid rgba(var(--y-theme-outline), var(--y-theme-outline-opacity));
+          border-bottom: thin solid var(--y-table-border-bottom-color);
           user-select: none;
         }
       }
@@ -59,7 +63,7 @@ $table-head-background: var(--y-theme-surface-variant, #dfe3eb) !default;
       > tbody > tr {
         &:not(:last-child) {
           > td {
-            border-bottom: thin solid rgba(var(--y-theme-outline), var(--y-theme-outline-opacity));
+            border-bottom: thin solid var(--y-table-border-bottom-color);
           }
         }
         > td {
@@ -78,7 +82,6 @@ $table-head-background: var(--y-theme-surface-variant, #dfe3eb) !default;
       justify-content: flex-end;
     }
   }
-
 }
 
 .y-data-table-header {
@@ -111,5 +114,34 @@ $table-head-background: var(--y-theme-surface-variant, #dfe3eb) !default;
     &:not(&--disabled) {
       cursor: pointer;
     }
+  }
+}
+
+.y-data-table-layer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  pointer-events: none;
+  overflow-y: clip;
+  overflow-x: visible;
+  z-index: 50;
+  margin-right: calc(100% - var(--y-table-wrapper-width, 100%));
+
+  &__head {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    height: var(--y-table-head-height, 48px);
+  }
+
+  &__body {
+    position: absolute;
+    top: var(--y-table-head-height, 48px);
+    right: 0;
+    left: 0;
+    bottom: 0;
   }
 }

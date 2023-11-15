@@ -1,26 +1,30 @@
-import { PropType, computed, defineComponent } from 'vue';
+import { PropType, defineComponent, provide } from 'vue';
 
 import { useRender } from '../../composables/component';
 import { useResizeObserver } from '../../composables/resize-observer';
 import { toStyleSizeValue } from '../../util/ui';
-import './YTable.scss';
-import { propsFactory } from "../../util/vue-component";
+import { propsFactory } from '../../util/vue-component';
 
-export const pressYTableProps = propsFactory({
-  tag: {
-    type: String as PropType<string>,
-    default: 'div',
+import './YTable.scss';
+
+export const pressYTableProps = propsFactory(
+  {
+    tag: {
+      type: String as PropType<string>,
+      default: 'div',
+    },
+    fixedHead: {
+      type: Boolean as PropType<boolean>,
+    },
+    height: {
+      type: [Number, String] as PropType<number | string>,
+    },
+    flexHeight: {
+      type: Boolean as PropType<boolean>,
+    },
   },
-  fixedHead: {
-    type: Boolean as PropType<boolean>,
-  },
-  height: {
-    type: [Number, String] as PropType<number | string>,
-  },
-  flexHeight: {
-    type: Boolean as PropType<boolean>,
-  },
-}, 'YTable')
+  'YTable',
+);
 
 export const YTable = defineComponent({
   name: 'YTable',
@@ -29,10 +33,13 @@ export const YTable = defineComponent({
   },
   setup(props, { slots }) {
     const { resizeObservedRef, contentRect } = useResizeObserver();
+    const { resizeObservedRef: tableRef, contentRect: tableRect } =
+      useResizeObserver();
+    provide('YTable', { containerRect: contentRect });
     useRender(() => {
       const ElTag = (props.tag as keyof HTMLElementTagNameMap) ?? 'div';
       const containerHeight = props.flexHeight
-        ? (contentRect.value?.height ?? props.height)
+        ? contentRect.value?.height ?? props.height
         : props.height;
       return (
         <ElTag
@@ -44,18 +51,25 @@ export const YTable = defineComponent({
               'y-table--flex-height': props.flexHeight,
             },
           ]}
+          style={{
+            '--y-table-container-width': toStyleSizeValue(
+              contentRect.value?.width,
+            ),
+            '--y-table-wrapper-width': toStyleSizeValue(tableRect.value?.width),
+          }}
         >
           {slots.top?.()}
           {slots.default ? (
-            <div
-              class={['y-table__container']}
-              ref={resizeObservedRef}
-              style={{
-                height: toStyleSizeValue(containerHeight),
-              }}
-            >
+            <div class={['y-table__container']} ref={resizeObservedRef}>
               {slots.leading?.()}
-              <table>{slots.default()}</table>
+              <div
+                class={['y-table__wrapper']}
+                style={{
+                  height: toStyleSizeValue(containerHeight),
+                }}
+              >
+                <table ref={tableRef}>{slots.default()}</table>
+              </div>
               {slots.trailing?.()}
             </div>
           ) : (

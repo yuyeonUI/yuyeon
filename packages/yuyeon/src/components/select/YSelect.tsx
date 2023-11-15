@@ -49,6 +49,7 @@ export const pressSelectPropsOptions = propsFactory(
       type: Function as PropType<SelectEquals>,
       default: deepEqual,
     },
+    defaultSelect: Boolean,
     ...pressListItemsPropsOptions(),
   },
   'Select',

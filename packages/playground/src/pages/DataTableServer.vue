@@ -62,6 +62,9 @@ const items = computed(() => {
           <template #item.sequence="{ index }">
             {{ index + 1 }}
           </template>
+          <template #layer-body>
+            <y-progress-bar indeterminate></y-progress-bar>
+          </template>
           <template #bottom="bottomProps">
             <DataTableBottom :bottom-props="bottomProps"></DataTableBottom>
           </template>
