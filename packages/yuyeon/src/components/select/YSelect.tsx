@@ -11,7 +11,7 @@ import {
   useItems,
 } from '../../composables/list-items';
 import { wrapInArray } from '../../util/array';
-import { deepEqual, getObjectValueByPath, omit } from '../../util/common';
+import {deepEqual, getObjectValueByPath, getPropertyFromItem, omit} from '../../util/common';
 import { chooseProps, propsFactory } from '../../util/vue-component';
 import { YCard } from '../card';
 import { YFieldInput, pressYFieldInputPropsOptions } from '../field-input';
@@ -61,6 +61,9 @@ export const pressYSelectPropsOptions = propsFactory(
       type: [Number, String],
       default: 310,
     },
+    expandIcon: {
+      type: Object,
+    },
     ...pressSelectPropsOptions(),
     ...pressYFieldInputPropsOptions(),
     ...omit(pressCoordinateProps({ position: 'bottom' as 'bottom' }), [
@@ -101,7 +104,7 @@ export const YSelect = defineComponent({
 
     const selections = computed<ListItem[]>(() => {
       return model.value.map((v: any) => {
-        return items.value.find((item) => {
+        return items.value.filter((item) => {
           return props.valueEquals(item.value, v.value);
         });
       });
@@ -110,6 +113,12 @@ export const YSelect = defineComponent({
     const selected = computed(() => {
       return selections.value.map((selection) => selection.props.value);
     });
+
+    function isSelected(item: ListItem) {
+      return !!selections.value.find((selectedItem) => {
+        return selectedItem.value === item.value;
+      });
+    }
 
     // Field
     function onMousedownDisplay(event: MouseEvent) {
@@ -141,7 +150,16 @@ export const YSelect = defineComponent({
 
     function select(item: ListItem) {
       if (props.multiple) {
-        //
+        const index = selections.value.findIndex((selectedItem) => {
+          return selectedItem.value === item.value;
+        });
+        if (index === -1) {
+          model.value = [...model.value, item];
+        } else {
+          const neo = model.value.slice();
+          neo.splice(index, 1);
+          model.value = neo;
+        }
       } else {
         model.value = [item];
       }
@@ -221,7 +239,10 @@ export const YSelect = defineComponent({
                     <YList ref={listRef}>
                       {items.value.map((item) => {
                         return (
-                          <YListItem onClick={(e) => onClickItem(item)}>
+                          <YListItem
+                            onClick={(e) => onClickItem(item)}
+                            class={{ 'y-list-item--active': isSelected(item) }}
+                          >
                             {item.text}
                           </YListItem>
                         );
@@ -241,6 +262,7 @@ export const YSelect = defineComponent({
       fieldInputRef,
       model,
       selections,
+      selected,
     };
   },
 });
