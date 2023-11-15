@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import DataTableBottom from "@/pages/data-table/DataTableBottom.vue";
 import { dataTableHeaders } from "@/settings/headers.ts";
-import { computed, ref } from "vue";
+import {computed, ref, shallowRef} from "vue";
 
 defineProps({
   bottomProps: Object,
@@ -42,8 +42,122 @@ const items = computed(() => {
         memSize: 12884901888,
       },
     },
+    {
+      id: "00003",
+      registerDate: 1687708312497,
+      os: "Windows 11",
+      user: {
+        name: "Henry",
+      },
+      computer: {
+        name: "OHLLE-DESKTOP",
+        username: "Hen",
+        cpu: "mt-2000001",
+        memSize: 12884901888,
+      },
+    },
+    {
+      id: "00004",
+      registerDate: 1687708312497,
+      os: "Windows 11",
+      user: {
+        name: "Henry",
+      },
+      computer: {
+        name: "OHLLE-DESKTOP",
+        username: "Hen",
+        cpu: "mt-2000001",
+        memSize: 12884901888,
+      },
+    },
+    {
+      id: "00005",
+      registerDate: 1687708312497,
+      os: "Windows 11",
+      user: {
+        name: "Henry",
+      },
+      computer: {
+        name: "OHLLE-DESKTOP",
+        username: "Hen",
+        cpu: "mt-2000001",
+        memSize: 12884901888,
+      },
+    },
+    {
+      id: "00006",
+      registerDate: 1687708312497,
+      os: "Windows 11",
+      user: {
+        name: "Henry",
+      },
+      computer: {
+        name: "OHLLE-DESKTOP",
+        username: "Hen",
+        cpu: "mt-2000001",
+        memSize: 12884901888,
+      },
+    },
+    {
+      id: "00007",
+      registerDate: 1687708312497,
+      os: "Windows 11",
+      user: {
+        name: "Henry",
+      },
+      computer: {
+        name: "OHLLE-DESKTOP",
+        username: "Hen",
+        cpu: "mt-2000001",
+        memSize: 12884901888,
+      },
+    },
+    {
+      id: "00008",
+      registerDate: 1687708312497,
+      os: "Windows 11",
+      user: {
+        name: "Henry",
+      },
+      computer: {
+        name: "OHLLE-DESKTOP",
+        username: "Hen",
+        cpu: "mt-2000001",
+        memSize: 12884901888,
+      },
+    },
+    {
+      id: "00009",
+      registerDate: 1687708312497,
+      os: "Windows 11",
+      user: {
+        name: "Henry",
+      },
+      computer: {
+        name: "OHLLE-DESKTOP",
+        username: "Hen",
+        cpu: "mt-2000001",
+        memSize: 12884901888,
+      },
+    },
+    {
+      id: "00010",
+      registerDate: 1687708312497,
+      os: "Windows 11",
+      user: {
+        name: "Henry",
+      },
+      computer: {
+        name: "OHLLE-DESKTOP",
+        username: "Hen",
+        cpu: "mt-2000001",
+        memSize: 12884901888,
+      },
+    },
   ];
 });
+
+const loading = ref(true);
 </script>
 
 <template>
@@ -51,6 +165,7 @@ const items = computed(() => {
     <section class="pv-2" style="height: 80vh">
       <y-card class="h-100 contain-paint">
         <y-data-table
+          :loading="loading"
           :headers="headers"
           :height="150"
           :items="items"

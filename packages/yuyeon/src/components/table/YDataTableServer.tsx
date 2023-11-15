@@ -2,6 +2,8 @@ import { toRef } from '@vue/runtime-core';
 import { PropType, computed, defineComponent, provide } from 'vue';
 
 import { useRender } from '../../composables/component';
+import { useResizeObserver } from '../../composables/resize-observer';
+import { toStyleSizeValue } from '../../util';
 import { chooseProps, propsFactory } from '../../util/vue-component';
 import { pressDataTableProps } from './YDataTable';
 import { YDataTableBody } from './YDataTableBody';
@@ -10,6 +12,8 @@ import { YDataTableHead } from './YDataTableHead';
 import { YDataTableLayer } from './YDataTableLayer';
 import { YTable } from './YTable';
 import { createHeader } from './composibles/header';
+import { useItems } from './composibles/items';
+import { useOptions } from './composibles/options';
 import {
   createPagination,
   pressDataTablePaginationProps,
@@ -17,9 +21,6 @@ import {
 } from './composibles/pagination';
 import { provideSelection } from './composibles/selection';
 import { createSorting, provideSorting } from './composibles/sorting';
-
-import { useItems } from './composibles/items';
-import { useOptions } from './composibles/options';
 import { YDataTableSlotProps } from './types';
 
 export const pressDataTableServerProps = propsFactory(
@@ -78,6 +79,9 @@ export const YDataTableServer = defineComponent({
       allSelected,
     } = provideSelection(props, { allItems: items, pageItems: items });
 
+    const { resizeObservedRef: headObserveRef, contentRect: headRect } =
+      useResizeObserver();
+
     useOptions(
       {
         page,
@@ -91,6 +95,7 @@ export const YDataTableServer = defineComponent({
     provide('y-data-table', {
       toggleSort,
       sortBy,
+      headRect,
     });
 
     const slotProps = computed<YDataTableSlotProps>(() => {
@@ -123,7 +128,13 @@ export const YDataTableServer = defineComponent({
       const yDataTableBodyProps = chooseProps(props, YDataTableBody.props);
       const yTableProps = chooseProps(props, YTable.props);
       return (
-        <YTable class={['y-data-table']} {...yTableProps}>
+        <YTable
+          class={['y-data-table']}
+          {...yTableProps}
+          style={{
+            '--y-table-head-height': toStyleSizeValue(headRect.value?.height),
+          }}
+        >
           {{
             top: () => slots.top?.(slotProps.value),
             leading: () =>
@@ -139,7 +150,7 @@ export const YDataTableServer = defineComponent({
                 slots.default(slotProps.value)
               ) : (
                 <>
-                  <thead>
+                  <thead ref={headObserveRef}>
                     <YDataTableHead
                       v-slots={slots}
                       {...yDataTableHeadProps}
