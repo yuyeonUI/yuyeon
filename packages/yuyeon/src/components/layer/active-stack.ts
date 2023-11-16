@@ -27,6 +27,7 @@ export function useActiveStack(
 ) {
   const parent = inject(YUYEON_ACTIVE_STACK_KEY, null);
   const children = shallowRef<any[]>([]);
+  const vm = getCurrentInstance();
 
   function push(instance: any) {
     children.value.push(instance);
@@ -57,9 +58,9 @@ export function useActiveStack(
 
   watch(active, (neo) => {
     if (neo) {
-      parent?.push(getCurrentInstance());
+      parent?.push(vm);
     } else {
-      parent?.pop(getCurrentInstance());
+      parent?.pop(vm);
     }
   });
 

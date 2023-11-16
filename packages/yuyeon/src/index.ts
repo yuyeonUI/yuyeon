@@ -71,7 +71,6 @@ export function init(options: any = defaultOptions) {
 
   return {
     install,
-    // theme: themeModule,
   };
 }
 

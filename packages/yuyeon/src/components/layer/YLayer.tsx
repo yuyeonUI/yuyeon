@@ -1,15 +1,16 @@
-import type { CSSProperties, PropType } from 'vue';
+import type { CSSProperties, PropType, ComponentInternalInstance } from 'vue';
 import {
   Teleport,
   Transition,
   computed,
   defineComponent,
+  getCurrentInstance,
   mergeProps,
   reactive,
   ref,
   shallowRef,
   toRef,
-  watchEffect, watch,
+  watchEffect,
 } from 'vue';
 
 import { useRender } from '../../composables/component';
@@ -45,6 +46,9 @@ export const pressYLayerProps = propsFactory(
     scrim: {
       type: Boolean as PropType<boolean>,
     },
+    scrimOpacity: {
+      type: Number as PropType<number>,
+    },
     eager: {
       type: Boolean as PropType<boolean>,
     },
@@ -61,7 +65,7 @@ export const pressYLayerProps = propsFactory(
     closeClickScrim: {
       type: Boolean as PropType<boolean>,
     },
-    modal: Boolean as PropType<boolean>,
+
     contentStyles: {
       type: Object as PropType<CSSProperties>,
       default: () => {},
@@ -100,6 +104,7 @@ export const YLayer = defineComponent({
     ComplementClick,
   },
   props: {
+    modal: Boolean as PropType<boolean>,
     ...pressYLayerProps(),
   },
   emits: {
@@ -108,6 +113,7 @@ export const YLayer = defineComponent({
     afterLeave: () => true,
   },
   setup(props, { emit, expose, attrs, slots }) {
+    const vm = getCurrentInstance();
     const base$ = ref();
     const scrim$ = ref<HTMLElement>();
     const content$ = ref<HTMLElement>();
@@ -115,7 +121,7 @@ export const YLayer = defineComponent({
     const baseEl = ref<HTMLElement>();
 
     const { themeClasses } = useLocalTheme(props);
-    const { layerGroup } = useLayerGroup();
+    const { layerGroup, layerGroupState, getActiveLayers } = useLayerGroup();
     const { polyTransitionBindProps } = usePolyTransition(props);
     const { dimensionStyles } = useDimension(props);
     const active = computed<boolean>({
@@ -129,18 +135,16 @@ export const YLayer = defineComponent({
     const finish = shallowRef(false);
 
     const disabled = toRef(props, 'disabled');
-    const { lazyValue, onAfterUpdate } = useLazy(
-      toRef(props, 'eager'),
-      active,
-    );
+    const { lazyValue, onAfterUpdate } = useLazy(toRef(props, 'eager'), active);
     const rendered = computed<boolean>(
       () => !disabled.value && (lazyValue.value || active.value),
     );
 
-    const { coordinate, coordinateStyles, updateCoordinate } = useCoordinate(
-      props,
-      { contentEl: content$, baseEl, active },
-    );
+    const { coordinateStyles, updateCoordinate } = useCoordinate(props, {
+      contentEl: content$,
+      baseEl,
+      active,
+    });
 
     function onClickComplementLayer(mouseEvent: MouseEvent) {
       emit('click:complement', mouseEvent);
@@ -240,6 +244,11 @@ export const YLayer = defineComponent({
       onAfterUpdate,
       updateCoordinate,
       hovered,
+      modal: computed(() => props.modal),
+      getActiveLayers,
+      isMe: (vnode: ComponentInternalInstance) => {
+        return vnode === vm;
+      },
     });
 
     useRender(() => {
@@ -275,6 +284,7 @@ export const YLayer = defineComponent({
                   {active.value && props.scrim && (
                     <div
                       class="y-layer__scrim"
+                      style={{ '--y-layer-scrim-opacity': props.scrimOpacity }}
                       onClick={onClickScrim}
                       ref="scrim$"
                     ></div>
@@ -324,6 +334,8 @@ export const YLayer = defineComponent({
       baseEl,
       polyTransitionBindProps,
       coordinateStyles,
+      layerGroupState,
+      getActiveLayers,
     };
   },
 });

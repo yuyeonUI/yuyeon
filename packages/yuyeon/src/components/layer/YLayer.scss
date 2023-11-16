@@ -8,6 +8,8 @@
 }
 
 .y-layer {
+  --y-layer-scrim-opacity: 0.4;
+
   border-radius: inherit;
   display: flex;
   inset: 0;
@@ -18,9 +20,12 @@
     pointer-events: auto;
     background: rgb(var(--y-layer-scrim, 0, 0, 0));
     border-radius: inherit;
-    inset: 0;
-    opacity: 0.4;
+    opacity: var(--y-layer-scrim-opacity);
     position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
   }
 
   &__content {
