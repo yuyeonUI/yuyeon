@@ -1,6 +1,6 @@
 import { init } from "yuyeon";
 
-const yui = init({
+const yuyeon = init({
   theme: {
     themes: {
       light: {
@@ -19,7 +19,7 @@ const yui = init({
     },
   },
 
-  credit: false,
+  credit: true,
 });
 
-export default yui;
+export default yuyeon;

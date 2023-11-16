@@ -117,6 +117,14 @@
   color: var(--y-theme-error);
 }
 
+.d-flex {
+  display: flex;
+}
+
 .flex-wrap {
   flex-wrap: wrap;
+}
+
+.flex-spacer {
+  flex: 1 1;
 }

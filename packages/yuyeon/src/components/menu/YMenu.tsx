@@ -55,7 +55,7 @@ export const YMenu = defineComponent({
   },
   emits: ['update:modelValue', 'afterLeave'],
   setup(props, { slots, emit, expose }) {
-    const el$ = ref<typeof YLayer>();
+    const layer$ = ref<typeof YLayer>();
 
     const classes = computed(() => {
       const boundClasses = bindClasses(props.menuClasses);
@@ -76,8 +76,8 @@ export const YMenu = defineComponent({
       },
     });
 
-    const hovered = computed(() => !!el$.value?.hovered);
-    const { children, parent } = useActiveStack(el$, active, toRef(props, 'preventCloseBubble'));
+    const hovered = computed(() => !!layer$.value?.hovered);
+    const { children, parent } = useActiveStack(layer$, active, toRef(props, 'preventCloseBubble'));
     const { startOpenDelay, startCloseDelay } = useDelay(
       props,
       (changeActive) => {
@@ -130,8 +130,9 @@ export const YMenu = defineComponent({
       }
       if (active.value) {
         const parentContent = parent?.$el.value?.content$;
+        const parentModal = parent?.$el.value?.modal;
         active.value = false;
-        if (!(parentContent && !hasElementMouseEvent(e, parentContent))) {
+        if (!(parentContent && !hasElementMouseEvent(e, parentContent)) && !parentModal) {
           parent?.clear();
         }
       }
@@ -148,7 +149,7 @@ export const YMenu = defineComponent({
     }
 
     watch(
-      () => el$.value?.baseEl,
+      () => layer$.value?.baseEl,
       (neo, old) => {
         if (neo) {
           bindHover(neo);
@@ -171,7 +172,7 @@ export const YMenu = defineComponent({
       return (
         <>
           <YLayer
-            ref={el$}
+            ref={layer$}
             transition={props.transition}
             onClick:complement={onComplementClick}
             onAfterLeave={() => emit('afterLeave')}
@@ -198,7 +199,7 @@ export const YMenu = defineComponent({
     });
 
     return {
-      el$,
+      el$: layer$,
       classes,
     };
   },
