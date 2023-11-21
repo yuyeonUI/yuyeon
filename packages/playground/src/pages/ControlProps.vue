@@ -226,7 +226,7 @@ const maximizedDialog = ref(false);
           <div class="d-flex align-center" style="gap: 8px">
             <y-menu
               position="right"
-              align="start"
+              align="top"
               offset="8"
               height="80"
               eager
