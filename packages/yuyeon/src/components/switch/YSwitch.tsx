@@ -166,6 +166,7 @@ export const YSwitch = defineComponent({
   },
   render() {
     const {
+      $slots,
       classes,
       onClick,
       onKeydown,
@@ -202,21 +203,23 @@ export const YSwitch = defineComponent({
               ref="checkbox"
             />
             <div class="y-switch__track" style={trackStyles}>
-              {stateLabel && (<div class="y-switch__state">
-                <span class="y-switch__state-label y-switch__state-label--on">
-                  {{ labelOn }}
-                </span>
-                <span class="y-switch__state-label y-switch__state-label--off">
-                  {{ labelOff }}
-                </span>
-              </div>)}
+              {stateLabel && (
+                <div class="y-switch__state">
+                  <span class="y-switch__state-label y-switch__state-label--on">
+                    {{ labelOn }}
+                  </span>
+                  <span class="y-switch__state-label y-switch__state-label--off">
+                    {{ labelOff }}
+                  </span>
+                </div>
+              )}
             </div>
             <div class="y-switch__thumb">
-              {loading && (<div class="y-switch__spinner"></div>)}
+              {loading && <div class="y-switch__spinner"></div>}
             </div>
           </div>
           <label for={inputId} class="y-switch__label">
-            <slot name="label"></slot>
+            {$slots.label?.()}
             <input hidden />
           </label>
         </div>
