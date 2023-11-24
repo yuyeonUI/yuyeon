@@ -104,7 +104,7 @@ export const YSelect = defineComponent({
 
     const selections = computed<ListItem[]>(() => {
       return model.value.map((v: any) => {
-        return items.value.filter((item) => {
+        return items.value.find((item) => {
           return props.valueEquals(item.value, v.value);
         });
       });

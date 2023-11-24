@@ -48,6 +48,12 @@ function onCloseMenuIn() {
 }
 
 const tab = ref();
+
+const focusTrapTest = ref("");
+
+const parentDialog = ref(false);
+const childDialog = ref(false);
+const maximizedDialog = ref(false);
 </script>
 
 <template>
@@ -142,8 +148,7 @@ const tab = ref();
           ></y-tabs>
           <router-view></router-view>
           <span v-if="$route.path === '/'">
-            Tab not selected yet.
-            Consider using vue-router redirect.
+            Tab not selected yet. Consider using vue-router redirect.
           </span>
         </y-card-body>
       </y-card>
@@ -220,7 +225,8 @@ const tab = ref();
         <y-card-body class="pt-4">
           <div class="d-flex align-center" style="gap: 8px">
             <y-menu
-              position="right top"
+              position="right"
+              align="top"
               offset="8"
               height="80"
               eager
@@ -295,13 +301,83 @@ const tab = ref();
                       <y-button>hello</y-button>
                     </template>
                     <y-card>
-                      <div>menu 1</div>
+                      <div>
+                        <y-field-input
+                          v-model="focusTrapTest"
+                          placeholder="No Trap!"
+                        ></y-field-input>
+                      </div>
                     </y-card>
                   </y-menu>
                 </y-card-body>
                 <y-card-footer style="justify-content: flex-end">
                   <y-button @click="showDialog = false">close</y-button>
                 </y-card-footer>
+              </y-card>
+            </y-dialog>
+            <!-- -->
+            <y-dialog
+              v-model="parentDialog"
+              :dialog-classes="['playground-dialog--showcase']"
+            >
+              <template #base>
+                <y-button variation="filled" color="primary" class="mr-2">
+                  DIALOG
+                </y-button>
+              </template>
+              <y-card style="width: 400px">
+                <y-card-body class="pv-8">
+                  Sure?
+                  <y-menu>
+                    <template #base>
+                      <y-button>hello</y-button>
+                    </template>
+                    <y-card>
+                      <div>
+                        <y-field-input
+                          v-model="focusTrapTest"
+                          placeholder="No Trap!"
+                        ></y-field-input>
+                      </div>
+                    </y-card>
+                  </y-menu>
+                  <y-dialog v-model="childDialog">
+                    <template #base>
+                      <y-button>MORE DIALOG</y-button>
+                    </template>
+                    <y-card>
+                      <y-card-header>
+                        <div>DIALOG IN DIALOG</div>
+                      </y-card-header>
+                      <y-card-footer>
+                        <y-button @click="childDialog = false">CLOSE</y-button>
+                      </y-card-footer>
+                    </y-card>
+                  </y-dialog>
+                </y-card-body>
+                <y-card-footer style="justify-content: flex-end">
+                  <y-button @click="parentDialog = false">close</y-button>
+                </y-card-footer>
+              </y-card>
+            </y-dialog>
+            <!-- -->
+            <y-dialog v-model="maximizedDialog" maximized :scrim="false" offset="56">
+              <template #base>
+                <y-button variation="outlined" color="secondary" class="mr-2"> MAXIMIZED DIALOG </y-button>
+              </template>
+              <y-card>
+                <y-card-header>
+                  <div class="y-card-title">SETTINGS</div>
+                  <div class="flex-spacer"></div>
+                  <y-button @click="maximizedDialog = false">
+                    CLOSE
+                  </y-button>
+                </y-card-header>
+                <y-card-body class="pv-8">
+                  <y-field-input variation="outlined"></y-field-input>
+                  <div class="pt-3"></div>
+                  <y-checkbox :label="'Show startup'"></y-checkbox>
+                </y-card-body>
               </y-card>
             </y-dialog>
             <!--  -->

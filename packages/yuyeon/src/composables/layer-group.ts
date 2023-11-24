@@ -1,12 +1,14 @@
-import {computed, getCurrentInstance} from 'vue';
-import type { Ref } from 'vue';
+import { computed, getCurrentInstance, watch } from 'vue';
+import type { Ref, ComponentInternalInstance } from 'vue';
 
 export const Y_LAYER_GROUP_CLASS_NAME = 'y-layer-group';
+
+const layerGroupState = new WeakMap<HTMLElement, Set<any>>();
 
 export function useLayerGroup(target?: Ref<string | Element>) {
   const vm = getCurrentInstance()!;
 
-  const layerGroup = computed<string | HTMLElement>(() => {
+  const layerGroup = computed<HTMLElement>(() => {
     const refTarget = target?.value;
     let targetEl: Element = document.body;
 
@@ -34,5 +36,29 @@ export function useLayerGroup(target?: Ref<string | Element>) {
     return layerEl as HTMLElement;
   });
 
-  return { layerGroup };
+  watch(
+    layerGroup,
+    (neo, old) => {
+      if (old && layerGroupState.has(old)) {
+        layerGroupState.get(old)?.delete(vm);
+      }
+      if (!(layerGroupState.has(neo) && layerGroupState.get(neo))) {
+        layerGroupState.set(neo, new Set());
+      }
+      layerGroupState.get(neo)?.add(vm);
+    },
+    { immediate: true },
+  );
+
+  function getActiveLayers() {
+    const activeLayers: ComponentInternalInstance[] = [];
+    layerGroupState.get(layerGroup.value)?.forEach((value) => {
+      if (value?.ctx?.active) {
+        activeLayers.push(value);
+      }
+    });
+    return activeLayers;
+  }
+
+  return { layerGroup, layerGroupState, getActiveLayers };
 }
