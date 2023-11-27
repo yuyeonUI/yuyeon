@@ -3,7 +3,6 @@ import {
   computed,
   defineComponent,
   getCurrentInstance,
-  h,
   nextTick,
   ref,
   toRef,
@@ -81,7 +80,6 @@ export const YFieldInput = defineComponent({
     };
 
     function onClick(event: MouseEvent) {
-      inputRef.value?.focus();
       emit('click', event);
     }
 
@@ -98,7 +96,7 @@ export const YFieldInput = defineComponent({
       changeDisplay();
     }
 
-    function onInput(event: InputEvent) {
+    function onInput(event: Event) {
       emit('input', event);
       const target = event.target as HTMLInputElement | null;
       inValue.value = target?.value;
@@ -191,20 +189,18 @@ export const YFieldInput = defineComponent({
       emit('update:modelValue', value);
     }
 
-    useRender(() =>
-      h(
-        YInput,
-        {
-          class: classes.value,
-          ref: yInputRef,
-          ...chooseProps(props, YInput.props),
-          modelValue: inValue.value,
-          'onUpdate:modelValue': onUpdateModel,
-          onClick,
-          focused: focused.value,
-          'onMousedown:display': ($event) => emit('mousedown:display', $event),
-        },
-        {
+    useRender(() => (
+      <YInput
+        class={classes.value}
+        ref={yInputRef}
+        {...chooseProps(props, YInput.props)}
+        modelValue={inValue.value}
+        onUpdate:modelValue={onUpdateModel}
+        focused={focused.value}
+        onClick={onClick}
+        onMousedown:display={($event) => emit('mousedown:display', $event)}
+      >
+        {{
           leading: slots.leading
             ? (...args: any[]) => {
                 const leadingChildren = [];
@@ -217,88 +213,83 @@ export const YFieldInput = defineComponent({
                 return leadingChildren;
               }
             : undefined,
-          default: (defaultProps: any) =>
-            h(
-              'div',
+          default: (defaultProps: any) => (
+            <div
+              class={[`${NAME}__field`]}
+              data-id={defaultProps.attrId}
+              ref={'field'}
+            >
+              {props.floating
+                ? yInputRef.value &&
+                  YInput.methods!.createLabel.call(yInputRef.value)
+                : undefined}
+              {slots.default?.()}
               {
-                class: `${NAME}__field`,
-                'data-id': defaultProps.attrId,
-                ref: 'field',
-              },
-              [
-                props.floating
-                  ? yInputRef.value &&
-                    YInput.methods!.createLabel.call(yInputRef.value)
-                  : undefined,
-                slots.default?.(),
-                h('input', {
-                  '.value': displayValue.value,
-                  '.id': defaultProps.attrId,
-                  '^type': inputType.value,
-                  readonly:
-                    props.readonly || props.loading || defaultProps.formLoading,
-                  '.placeholder': props.placeholder,
-                  '.disabled': props.disabled,
-                  '^tabindex': props.tabindex || '0',
-                  autocomplete: attrs.autocomplete,
-                  maxlength: attrs.maxlength,
-                  min: attrs.min,
-                  max: attrs.max,
-                  onInput,
-                  onFocus,
-                  onBlur,
-                  onChange,
-                  onKeydown,
-                  onKeyup,
-                  style: {
-                    textAlign: props.inputAlign,
-                  },
-                  ref: inputRef,
-                }),
-              ],
-            ),
-          trailing: () => {
-            const trailingChildren = [];
-            if (props.enableClear && inValue.value) {
-              trailingChildren.push(
-                h(
-                  'div',
-                  { class: 'y-input__trailing y-input__trailing--clear' },
-                  [
-                    h(
-                      'button',
-                      {
-                        class: `${NAME}__clear`,
-                        onClick: onClickClear,
-                        onKeydown: onKeydownClear,
-                        '^tabindex': '2',
-                      },
-                      [h(YIconClear)],
-                    ),
-                  ],
-                ),
-              );
-            }
-            const slot = slots.trailing;
-            if (slot) {
-              trailingChildren.push(
-                h('div', { class: 'y-input__trailing' }, slot()),
-              );
-            }
-            return trailingChildren;
-          },
-          label: slots['label']?.(),
-          'helper-text': slots['helper-text']
-            ? () => {
-                return slots['helper-text']?.();
+                <input
+                  ref={inputRef}
+                  value={displayValue.value}
+                  name={props.name}
+                  id={defaultProps.attrId}
+                  type={inputType.value}
+                  readonly={
+                    props.readonly || props.loading || defaultProps.formLoading
+                  }
+                  placeholder={props.placeholder}
+                  disabled={props.disabled}
+                  tabindex={props.tabindex || '0'}
+                  autocomplete={attrs.autocomplete as string}
+                  maxlength={attrs.maxlength as number | string}
+                  min={attrs.min as number | string}
+                  max={attrs.max as number | string}
+                  style={[attrs?.style, { textAlign: props.inputAlign } as any]}
+                  onInput={onInput}
+                  onFocus={onFocus}
+                  onBlur={onBlur}
+                  onChange={onChange}
+                  onKeydown={onKeydown}
+                  onKeyup={onKeyup}
+                />
               }
-            : undefined,
-        },
-      ),
-    );
+            </div>
+          ),
+          trailing:
+            slots.trailing || (props.enableClear && inValue.value)
+              ? () => (
+                  <>
+                    {props.enableClear && inValue.value && (
+                      <div
+                        class={[
+                          'y-input__trailing',
+                          'y-input__trailing--clear',
+                        ]}
+                      >
+                        <button
+                          class={[`${NAME}__clear`]}
+                          onClick={onClickClear}
+                          onKeydown={onKeydownClear}
+                          tabindex={2}
+                        >
+                          <YIconClear></YIconClear>
+                        </button>
+                      </div>
+                    )}
+                    {slots.trailing && (
+                      <div class={['y-input__trailing']}>
+                        {slots.trailing()}
+                      </div>
+                    )}
+                  </>
+                )
+              : undefined,
+          label: slots.label?.(),
+          'helper-text': slots['helper-text']?.(),
+        }}
+      </YInput>
+    ));
 
     return {
       focused,
+      inValue
     };
   },
 });

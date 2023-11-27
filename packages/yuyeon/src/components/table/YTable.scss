@@ -20,6 +20,7 @@ $table-cell-border-bottom-color: rgba(var(--y-theme-outline-rgb), var(--y-theme-
   &--flex-height > &__container {
     flex: 1 1;
     min-height: 0;
+    position: relative;
   }
 
   &__wrapper > table {

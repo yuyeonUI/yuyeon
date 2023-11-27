@@ -49,20 +49,18 @@ export const YList = defineComponent({
     }
 
     useRender(() => (
-      <>
         <div
-          ref={el$}
-          class={['y-list', themeClasses.value]}
-          role="listbox"
-          tabindex={props.disabled || focused.value ? -1 : 0}
-          onFocus={onFocus}
-          onFocusin={onFocusIn}
-          onFocusout={onFocusOut}
-          onKeydown={onKeydown}
+            ref={el$}
+            class={['y-list', themeClasses.value]}
+            role="listbox"
+            tabindex={props.disabled || focused.value ? -1 : 0}
+            onFocus={onFocus}
+            onFocusin={onFocusIn}
+            onFocusout={onFocusOut}
+            onKeydown={onKeydown}
         >
           {slots.default?.()}
         </div>
-      </>
     ));
   },
 });

@@ -13,6 +13,7 @@ import {
   YDataTableServer,
   YDialog,
   YDividePanel,
+  YDivider,
   YDropdown,
   YExpandHTransition,
   YExpandVTransition,
@@ -77,5 +78,6 @@ declare module '@vue/runtime-core' {
     YAlert: typeof YAlert;
     YTabs: typeof YTabs;
     YTab: typeof YTab;
+    YDivider: typeof YDivider;
   }
 }

@@ -1,18 +1,17 @@
 import type { PropType } from 'vue';
-import {computed, defineComponent, ref, toRef, watch} from 'vue';
+import { computed, defineComponent, ref, toRef, watch } from 'vue';
 
 import { useModelDuplex } from '../../composables/communication';
 import { useRender } from '../../composables/component';
-import { pressCoordinateProps } from '../../composables/coordinate';
 import { polyTransitionPropOptions } from '../../composables/transition';
+import { hasElementMouseEvent } from '../../util/dom';
 import { toKebabCase } from '../../util/string';
 import { bindClasses, chooseProps } from '../../util/vue-component';
 import { YLayer, pressYLayerProps } from '../layer';
 import { useDelay } from '../layer/active-delay';
+import { useActiveStack } from '../layer/active-stack';
 
 import './YMenu.scss';
-import {useActiveStack} from "../layer/active-stack";
-import {hasElementMouseEvent} from "../../util/dom";
 
 const NAME = 'YMenu';
 const CLASS_NAME = toKebabCase(NAME);
@@ -77,11 +76,20 @@ export const YMenu = defineComponent({
     });
 
     const hovered = computed(() => !!layer$.value?.hovered);
-    const { children, parent } = useActiveStack(layer$, active, toRef(props, 'preventCloseBubble'));
+    const { children, parent } = useActiveStack(
+      layer$,
+      active,
+      toRef(props, 'preventCloseBubble'),
+    );
     const { startOpenDelay, startCloseDelay } = useDelay(
       props,
       (changeActive) => {
-        if (!changeActive && props.openOnHover && !hovered.value && children.value.length === 0) {
+        if (
+          !changeActive &&
+          props.openOnHover &&
+          !hovered.value &&
+          children.value.length === 0
+        ) {
           active.value = false;
         } else if (changeActive) {
           active.value = true;
@@ -132,7 +140,10 @@ export const YMenu = defineComponent({
         const parentContent = parent?.$el.value?.content$;
         const parentModal = parent?.$el.value?.modal;
         active.value = false;
-        if (!(parentContent && !hasElementMouseEvent(e, parentContent)) && !parentModal) {
+        if (
+          !(parentContent && !hasElementMouseEvent(e, parentContent)) &&
+          !parentModal
+        ) {
           parent?.clear();
         }
       }

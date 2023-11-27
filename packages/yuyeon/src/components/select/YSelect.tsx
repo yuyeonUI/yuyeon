@@ -1,17 +1,15 @@
 import { shallowRef } from '@vue/runtime-core';
-import type { PropType } from 'vue';
-import { computed, defineComponent, mergeProps, ref } from 'vue';
+import type { PropType, SlotsType } from 'vue';
+import { computed, defineComponent, mergeProps, onMounted, ref } from 'vue';
+
+
 
 import { useModelDuplex } from '../../composables/communication';
 import { useRender } from '../../composables/component';
 import { pressCoordinateProps } from '../../composables/coordinate';
-import {
-  ListItem,
-  pressListItemsPropsOptions,
-  useItems,
-} from '../../composables/list-items';
+import { ListItem, pressListItemsPropsOptions, useItems } from '../../composables/list-items';
 import { wrapInArray } from '../../util/array';
-import {deepEqual, getObjectValueByPath, getPropertyFromItem, omit} from '../../util/common';
+import { deepEqual, getObjectValueByPath, getPropertyFromItem, omit } from '../../util/common';
 import { chooseProps, propsFactory } from '../../util/vue-component';
 import { YCard } from '../card';
 import { YFieldInput, pressYFieldInputPropsOptions } from '../field-input';
@@ -19,7 +17,10 @@ import { YIconDropdown } from '../icons/YIconDropdown';
 import { YList, YListItem } from '../list';
 import { YMenu } from '../menu';
 
+
+
 import './YSelect.scss';
+
 
 export type SelectEquals = (
   optionsItem: any,
@@ -75,14 +76,26 @@ export const pressYSelectPropsOptions = propsFactory(
 
 export const YSelect = defineComponent({
   name: 'YSelect',
+  inheritAttrs: false,
   props: {
     ...pressYSelectPropsOptions(),
   },
   emits: {
     'update:modelValue': (value: any) => true,
     'update:opened': (opened: boolean) => true,
+    'click:item': (item: any, e: MouseEvent) => true,
   },
-  setup(props, { slots }) {
+  slots: Object as SlotsType<{
+    base: any;
+    selection: any;
+    leading: any;
+    'helper-text': any;
+    menu: any;
+    'menu-prepend': any;
+    'menu-append': any;
+    'expand-icon': any;
+  }>,
+  setup(props, { slots, attrs }) {
     const fieldInputRef = ref();
     const menuRef = ref();
     const listRef = ref<InstanceType<typeof YList>>();
@@ -116,7 +129,7 @@ export const YSelect = defineComponent({
 
     function isSelected(item: ListItem) {
       return !!selections.value.find((selectedItem) => {
-        return selectedItem.value === item.value;
+        return selectedItem?.value === item.value;
       });
     }
 
@@ -129,13 +142,13 @@ export const YSelect = defineComponent({
     }
 
     function onBlur(event: FocusEvent) {
-      if (listRef.value?.$el.contains(event.relatedTarget)) {
-        opened.value = false;
-      }
+      // if (listRef.value?.$el.contains(event.relatedTarget)) {
+      //   opened.value = false;
+      // }
     }
 
     // Menu Contents
-    function onClickItem(item: ListItem) {
+    function onClickItem(item: ListItem, e: MouseEvent) {
       select(item);
       if (!props.multiple) {
         opened.value = false;
@@ -200,6 +213,7 @@ export const YSelect = defineComponent({
                   onBlur={onBlur}
                   readonly
                   class={['y-select', { 'y-select--opened': opened.value }]}
+                  {...attrs}
                   v-model:focused={focused.value}
                 >
                   {{
@@ -235,12 +249,13 @@ export const YSelect = defineComponent({
                 slots.menu()
               ) : (
                 <YCard>
+                  {slots['menu-prepend']?.()}
                   {items.value.length > 0 ? (
                     <YList ref={listRef}>
                       {items.value.map((item) => {
                         return (
                           <YListItem
-                            onClick={(e) => onClickItem(item)}
+                            onClick={(e) => onClickItem(item, e)}
                             class={{ 'y-list-item--active': isSelected(item) }}
                           >
                             {item.text}
@@ -251,11 +266,23 @@ export const YSelect = defineComponent({
                   ) : (
                     <div class="y-select__no-options">항목이 없습니다.</div>
                   )}
+                  {slots['menu-append']?.()}
                 </YCard>
               ),
           }}
         </YMenu>
       );
+    });
+
+    onMounted(() => {
+      if (
+        props.defaultSelect &&
+        (props.modelValue === undefined ||
+          (Array.isArray(props.modelValue) && props.modelValue.length === 0)) &&
+        items.value?.length
+      ) {
+        select(items.value[0]);
+      }
     });
 
     return {
