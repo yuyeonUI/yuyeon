@@ -33,6 +33,8 @@ export const YTable = defineComponent({
   },
   setup(props, { slots }) {
     const { resizeObservedRef, contentRect } = useResizeObserver();
+    const { resizeObservedRef: wrapperRef, contentRect: wrapperRect } =
+      useResizeObserver();
     const { resizeObservedRef: tableRef, contentRect: tableRect } =
       useResizeObserver();
     provide('YTable', { containerRect: contentRect });
@@ -55,14 +57,17 @@ export const YTable = defineComponent({
             '--y-table-container-width': toStyleSizeValue(
               contentRect.value?.width,
             ),
-            '--y-table-wrapper-width': toStyleSizeValue(tableRect.value?.width),
+            '--y-table-wrapper-width': toStyleSizeValue(
+              wrapperRect.value?.width,
+            ),
           }}
         >
           {slots.top?.()}
           {slots.default ? (
-            <div class={['y-table__container']} ref={resizeObservedRef}>
+            <div ref={resizeObservedRef} class={['y-table__container']}>
               {slots.leading?.()}
               <div
+                ref={wrapperRef}
                 class={['y-table__wrapper']}
                 style={{
                   height: toStyleSizeValue(containerHeight),

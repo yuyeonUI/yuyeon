@@ -4,6 +4,8 @@ import VueSvg from "@/assets/vue.svg?component";
 import { ref, shallowRef } from "vue";
 import { useTheme } from "yuyeon";
 
+const outlinedFieldInput = ref('');
+
 const showDialog = ref(false);
 
 const loadingButton = ref(false);
@@ -43,6 +45,8 @@ function toggleThemeMode() {
 
 const innerMenu = shallowRef(false);
 
+const defaultSelectV = ref([]);
+
 function onCloseMenuIn() {
   return innerMenu.value;
 }
@@ -54,6 +58,10 @@ const focusTrapTest = ref("");
 const parentDialog = ref(false);
 const childDialog = ref(false);
 const maximizedDialog = ref(false);
+
+function onClickFieldWrap() {
+  console.log('activate my trap')
+}
 </script>
 
 <template>
@@ -62,6 +70,7 @@ const maximizedDialog = ref(false);
       <template #title> Alert!! </template>
       <template #default> Alert Alert Alert Alert! </template>
     </y-alert>
+    <!--  Alerts  -->
     <section class="py-2">
       <y-card>
         <y-card-header> ALERTS </y-card-header>
@@ -127,6 +136,7 @@ const maximizedDialog = ref(false);
         </y-card-body>
       </y-card>
     </section>
+    <!--  Tabs  -->
     <section class="pv-2" style="height: 200px">
       <y-card class="h-100 contain-paint">
         <y-card-header
@@ -153,6 +163,7 @@ const maximizedDialog = ref(false);
         </y-card-body>
       </y-card>
     </section>
+    <!--  BUTTONS  -->
     <section class="pv-2" style="height: 200px">
       <y-card class="h-100 contain-paint">
         <y-card-header> BUTTONS </y-card-header>
@@ -180,18 +191,23 @@ const maximizedDialog = ref(false);
         </y-card-body>
       </y-card>
     </section>
+    <!--  Inputs  -->
     <section class="py-2">
       <y-card class="pa-2">
         <y-card-header>INPUTS</y-card-header>
         <y-card-body class="pv-4">
           <div class="d-flex gap-2">
             <y-checkbox :label="'체크박스'"></y-checkbox>
+            <div class="pa-4" style="border: 1px solid royalblue" @click="onClickFieldWrap">
+              <y-field-input
+                label="이름"
+                placeholder="이름을 입력하세요"
+                required
+                @click.stop.prevent
+              ></y-field-input>
+            </div>
             <y-field-input
-              label="이름"
-              placeholder="이름을 입력하세요"
-              required
-            ></y-field-input>
-            <y-field-input
+              v-model="outlinedFieldInput"
               variation="outlined"
               label="label slot"
               placeholder="variation outlined"
@@ -215,6 +231,7 @@ const maximizedDialog = ref(false);
         </y-card-body>
       </y-card>
     </section>
+    <!--  Layer base  -->
     <section class="pv-2" style="height: 300px">
       <y-card class="h-100 contain-paint">
         <y-progress-bar
@@ -399,13 +416,16 @@ const maximizedDialog = ref(false);
             </y-dropdown>
             <!--  -->
             <y-select
+                v-model="defaultSelectV"
               :items="dropdownItems"
               :label="'y-select'"
               offset="8"
+              default-select
+              style="max-width: 80px"
             ></y-select>
           </div>
           <div class="mv-3">
-            <y-select :items="dropdownItems" variation="outlined"></y-select>
+            <y-select :items="dropdownItems" variation="outlined" style="max-width: 120px"></y-select>
           </div>
         </y-card-body>
       </y-card>

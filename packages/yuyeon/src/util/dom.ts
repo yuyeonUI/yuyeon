@@ -25,3 +25,7 @@ export function hasElementMouseEvent(
   elements.push(element);
   return !elements.some((el) => el?.contains(mouseEvent.target as Node));
 }
+
+export function isOverflow(el: HTMLElement) {
+  return el.offsetWidth < el.scrollWidth;
+}

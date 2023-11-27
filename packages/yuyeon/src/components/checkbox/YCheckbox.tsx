@@ -1,21 +1,24 @@
-import { PropType, computed, defineComponent, ref, withModifiers } from 'vue';
+import {
+  PropType,
+  computed,
+  defineComponent,
+  ref,
+  watch,
+  withModifiers,
+} from 'vue';
 
 import { useRender } from '../../composables/component';
 import { getUid } from '../../util/vue-component';
+import YInputCheckbox from './YInputCheckbox';
 
 import './YCheckbox.scss';
-import YInputCheckbox from './YInputCheckbox';
 
 export default defineComponent({
   name: 'YCheckbox',
   components: { YInputCheckbox },
-  model: {
-    prop: 'inputValue',
-    event: 'change',
-  },
-  emits: ['focus', 'blur', 'change'],
+  emits: ['focus', 'blur', 'click', 'update:modelValue', 'change'],
   props: {
-    inputValue: [Boolean, Array] as PropType<boolean | any[]>,
+    modelValue: [Boolean, Array] as PropType<boolean | any[]>,
     value: [String, Number, Object] as PropType<any>,
     label: String as PropType<string>,
     reverse: Boolean as PropType<boolean>,
@@ -33,7 +36,7 @@ export default defineComponent({
   },
   setup(props, { emit, slots }) {
     const focused = ref(false);
-    const innerValue = ref(false);
+    const checked = ref(false);
     const counterId = (getUid() ?? '').toString();
     const inputId = `input-${counterId}`;
 
@@ -48,22 +51,24 @@ export default defineComponent({
     }
 
     function onClick(e: Event, ...args: any[]) {
+      emit('click', e);
       if (props.disabled || props.readonly) return;
-      innerValue.value = !innerValue.value;
-      emit('change', innerValue.value, e);
+      const check = !checked.value;
+      checked.value = check;
+      emit('change', check);
     }
 
-    function inputByValue() {
-      if (Array.isArray(props.inputValue)) {
-        const found = props.inputValue?.find((inp: any) => inp === props.value);
+    function inputByProp() {
+      if (Array.isArray(props.modelValue)) {
+        const found = props.modelValue?.find((inp: any) => inp === props.value);
 
         if (found !== undefined) {
-          innerValue.value = true;
+          checked.value = true;
         } else {
-          innerValue.value = false;
+          checked.value = false;
         }
-      } else if (typeof props.inputValue === 'boolean') {
-        innerValue.value = props.inputValue;
+      } else if (typeof props.modelValue === 'boolean') {
+        checked.value = props.modelValue;
       }
     }
 
@@ -86,21 +91,48 @@ export default defineComponent({
     });
 
     const isMultipleInput = computed<boolean>(() => {
-      return Array.isArray(props.inputValue);
+      return Array.isArray(props.modelValue);
     });
 
-    const multipleInputIndex = computed<number>(() => {
+    function getMultipleInputIndex() {
       if (!isMultipleInput.value) {
         return -1;
       }
-      return (props.inputValue as any[]).findIndex(
+      return (props.modelValue as any[]).findIndex(
         (v: any) => v === props.value,
       );
+    }
+
+    watch(checked, (neo) => {
+      if (Array.isArray(props.modelValue)) {
+        const value = props.modelValue;
+        const index = getMultipleInputIndex();
+        if (neo && index === -1) {
+          value.push(props.value);
+        } else if (!neo && index !== -1) {
+          value.splice(index, 1);
+        }
+        emit('update:modelValue', value);
+      } else {
+        emit('update:modelValue', neo);
+      }
     });
+
+    watch(
+      () => props.modelValue,
+      (neo) => {
+        if (Array.isArray(neo)) {
+          inputByProp();
+        } else {
+          checked.value = !!neo;
+        }
+      },
+      { immediate: true },
+    );
 
     useRender(() => {
       return (
-        <div class={[{...classes.value}]}>
+        <div class={[{ ...classes.value }]}>
           {slots.leading?.()}
           <div class="y-checkbox__slot">
             <YInputCheckbox
@@ -111,7 +143,7 @@ export default defineComponent({
               onFocus={onFocus}
               onBlur={onBlur}
               id={counterId}
-              value={innerValue.value}
+              value={checked.value}
               icon={computedIcon.value}
               color={props.color}
               disabled={props.disabled}
@@ -135,23 +167,7 @@ export default defineComponent({
     });
 
     return {
-      innerValue,
-      inputByValue,
+      checked,
     };
-  },
-  created() {
-    if (Array.isArray(this.inputValue)) {
-      this.inputByValue();
-    } else {
-      this.innerValue = !!this.inputValue;
-    }
-  },
-  watch: {
-    inputValue: {
-      handler() {
-        this.inputByValue();
-      },
-      immediate: true,
-    },
   },
 });

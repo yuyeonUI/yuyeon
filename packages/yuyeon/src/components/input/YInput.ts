@@ -29,7 +29,7 @@ export const pressYInputPropsOptions = propsFactory(
       default: 'div',
     },
     label: String as PropType<string>,
-    modelValue: { type: [String, Number] as PropType<string | number> },
+    modelValue: { type: [String, Number, Array, Object] as PropType<any> },
     autoSelect: {
       type: Boolean as PropType<boolean>,
       default: true,
@@ -256,7 +256,7 @@ export const YInput = defineComponent({
           class: {
             [`${NAME}__display`]: true,
           },
-          // onClick: this.onClick,
+          onClick: this.onClick,
           onMousedown: this.onMousedown,
           onMouseup: this.onMouseup,
           ref: 'display',
@@ -307,11 +307,6 @@ export const YInput = defineComponent({
     },
     //
     onClick(event: MouseEvent) {
-      if (this.autoSelect) {
-        if (event.target) {
-          window.getSelection()?.selectAllChildren(event.target as HTMLElement);
-        }
-      }
       this.$emit('click', event);
     },
     onMousedown(e: Event) {

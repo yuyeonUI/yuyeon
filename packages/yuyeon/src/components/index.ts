@@ -25,3 +25,4 @@ export * from './dropdown';
 export * from './select';
 export * from './tab';
 export * from './alert';
+export * from './divider';
