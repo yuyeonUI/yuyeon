@@ -26,3 +26,4 @@ export * from './select';
 export * from './tab';
 export * from './alert';
 export * from './divider';
+export * from  './date-picker';
