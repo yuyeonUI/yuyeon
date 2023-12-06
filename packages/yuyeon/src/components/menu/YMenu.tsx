@@ -53,6 +53,7 @@ export const YMenu = defineComponent({
     },
   },
   emits: ['update:modelValue', 'afterLeave'],
+  expose: ['layer$', 'baseEl'],
   setup(props, { slots, emit, expose }) {
     const layer$ = ref<typeof YLayer>();
 
@@ -133,8 +134,8 @@ export const YMenu = defineComponent({
       if (typeof props.closeCondition === 'function') {
         if (props.closeCondition(e) === false) {
           active.value = false;
+          return;
         }
-        return;
       }
       if (active.value) {
         const parentContent = parent?.$el.value?.content$;
@@ -179,6 +180,15 @@ export const YMenu = defineComponent({
       };
     });
 
+    const baseEl = computed(() => {
+      return layer$.value?.baseEl;
+    });
+
+    expose({
+      layer$,
+      baseEl,
+    });
+
     useRender(() => {
       return (
         <>
@@ -210,7 +220,8 @@ export const YMenu = defineComponent({
     });
 
     return {
-      el$: layer$,
+      layer$,
+      baseEl,
       classes,
     };
   },

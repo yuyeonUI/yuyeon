@@ -11,6 +11,7 @@ import {
   YChip,
   YDataTable,
   YDataTableServer,
+  YDateCalendar,
   YDialog,
   YDividePanel,
   YDivider,
@@ -79,5 +80,6 @@ declare module '@vue/runtime-core' {
     YTabs: typeof YTabs;
     YTab: typeof YTab;
     YDivider: typeof YDivider;
+    YDateCalendar: typeof YDateCalendar;
   }
 }

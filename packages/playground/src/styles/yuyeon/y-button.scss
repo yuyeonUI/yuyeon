@@ -1,7 +1,6 @@
 @use '@/styles/palette.scss';
 @forward 'yuyeon/src/components/button/YButton' with (
   $button-border-radius: 4px,
-  $button-disabled-background: #afafaf
 );
 
 .y-button {

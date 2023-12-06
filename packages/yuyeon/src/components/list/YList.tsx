@@ -1,10 +1,15 @@
 import { defineComponent, ref, shallowRef } from 'vue';
 
+
+
 import { useRender } from '../../composables/component';
 import { pressThemePropsOptions, useLocalTheme } from '../../composables/theme';
 import { propsFactory } from '../../util/vue-component';
 
+
+
 import './YList.scss';
+
 
 export const pressYListPropsOptions = propsFactory(
   {
@@ -19,7 +24,7 @@ export const YList = defineComponent({
   props: {
     ...pressYListPropsOptions(),
   },
-  setup(props, { slots }) {
+  setup(props, { slots, attrs }) {
     const el$ = ref<HTMLElement>();
 
     const { themeClasses } = useLocalTheme(props);
@@ -27,7 +32,13 @@ export const YList = defineComponent({
     const focused = shallowRef(false);
 
     function onFocus(event: FocusEvent) {
-      if (!focused.value && !(event.relatedTarget && el$.value?.contains(event.relatedTarget as Node))) {
+      if (
+        !focused.value &&
+        !(
+          event.relatedTarget &&
+          el$.value?.contains(event.relatedTarget as Node)
+        )
+      ) {
         focus();
       }
     }
@@ -49,18 +60,22 @@ export const YList = defineComponent({
     }
 
     useRender(() => (
-        <div
-            ref={el$}
-            class={['y-list', themeClasses.value]}
-            role="listbox"
-            tabindex={props.disabled || focused.value ? -1 : 0}
-            onFocus={onFocus}
-            onFocusin={onFocusIn}
-            onFocusout={onFocusOut}
-            onKeydown={onKeydown}
-        >
-          {slots.default?.()}
-        </div>
+      <div
+        ref={el$}
+        class={['y-list', themeClasses.value]}
+        role="listbox"
+        tabindex={
+          (attrs.tabindex as number | string) ??
+          (props.disabled || focused.value ? -1 : 0)
+        }
+        onFocus={onFocus}
+        onFocusin={onFocusIn}
+        onFocusout={onFocusOut}
+        onKeydown={onKeydown}
+        {...attrs}
+      >
+        {slots.default?.()}
+      </div>
     ));
   },
 });

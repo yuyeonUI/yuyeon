@@ -1,0 +1,72 @@
+.y-date-calendar {
+  padding: 0 8px;
+
+  &__header {
+    display: flex;
+    padding: 0 12px 12px;
+    font-weight: 500;
+  }
+
+  &__week {
+    display: grid;
+    grid-template-columns: repeat(7, min-content);
+  }
+
+  &__cell {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  &__weekday {
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+
+  &__day {
+    position: relative;
+
+    .y-button {
+      width: 36px;
+      height: 36px;
+      --y-button__disabled-background: transparent;
+    }
+
+    &--adjacent {
+      color: var(--y-theme-on-surface-variant);
+      opacity: 0.5;
+    }
+
+    &:before {
+      content: '';
+      position: absolute;
+      right: 0;
+      left: 0;
+      top: calc((40px - 36px) / 2);
+      bottom: calc((40px - 36px) / 2);
+    }
+
+    &--range-interval:before {
+      background: rgba(var(--y-theme-primary-rgb), 0.3);
+    }
+  }
+
+  &__day--range-start:before, &__day--range-end:before {
+    background: rgba(var(--y-theme-primary-rgb), 0.3);
+  }
+
+  &__day--range-start:before {
+    border-top-left-radius: 50%;
+    border-bottom-left-radius: 50%;
+    left: calc((40px - 36px) / 2);
+  }
+
+  &__day--range-end:before {
+    border-top-right-radius: 50%;
+    border-bottom-right-radius: 50%;
+    right: calc((40px - 36px) / 2);
+  }
+}

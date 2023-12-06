@@ -1,4 +1,9 @@
-import type { CSSProperties, PropType, ComponentInternalInstance } from 'vue';
+import type {
+  CSSProperties,
+  ComponentInternalInstance,
+  PropType,
+  SlotsType,
+} from 'vue';
 import {
   Teleport,
   Transition,
@@ -112,6 +117,10 @@ export const YLayer = defineComponent({
     'click:complement': (mouseEvent: MouseEvent) => true,
     afterLeave: () => true,
   },
+  slots: Object as SlotsType<{
+    base: any;
+    default: any;
+  }>,
   setup(props, { emit, expose, attrs, slots }) {
     const vm = getCurrentInstance();
     const base$ = ref();
@@ -164,7 +173,7 @@ export const YLayer = defineComponent({
     function closeConditional(): boolean {
       return (
         (!props.openOnHover || (props.openOnHover && !hovered.value)) &&
-        active.value
+        active.value && finish.value
       ); // TODO: && groupTopLevel.value;
     }
 
@@ -199,8 +208,16 @@ export const YLayer = defineComponent({
         baseEl.value = baseFromSlotEl.value;
         return;
       }
-      const base = base$.value;
-      baseEl.value = base$.value?.$el ? base$.value?.$el : base;
+      let base = base$.value;
+      if (base.baseEl) {
+        base = base.baseEl;
+      }
+      if (base$.value?.$el) {
+        if (base$.value.$el.nodeType === 1) {
+          base = base$.value.$el;
+        }
+      }
+      baseEl.value = base;
     });
 
     const computedStyle = computed(() => {
@@ -331,6 +348,7 @@ export const YLayer = defineComponent({
       onAfterUpdate: onAfterUpdate as () => void,
       scrim$,
       content$,
+      base$,
       baseEl,
       polyTransitionBindProps,
       coordinateStyles,

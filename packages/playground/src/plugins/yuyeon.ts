@@ -1,4 +1,5 @@
 import { init } from "yuyeon";
+import { ko } from "yuyeon/locales";
 
 const yuyeon = init({
   theme: {
@@ -18,7 +19,12 @@ const yuyeon = init({
       },
     },
   },
-
+  i18n: {
+    locale: "ko",
+    messages: {
+      ko,
+    },
+  },
   credit: true,
 });
 
