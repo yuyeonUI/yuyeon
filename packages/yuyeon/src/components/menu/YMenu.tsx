@@ -138,12 +138,14 @@ export const YMenu = defineComponent({
         }
       }
       if (active.value) {
+        if ((!parent && children.value.length === 0) || parent) {
+          active.value = false;
+        }
         const parentContent = parent?.$el.value?.content$;
         const parentModal = parent?.$el.value?.modal;
-        active.value = false;
         if (
-          !(parentContent && !hasElementMouseEvent(e, parentContent)) &&
-          !parentModal
+            !(parentContent && !hasElementMouseEvent(e, parentContent)) &&
+            !parentModal
         ) {
           parent?.clear();
         }
@@ -223,6 +225,8 @@ export const YMenu = defineComponent({
       layer$,
       baseEl,
       classes,
+      children,
+      parent,
     };
   },
 });

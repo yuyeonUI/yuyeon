@@ -35,6 +35,7 @@ import {
   YTab,
   YTable,
   YTabs,
+  YTextarea,
   YTooltip,
   YTreeView,
   YTreeViewNode,
@@ -48,6 +49,7 @@ declare module '@vue/runtime-core' {
     YChip: typeof YChip;
     YInput: typeof YInput;
     YFieldInput: typeof YFieldInput;
+    YTextarea: typeof YTextarea;
     YForm: typeof YForm;
     YCard: typeof YCard;
     YCardBody: typeof YCardBody;

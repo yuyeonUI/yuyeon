@@ -1,0 +1,25 @@
+.y-textarea {
+  --y-textarea-horizon-padding: 10px;
+
+  &__field {
+    position: relative;
+    flex: 1 1 auto;
+    min-height: 36px;
+    min-width: 0.000000001px;
+    padding: 1px 0;
+    border-radius: inherit;
+
+    > textarea {
+      position: relative;
+      outline: none;
+      padding: 8px var(--y-textarea-horizon-padding, 10px);
+      width: 100%;
+      height: 100%;
+      line-height: 1.2;
+      font-size: 0.875rem;
+      color: inherit;
+      border-radius: inherit;
+      margin: 1px;
+    }
+  }
+}

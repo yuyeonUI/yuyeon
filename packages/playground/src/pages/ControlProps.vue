@@ -59,6 +59,8 @@ const parentDialog = ref(false);
 const childDialog = ref(false);
 const maximizedDialog = ref(false);
 
+const textarea = ref('content');
+
 function onClickFieldWrap() {
   console.log("activate my trap");
 }
@@ -231,6 +233,9 @@ function onClickFieldWrap() {
               floating
               placeholder="floating with placeholder"
             ></y-field-input>
+          </div>
+          <div class="d-flex pt-8 gap-2">
+            <y-textarea v-model="textarea" :label="'TEXTAREA'" rows="10"></y-textarea>
           </div>
         </y-card-body>
       </y-card>

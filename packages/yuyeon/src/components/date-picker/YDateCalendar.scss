@@ -1,3 +1,5 @@
+@use '../../styles/util/mixin';
+
 .y-date-calendar {
   padding: 0 8px;
 
@@ -52,21 +54,29 @@
     &--range-interval:before {
       background: rgba(var(--y-theme-primary-rgb), 0.3);
     }
-  }
 
-  &__day--range-start:before, &__day--range-end:before {
-    background: rgba(var(--y-theme-primary-rgb), 0.3);
-  }
+    &--range-start:before,
+    &--range-end:before {
+      background: rgba(var(--y-theme-primary-rgb), 0.3);
+    }
 
-  &__day--range-start:before {
-    border-top-left-radius: 50%;
-    border-bottom-left-radius: 50%;
-    left: calc((40px - 36px) / 2);
-  }
+    &--range-start:before, &--week-start:before {
+      left: calc((40px - 36px) / 2);
+    }
 
-  &__day--range-end:before {
-    border-top-right-radius: 50%;
-    border-bottom-right-radius: 50%;
-    right: calc((40px - 36px) / 2);
+    &--range-end:before, &--week-end:before {
+      right: calc((40px - 36px) / 2);
+    }
+
+    &--range-interval#{&}--week-start:before,
+    &--range-start:before {
+      @include mixin.borderRadius(50%, 'left');
+    }
+
+    &--range-interval#{&}--week-end:before,
+    &--range-start#{&}--week-end:before,
+    &--range-end:before {
+      @include mixin.borderRadius(50%, 'right');
+    }
   }
 }

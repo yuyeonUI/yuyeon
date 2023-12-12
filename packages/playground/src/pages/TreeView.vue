@@ -41,10 +41,14 @@ const activeGroups = ref(["1-1", "1-3"]);
 const selected = ref(["2", "1-1"]);
 const opened = ref([]);
 const search = ref("");
+
+const opened2 = ref([]);
+const active2 = ref([]);
+const search2 = ref('');
 </script>
 
 <template>
-  <section>
+  <section class="d-flex pa-2" style="gap: 8px">
     <y-card class="pa-4 ma-1" style="width: 320px">
       <y-field-input
         v-model="search"
@@ -65,6 +69,27 @@ const search = ref("");
         enable-select
         select-strategy="cascade"
         default-expand="0"
+      ></y-tree-view>
+    </y-card>
+
+    <y-card class="pa-4 ma-1" style="width: 320px">
+      <y-field-input
+          v-model="search"
+          clearable
+          ceramic
+          class="mb-2"
+      ></y-field-input>
+      <y-tree-view
+          v-model:expanded="opened2"
+          v-model:active="active2"
+          :items="groups"
+          :search="search2"
+          enable-active
+          multiple-active
+          required-active
+          active-strategy="cascade"
+          active-single-modifier="Control"
+          default-expand="0"
       ></y-tree-view>
     </y-card>
   </section>

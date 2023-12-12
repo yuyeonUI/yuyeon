@@ -25,6 +25,7 @@ export const pressYTreeViewNodeProps = propsFactory(
     enableActive: Boolean,
     activeClass: [String, Array],
     activeSingleModifier: String,
+    requiredActive: Boolean,
     activeColor: {
       type: String,
       default: 'primary',

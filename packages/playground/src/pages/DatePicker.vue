@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import PrevSvg from "@/assets/prev.svg";
+import Test from "@/components/Test.vue";
 import { ref } from "vue";
 import { YIconPageControl } from "yuyeon/components";
 import { useDate } from "yuyeon/composables";
@@ -25,10 +27,12 @@ function onClickPage(dir: number) {
 
 <template>
   <div class="pa-10 d-flex">
+    <test :icon="PrevSvg"></test>
+
     <div>
       <y-card class="pa-2">
         <header class="d-flex pa-2">
-          <div class="f534lex-spacer"></div>
+          <div class="flex-spacer"></div>
           <y-button variation="text" style="width: 32px">
             <YIconPageControl
               type="prev"

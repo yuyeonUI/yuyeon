@@ -10,7 +10,7 @@ import {
 
 import { YLayer } from './YLayer';
 
-interface ActiveStackProvide {
+export interface ActiveStackProvide {
   push: (instance: any) => void;
   pop: (instance?: any) => void;
   clear: () => void;

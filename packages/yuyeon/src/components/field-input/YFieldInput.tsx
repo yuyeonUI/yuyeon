@@ -62,8 +62,8 @@ export const YFieldInput = defineComponent({
     'mousedown:display',
   ],
   setup(props, { attrs, expose, emit, slots }) {
-    const yInputRef = ref<YInput>();
-    const inputRef = ref<HTMLInputElement>();
+    const yInput$ = ref<YInput>();
+    const input$ = ref<HTMLInputElement>();
     const { focused, whenFocus, whenBlur } = useFocus(props, 'y-field-input');
     const inValue = ref<any>('');
     const displayValue = ref('');
@@ -129,11 +129,11 @@ export const YFieldInput = defineComponent({
     }
 
     function focus() {
-      inputRef.value?.focus();
+      input$.value?.focus();
     }
 
     function select() {
-      inputRef.value?.select();
+      input$.value?.select();
     }
 
     function clear() {
@@ -182,7 +182,7 @@ export const YFieldInput = defineComponent({
       focus,
       select,
       clear,
-      inputRef,
+      input$,
     });
 
     function onUpdateModel(value: any) {
@@ -192,7 +192,7 @@ export const YFieldInput = defineComponent({
     useRender(() => (
       <YInput
         class={classes.value}
-        ref={yInputRef}
+        ref={yInput$}
         {...chooseProps(props, YInput.props)}
         modelValue={inValue.value}
         onUpdate:modelValue={onUpdateModel}
@@ -220,13 +220,13 @@ export const YFieldInput = defineComponent({
               ref={'field'}
             >
               {props.floating
-                ? yInputRef.value &&
-                  YInput.methods!.createLabel.call(yInputRef.value)
+                ? yInput$.value &&
+                  YInput.methods!.createLabel.call(yInput$.value)
                 : undefined}
               {slots.default?.()}
               {
                 <input
-                  ref={inputRef}
+                  ref={input$}
                   value={displayValue.value}
                   name={props.name}
                   id={defaultProps.attrId}
@@ -281,15 +281,17 @@ export const YFieldInput = defineComponent({
                   </>
                 )
               : undefined,
-          label: slots.label?.(),
-          'helper-text': slots['helper-text']?.(),
+          label: slots.label ? () => slots.label?.() : undefined,
+          'helper-text': slots['helper-text']
+            ? () => slots['helper-text']?.()
+            : undefined,
         }}
       </YInput>
     ));
 
     return {
       focused,
-      inValue
+      inValue,
     };
   },
 });

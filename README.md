@@ -1,5 +1,7 @@
 # yuyeon
 
+![npm](https://img.shields.io/npm/v/yuyeon)
+
 ---
 **⚠️WARNING**
 

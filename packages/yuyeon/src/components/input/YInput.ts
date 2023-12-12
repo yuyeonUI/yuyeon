@@ -279,7 +279,7 @@ export const YInput = defineComponent({
       });
       const children = [];
       if (helperTextSlot) {
-        children.push(h('span', {}, helperTextSlot));
+        children.push(h('span', {}, () => helperTextSlot));
       } else {
         children.push(this.errorResult);
       }

@@ -1,4 +1,4 @@
-import type { App, ComputedRef, Ref } from 'vue';
+import type {App, ComputedRef, PropType, Ref} from 'vue';
 import {
   computed,
   effectScope,
@@ -49,7 +49,7 @@ export const YUYEON_THEME_KEY = Symbol.for('yuyeon.theme');
 
 export const pressThemePropsOptions = propsFactory(
   {
-    theme: String,
+    theme: String as PropType<string>,
   },
   'theme',
 );
