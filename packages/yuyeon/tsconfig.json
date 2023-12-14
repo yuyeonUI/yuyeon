@@ -2,6 +2,7 @@
   "root": true,
   "compilerOptions": {
     "target": "ESNext",
+    "declaration": true,
     "useDefineForClassFields": true,
     "module": "ESNext",
     "moduleResolution": "node",
@@ -15,7 +16,8 @@
     "skipLibCheck": true,
     "noEmit": true,
     "allowJs": true,
-    "outDir": "types"
+    "outDir": "types",
+    "downlevelIteration": true
   },
   "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
   "vueCompilerOptions": {

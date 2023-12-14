@@ -261,6 +261,7 @@ export const YLayer = defineComponent({
       onAfterUpdate,
       updateCoordinate,
       hovered,
+      finish,
       modal: computed(() => props.modal),
       getActiveLayers,
       isMe: (vnode: ComponentInternalInstance) => {
@@ -343,6 +344,7 @@ export const YLayer = defineComponent({
       complementClickOption,
       layerGroup,
       active,
+      finish,
       rendered,
       lazyValue,
       onAfterUpdate: onAfterUpdate as () => void,

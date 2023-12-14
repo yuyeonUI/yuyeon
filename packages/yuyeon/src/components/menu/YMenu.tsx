@@ -77,6 +77,7 @@ export const YMenu = defineComponent({
     });
 
     const hovered = computed(() => !!layer$.value?.hovered);
+    const finish = computed(() => !!layer$.value?.finish);
     const { children, parent } = useActiveStack(
       layer$,
       active,
@@ -123,6 +124,9 @@ export const YMenu = defineComponent({
       }
       const currentActive = active.value;
       if (!props.disabled) {
+        if (props.openOnHover && !!finish.value && active.value) {
+          return;
+        }
         active.value = !currentActive;
       }
     }
@@ -144,8 +148,8 @@ export const YMenu = defineComponent({
         const parentContent = parent?.$el.value?.content$;
         const parentModal = parent?.$el.value?.modal;
         if (
-            !(parentContent && !hasElementMouseEvent(e, parentContent)) &&
-            !parentModal
+          !(parentContent && !hasElementMouseEvent(e, parentContent)) &&
+          !parentModal
         ) {
           parent?.clear();
         }
@@ -172,6 +176,9 @@ export const YMenu = defineComponent({
           unbindHover(old);
           old.removeEventListener('click', onClick);
         }
+      },
+      {
+        immediate: true,
       },
     );
 
@@ -227,6 +234,8 @@ export const YMenu = defineComponent({
       classes,
       children,
       parent,
+      active,
+      hovered,
     };
   },
 });

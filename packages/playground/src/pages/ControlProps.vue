@@ -35,11 +35,20 @@ const theme = useTheme();
 function toggleThemeMode() {
   console.log(theme);
   if (theme) {
-    theme.scheme === "auto"
-      ? (theme.scheme = "light")
-      : theme.scheme === "light"
-      ? (theme.scheme = "dark")
-      : (theme.scheme = "auto");
+    let to = "light";
+    switch(theme.scheme.value) {
+      case "dark":
+        to = 'auto'
+            break;
+      case "light":
+        to = 'dark'
+            break;
+      case "auto":
+      default:
+        to = 'light';
+    }
+
+    theme.scheme.value = to;
   }
 }
 
@@ -463,6 +472,14 @@ function onClickFieldWrap() {
               class="ml-2 elevation-1"
               variation="filled"
               color="primary"
+              :expand-icon="{
+                name: '$expand',
+                size: 32,
+                iconProps: {
+                  width: 32,
+                  height: 32,
+                }
+              }"
               style="width: 160px"
             >
               드롭다운

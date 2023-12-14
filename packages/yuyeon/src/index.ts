@@ -20,6 +20,7 @@ import { YUYEON_LOGO } from './etc';
 
 //
 import './styles/base.scss';
+import {createIconModule, YUYEON_ICON_KEY} from "./composables/icon";
 
 const defaultOptions = {
   credit: true,
@@ -35,7 +36,7 @@ export function init(options: any = defaultOptions) {
   const themeModule = createThemeModule(options?.theme);
   const i18nModule = createI18nModule(options?.i18n);
   const dateModule = createDateModule(options?.date, i18nModule.localeModule);
-
+  const iconModule = createIconModule(options?.icon);
   const install = (app: App): any => {
     themeModule.install(app);
 
@@ -58,6 +59,7 @@ export function init(options: any = defaultOptions) {
     app.directive('plate-wave', PlateWave);
 
     app.provide(YUYEON_THEME_KEY, themeModule.instance);
+    app.provide(YUYEON_ICON_KEY, iconModule);
     app.provide(YUYEON_I18N_KEY, {
       ...i18nModule.localeModule,
       ...i18nModule.rtlModule,

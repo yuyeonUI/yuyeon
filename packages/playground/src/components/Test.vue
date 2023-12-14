@@ -1,12 +1,16 @@
 <script setup lang="ts">
-import {computed, PropType} from "vue";
+import { computed, PropType, resolveDynamicComponent } from "vue";
 
 const props = defineProps({
   icon: [String, Object] as PropType<unknown>,
 });
 
 const isComponentIcon = computed(() => {
-  return props.icon && Reflect.has(props.icon as any, 'render');
+  return (
+    props.icon &&
+    Reflect.has(props.icon as any, "render") &&
+    resolveDynamicComponent(props.icon)
+  );
 });
 </script>
 

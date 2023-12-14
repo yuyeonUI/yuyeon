@@ -1,0 +1,18 @@
+.y-icon {
+  position: relative;
+  font-feature-settings: "liga";
+  text-indent: 0;
+  text-align: center;
+  letter-spacing: normal;
+  min-width: 1em;
+  line-height: 1;
+  user-select: none;
+  vertical-align: middle;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  > * {
+    display: inline-block;
+  }
+}

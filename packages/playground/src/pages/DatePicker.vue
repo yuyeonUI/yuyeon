@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import PrevSvg from "@/assets/prev.svg";
-import Test from "@/components/Test.vue";
 import { ref } from "vue";
 import { YIconPageControl } from "yuyeon/components";
 import { useDate } from "yuyeon/composables";
 
-const dateUtil = useDate();
+// const dateUtil = useDate();
 
 const month = ref(11);
 const year = ref(2023);
@@ -27,8 +26,18 @@ function onClickPage(dir: number) {
 
 <template>
   <div class="pa-10 d-flex">
-    <test :icon="PrevSvg"></test>
-
+    <div>
+      <y-icon :icon="YIconPageControl" :size="24"></y-icon>
+      <y-icon icon="$pageControl"></y-icon>
+      <y-icon
+        :icon="{
+          alias: '$pageControl',
+          iconProps: { type: 'first' },
+        }"
+      ></y-icon>
+      <y-icon :icon="PrevSvg"></y-icon>
+      <y-icon icon="$prev"></y-icon>
+    </div>
     <div>
       <y-card class="pa-2">
         <header class="d-flex pa-2">

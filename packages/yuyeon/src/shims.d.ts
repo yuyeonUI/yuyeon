@@ -1,4 +1,3 @@
-import * as vue from 'vue';
 import {
   YAlert,
   YApp,

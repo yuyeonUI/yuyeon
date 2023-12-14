@@ -15,6 +15,7 @@ import { deepEqual, getObjectValueByPath, omit } from '../../util/common';
 import { chooseProps, propsFactory } from '../../util/vue-component';
 import { YCard } from '../card';
 import { YFieldInput, pressYFieldInputPropsOptions } from '../field-input';
+import { YIcon, YIconIconProp } from '../icon';
 import { YIconDropdown } from '../icons/YIconDropdown';
 import { YList, YListItem } from '../list';
 import { YMenu } from '../menu';
@@ -61,8 +62,9 @@ export const pressYSelectPropsOptions = propsFactory(
       type: [Number, String],
       default: 310,
     },
-    expandIcon: {
-      type: Object,
+    dropdownIcon: {
+      type: [String, Array, Object] as PropType<YIconIconProp>,
+      default: '$dropdown',
     },
     openDelay: {
       type: Number as PropType<number>,
@@ -100,7 +102,7 @@ export const YSelect = defineComponent({
     menu: any;
     'menu-prepend': any;
     'menu-append': any;
-    'expand-icon': any;
+    'dropdown-icon': any;
     item: { item: any; selected: boolean; select: () => void };
   }>,
   setup(props, { slots, attrs, expose }) {
@@ -171,7 +173,9 @@ export const YSelect = defineComponent({
 
     function closeCondition(event: MouseEvent) {
       if (event.target && (menuRef.value as any)?.layer$?.content$.value) {
-        return (event.target as HTMLElement)?.contains((menuRef.value as any)?.layer$?.content$.value)
+        return (event.target as HTMLElement)?.contains(
+          (menuRef.value as any)?.layer$?.content$.value,
+        );
       }
     }
 
@@ -205,6 +209,10 @@ export const YSelect = defineComponent({
 
     useRender(() => {
       const fieldInputProps = chooseProps(props, YFieldInput.props);
+      const dropdownIconProps = chooseProps(
+          typeof props.dropdownIcon === 'object' ? props.dropdownIcon : {},
+          YIcon.props,
+      );
       return (
         <YMenu
           v-model={opened.value}
@@ -252,12 +260,14 @@ export const YSelect = defineComponent({
                       ? (...args: any[]) => slots.leading?.(...args)
                       : undefined,
                     trailing: (...args: any[]) => {
-                      return slots['expand-icon'] ? (
-                        slots['expand-icon']()
+                      return slots['dropdown-icon'] ? (
+                        slots['dropdown-icon']()
                       ) : (
-                        <i class="y-select__icon">
-                          <YIconDropdown></YIconDropdown>
-                        </i>
+                        <YIcon
+                          {...mergeProps(dropdownIconProps)}
+                          icon={props.dropdownIcon}
+                          class={['y-select__icon']}
+                        ></YIcon>
                       );
                     },
                     'helper-text': slots['helper-text']
