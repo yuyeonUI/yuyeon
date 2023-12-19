@@ -1,5 +1,5 @@
 import { HTMLAttributes } from '@vue/runtime-dom';
-import type { Component, InjectionKey, PropType, Ref } from 'vue';
+import { Component, InjectionKey, PropType, Ref, h } from 'vue';
 import { computed, defineComponent, inject, mergeProps, unref } from 'vue';
 
 import { builtSet } from '../components';
@@ -179,7 +179,6 @@ export function useIcon(iconProp: Ref<IconValue | undefined>) {
       };
     } else if (typeof icon !== 'string') {
       const iconValue = unref(iconProp);
-      console.log(iconValue);
       if (
         iconValue &&
         typeof iconValue === 'object' &&
@@ -213,8 +212,29 @@ export function useIcon(iconProp: Ref<IconValue | undefined>) {
       const svgNode = text.querySelector('svg');
       if (svgNode) {
         return {
-          component: () => { template: svgNode }
-        }
+          component: YComponentIcon,
+          icon: {
+            mounted() {
+              svgNode.childNodes.forEach((child) => {
+                this.$el?.appendChild(child);
+              });
+            },
+            render: function () {
+              const attrs: any = {};
+              if (svgNode.hasAttributes()) {
+                for (let i = 0; i < svgNode.attributes.length; i += 1) {
+                  const attr = svgNode.attributes.item(i);
+                  if (attr) {
+                    attrs[`^${attr.name}`] = attr.value;
+                  }
+                }
+              }
+
+              const node = h('svg', { ...attrs }, []);
+              return node;
+            },
+          } as any,
+        };
       }
     }
 

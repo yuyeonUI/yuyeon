@@ -3,7 +3,7 @@ import PrevSvg from "@/assets/prev.svg";
 import VueSvgRaw from '@/assets/vue.svg?raw';
 import { ref } from "vue";
 import { YIconPageControl } from "yuyeon/components";
-import { useDate } from "yuyeon/composables";
+// import { useDate } from "yuyeon/composables";
 
 // const dateUtil = useDate();
 
