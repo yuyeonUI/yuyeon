@@ -194,6 +194,7 @@ export function useIcon(iconProp: Ref<IconValue | undefined>) {
               : iconValue.iconProps,
         };
       }
+
       return {
         component: YComponentIcon,
         icon,
@@ -206,6 +207,16 @@ export function useIcon(iconProp: Ref<IconValue | undefined>) {
 
     const iconName = iconSetName ? icon.slice(iconSetName.length + 1) : icon;
     const iconSet = iconModule.sets[iconSetName ?? iconModule.defaultSet];
+
+    if (!iconSet?.component && typeof icon === 'string') {
+      const text = new DOMParser().parseFromString(icon, 'text/xml');
+      const svgNode = text.querySelector('svg');
+      if (svgNode) {
+        return {
+          component: () => { template: svgNode }
+        }
+      }
+    }
 
     return {
       icon: iconName,

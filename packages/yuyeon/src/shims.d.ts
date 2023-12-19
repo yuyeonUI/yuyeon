@@ -19,6 +19,7 @@ import {
   YExpandVTransition,
   YFieldInput,
   YForm,
+  YIcon,
   YInput,
   YInputCheckbox,
   YLayer,
@@ -38,7 +39,7 @@ import {
   YTooltip,
   YTreeView,
   YTreeViewNode,
-} from 'yuyeon/types/components';
+} from 'yuyeon/components';
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
@@ -82,5 +83,6 @@ declare module '@vue/runtime-core' {
     YTab: typeof YTab;
     YDivider: typeof YDivider;
     YDateCalendar: typeof YDateCalendar;
+    YIcon: typeof YIcon;
   }
 }

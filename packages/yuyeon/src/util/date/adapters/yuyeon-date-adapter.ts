@@ -123,7 +123,7 @@ export class YuyeonDateAdapter implements DateAdapter<Date> {
     }
 
     public toISO(date: Date): string {
-        return DateUtil.toISO(date);
+        return DateUtil.toISO(this, date);
     }
 
     public toJsDate(date: Date): Date {

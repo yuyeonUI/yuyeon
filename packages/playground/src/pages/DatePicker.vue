@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import PrevSvg from "@/assets/prev.svg";
+import VueSvgRaw from '@/assets/vue.svg?raw';
 import { ref } from "vue";
 import { YIconPageControl } from "yuyeon/components";
 import { useDate } from "yuyeon/composables";
@@ -27,6 +28,7 @@ function onClickPage(dir: number) {
 <template>
   <div class="pa-10 d-flex">
     <div>
+      <y-icon :icon="VueSvgRaw"></y-icon>
       <y-icon :icon="YIconPageControl" :size="24"></y-icon>
       <y-icon icon="$pageControl"></y-icon>
       <y-icon

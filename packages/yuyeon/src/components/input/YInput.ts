@@ -4,7 +4,7 @@ import {
   defineComponent,
   h,
   resolveDirective,
-  withDirectives,
+  withDirectives, SlotsType,
 } from 'vue';
 
 import { pressFocusPropsOptions, useFocus } from '../../composables/focus';
@@ -61,7 +61,6 @@ export const pressYInputPropsOptions = propsFactory(
 
 export const YInput = defineComponent({
   name: 'YInput',
-
   props: {
     ...pressThemePropsOptions(),
     ...pressYInputPropsOptions(),
@@ -79,6 +78,15 @@ export const YInput = defineComponent({
     'update:modelValue',
     'update:focused',
   ],
+  slots: Object as SlotsType<{
+    prepend: any,
+    append: any,
+    label: any,
+    default: { value: any, formLoading: boolean, attrId: string },
+    leading: { error: boolean },
+    trailing: any,
+    'helper-text': { error: boolean, errorResult: string | undefined }
+  }>,
   data() {
     const iid = uidCounter.toString();
     uidCounter += 1;
@@ -279,7 +287,7 @@ export const YInput = defineComponent({
       });
       const children = [];
       if (helperTextSlot) {
-        children.push(h('span', {}, () => helperTextSlot));
+        children.push(h('span', {}, helperTextSlot));
       } else {
         children.push(this.errorResult);
       }

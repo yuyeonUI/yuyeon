@@ -36,16 +36,16 @@ function toggleThemeMode() {
   console.log(theme);
   if (theme) {
     let to = "light";
-    switch(theme.scheme.value) {
+    switch (theme.scheme.value) {
       case "dark":
-        to = 'auto'
-            break;
+        to = "auto";
+        break;
       case "light":
-        to = 'dark'
-            break;
+        to = "dark";
+        break;
       case "auto":
       default:
-        to = 'light';
+        to = "light";
     }
 
     theme.scheme.value = to;
@@ -68,7 +68,7 @@ const parentDialog = ref(false);
 const childDialog = ref(false);
 const maximizedDialog = ref(false);
 
-const textarea = ref('content');
+const textarea = ref("content");
 
 function onClickFieldWrap() {
   console.log("activate my trap");
@@ -227,6 +227,9 @@ function onClickFieldWrap() {
               label="label slot"
               placeholder="variation outlined"
             >
+              <template #helper-text>
+                {{ 'HELPER TEXT text' }}
+              </template>
             </y-field-input>
             <y-field-input
               label="ceramic"
@@ -244,7 +247,11 @@ function onClickFieldWrap() {
             ></y-field-input>
           </div>
           <div class="d-flex pt-8 gap-2">
-            <y-textarea v-model="textarea" :label="'TEXTAREA'" rows="10"></y-textarea>
+            <y-textarea
+              v-model="textarea"
+              :label="'TEXTAREA'"
+              rows="10"
+            ></y-textarea>
           </div>
         </y-card-body>
       </y-card>
@@ -478,7 +485,7 @@ function onClickFieldWrap() {
                 iconProps: {
                   width: 32,
                   height: 32,
-                }
+                },
               }"
               style="width: 160px"
             >
@@ -492,7 +499,19 @@ function onClickFieldWrap() {
               offset="8"
               default-select
               style="max-width: 80px"
-            ></y-select>
+            >
+              <template #item="{ selected, item, select }">
+                <div class="d-flex align-center">
+                  <YIconCheckbox
+                      class="mr-2"
+                      style="width: 20px; height: 20px"
+                      :checked="selected"
+                      @click="select"
+                  ></YIconCheckbox>
+                  {{ item.text }}
+                </div>
+              </template>
+            </y-select>
           </div>
           <div class="d-flex mv-3 gap-2" style="align-items: flex-end">
             <y-tooltip position="top">

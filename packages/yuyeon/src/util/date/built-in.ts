@@ -1,4 +1,4 @@
-import type { DateFormatOptions } from './types';
+import type {DateAdapter, DateFormatOptions} from './types';
 
 const FIRST_DAY_INDEX: Record<string, number> = {
   AD: 1,
@@ -245,8 +245,12 @@ export class DateUtil {
     return new Date(year, month - 1, day);
   }
 
-  static toISO(date: Date): string {
-    return date.toISOString().substring(0, 10);
+  static toISO(adapter: DateAdapter<any>, value: Date): string {
+    const date = adapter.toJsDate(value)
+    const year = date.getFullYear()
+    const month = date.getMonth() + 1 < 10 ? `0${date.getMonth() + 1}` : `${date.getMonth() + 1}`;
+    const day = date.getDate() < 10 ? `0${date.getDate()}` : `${date.getDate()}`;
+    return `${year}-${month}-${day}`;
   }
 
   static getWeekArray(date: Date, locale: string) {
