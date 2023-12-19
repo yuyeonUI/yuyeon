@@ -166,8 +166,7 @@ export const YTextarea = defineComponent({
                 ref={'field'}
               >
                 {props.floating
-                  ? el$.value &&
-                    YInput.methods!.createLabel.call(el$.value)
+                  ? el$.value?.createLabel?.()
                   : undefined}
                 {slots.default ? () => slots.default(defaultProps) : undefined}
                 {

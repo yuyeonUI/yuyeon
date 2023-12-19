@@ -1,4 +1,4 @@
-import type { PropType } from 'vue';
+import type {PropType, SlotsType} from 'vue';
 import {
   computed,
   defineComponent,
@@ -10,7 +10,7 @@ import {
 } from 'vue';
 
 import { useRender } from '../../composables/component';
-import { useFocus } from '../../composables/focus';
+import {pressFocusPropsOptions, useFocus} from '../../composables/focus';
 import { chooseProps, propsFactory } from '../../util/vue-component';
 import { YIconClear } from '../icons/YIconClear';
 import { YInput, pressYInputPropsOptions } from '../input';
@@ -61,6 +61,15 @@ export const YFieldInput = defineComponent({
     'blur',
     'mousedown:display',
   ],
+  slots: Object as SlotsType<{
+    prepend: any,
+    append: any,
+    label: any,
+    default: { value: any, formLoading: boolean, attrId: string },
+    leading: { error: boolean },
+    trailing: any,
+    'helper-text': { error: boolean, errorResult: string | undefined }
+  }>,
   setup(props, { attrs, expose, emit, slots }) {
     const yInput$ = ref<YInput>();
     const input$ = ref<HTMLInputElement>();
@@ -202,9 +211,9 @@ export const YFieldInput = defineComponent({
       >
         {{
           leading: slots.leading
-            ? (...args: any[]) => {
+            ? (args: any) => {
                 const leadingChildren = [];
-                const slot = slots.leading?.(...args);
+                const slot = slots.leading?.(args);
                 if (slot) {
                   leadingChildren.push(slot);
                 } else {
@@ -220,10 +229,9 @@ export const YFieldInput = defineComponent({
               ref={'field'}
             >
               {props.floating
-                ? yInput$.value &&
-                  YInput.methods!.createLabel.call(yInput$.value)
+                ? yInput$.value?.createLabel?.()
                 : undefined}
-              {slots.default?.()}
+              {slots.default?.(defaultProps)}
               {
                 <input
                   ref={input$}
@@ -283,7 +291,7 @@ export const YFieldInput = defineComponent({
               : undefined,
           label: slots.label ? () => slots.label?.() : undefined,
           'helper-text': slots['helper-text']
-            ? () => slots['helper-text']?.()
+            ? ({ error, errorResult }: any) => slots['helper-text']?.({ error, errorResult })
             : undefined,
         }}
       </YInput>

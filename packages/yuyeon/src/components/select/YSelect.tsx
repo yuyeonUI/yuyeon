@@ -1,5 +1,5 @@
 import { shallowRef } from '@vue/runtime-core';
-import type { PropType, SlotsType } from 'vue';
+import { PropType, SlotsType, nextTick } from 'vue';
 import { computed, defineComponent, mergeProps, onMounted, ref } from 'vue';
 
 import { useModelDuplex } from '../../composables/communication';
@@ -51,6 +51,9 @@ export const pressSelectPropsOptions = propsFactory(
       default: deepEqual,
     },
     defaultSelect: Boolean,
+    menuProps: {
+      type: Object as PropType<YMenu['$props']>,
+    },
     ...pressListItemsPropsOptions(),
   },
   'Select',
@@ -137,6 +140,10 @@ export const YSelect = defineComponent({
       return selections.value.map((selection) => selection.props.value);
     });
 
+    const extraMenuProps = computed(() => {
+      return { ...props.menuProps };
+    });
+
     function isSelected(item: ListItem) {
       return !!selections.value.find((selectedItem) => {
         return selectedItem?.value === item.value;
@@ -161,12 +168,14 @@ export const YSelect = defineComponent({
     function onClickItem(item: ListItem, e: MouseEvent) {
       select(item);
       if (!props.multiple) {
-        opened.value = false;
+        nextTick(() => {
+          opened.value = false;
+        });
       }
     }
 
     function onAfterLeave() {
-      if (focused.value) {
+      if (!focused.value) {
         fieldInputRef.value?.focus();
       }
     }
@@ -210,8 +219,8 @@ export const YSelect = defineComponent({
     useRender(() => {
       const fieldInputProps = chooseProps(props, YFieldInput.props);
       const dropdownIconProps = chooseProps(
-          typeof props.dropdownIcon === 'object' ? props.dropdownIcon : {},
-          YIcon.props,
+        typeof props.dropdownIcon === 'object' ? props.dropdownIcon : {},
+        YIcon.props,
       );
       return (
         <YMenu
@@ -228,6 +237,7 @@ export const YSelect = defineComponent({
           open-delay={props.openDelay}
           close-delay={props.closeDelay}
           closeCondition={closeCondition}
+          {...extraMenuProps.value}
         >
           {{
             base: (...args: any[]) =>
@@ -244,7 +254,7 @@ export const YSelect = defineComponent({
                   readonly
                   class={['y-select', { 'y-select--opened': opened.value }]}
                   {...attrs}
-                  v-model:focused={focused.value}
+                  focused={focused.value}
                 >
                   {{
                     default: () => {
