@@ -32,10 +32,11 @@ const dropdownItems = [
   },
 ];
 const theme = useTheme();
+
 function toggleThemeMode() {
   console.log(theme);
   if (theme) {
-    let to = "light";
+    let to = "light" as 'dark' | 'light' | 'auto';
     switch (theme.scheme.value) {
       case "dark":
         to = "auto";
@@ -70,6 +71,8 @@ const maximizedDialog = ref(false);
 
 const textarea = ref("content");
 
+const validSelectValue = ref();
+
 function onClickFieldWrap() {
   console.log("activate my trap");
 }
@@ -81,8 +84,48 @@ function onClickFieldWrap() {
       <template #title> Alert!! </template>
       <template #default> Alert Alert Alert Alert! </template>
     </y-alert>
+    <section class="mv-2">
+      <y-card class="pa-2">
+        <y-card-header>VALIDATION</y-card-header>
+        <y-card-body class="pv-4">
+          <div class="d-flex gap-2">
+            <y-field-input
+              v-model="outlinedFieldInput"
+              variation="outlined"
+              label="label slot"
+              placeholder="variation outlined"
+              :validators="[(v: string) => !!v || 'REQUIRED']"
+            >
+            </y-field-input>
+            <y-select
+                v-model="validSelectValue"
+              variation="outlined"
+              label="label slot"
+              placeholder="variation outlined"
+              :items="[
+                { text: 'one', value: 1 },
+                { text: 'two', value: 2 },
+              ]"
+              :validators="[(v: string) => !!v || 'REQUIRED']"
+            >
+            </y-select>
+            <y-select
+                variation="outlined"
+                label="label slot"
+                placeholder="variation outlined"
+                :items="[
+                { text: '가지', value: 1 },
+                { text: '나무', value: 2 },
+              ]"
+                :validators="[(v: number) => v === 1 || 'REQUIRED']"
+            >
+            </y-select>
+          </div>
+        </y-card-body>
+      </y-card>
+    </section>
     <!--  Alerts  -->
-    <section class="py-2">
+    <section class="pv-2">
       <y-card>
         <y-card-header> ALERTS </y-card-header>
         <y-card-body class="pv-4">
@@ -203,7 +246,7 @@ function onClickFieldWrap() {
       </y-card>
     </section>
     <!--  Inputs  -->
-    <section class="py-2">
+    <section class="pv-2">
       <y-card class="pa-2">
         <y-card-header>INPUTS</y-card-header>
         <y-card-body class="pv-4">
@@ -228,7 +271,7 @@ function onClickFieldWrap() {
               placeholder="variation outlined"
             >
               <template #helper-text>
-                {{ 'HELPER TEXT text' }}
+                {{ "HELPER TEXT text" }}
               </template>
             </y-field-input>
             <y-field-input
@@ -503,10 +546,10 @@ function onClickFieldWrap() {
               <template #item="{ selected, item, select }">
                 <div class="d-flex align-center">
                   <YIconCheckbox
-                      class="mr-2"
-                      style="width: 20px; height: 20px"
-                      :checked="selected"
-                      @click="select"
+                    class="mr-2"
+                    style="width: 20px; height: 20px"
+                    :checked="selected"
+                    @click="select"
                   ></YIconCheckbox>
                   {{ item.text }}
                 </div>

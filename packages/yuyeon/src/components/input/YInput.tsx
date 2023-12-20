@@ -12,6 +12,10 @@ import {
 import { useRender } from '../../composables/component';
 import { pressFocusPropsOptions, useFocus } from '../../composables/focus';
 import { pressThemePropsOptions, useLocalTheme } from '../../composables/theme';
+import {
+  pressValidationPropsOptions,
+  useValidation,
+} from '../../composables/validation';
 import { getUid, toStyleSizeValue } from '../../util';
 import { propsFactory } from '../../util/vue-component';
 
@@ -48,15 +52,7 @@ export const pressYInputPropsOptions = propsFactory(
     filled: Boolean as PropType<boolean>,
     ceramic: Boolean as PropType<boolean>,
     // validate
-    readonly: Boolean as PropType<boolean>,
-    disabled: Boolean as PropType<boolean>,
-    status: {
-      type: String as PropType<'success' | 'warning' | 'error' | undefined>,
-      validator(value: string) {
-        return ['success', 'warning', 'error'].includes(value);
-      },
-    },
-    validators: Array as PropType<((v: any) => boolean | string)[] | string[]>,
+    ...pressValidationPropsOptions(),
     ...pressFocusPropsOptions(),
   },
   'YInput',
@@ -100,15 +96,18 @@ export const YInput = defineComponent({
       whenBlur,
     } = useFocus(props, 'y-input');
 
+    const { invokeValidators, isError, isSuccess, errorResult } = useValidation(
+      props,
+      NAME,
+      UID,
+    );
+
     const stack$ = ref();
     const display$ = ref();
 
     const inValue = ref();
     const lazyValue = ref();
     const hasMouseDown = shallowRef(false);
-
-    const errorResult = ref();
-    const inError = ref(false);
 
     const variations = computed(() => {
       if (props.variation) {
@@ -160,14 +159,6 @@ export const YInput = defineComponent({
       //   return form$.loading;
       // }
       return false;
-    });
-
-    const isError = computed(() => {
-      return props.status === 'error' || inError.value;
-    });
-
-    const isSuccess = computed(() => {
-      return !isError.value && props.status === 'success';
     });
 
     watch(
@@ -269,40 +260,6 @@ export const YInput = defineComponent({
           )}
         </label>
       );
-    }
-
-    function invokeValidators(): boolean {
-      const { required } = attrs;
-      resetError();
-      let flag = true;
-      if (Array.isArray(props.validators)) {
-        props.validators.some((validator: any) => {
-          const result = validator(inValue);
-          if (typeof result === 'string') {
-            inError.value = true;
-            errorResult.value = result;
-            flag = false;
-            return true;
-          }
-          if (result === false) {
-            inError.value = true;
-            errorResult.value = '';
-            flag = false;
-            return true;
-          }
-          return false;
-        });
-      }
-      if (flag && required && !inValue.value) {
-        inError.value = true;
-        return false;
-      }
-      return flag;
-    }
-
-    function resetError() {
-      inError.value = false;
-      errorResult.value = undefined;
     }
 
     expose({

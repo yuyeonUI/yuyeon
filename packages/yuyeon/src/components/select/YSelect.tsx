@@ -249,6 +249,10 @@ export const YSelect = defineComponent({
                     ...fieldInputProps,
                     ...mergeProps({ ...args[0].props }, { ref: fieldInputRef }),
                   }}
+                  modelValue={model.value
+                    .map((v: any) => v.props.value)
+                    .join(', ')}
+                  validationValue={model.rxValue}
                   onMousedown:display={onMousedownDisplay}
                   onBlur={onBlur}
                   readonly

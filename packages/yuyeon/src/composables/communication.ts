@@ -4,6 +4,7 @@ import type { Ref } from 'vue';
 import { hasOwnProperty } from '../util/common';
 import { kebabToCamel, toKebabCase } from '../util/string';
 import { useToggleScope } from './scope';
+import {WritableComputedRef} from "@vue/runtime-core";
 
 export function useModelDuplex(
   props: any,
@@ -59,7 +60,7 @@ export function useModelDuplex(
       txValue.value = neo;
       vm?.emit(`update:${property}`, neo);
     },
-  });
+  }) as WritableComputedRef<any> & { readonly rxValue: any };
 
   Object.defineProperty(model, 'rxValue', {
     get: () => (isDefinedProp.value ? getProp() : txValue.value),
