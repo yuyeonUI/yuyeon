@@ -6,6 +6,7 @@ const mainSnackbar = ref(false);
 
 <template>
   <y-app>
+    <nav style="height: 56px; background-color: #4f97dc;"></nav>
     <main>
       <router-view>
         <template #default="{ Component }">

@@ -264,6 +264,7 @@ export const YInput = defineComponent({
 
     expose({
       createLabel,
+      invokeValidators,
     });
 
     useRender(() => {
@@ -317,7 +318,7 @@ export const YInput = defineComponent({
                   })}
                 </span>
               ) : (
-                errorResult.value
+                props.helperText ?? errorResult.value
               )}
             </div>
           </div>
@@ -335,6 +336,7 @@ export const YInput = defineComponent({
       whenFocus,
       whenBlur,
       createLabel,
+      invokeValidators,
     };
   },
 });

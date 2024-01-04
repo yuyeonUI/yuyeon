@@ -1,12 +1,7 @@
 import type { PropType } from 'vue';
-import {
-  computed,
-  defineComponent,
-  getCurrentInstance,
-  ref,
-  shallowRef,
-  watch,
-} from 'vue';
+import { computed, defineComponent, getCurrentInstance, nextTick, ref, shallowRef, watch } from 'vue';
+
+
 
 import { useModelDuplex } from '../../composables/communication';
 import { useRender } from '../../composables/component';
@@ -16,7 +11,10 @@ import { YCard } from '../card';
 import { YLayer } from '../layer';
 import { useActiveStack } from '../layer/active-stack';
 
+
+
 import './YDialog.scss';
+
 
 export const YDialog = defineComponent({
   name: 'YDialog',
@@ -133,7 +131,10 @@ export const YDialog = defineComponent({
         const filtered = activeLayers?.filter((layer: any) => {
           return layer.ctx.modal;
         });
-        if (filtered && !filtered.length) {
+        if (
+          (filtered && !filtered.length) ||
+          !root$.classList.contains('y-dialog--virtual-scroll')
+        ) {
           const scrollTop = document.documentElement.scrollTop;
           const scrollLeft = document.documentElement.scrollLeft;
           tempScrollTop.value = scrollTop;

@@ -38,6 +38,10 @@ const routes: Array<RouteRecordRaw> = [
     path: "/date-picker",
     component: () => import("@/pages/DatePicker.vue"),
   },
+  {
+    path: "/max-dialog",
+    component: () => import("@/pages/MaxDialog.vue"),
+  },
 ];
 
 const router = createRouter({

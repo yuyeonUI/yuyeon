@@ -14,6 +14,7 @@ export const pressValidationPropsOptions = propsFactory(
         return ['success', 'warning', 'error'].includes(value);
       },
     },
+    helperText: String,
     validators: Array as PropType<((v: any) => boolean | string)[] | string[]>,
     validateOn: {
       type: String as PropType<string>,
