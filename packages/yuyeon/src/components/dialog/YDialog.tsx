@@ -77,6 +77,7 @@ export const YDialog = defineComponent({
 
     const layer$ = ref<typeof YLayer>();
     const { children } = useActiveStack(layer$, active, shallowRef(true));
+
     function onFocusin(e: FocusEvent) {
       const prevTarget = e.relatedTarget as HTMLElement | null;
       const target = e.target as HTMLElement | null;
@@ -105,6 +106,9 @@ export const YDialog = defineComponent({
         if (!focusables.length) return;
         const firstChild = focusables[0];
         const lastChild = focusables[focusables.length - 1];
+        if (target?.isSameNode(firstChild) || target?.isSameNode(lastChild)) {
+          return;
+        }
         if (firstChild === lastChild) {
           lastChild.focus();
         } else {

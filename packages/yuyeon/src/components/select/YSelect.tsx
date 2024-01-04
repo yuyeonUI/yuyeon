@@ -181,9 +181,9 @@ export const YSelect = defineComponent({
     }
 
     function closeCondition(event: MouseEvent) {
-      if (event.target && (menuRef.value as any)?.layer$?.content$.value) {
+      if (event.target && (menuRef.value as any)?.layer$?.content$) {
         return (event.target as HTMLElement)?.contains(
-          (menuRef.value as any)?.layer$?.content$.value,
+          (menuRef.value as any)?.layer$?.content$,
         );
       }
     }

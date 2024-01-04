@@ -255,7 +255,7 @@ export const YLayer = defineComponent({
     expose({
       scrim$,
       base$,
-      content$,
+      content$: content$.value,
       baseEl,
       active,
       onAfterUpdate,

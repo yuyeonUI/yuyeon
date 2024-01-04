@@ -11,6 +11,14 @@ const open = ref(true);
         <y-card-header>
           <div class="y-card-header__title">Settings</div>
         </y-card-header>
+        <nav>
+          <y-button variation="filled,rounded">
+            back
+          </y-button>
+          <y-list>
+            <y-list-item></y-list-item>
+          </y-list>
+        </nav>
       </y-card>
     </y-dialog>
   </div>
