@@ -27,7 +27,6 @@ $border-radius: (
   @if (map.has-key($border-radius, $side)) {
     $props: map.get($border-radius, $side);
     @each $prop in $props {
-      @debug $prop;
       border-#{$prop}-radius: $round;
     }
   }

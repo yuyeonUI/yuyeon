@@ -422,6 +422,7 @@ function onClickFieldWrap() {
                   <y-field-input variation="outlined"></y-field-input>
                   <div class="pt-3"></div>
                   <y-checkbox :label="'Show startup'"></y-checkbox>
+                  <div style="height: 2000px;">a</div>
                 </y-card-body>
               </y-card>
             </y-dialog>

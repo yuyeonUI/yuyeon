@@ -1,4 +1,4 @@
-import { computed, getCurrentInstance, watch } from 'vue';
+import {computed, getCurrentInstance, onBeforeUnmount, watch} from 'vue';
 import type { Ref, ComponentInternalInstance } from 'vue';
 
 export const Y_LAYER_GROUP_CLASS_NAME = 'y-layer-group';
@@ -52,13 +52,22 @@ export function useLayerGroup(target?: Ref<string | Element>) {
 
   function getActiveLayers() {
     const activeLayers: ComponentInternalInstance[] = [];
-    layerGroupState.get(layerGroup.value)?.forEach((value) => {
-      if (value?.ctx?.active) {
+    const currentGroup = layerGroupState.get(layerGroup.value);
+    currentGroup?.forEach((value) => {
+      if (value?.ctx?.active && !value?.isUnmounted) {
         activeLayers.push(value);
       }
     });
     return activeLayers;
   }
+
+  function unregister() {
+    layerGroupState.get(layerGroup.value)?.delete(vm);
+  }
+
+  onBeforeUnmount(() => {
+    unregister();
+  });
 
   return { layerGroup, layerGroupState, getActiveLayers };
 }

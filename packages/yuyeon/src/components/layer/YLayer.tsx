@@ -70,7 +70,6 @@ export const pressYLayerProps = propsFactory(
     closeClickScrim: {
       type: Boolean as PropType<boolean>,
     },
-
     contentStyles: {
       type: Object as PropType<CSSProperties>,
       default: () => {},
@@ -255,7 +254,7 @@ export const YLayer = defineComponent({
     expose({
       scrim$,
       base$,
-      content$: content$.value,
+      content$: computed(() => content$.value),
       baseEl,
       active,
       onAfterUpdate,

@@ -1,31 +1,27 @@
 import type { PropType } from 'vue';
-import { computed, defineComponent, getCurrentInstance, nextTick, ref, shallowRef, watch } from 'vue';
-
-
+import {
+  computed,
+  defineComponent,
+  getCurrentInstance,
+  onBeforeUnmount,
+  ref,
+  shallowRef,
+  watch,
+} from 'vue';
 
 import { useModelDuplex } from '../../composables/communication';
 import { useRender } from '../../composables/component';
-import { toStyleSizeValue } from '../../util';
-import { bindClasses } from '../../util/vue-component';
+import { chooseProps, omit } from '../../util';
+import { toStyleSizeValue } from '../../util/ui';
+import { bindClasses, propsFactory } from '../../util/vue-component';
 import { YCard } from '../card';
-import { YLayer } from '../layer';
+import { YLayer, pressYLayerProps } from '../layer';
 import { useActiveStack } from '../layer/active-stack';
-
-
 
 import './YDialog.scss';
 
-
-export const YDialog = defineComponent({
-  name: 'YDialog',
-  components: {
-    YLayer,
-    YCard,
-  },
-  props: {
-    modelValue: {
-      type: Boolean as PropType<boolean>,
-    },
+export const pressYDialogPropsOptions = propsFactory(
+  {
     persistent: {
       type: Boolean as PropType<boolean>,
       default: true,
@@ -35,19 +31,27 @@ export const YDialog = defineComponent({
         string[] | string | Record<string, any>
       >,
     },
-    closeClickScrim: {
-      type: Boolean as PropType<boolean>,
-    },
-    disabled: Boolean as PropType<boolean>,
     maximized: Boolean as PropType<boolean>,
-    scrim: {
-      type: Boolean as PropType<boolean>,
-      default: true,
-    },
     offset: {
       type: String as PropType<string>,
     },
+    ...omit(
+      pressYLayerProps({
+        scrim: true,
+      }),
+      ['offset', 'classes'],
+    ),
   },
+  'YDialog',
+);
+
+export const YDialog = defineComponent({
+  name: 'YDialog',
+  components: {
+    YLayer,
+    YCard,
+  },
+  props: pressYDialogPropsOptions(),
   emits: ['update:modelValue'],
   setup(props, { emit, slots }) {
     const vm = getCurrentInstance();
@@ -63,15 +67,10 @@ export const YDialog = defineComponent({
       };
     });
 
-    const computedOffset = computed(() => {
-      return {
-        paddingTop: toStyleSizeValue(props.offset),
-      };
-    });
-
     const styles = computed(() => {
       return {
-        ...computedOffset.value,
+        ...(props.contentStyles ?? {}),
+        paddingTop: toStyleSizeValue(props.offset),
       };
     });
 
@@ -143,7 +142,9 @@ export const YDialog = defineComponent({
           const scrollLeft = document.documentElement.scrollLeft;
           tempScrollTop.value = scrollTop;
           tempScrollLeft.value = scrollLeft;
-          document.documentElement.classList.add('y-dialog--prevent-scroll');
+          if (props.maximized) {
+            document.documentElement.classList.add('y-dialog--prevent-scroll');
+          }
           root$.classList.add('y-dialog--virtual-scroll');
           root$.style.top = toStyleSizeValue(-1 * scrollTop) || '';
           root$.style.left = toStyleSizeValue(-1 * scrollLeft) || '';
@@ -194,6 +195,10 @@ export const YDialog = defineComponent({
       { immediate: true },
     );
 
+    onBeforeUnmount(() => {
+      preventInteractionBackground(false);
+    });
+
     useRender(() => {
       return (
         <>
@@ -201,10 +206,9 @@ export const YDialog = defineComponent({
             v-model={active.value}
             classes={classes.value}
             content-styles={styles.value}
-            scrim={props.scrim}
             modal
-            close-click-scrim={props.closeClickScrim}
             ref={layer$}
+            {...omit(chooseProps(props, YLayer.props), ['contentStyles'])}
           >
             {{
               default: (...args: any[]) => slots.default?.(...args),
