@@ -1,6 +1,5 @@
 import { init } from "yuyeon";
 import { ko } from "yuyeon/locales";
-import PrevSvg from '@/assets/prev.svg?component';
 import ConversionStatusChip from "@/components/ConversionStatusChip.vue";
 
 const yuyeon = init({
@@ -29,12 +28,6 @@ const yuyeon = init({
   },
   icon: {
     aliases: {
-      prev: {
-        component: PrevSvg,
-        props: {
-          style: 'height: 100px'
-        }
-      },
       conversionStatusChip: {
         component: ConversionStatusChip,
         props: {

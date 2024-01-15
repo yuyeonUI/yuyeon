@@ -17,5 +17,17 @@ export const builtSet = {
   clear: YIconClear,
   checkbox: YIconCheckbox,
   pageControl: YIconPageControl,
+  next: {
+    component: YIconPageControl,
+    props: {
+      type: 'next'
+    }
+  },
+  prev: {
+    component: YIconPageControl,
+    props: {
+      type: 'prev'
+    }
+  },
   sort: YIconSort,
 };

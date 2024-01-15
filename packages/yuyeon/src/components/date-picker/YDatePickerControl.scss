@@ -1,3 +1,35 @@
 .y-date-picker-control {
-  //
+  display: flex;
+  padding: 8px 8px 12px;
+  font-weight: 500;
+
+  &__display {
+    font-size: 1rem;
+    font-weight: 600;
+    align-self: center;
+    border-radius: 4px;
+
+    &:first-child {
+      margin: 0 4px 0 10px;
+    }
+
+    .y-button__content {
+      padding: 0 2px;
+    }
+  }
+
+  &__page-button {
+    height: 32px;
+
+    .y-button__content {
+      padding: 4px;
+    }
+
+    .y-icon {
+      > svg {
+        width: 24px;
+        height: 24px;
+      }
+    }
+  }
 }

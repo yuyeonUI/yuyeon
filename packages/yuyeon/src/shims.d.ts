@@ -11,6 +11,7 @@ import {
   YDataTable,
   YDataTableServer,
   YDateCalendar,
+  YDatePicker,
   YDialog,
   YDividePanel,
   YDivider,
@@ -26,6 +27,7 @@ import {
   YList,
   YListItem,
   YMenu,
+  YMonthPicker,
   YPagination,
   YProgressBar,
   YSelect,
@@ -84,5 +86,7 @@ declare module '@vue/runtime-core' {
     YDivider: typeof YDivider;
     YDateCalendar: typeof YDateCalendar;
     YIcon: typeof YIcon;
+    YDatePicker: typeof YDatePicker;
+    YMonthPicker: typeof YMonthPicker;
   }
 }

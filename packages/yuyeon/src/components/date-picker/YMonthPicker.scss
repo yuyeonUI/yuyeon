@@ -1,0 +1,25 @@
+.y-month-picker {
+  --y-month-picker-cols: 3;
+
+  display: grid;
+  grid-template-columns: repeat(var(--y-month-picker-cols, 3), 1fr);
+  min-height: 280px;
+
+  &__cell {
+    display: flex;
+    justify-content: center;
+
+    > .y-button {
+      width: 70px;
+      height: 70px;
+
+      &--active.y-button--text {
+        color: var(--y-button__color);
+        --y-button__color: var(--y-theme-primary);
+        &:before {
+          opacity: 0.3;
+        }
+      }
+    }
+  }
+}

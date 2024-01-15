@@ -40,7 +40,17 @@ function onClickPage(dir: number) {
       <y-icon :icon="PrevSvg"></y-icon>
       <y-icon icon="$prev"></y-icon>
     </div>
-    <div>
+    <div class="mh-2">
+      <y-card class="pa-2">
+        <y-date-picker></y-date-picker>
+      </y-card>
+    </div>
+    <div class="mh-2">
+      <y-card class="pa-2">
+        <y-date-picker multiple range></y-date-picker>
+      </y-card>
+    </div>
+    <div v-if="false" class="mh-2">
       <y-card class="pa-2">
         <header class="d-flex pa-2">
           <div class="flex-spacer"></div>

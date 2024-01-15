@@ -48,7 +48,7 @@ export const YDateCalendar = defineComponent({
     const day$ = ref([]);
 
     const model = useModelDuplex(props, 'modelValue', [], (v) =>
-      wrapInArray(v),
+      v == null ? [] : wrapInArray(v),
     );
 
     const displayValue = computed(() => {
@@ -121,8 +121,9 @@ export const YDateCalendar = defineComponent({
         days.map((date, index) => {
           const isoDate = dateUtil.toISO(date);
           const adjacent = !dateUtil.isSameMonth(date, month.value);
-          const selected = model.value.some((value: unknown) =>
-            dateUtil.isSameDay(date, value),
+          const selected = !!model.value?.find(
+            (value: unknown) =>
+              value != null && dateUtil.isSameDay(date, value),
           );
           return {
             date,
@@ -137,10 +138,12 @@ export const YDateCalendar = defineComponent({
             rangeStart:
               selected &&
               model.value.length > 1 &&
+              props.range &&
               dateUtil.isSameDay(rangeStart.value, date),
             rangeEnd:
               selected &&
               model.value.length === 2 &&
+              props.range &&
               dateUtil.isSameDay(rangeEnd.value, date),
             weekIndex,
             selected,
@@ -321,7 +324,7 @@ export const YDateCalendar = defineComponent({
                               }
                               disabled={item.disabled}
                               variation={[
-                                'icon',
+                                'rounded',
                                 item.selected
                                   ? 'filled'
                                   : item.today

@@ -82,6 +82,7 @@ export const pressChoicePropsOptions = propsFactory(
     max: Number,
     selectedClass: String as PropType<string>,
     disabled: Boolean,
+    returnItem: Boolean as PropType<boolean>,
   },
   'choice',
 );
