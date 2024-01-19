@@ -36,9 +36,11 @@ export function refineListItems(
   props: Omit<ListItemProps, 'items'>,
   items: any[],
 ) {
-  return items.map((item) => {
-    return refineListItem(props, item);
-  });
+  const ret: ListItem[] = [];
+  for (const item of items) {
+    ret.push(refineListItem(props, item));
+  }
+  return ret;
 }
 
 export function refineListItem(
@@ -67,26 +69,22 @@ export function refineListItem(
 
 export function useItems(props: ListItemProps) {
   const items = computed(() => refineListItems(props, props.items));
-  return useRefineListItems(items, (v) => refineListItem(props, v));
-}
 
-export function useRefineListItems<T extends { value: unknown }>(
-  items: Ref<T[]>,
-  refine: (value: unknown) => T,
-) {
-  function toRefineItems(values: any[]): T[] {
+  function toRefineItems(values: any[]) {
     return values
       .filter(
         (v) => v !== null || items.value.some((item) => item.value === null),
       )
       .map((v) => {
         const found = items.value.find((item) => deepEqual(v, item.value));
-        return found ?? refine(v);
+        return found ?? refineListItem(props, v);
       });
   }
 
-  function toEmitItems(items: T[]) {
-    return items.map(({ value }) => value);
+  function toEmitItems(items: any[]) {
+    return props.returnItem
+      ? items.map(({ raw }) => raw)
+      : items.map(({ value }) => value);
   }
 
   return {

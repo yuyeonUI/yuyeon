@@ -32,8 +32,11 @@
     > input {
       position: absolute;
       inset: 0;
-      opacity: 0;
       cursor: pointer;
     }
+  }
+
+  &--selected .y-field-input__field > input {
+    opacity: 0;
   }
 }

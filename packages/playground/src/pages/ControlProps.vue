@@ -36,7 +36,7 @@ const theme = useTheme();
 function toggleThemeMode() {
   console.log(theme);
   if (theme) {
-    let to = "light" as 'dark' | 'light' | 'auto';
+    let to = "light" as "dark" | "light" | "auto";
     switch (theme.scheme.value) {
       case "dark":
         to = "auto";
@@ -98,7 +98,7 @@ function onClickFieldWrap() {
             >
             </y-field-input>
             <y-select
-                v-model="validSelectValue"
+              v-model="validSelectValue"
               variation="outlined"
               label="label slot"
               placeholder="variation outlined"
@@ -110,14 +110,14 @@ function onClickFieldWrap() {
             >
             </y-select>
             <y-select
-                variation="outlined"
-                label="label slot"
-                placeholder="variation outlined"
-                :items="[
+              variation="outlined"
+              label="label slot"
+              placeholder="variation outlined"
+              :items="[
                 { text: '가지', value: 1 },
                 { text: '나무', value: 2 },
               ]"
-                :validators="[(v: number) => v === 1 || 'REQUIRED']"
+              :validators="[(v: number) => v === 1 || 'REQUIRED']"
             >
             </y-select>
           </div>
@@ -422,7 +422,7 @@ function onClickFieldWrap() {
                   <y-field-input variation="outlined"></y-field-input>
                   <div class="pt-3"></div>
                   <y-checkbox :label="'Show startup'"></y-checkbox>
-                  <div style="height: 2000px;">a</div>
+                  <div style="height: 2000px">a</div>
                 </y-card-body>
               </y-card>
             </y-dialog>

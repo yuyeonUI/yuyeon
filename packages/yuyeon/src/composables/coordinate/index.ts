@@ -34,7 +34,7 @@ export const pressCoordinateProps = propsFactory(
       default: 'default',
     },
     align: {
-      type: String as PropType<'start' | 'center' | 'end'>,
+      type: String as PropType<'start' | 'center' | 'end' | 'top' | 'bottom'>,
       default: 'start',
     },
     origin: {

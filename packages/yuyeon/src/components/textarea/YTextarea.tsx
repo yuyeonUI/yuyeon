@@ -174,6 +174,8 @@ export const YTextarea = defineComponent({
                     ref={input$}
                     value={displayValue.value}
                     id={`y-input--${UID}`}
+                    disabled={props.disabled}
+                    placeholder={props.placeholder}
                     {...attrs}
                     onInput={onInput}
                     onFocus={onFocus}

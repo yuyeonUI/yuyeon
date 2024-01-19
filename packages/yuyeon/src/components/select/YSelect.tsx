@@ -129,15 +129,20 @@ export const YSelect = defineComponent({
     );
 
     const selections = computed<ListItem[]>(() => {
-      return model.value.map((v: any) => {
-        return items.value.find((item) => {
+      const ret: ListItem<any>[] = [];
+      for (const v of model.value) {
+        const found = items.value.find((item) => {
           return props.valueEquals(item.value, v.value);
         });
-      });
+        if (found !== undefined) {
+          ret.push(found);
+        }
+      }
+      return ret;
     });
 
     const selected = computed(() => {
-      return selections.value.map((selection) => selection.props.value);
+      return selections.value.map((selection) => selection?.props?.value);
     });
 
     const extraMenuProps = computed(() => {
@@ -256,7 +261,13 @@ export const YSelect = defineComponent({
                   onMousedown:display={onMousedownDisplay}
                   onBlur={onBlur}
                   readonly
-                  class={['y-select', { 'y-select--opened': opened.value }]}
+                  class={[
+                    'y-select',
+                    {
+                      'y-select--opened': opened.value,
+                      'y-select--selected': selected.value.length > 0,
+                    },
+                  ]}
                   {...attrs}
                   focused={focused.value}
                 >
