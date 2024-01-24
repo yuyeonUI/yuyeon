@@ -277,7 +277,9 @@ export const YSelect = defineComponent({
                         <div class={['y-select__selection']}>
                           {slots.selection
                             ? slots.selection?.()
-                            : displayText.value}
+                            : selected.value.length > 0
+                            ? displayText.value
+                            : props.placeholder}
                         </div>
                       );
                     },

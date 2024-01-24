@@ -10,7 +10,8 @@ export function getKeys(items: any[], itemKey: string, childrenKey: string) {
     keys.push(key);
     const children = getObjectValueByPath(item, childrenKey);
     if (Array.isArray(children)) {
-      keys.push(...getKeys(children, itemKey, childrenKey));
+      const childrenKeys = getKeys(children, itemKey, childrenKey);
+      keys.push(...childrenKeys);
     }
   }
   return keys;

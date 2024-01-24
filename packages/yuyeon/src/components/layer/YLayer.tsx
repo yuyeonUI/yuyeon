@@ -42,6 +42,7 @@ import {
 import { bindClasses, propsFactory } from '../../util/vue-component';
 
 import './YLayer.scss';
+import {useBase} from "./base";
 
 export const pressYLayerProps = propsFactory(
   {
@@ -122,11 +123,11 @@ export const YLayer = defineComponent({
   }>,
   setup(props, { emit, expose, attrs, slots }) {
     const vm = getCurrentInstance();
-    const base$ = ref();
+
     const scrim$ = ref<HTMLElement>();
     const content$ = ref<HTMLElement>();
-    const baseSlot = ref();
-    const baseEl = ref<HTMLElement>();
+
+    const { base$, baseEl, baseSlot } = useBase();
 
     const { themeClasses } = useLocalTheme(props);
     const { layerGroup, layerGroupState, getActiveLayers } = useLayerGroup();
@@ -141,6 +142,7 @@ export const YLayer = defineComponent({
       },
     });
     const finish = shallowRef(false);
+    const hovered = ref(false);
 
     const disabled = toRef(props, 'disabled');
     const { lazyValue, onAfterUpdate } = useLazy(toRef(props, 'eager'), active);
@@ -198,26 +200,13 @@ export const YLayer = defineComponent({
       }
     }
 
-    const baseFromSlotEl = computed(() => {
-      return baseSlot.value?.[0]?.el;
-    });
+    function onMouseenter(event: Event) {
+      hovered.value = true;
+    }
 
-    watchEffect(() => {
-      if (!base$.value) {
-        baseEl.value = baseFromSlotEl.value;
-        return;
-      }
-      let base = base$.value;
-      if (base.baseEl) {
-        base = base.baseEl;
-      }
-      if (base$.value?.$el) {
-        if (base$.value.$el.nodeType === 1) {
-          base = base$.value.$el;
-        }
-      }
-      baseEl.value = base;
-    });
+    function onMouseleave(event: Event) {
+      hovered.value = false;
+    }
 
     const computedStyle = computed(() => {
       return {
@@ -240,16 +229,6 @@ export const YLayer = defineComponent({
         ...boundClasses,
       };
     });
-
-    const hovered = ref(false);
-
-    function onMouseenter(event: Event) {
-      hovered.value = true;
-    }
-
-    function onMouseleave(event: Event) {
-      hovered.value = false;
-    }
 
     expose({
       scrim$,
