@@ -1,4 +1,4 @@
-import type { App, ComputedRef, Ref } from 'vue';
+import type {App, ComputedRef, PropType, Ref} from 'vue';
 import {
   computed,
   effectScope,
@@ -24,7 +24,7 @@ export type { ThemeOptions };
 export const Y_THEME_PREFIX = 'y-theme';
 
 export interface ThemeModuleInstance {
-  scheme: keyof typeof ThemeScheme | 'auto';
+  scheme: Ref<keyof typeof ThemeScheme | 'auto'>;
   theme: Ref<[string, string?]>;
   // theme values(schemes) for colors & variables
   readonly themes: any;
@@ -32,7 +32,7 @@ export interface ThemeModuleInstance {
     // currentThemeKeys: [lightThemeKey, darkThemeKey]
     // If used manually, fix the scheme to 'light' and have a [lightThemeKey] value.
     // Use the appropriate default theme scheme if it does not match the themeKey
-    scheme: keyof typeof ThemeScheme | 'auto';
+    scheme: Ref<keyof typeof ThemeScheme | 'auto'>;
     theme: Ref<[string, string?]>;
   };
   /* computed */
@@ -49,7 +49,7 @@ export const YUYEON_THEME_KEY = Symbol.for('yuyeon.theme');
 
 export const pressThemePropsOptions = propsFactory(
   {
-    theme: String,
+    theme: String as PropType<string>,
   },
   'theme',
 );

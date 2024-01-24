@@ -8,6 +8,7 @@ $button-disabled-background: #d3d3d3 !default;
 .y-button {
   --y-button__color: var(--y-theme-primary);
   --y-button__text-color: var(--y-theme-on-primary);
+  --y-button__disabled-background: #{$button-disabled-background};
 
   cursor: pointer;
   display: inline-flex;
@@ -57,7 +58,7 @@ $button-disabled-background: #d3d3d3 !default;
 
   &:disabled,
   &--disabled {
-    background-color: $button-disabled-background;
+    background-color: var(--y-button__disabled-background);
     opacity: 0.4;
     cursor: default;
     box-shadow: none;

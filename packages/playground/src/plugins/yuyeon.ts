@@ -1,4 +1,6 @@
 import { init } from "yuyeon";
+import { ko } from "yuyeon/locales";
+import ConversionStatusChip from "@/components/ConversionStatusChip.vue";
 
 const yuyeon = init({
   theme: {
@@ -18,7 +20,22 @@ const yuyeon = init({
       },
     },
   },
-
+  i18n: {
+    locale: "ko",
+    messages: {
+      ko,
+    },
+  },
+  icon: {
+    aliases: {
+      conversionStatusChip: {
+        component: ConversionStatusChip,
+        props: {
+          status: 'TEST'
+        }
+      }
+    }
+  },
   credit: true,
 });
 

@@ -13,7 +13,6 @@ $notosanskr-font-path: '@/assets/fonts/NotoSansKR/';
   //color: rgba(255, 255, 255, 0.87);
   //background-color: #242424;
 
-  font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -92,4 +91,14 @@ fieldset {
 
 .h-100 {
   height: 100%;
+}
+
+.icon-16 {
+  width: 16px;
+  height: 16px;
+}
+
+.icon-24 {
+  width: 24px;
+  height: 24px;
 }

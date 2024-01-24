@@ -53,6 +53,7 @@ export const YMenu = defineComponent({
     },
   },
   emits: ['update:modelValue', 'afterLeave'],
+  expose: ['layer$', 'baseEl'],
   setup(props, { slots, emit, expose }) {
     const layer$ = ref<typeof YLayer>();
 
@@ -76,6 +77,7 @@ export const YMenu = defineComponent({
     });
 
     const hovered = computed(() => !!layer$.value?.hovered);
+    const finish = computed(() => !!layer$.value?.finish);
     const { children, parent } = useActiveStack(
       layer$,
       active,
@@ -122,6 +124,9 @@ export const YMenu = defineComponent({
       }
       const currentActive = active.value;
       if (!props.disabled) {
+        if (props.openOnHover && !!finish.value && active.value) {
+          return;
+        }
         active.value = !currentActive;
       }
     }
@@ -133,13 +138,15 @@ export const YMenu = defineComponent({
       if (typeof props.closeCondition === 'function') {
         if (props.closeCondition(e) === false) {
           active.value = false;
+          return;
         }
-        return;
       }
       if (active.value) {
+        if ((!parent && children.value.length === 0) || parent) {
+          active.value = false;
+        }
         const parentContent = parent?.$el.value?.content$;
         const parentModal = parent?.$el.value?.modal;
-        active.value = false;
         if (
           !(parentContent && !hasElementMouseEvent(e, parentContent)) &&
           !parentModal
@@ -170,6 +177,9 @@ export const YMenu = defineComponent({
           old.removeEventListener('click', onClick);
         }
       },
+      {
+        immediate: true,
+      },
     );
 
     const computedContentClasses = computed<Record<string, boolean>>(() => {
@@ -177,6 +187,15 @@ export const YMenu = defineComponent({
       return {
         ...boundClasses,
       };
+    });
+
+    const baseEl = computed(() => {
+      return layer$.value?.baseEl;
+    });
+
+    expose({
+      layer$,
+      baseEl,
     });
 
     useRender(() => {
@@ -210,8 +229,13 @@ export const YMenu = defineComponent({
     });
 
     return {
-      el$: layer$,
+      layer$,
+      baseEl,
       classes,
+      children,
+      parent,
+      active,
+      hovered,
     };
   },
 });

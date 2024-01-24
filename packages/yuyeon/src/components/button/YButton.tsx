@@ -68,9 +68,10 @@ export const YButton = defineComponent({
   },
   props: pressYButtonProps(),
   emits: {
+    'click': (event: MouseEvent) => true,
     'choice:selected': (choice: { value: boolean }) => true,
   },
-  setup(props, { attrs, slots }) {
+  setup(props, { attrs, slots, emit }) {
     const choice = useChoiceItem(props, props.injectSymbol, false);
     const link = useLink(props, attrs);
     useChoiceByLink(link, choice?.select);
@@ -147,6 +148,7 @@ export const YButton = defineComponent({
       if (!guardEvent(e) || props.loading || isDisabled.value) {
         return;
       }
+      emit('click', e);
       link.navigate?.(e);
       if (e.preventDefault) e.preventDefault();
       choice?.toggle();

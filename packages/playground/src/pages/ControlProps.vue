@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import AlertCircleOutlineSvg from "@/assets/alert-circle-outline.svg?component";
 import VueSvg from "@/assets/vue.svg?component";
-import { ref, shallowRef } from "vue";
+import { mergeProps, ref, shallowRef } from "vue";
 import { useTheme } from "yuyeon";
 
-const outlinedFieldInput = ref('');
+const outlinedFieldInput = ref("");
 
 const showDialog = ref(false);
 
@@ -32,14 +32,24 @@ const dropdownItems = [
   },
 ];
 const theme = useTheme();
+
 function toggleThemeMode() {
   console.log(theme);
   if (theme) {
-    theme.scheme === "auto"
-      ? (theme.scheme = "light")
-      : theme.scheme === "light"
-      ? (theme.scheme = "dark")
-      : (theme.scheme = "auto");
+    let to = "light" as "dark" | "light" | "auto";
+    switch (theme.scheme.value) {
+      case "dark":
+        to = "auto";
+        break;
+      case "light":
+        to = "dark";
+        break;
+      case "auto":
+      default:
+        to = "light";
+    }
+
+    theme.scheme.value = to;
   }
 }
 
@@ -59,8 +69,12 @@ const parentDialog = ref(false);
 const childDialog = ref(false);
 const maximizedDialog = ref(false);
 
+const textarea = ref("content");
+
+const validSelectValue = ref();
+
 function onClickFieldWrap() {
-  console.log('activate my trap')
+  console.log("activate my trap");
 }
 </script>
 
@@ -70,8 +84,48 @@ function onClickFieldWrap() {
       <template #title> Alert!! </template>
       <template #default> Alert Alert Alert Alert! </template>
     </y-alert>
+    <section class="mv-2">
+      <y-card class="pa-2">
+        <y-card-header>VALIDATION</y-card-header>
+        <y-card-body class="pv-4">
+          <div class="d-flex gap-2">
+            <y-field-input
+              v-model="outlinedFieldInput"
+              variation="outlined"
+              label="label slot"
+              placeholder="variation outlined"
+              :validators="[(v: string) => !!v || 'REQUIRED']"
+            >
+            </y-field-input>
+            <y-select
+              v-model="validSelectValue"
+              variation="outlined"
+              label="label slot"
+              placeholder="variation outlined"
+              :items="[
+                { text: 'one', value: 1 },
+                { text: 'two', value: 2 },
+              ]"
+              :validators="[(v: string) => !!v || 'REQUIRED']"
+            >
+            </y-select>
+            <y-select
+              variation="outlined"
+              label="label slot"
+              placeholder="variation outlined"
+              :items="[
+                { text: '가지', value: 1 },
+                { text: '나무', value: 2 },
+              ]"
+              :validators="[(v: number) => v === 1 || 'REQUIRED']"
+            >
+            </y-select>
+          </div>
+        </y-card-body>
+      </y-card>
+    </section>
     <!--  Alerts  -->
-    <section class="py-2">
+    <section class="pv-2">
       <y-card>
         <y-card-header> ALERTS </y-card-header>
         <y-card-body class="pv-4">
@@ -192,13 +246,17 @@ function onClickFieldWrap() {
       </y-card>
     </section>
     <!--  Inputs  -->
-    <section class="py-2">
+    <section class="pv-2">
       <y-card class="pa-2">
         <y-card-header>INPUTS</y-card-header>
         <y-card-body class="pv-4">
           <div class="d-flex gap-2">
             <y-checkbox :label="'체크박스'"></y-checkbox>
-            <div class="pa-4" style="border: 1px solid royalblue" @click="onClickFieldWrap">
+            <div
+              class="pa-4"
+              style="border: 1px solid royalblue"
+              @click="onClickFieldWrap"
+            >
               <y-field-input
                 label="이름"
                 placeholder="이름을 입력하세요"
@@ -212,6 +270,9 @@ function onClickFieldWrap() {
               label="label slot"
               placeholder="variation outlined"
             >
+              <template #helper-text>
+                {{ "HELPER TEXT text" }}
+              </template>
             </y-field-input>
             <y-field-input
               label="ceramic"
@@ -228,6 +289,13 @@ function onClickFieldWrap() {
               placeholder="floating with placeholder"
             ></y-field-input>
           </div>
+          <div class="d-flex pt-8 gap-2">
+            <y-textarea
+              v-model="textarea"
+              :label="'TEXTAREA'"
+              rows="10"
+            ></y-textarea>
+          </div>
         </y-card-body>
       </y-card>
     </section>
@@ -241,51 +309,6 @@ function onClickFieldWrap() {
         <y-card-header> LAYER BASE </y-card-header>
         <y-card-body class="pt-4">
           <div class="d-flex align-center" style="gap: 8px">
-            <y-menu
-              position="right"
-              align="top"
-              offset="8"
-              height="80"
-              eager
-              open-on-hover
-              :close-condition="onCloseMenuIn"
-              prevent-close-bubble
-            >
-              <template #base="{ props: menuProps }">
-                <y-tooltip position="top">
-                  <template #base="{ props: tooltipProps }">
-                    <y-button
-                      class="mr-2"
-                      v-bind="{ ...tooltipProps, ...menuProps }"
-                    >
-                      MENU
-                    </y-button>
-                  </template>
-                  <span>menu + tooltip</span>
-                </y-tooltip>
-              </template>
-              <y-card>
-                <y-card-body>
-                  <y-menu v-model="innerMenu" height="80">
-                    <template #base>
-                      <y-button>hello</y-button>
-                    </template>
-                    <y-card>
-                      <div>menu 1</div>
-                    </y-card>
-                  </y-menu>
-
-                  <y-menu height="80" open-on-hover>
-                    <template #base>
-                      <y-button>prevent bubble</y-button>
-                    </template>
-                    <y-card>
-                      <div>menu 0</div>
-                    </y-card>
-                  </y-menu>
-                </y-card-body>
-              </y-card>
-            </y-menu>
             <!-- -->
             <y-dialog
               v-model="showDialog"
@@ -378,22 +401,28 @@ function onClickFieldWrap() {
               </y-card>
             </y-dialog>
             <!-- -->
-            <y-dialog v-model="maximizedDialog" maximized :scrim="false" offset="56">
+            <y-dialog
+              v-model="maximizedDialog"
+              maximized
+              :scrim="false"
+              offset="56"
+            >
               <template #base>
-                <y-button variation="outlined" color="secondary" class="mr-2"> MAXIMIZED DIALOG </y-button>
+                <y-button variation="outlined" color="secondary" class="mr-2">
+                  MAXIMIZED DIALOG
+                </y-button>
               </template>
               <y-card>
                 <y-card-header>
                   <div class="y-card-title">SETTINGS</div>
                   <div class="flex-spacer"></div>
-                  <y-button @click="maximizedDialog = false">
-                    CLOSE
-                  </y-button>
+                  <y-button @click="maximizedDialog = false"> CLOSE </y-button>
                 </y-card-header>
                 <y-card-body class="pv-8">
                   <y-field-input variation="outlined"></y-field-input>
                   <div class="pt-3"></div>
                   <y-checkbox :label="'Show startup'"></y-checkbox>
+                  <div style="height: 2000px">a</div>
                 </y-card-body>
               </y-card>
             </y-dialog>
@@ -405,27 +434,168 @@ function onClickFieldWrap() {
               <span>어서와 처음이지?</span>
             </y-tooltip>
             <!--  -->
+            <y-menu
+              position="right"
+              align="top"
+              offset="8"
+              height="80"
+              eager
+              open-on-hover
+              :close-condition="onCloseMenuIn"
+              prevent-close-bubble
+            >
+              <template #base="{ props: menuProps }">
+                <y-tooltip position="top">
+                  <template #base="{ props: tooltipProps }">
+                    <y-button
+                      class="mr-2"
+                      v-bind="{ ...tooltipProps, ...menuProps }"
+                    >
+                      MENU TOOLTIP
+                    </y-button>
+                  </template>
+                  <span>menu + tooltip</span>
+                </y-tooltip>
+              </template>
+              <y-card>
+                <y-card-body>
+                  <y-menu v-model="innerMenu" height="80">
+                    <template #base>
+                      <y-button>hello</y-button>
+                    </template>
+                    <y-card>
+                      <div>menu 1</div>
+                    </y-card>
+                  </y-menu>
+
+                  <y-menu height="80" open-on-hover>
+                    <template #base>
+                      <y-button>prevent bubble</y-button>
+                    </template>
+                    <y-card>
+                      <div>menu 0</div>
+                    </y-card>
+                  </y-menu>
+                </y-card-body>
+              </y-card>
+            </y-menu>
+
+            <y-menu
+              position="right"
+              align="top"
+              offset="8"
+              height="80"
+              eager
+              open-on-hover
+              :close-condition="onCloseMenuIn"
+              prevent-close-bubble
+            >
+              <template #base="{ props: menuProps }">
+                <y-button class="mr-2" v-bind="{ ...menuProps }">
+                  MENU
+                </y-button>
+              </template>
+              <y-card>
+                <y-card-body>
+                  <y-menu v-model="innerMenu" height="80">
+                    <template #base>
+                      <y-button>hello</y-button>
+                    </template>
+                    <y-card>
+                      <div>menu 1</div>
+                    </y-card>
+                  </y-menu>
+
+                  <y-menu height="80" open-on-hover>
+                    <template #base>
+                      <y-button>prevent bubble</y-button>
+                    </template>
+                    <y-card>
+                      <div>menu 0</div>
+                    </y-card>
+                  </y-menu>
+                </y-card-body>
+              </y-card>
+            </y-menu>
+            <!--  -->
             <y-dropdown
               :items="dropdownItems"
               class="ml-2 elevation-1"
               variation="filled"
               color="primary"
+              :expand-icon="{
+                name: '$expand',
+                size: 32,
+                iconProps: {
+                  width: 32,
+                  height: 32,
+                },
+              }"
               style="width: 160px"
             >
               드롭다운
             </y-dropdown>
             <!--  -->
             <y-select
-                v-model="defaultSelectV"
+              v-model="defaultSelectV"
               :items="dropdownItems"
               :label="'y-select'"
               offset="8"
               default-select
               style="max-width: 80px"
-            ></y-select>
+            >
+              <template #item="{ selected, item, select }">
+                <div class="d-flex align-center">
+                  <YIconCheckbox
+                    class="mr-2"
+                    style="width: 20px; height: 20px"
+                    :checked="selected"
+                    @click="select"
+                  ></YIconCheckbox>
+                  {{ item.text }}
+                </div>
+              </template>
+            </y-select>
           </div>
-          <div class="mv-3">
-            <y-select :items="dropdownItems" variation="outlined" style="max-width: 120px"></y-select>
+          <div class="d-flex mv-3 gap-2" style="align-items: flex-end">
+            <y-tooltip position="top">
+              <template #base="{ props }">
+                <y-select
+                  :items="dropdownItems"
+                  variation="outlined"
+                  style="max-width: 120px"
+                  v-bind="mergeProps(props)"
+                ></y-select>
+              </template>
+              <span>tooltip + select</span>
+            </y-tooltip>
+            <y-menu origin="overlap">
+              <template #base>
+                <y-button>menu overlap</y-button>
+              </template>
+              <y-card>
+                <y-card-header> 테스트 </y-card-header>
+                <y-list>
+                  <y-list-item
+                    @click="
+                      () => {
+                        return true;
+                      }
+                    "
+                  >
+                    테스트 아이템
+                  </y-list-item>
+                </y-list>
+              </y-card>
+            </y-menu>
+            <y-select
+              v-model="defaultSelectV"
+              :items="dropdownItems"
+              :label="'y-select'"
+              origin="overlap"
+              default-select
+              style="max-width: 140px"
+            ></y-select>
           </div>
         </y-card-body>
       </y-card>

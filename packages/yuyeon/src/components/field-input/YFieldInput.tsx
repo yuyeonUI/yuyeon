@@ -1,4 +1,4 @@
-import type { PropType } from 'vue';
+import type {PropType, SlotsType} from 'vue';
 import {
   computed,
   defineComponent,
@@ -10,7 +10,7 @@ import {
 } from 'vue';
 
 import { useRender } from '../../composables/component';
-import { useFocus } from '../../composables/focus';
+import {pressFocusPropsOptions, useFocus} from '../../composables/focus';
 import { chooseProps, propsFactory } from '../../util/vue-component';
 import { YIconClear } from '../icons/YIconClear';
 import { YInput, pressYInputPropsOptions } from '../input';
@@ -61,9 +61,18 @@ export const YFieldInput = defineComponent({
     'blur',
     'mousedown:display',
   ],
+  slots: Object as SlotsType<{
+    prepend: any,
+    append: any,
+    label: any,
+    default: { value: any, formLoading: boolean, attrId: string },
+    leading: { error: boolean },
+    trailing: any,
+    'helper-text': { error: boolean, errorResult: string | undefined }
+  }>,
   setup(props, { attrs, expose, emit, slots }) {
-    const yInputRef = ref<YInput>();
-    const inputRef = ref<HTMLInputElement>();
+    const yInput$ = ref<YInput>();
+    const input$ = ref<HTMLInputElement>();
     const { focused, whenFocus, whenBlur } = useFocus(props, 'y-field-input');
     const inValue = ref<any>('');
     const displayValue = ref('');
@@ -129,11 +138,11 @@ export const YFieldInput = defineComponent({
     }
 
     function focus() {
-      inputRef.value?.focus();
+      input$.value?.focus();
     }
 
     function select() {
-      inputRef.value?.select();
+      input$.value?.select();
     }
 
     function clear() {
@@ -182,7 +191,7 @@ export const YFieldInput = defineComponent({
       focus,
       select,
       clear,
-      inputRef,
+      input$,
     });
 
     function onUpdateModel(value: any) {
@@ -192,7 +201,7 @@ export const YFieldInput = defineComponent({
     useRender(() => (
       <YInput
         class={classes.value}
-        ref={yInputRef}
+        ref={yInput$}
         {...chooseProps(props, YInput.props)}
         modelValue={inValue.value}
         onUpdate:modelValue={onUpdateModel}
@@ -202,9 +211,9 @@ export const YFieldInput = defineComponent({
       >
         {{
           leading: slots.leading
-            ? (...args: any[]) => {
+            ? (args: any) => {
                 const leadingChildren = [];
-                const slot = slots.leading?.(...args);
+                const slot = slots.leading?.(args);
                 if (slot) {
                   leadingChildren.push(slot);
                 } else {
@@ -220,13 +229,12 @@ export const YFieldInput = defineComponent({
               ref={'field'}
             >
               {props.floating
-                ? yInputRef.value &&
-                  YInput.methods!.createLabel.call(yInputRef.value)
+                ? yInput$.value?.createLabel?.()
                 : undefined}
-              {slots.default?.()}
+              {slots.default?.(defaultProps)}
               {
                 <input
-                  ref={inputRef}
+                  ref={input$}
                   value={displayValue.value}
                   name={props.name}
                   id={defaultProps.attrId}
@@ -281,15 +289,17 @@ export const YFieldInput = defineComponent({
                   </>
                 )
               : undefined,
-          label: slots.label?.(),
-          'helper-text': slots['helper-text']?.(),
+          label: slots.label ? () => slots.label?.() : undefined,
+          'helper-text': slots['helper-text']
+            ? ({ error, errorResult }: any) => slots['helper-text']?.({ error, errorResult })
+            : undefined,
         }}
       </YInput>
     ));
 
     return {
       focused,
-      inValue
+      inValue,
     };
   },
 });

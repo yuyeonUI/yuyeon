@@ -105,6 +105,8 @@ export const YSwitch = defineComponent({
         } else {
           this.innerValue = false;
         }
+      } else if (typeof this.input === 'boolean') {
+        this.innerValue = this.input;
       }
     },
     changeMultipleInput(checked: boolean) {

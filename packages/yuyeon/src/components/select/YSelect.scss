@@ -1,18 +1,13 @@
 .y-select {
   &__icon {
     transition: 200ms ease;
-    width: 1.5em;
-    height: 1.5em;
     margin-right: 8px;
-
-    > svg {
-      width: 1.5em;
-      height: 1.5em;
-    }
+    width: 24px;
+    height: 24px;
   }
 
   &--opened &__icon {
-    transform: rotate3d(1, 0, 0, 180deg) translateY(0.1em);
+    transform: rotate3d(1, 0, 0, 180deg);
   }
 
   &__content {
@@ -40,5 +35,9 @@
       opacity: 0;
       cursor: pointer;
     }
+  }
+
+  &:not(&--selected) &__selection {
+    color: rgba(var(--y-theme-on-background-rgb), 0.6);
   }
 }

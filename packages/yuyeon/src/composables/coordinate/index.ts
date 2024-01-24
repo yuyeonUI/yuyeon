@@ -34,7 +34,7 @@ export const pressCoordinateProps = propsFactory(
       default: 'default',
     },
     align: {
-      type: String as PropType<'start' | 'center' | 'end'>,
+      type: String as PropType<'start' | 'center' | 'end' | 'top' | 'bottom'>,
       default: 'start',
     },
     origin: {
@@ -42,7 +42,7 @@ export const pressCoordinateProps = propsFactory(
       default: 'auto'
     },
     offset: {
-      type: [Number, String, Array],
+      type: [Number, String, Array] as PropType<number | string | string[]>,
     },
     viewportMargin: {
       type: Number,

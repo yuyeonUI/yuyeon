@@ -1,4 +1,3 @@
-import * as vue from 'vue';
 import {
   YAlert,
   YApp,
@@ -11,6 +10,8 @@ import {
   YChip,
   YDataTable,
   YDataTableServer,
+  YDateCalendar,
+  YDatePicker,
   YDialog,
   YDividePanel,
   YDivider,
@@ -19,12 +20,14 @@ import {
   YExpandVTransition,
   YFieldInput,
   YForm,
+  YIcon,
   YInput,
   YInputCheckbox,
   YLayer,
   YList,
   YListItem,
   YMenu,
+  YMonthPicker,
   YPagination,
   YProgressBar,
   YSelect,
@@ -34,10 +37,11 @@ import {
   YTab,
   YTable,
   YTabs,
+  YTextarea,
   YTooltip,
   YTreeView,
   YTreeViewNode,
-} from 'yuyeon/types/components';
+} from 'yuyeon/components';
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
@@ -47,6 +51,7 @@ declare module '@vue/runtime-core' {
     YChip: typeof YChip;
     YInput: typeof YInput;
     YFieldInput: typeof YFieldInput;
+    YTextarea: typeof YTextarea;
     YForm: typeof YForm;
     YCard: typeof YCard;
     YCardBody: typeof YCardBody;
@@ -79,5 +84,9 @@ declare module '@vue/runtime-core' {
     YTabs: typeof YTabs;
     YTab: typeof YTab;
     YDivider: typeof YDivider;
+    YDateCalendar: typeof YDateCalendar;
+    YIcon: typeof YIcon;
+    YDatePicker: typeof YDatePicker;
+    YMonthPicker: typeof YMonthPicker;
   }
 }

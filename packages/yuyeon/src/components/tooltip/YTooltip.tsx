@@ -1,8 +1,7 @@
-import type { CSSProperties, PropType } from 'vue';
+import type { PropType } from 'vue';
 import {
   computed,
   defineComponent,
-  mergeProps,
   nextTick,
   ref,
   watch,
@@ -12,41 +11,21 @@ import {
 import { useModelDuplex } from '../../composables/communication';
 import { useRender } from '../../composables/component';
 import { polyTransitionPropOptions } from '../../composables/transition';
-import { toKebabCase } from '../../util/string';
-import { bindClasses } from '../../util/vue-component';
-import { YLayer } from '../layer';
+import { omit } from '../../util';
+import { bindClasses, chooseProps } from '../../util/vue-component';
+import { YLayer, pressYLayerProps } from '../layer';
+import { useDelay } from '../layer/active-delay';
 import { YPlate } from '../plate';
 
 import './YTooltip.scss';
 
 const NAME = 'YTooltip';
-const KEBAB_NAME = toKebabCase(NAME);
 
 const YTooltipPropOptions = {
-  modelValue: {
-    type: Boolean as PropType<boolean>,
-    default: false,
-  },
   tooltipClasses: {
     type: [Array, String, Object] as PropType<
       string[] | string | Record<string, any>
     >,
-  },
-  disabled: {
-    type: Boolean as PropType<boolean>,
-    default: false,
-  },
-  position: {
-    type: String as PropType<'default' | 'top' | 'bottom' | 'left' | 'right'>,
-    default: 'default',
-  },
-  align: {
-    type: String as PropType<'center' | 'start' | 'end'>,
-    default: 'center',
-  },
-  openOnHover: {
-    type: Boolean as PropType<boolean>,
-    default: true,
   },
   preventClip: {
     type: Boolean as PropType<boolean>,
@@ -61,6 +40,12 @@ export const YTooltip = defineComponent({
   name: NAME,
   props: {
     ...YTooltipPropOptions,
+    ...pressYLayerProps({
+      coordinateStrategy: 'levitation',
+      openOnHover: true,
+      align: 'center',
+      offset: 8,
+    }),
     transition: {
       ...polyTransitionPropOptions.transition,
       default: 'fade',
@@ -68,7 +53,7 @@ export const YTooltip = defineComponent({
   },
   emits: ['update:modelValue'],
   setup(props, { slots, emit, expose }) {
-    const el$ = ref<typeof YLayer>();
+    const layer$ = ref<typeof YLayer>();
     const base$ = ref();
     const baseSlot = ref();
     const baseEl = ref<HTMLElement>();
@@ -93,46 +78,7 @@ export const YTooltip = defineComponent({
       },
     });
 
-    const coordinatesStyles = computed<CSSProperties>(() => {
-      const $base = baseEl.value;
-      if ($base) {
-        const { position, align } = props;
-        const $content = contentEl.value;
-        const rect = $base.getBoundingClientRect();
-
-        let top = rect.top;
-        let left = rect.left + rect.width / 2;
-
-        if ($content) {
-          if (position === 'top' || position === 'bottom') {
-            if (position === 'top') {
-              top -= $content.clientHeight;
-              top -= 8; // Offset
-            }
-
-            if (position === 'bottom') {
-              top += rect.height;
-              top += 8; // Offset
-            }
-
-            if (align === 'center') {
-              left -= $content.clientWidth / 2;
-            } else if (align === 'end') {
-              left = rect.right;
-              left -= $content.clientWidth;
-            }
-          } else if (position === 'left' || position === 'right') {
-
-          }
-        }
-
-        return {
-          top: `${top}px`,
-          left: `${left}px`,
-        };
-      }
-      return {};
-    });
+    const hovered = computed(() => !!layer$.value?.hovered);
 
     const baseFromSlotEl = computed(() => {
       return baseSlot.value?.[0]?.el;
@@ -152,23 +98,40 @@ export const YTooltip = defineComponent({
     watch(active, (neo) => {
       if (neo) {
         nextTick(() => {
-          const $content = el$.value?.content$;
+          const $content = layer$.value?.content$;
           contentEl.value = $content;
         });
       }
     });
 
+    const { startOpenDelay, startCloseDelay } = useDelay(
+      props,
+      (changeActive) => {
+        if (!changeActive && props.openOnHover && !hovered.value) {
+          active.value = false;
+        } else if (changeActive) {
+          active.value = true;
+        }
+      },
+    );
+
     function onMouseenter(e: MouseEvent) {
       if (props.openOnHover) {
-        active.value = true;
+        startOpenDelay();
       }
     }
 
     function onMouseleave(e: MouseEvent) {
       if (props.openOnHover) {
-        active.value = false;
+        startCloseDelay();
       }
     }
+
+    watch(hovered, (value) => {
+      if (!value) {
+        startCloseDelay();
+      }
+    });
 
     function bindHover(el: HTMLElement) {
       el.addEventListener('mouseenter', onMouseenter);
@@ -180,33 +143,27 @@ export const YTooltip = defineComponent({
       el.removeEventListener('mouseleave', onMouseleave);
     }
 
-    watch(baseEl, (neo, old) => {
-      if (neo) {
-        bindHover(neo);
-      } else if (old) {
-        unbindHover(old);
-      }
-    });
+    watch(
+      () => layer$.value?.baseEl,
+      (neo, old) => {
+        if (neo) {
+          bindHover(neo);
+        } else if (old) {
+          unbindHover(old);
+        }
+      },
+    );
 
     useRender(() => {
-      const slotBase = slots.base?.({
-        active: active.value,
-        props: mergeProps({
-          ref: base$,
-        }),
-      });
-      baseSlot.value = slotBase;
       return (
         <>
-          {slotBase}
           <YLayer
-            v-model={active.value}
-            ref={el$}
+            ref={layer$}
+            {...omit(chooseProps(props, YLayer.props), ['scrim'])}
             classes={classes.value}
             scrim={false}
-            disabled={props.disabled}
-            content-styles={{ ...coordinatesStyles.value }}
             transition={props.transition}
+            v-model={active.value}
           >
             {{
               default: (...args: any) => {
@@ -219,6 +176,7 @@ export const YTooltip = defineComponent({
                   </>
                 );
               },
+              base: (...args: any[]) => slots.base?.(...args),
             }}
           </YLayer>
         </>
@@ -227,9 +185,8 @@ export const YTooltip = defineComponent({
 
     return {
       base$,
-      el$,
+      el$: layer$,
       baseEl,
-      coordinatesStyles,
       baseSlot,
       active,
     };

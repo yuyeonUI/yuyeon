@@ -1,0 +1,33 @@
+@use 'sass:map';
+
+$border-radius: (
+  'top': (
+    'top-left',
+    'top-right',
+  ),
+  'bottom': (
+    'bottom-left',
+    'bottom-right',
+  ),
+  'left': (
+    'top-left',
+    'bottom-left',
+  ),
+  'right': (
+    'top-right',
+    'bottom-right',
+  ),
+);
+
+@mixin borderRadius($round, $side) {
+  @if ($side == null) {
+    border-radius: $round;
+  }
+
+  @if (map.has-key($border-radius, $side)) {
+    $props: map.get($border-radius, $side);
+    @each $prop in $props {
+      border-#{$prop}-radius: $round;
+    }
+  }
+}

@@ -235,6 +235,15 @@ export const YTreeView = defineComponent({
       if (to) {
         activeSet.value.add(key);
         node.active = true;
+      } else {
+        if (
+          props.requiredActive &&
+          activeSet.value.size === 1 &&
+          key === inactiveKey
+        ) {
+          issueVnodeState(key);
+          return;
+        }
       }
       if (inactiveKey && inactiveKey in nodes.value) {
         activeSet.value.delete(inactiveKey);

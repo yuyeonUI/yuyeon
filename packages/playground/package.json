@@ -9,7 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "vue": "^3.2.47",
+    "vue": "^3.4.15",
     "vue-i18n": "^9.2.2",
     "vue-router": "^4.2.2",
     "yuyeon": "workspace:^"

@@ -13,3 +13,4 @@ export * from './frame-scheduler';
 export * from './vue-component';
 export * from './reactivity';
 export * from './color';
+export * from './date';

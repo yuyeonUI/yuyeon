@@ -15,5 +15,3 @@ export const MAIN_PALETTE = {
   'alert-warning': '#ffc70e',
   'alert-link': '#4781cc',
 };
-
-export default MAIN_PALETTE;

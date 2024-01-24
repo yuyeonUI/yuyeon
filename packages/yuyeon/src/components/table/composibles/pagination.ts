@@ -46,7 +46,7 @@ export function createPagination(props: PaginationProps) {
     props,
     'page',
     undefined,
-    (value) => +(value ?? 0),
+    (value) => +(value ?? 1),
   );
   const pageSize = useModelDuplex(
     props,

@@ -8,6 +8,7 @@ import { getObjectValueByPath, omit } from '../../util/common';
 import { chooseProps, propsFactory } from '../../util/vue-component';
 import { YButton } from '../button';
 import { YCard } from '../card';
+import { YIcon, YIconIconProp } from '../icon';
 import { YIconDropdown } from '../icons/YIconDropdown';
 import { YList, YListItem } from '../list';
 import { YMenu } from '../menu';
@@ -22,6 +23,10 @@ export const pressYDropdownPropsOptions = propsFactory(
     ...omit(pressCoordinateProps({ position: 'bottom' as 'bottom' }), [
       'coordinateStrategy',
     ]),
+    dropdownIcon: {
+      type: [String, Array, Object] as PropType<YIconIconProp>,
+      default: '$dropdown',
+    },
     ...pressItemsPropsOptions(),
   },
   'YDropdown',
@@ -47,6 +52,10 @@ export const YDropdown = defineComponent({
 
     useRender(() => {
       const menuProps = chooseProps(props, YMenu.props);
+      const dropdownIconProps = chooseProps(
+        typeof props.dropdownIcon === 'object' ? props.dropdownIcon : {},
+        YIcon.props,
+      );
       return (
         <>
           <YMenu
@@ -73,12 +82,14 @@ export const YDropdown = defineComponent({
                         {slots.default?.()}
                       </span>
                     }
-                    {slots['expand-icon'] ? (
-                      slots['expand-icon']()
+                    {slots['dropdown-icon'] ? (
+                      slots['dropdown-icon']()
                     ) : (
-                      <i class="y-dropdown__icon">
-                        <YIconDropdown></YIconDropdown>
-                      </i>
+                      <YIcon
+                        {...mergeProps(dropdownIconProps)}
+                        icon={props.dropdownIcon}
+                        class={['y-dropdown__icon']}
+                      ></YIcon>
                     )}
                   </YButton>
                 ),

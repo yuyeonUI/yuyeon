@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import DataTableBottom from "@/pages/data-table/DataTableBottom.vue";
 import { dataTableHeaders } from "@/settings/headers.ts";
-import {computed, ref, shallowRef} from "vue";
+import { computed, ref, shallowRef } from "vue";
 
 defineProps({
   bottomProps: Object,

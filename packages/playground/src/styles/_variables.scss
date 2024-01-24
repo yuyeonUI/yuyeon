@@ -19,7 +19,6 @@ $basic-border-radius: 8px;
     $target: #{$target} + ' ';
   }
 
-  @debug "#{$target}";
   @at-root #{$target}::-webkit-scrollbar {
     width: 12px;
     height: 12px;

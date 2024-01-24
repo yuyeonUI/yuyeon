@@ -1,8 +1,10 @@
 import { computed, getCurrentInstance, ref, toRaw, watch } from 'vue';
+import type { Ref } from 'vue';
 
 import { hasOwnProperty } from '../util/common';
 import { kebabToCamel, toKebabCase } from '../util/string';
 import { useToggleScope } from './scope';
+import {WritableComputedRef} from "@vue/runtime-core";
 
 export function useModelDuplex(
   props: any,
@@ -58,11 +60,22 @@ export function useModelDuplex(
       txValue.value = neo;
       vm?.emit(`update:${property}`, neo);
     },
-  });
+  }) as WritableComputedRef<any> & { readonly rxValue: any };
 
   Object.defineProperty(model, 'rxValue', {
     get: () => (isDefinedProp.value ? getProp() : txValue.value),
   });
 
   return model;
+}
+
+export function useProvided<T>(props: any, prop: string, provided: Ref<T>) {
+  const internal = useModelDuplex(props, prop, props[prop] ?? provided.value);
+
+  watch(provided, (value) => {
+    if (props[prop] == null) {
+      internal.value = value;
+    }
+  });
+  return internal;
 }

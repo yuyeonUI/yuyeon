@@ -61,7 +61,6 @@ export default defineComponent({
     function inputByProp() {
       if (Array.isArray(props.modelValue)) {
         const found = props.modelValue?.find((inp: any) => inp === props.value);
-
         if (found !== undefined) {
           checked.value = true;
         } else {
@@ -127,7 +126,7 @@ export default defineComponent({
           checked.value = !!neo;
         }
       },
-      { immediate: true },
+      { immediate: true, deep: true },
     );
 
     useRender(() => {
