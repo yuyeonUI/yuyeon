@@ -20,6 +20,9 @@ export const YDataTableCell = defineComponent({
     width: {
       type: [Number, String] as PropType<string | number>,
     },
+    maxWidth: {
+      type: [Number, String] as PropType<string | number>,
+    },
     height: {
       type: [Number, String] as PropType<string | number>,
     },
@@ -58,6 +61,7 @@ export const YDataTableCell = defineComponent({
           style={{
             width: toStyleSizeValue(props.width),
             height: toStyleSizeValue(props.height),
+            maxWidth: toStyleSizeValue(props.maxWidth),
             ...offsetStyle.value,
           }}
           {...attrs}

@@ -54,12 +54,15 @@ export function toStyleSizeValue(
   size: number | string | null | undefined,
   unit = 'px',
 ): string | undefined {
-  if (size === '' || size === null || size === undefined) {
+  if (size == null || size === '') {
     return undefined;
   }
   let value = Number(size);
-  if (isNaN(value) || !isFinite(value)) {
+  if (typeof(size) === 'string' && isNaN(value)) {
+    return size;
+  } else if (!isFinite(value)) {
     return undefined;
   }
+
   return `${value}${unit}`;
 }

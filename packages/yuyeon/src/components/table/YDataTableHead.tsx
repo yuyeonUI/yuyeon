@@ -103,6 +103,7 @@ export const YDataTableHead = defineComponent({
           style={{
             width: toStyleSizeValue(column.width),
             minWidth: toStyleSizeValue(column.width),
+            maxWidth: toStyleSizeValue(column.maxWidth),
             ...getFixedStyles(column, y),
           }}
           {...{ rowspan: column.rowspan, colspan: column.colspan }}

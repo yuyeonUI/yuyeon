@@ -1,6 +1,6 @@
-import { ComputedRef, Ref, UnwrapRef } from "vue";
+import { ComputedRef, Ref, UnwrapRef } from 'vue';
 
-import { SelectableItem } from '../composibles/selection';
+import { SelectableItem, provideSelection } from '../composibles/selection';
 
 export type DataTableCompareFn<T = any> = (a: T, b: T) => number;
 
@@ -13,6 +13,7 @@ export type DataTableHeader = {
   rowspan?: number;
   fixed?: boolean;
 
+  classes?: string | string[];
   align?: 'start' | 'end' | 'center';
   width?: number | string;
   minWidth?: string;
@@ -59,12 +60,12 @@ export interface DataTableProvideSelectionData {
   toggleSelect: (item: SelectableItem) => void;
   select: (items: SelectableItem[], value: boolean) => void;
   selectAll: (value: boolean) => void;
-  isSelected: (items: (SelectableItem | SelectableItem[])) => any;
-  isSomeSelected: (items: (SelectableItem | SelectableItem[])) => any;
+  isSelected: (items: SelectableItem | SelectableItem[]) => any;
+  isSomeSelected: (items: SelectableItem | SelectableItem[]) => any;
   someSelected: ComputedRef<boolean>;
   allSelected: ComputedRef<any>;
   showSelectAll: boolean;
-  selectables: ComputedRef<SelectableItem[]>
+  selectables: ComputedRef<SelectableItem[]>;
 }
 
 export type YDataTableSlotProps = {
@@ -77,8 +78,8 @@ export type YDataTableSlotProps = {
   sortBy: UnwrapRef<DataTableProvideSortingData['sortBy']>;
   toggleSort: DataTableProvideSortingData['toggleSort'];
   // selection
-  someSelected: boolean,
-  allSelected: boolean,
+  someSelected: boolean;
+  allSelected: boolean;
   isSelected: DataTableProvideSelectionData['isSelected'];
   select: DataTableProvideSelectionData['select'];
   selectAll: DataTableProvideSelectionData['selectAll'];
@@ -88,3 +89,26 @@ export type YDataTableSlotProps = {
   columns: InternalDataTableHeader[];
   headers: InternalDataTableHeader[][];
 };
+
+type ItemSlotBase<T> = {
+  index: number;
+  item: T;
+  internalItem: DataTableItem<T>;
+  selected: boolean;
+  isSelected: ReturnType<typeof provideSelection>['isSelected'];
+  toggleSelect: ReturnType<typeof provideSelection>['toggleSelect'];
+};
+
+export type ItemKeySlot<T> = ItemSlotBase<T> & {
+  value: any;
+  column: InternalDataTableHeader;
+};
+
+export type CellProps<T = any> =
+  | Record<string, any>
+  | ((
+      data: Pick<
+        ItemKeySlot<T>,
+        'index' | 'item' | 'internalItem' | 'value' | 'column' | 'selected'
+      >,
+    ) => Record<string, any>);
