@@ -124,7 +124,7 @@ export const YMenu = defineComponent({
       }
       const currentActive = active.value;
       if (!props.disabled) {
-        if (props.openOnHover && !!finish.value && active.value) {
+        if (props.openOnHover && finish.value && active.value) {
           return;
         }
         active.value = !currentActive;
@@ -149,7 +149,8 @@ export const YMenu = defineComponent({
         const parentModal = parent?.$el.value?.modal;
         if (
           !(parentContent && !hasElementMouseEvent(e, parentContent)) &&
-          !parentModal
+          !parentModal &&
+          !props.preventCloseBubble
         ) {
           parent?.clear();
         }

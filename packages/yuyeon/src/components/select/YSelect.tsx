@@ -5,6 +5,7 @@ import { computed, defineComponent, mergeProps, onMounted, ref } from 'vue';
 import { useModelDuplex } from '../../composables/communication';
 import { useRender } from '../../composables/component';
 import { pressCoordinateProps } from '../../composables/coordinate';
+import { useI18n } from '../../composables/i18n';
 import {
   ListItem,
   pressListItemsPropsOptions,
@@ -16,7 +17,6 @@ import { chooseProps, propsFactory } from '../../util/vue-component';
 import { YCard } from '../card';
 import { YFieldInput, pressYFieldInputPropsOptions } from '../field-input';
 import { YIcon, YIconIconProp } from '../icon';
-import { YIconDropdown } from '../icons/YIconDropdown';
 import { YList, YListItem } from '../list';
 import { YMenu } from '../menu';
 
@@ -117,6 +117,7 @@ export const YSelect = defineComponent({
     const focused = shallowRef(false);
 
     const { items, toRefineItems, toEmitItems } = useItems(props);
+    const { t } = useI18n();
     const model = useModelDuplex(
       props,
       'modelValue',
@@ -146,7 +147,7 @@ export const YSelect = defineComponent({
     });
 
     const extraMenuProps = computed(() => {
-      return { ...props.menuProps };
+      return { ...props.menuProps, preventCloseBubble: true };
     });
 
     function isSelected(item: ListItem) {
@@ -173,9 +174,9 @@ export const YSelect = defineComponent({
     function onClickItem(item: ListItem, e: MouseEvent) {
       select(item);
       if (!props.multiple) {
-        nextTick(() => {
+        setTimeout(() => {
           opened.value = false;
-        });
+        }, 40);
       }
     }
 
@@ -332,7 +333,9 @@ export const YSelect = defineComponent({
                         })}
                       </YList>
                     ) : (
-                      <div class="y-select__no-options">항목이 없습니다.</div>
+                      <div class="y-select__no-options">
+                        {t('$yuyeon.noItems')}
+                      </div>
                     )}
                     {slots['menu-append']?.()}
                   </YCard>
