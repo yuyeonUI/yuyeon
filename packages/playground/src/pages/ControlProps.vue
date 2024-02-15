@@ -481,12 +481,7 @@ function onClickFieldWrap() {
               </y-card>
             </y-menu>
             <!--            -->
-            <y-menu
-              position="right"
-              align="top"
-              offset="8"
-              height="400"
-            >
+            <y-menu position="right" align="top" offset="8" height="400">
               <template #base="{ props: menuProps }">
                 <y-button class="mr-2" v-bind="{ ...menuProps }">
                   MENU
@@ -617,6 +612,9 @@ function onClickFieldWrap() {
               @click="chipsSectionIndeterminate = !chipsSectionIndeterminate"
               >INDETERMINATE Toggle</y-chip
             >
+            <y-badge content="3">
+              <y-chip small class="mr-2 font-weight-700">BADGE CHIP</y-chip>
+            </y-badge>
           </div>
         </y-card-body>
       </y-card>

@@ -24,7 +24,9 @@
     "paths": {
       "@/*": ["./src/*"],
       "%/*": ["../*"]
-    }
+    },
+
+    "types": ["vite/client", "yuyeon"]
   },
   "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
   "references": [{ "path": "./tsconfig.node.json" }]

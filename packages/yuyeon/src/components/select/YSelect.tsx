@@ -371,3 +371,5 @@ export const YSelect = defineComponent({
     };
   },
 });
+
+export type YSelect = InstanceType<typeof YSelect>;

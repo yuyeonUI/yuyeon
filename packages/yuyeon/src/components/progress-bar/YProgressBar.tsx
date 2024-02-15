@@ -77,7 +77,7 @@ export const YProgressBar = defineComponent({
         minWidth = '2rem';
       }
       return {
-        transform: `scaleX(${this.numValue / 100})`,
+        width: `${this.numValue}%`,
         minWidth,
       };
     },
@@ -106,6 +106,7 @@ export const YProgressBar = defineComponent({
           '--y-progress-bar__outline-color':
             outlineColor !== undefined ? outlineColor : undefined,
           '--y-progress-bar__color': this.leadColor,
+          '--y-progress-bar__value': this.numValue,
         }}
       >
         <div class="y-progress__track"></div>
@@ -130,3 +131,5 @@ export const YProgressBar = defineComponent({
     );
   },
 });
+
+export type YProgressBar = InstanceType<typeof YProgressBar>;

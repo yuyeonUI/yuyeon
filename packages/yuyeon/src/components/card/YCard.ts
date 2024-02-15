@@ -5,8 +5,8 @@ import ThemeClass from '../../directives/theme-class';
 
 import './YCard.scss';
 
-export default defineComponent({
-  name: 'y-card',
+export const YCard = defineComponent({
+  name: 'YCard',
   props: {
     outline: {
       type: Boolean as PropType<boolean>,
@@ -18,7 +18,7 @@ export default defineComponent({
       h(
         'div',
         {
-          class: ['y-card'],
+          class: ['y-card', { 'y-card--outlined': this.$props.outline }],
         },
         this.$slots.default?.call(this),
       ),
@@ -26,3 +26,5 @@ export default defineComponent({
     );
   },
 });
+
+export type YCard = InstanceType<typeof YCard>;

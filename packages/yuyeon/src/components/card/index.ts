@@ -1,6 +1,4 @@
-import YCard from './YCard';
-import YCardBody from './YCardBody';
-import YCardFooter from './YCardFooter';
-import YCardHeader from './YCardHeader';
-
-export { YCard, YCardHeader, YCardBody, YCardFooter };
+export * from './YCard';
+export * from './YCardBody';
+export * from './YCardFooter';
+export * from './YCardHeader';

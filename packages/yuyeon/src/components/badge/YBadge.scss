@@ -1,0 +1,76 @@
+.y-badge {
+  --y-badge__min-width: 20px;
+  --y-badge__height: 20px;
+  --y-badge__dot-size: 8px;
+  --y-badge__dot-border-width: 1.413px;
+  --y-badge__padding: 4px 8px;
+  --y-badge__border-width: 2px;
+  --y-badge__border-transform: scale(1.0413);
+  --y-badge__inline-margin: 0 4px;
+  --y-badge__color: var(--y-theme-surface-variant);
+
+  display: inline-block;
+
+  &__base {
+    display: flex;
+    position: relative;
+  }
+
+  &__badge {
+    display: inline-flex;
+    align-items: center;
+    min-width: var(--y-badge__min-width);
+    height: var(--y-badge__height);
+    border-radius: 8px;
+    font-size: 0.75rem;
+    position: absolute;
+    text-align: center;
+    text-indent: 0;
+    white-space: nowrap;
+    padding: var(--y-badge__padding);
+    background: var(--y-badge__color);
+    bottom: calc(100% - var(--y-badge__height) / 2);
+    left: calc(100% - var(--y-badge__min-width));
+  }
+
+  @mixin badgeBorder {
+    border-radius: inherit;
+    border-style: solid;
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    transform: var(--y-badge__border-transform);
+  }
+
+  &--bordered & {
+    &__badge {
+      &::after {
+        @include badgeBorder;
+      }
+    }
+  }
+
+  &--dot & {
+    &__badge {
+      border-radius: 50%;
+      width: var(--y-badge__dot-size);
+      height: var(--y-badge__dot-size);
+      min-width: 0.00000001px;
+      padding: 0;
+      &::after {
+        @include badgeBorder;
+        border-width: var(--y-badge__dot-border-width);
+      }
+    }
+  }
+
+  &--inline &__base {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: var(--y-badge__inline-margin);
+  }
+}

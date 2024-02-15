@@ -124,3 +124,5 @@ export const YDividePanel = defineComponent({
     };
   },
 });
+
+export type YDividePanel = InstanceType<typeof YDividePanel>;

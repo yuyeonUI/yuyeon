@@ -78,3 +78,5 @@ export const YTab = defineComponent({
     return {};
   },
 });
+
+export type YTab = InstanceType<typeof YTab>;

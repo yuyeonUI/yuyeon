@@ -2,7 +2,7 @@ import { VNode, defineComponent, h } from 'vue';
 
 import './YTextHighlighter.scss';
 
-export default defineComponent({
+export const YTextHighlighter = defineComponent({
   name: 'YTextHighlighter',
   props: {
     text: {
@@ -87,3 +87,5 @@ export default defineComponent({
     return h('span', { staticClass: 'y-text-highlighter' }, children);
   },
 });
+
+export type YTextHighlighter = InstanceType<typeof YTextHighlighter>;

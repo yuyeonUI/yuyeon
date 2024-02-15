@@ -28,3 +28,5 @@ export const YSpinnerRing = defineComponent({
     );
   },
 });
+
+export type YSpinnerRing = InstanceType<typeof YSpinnerRing>;

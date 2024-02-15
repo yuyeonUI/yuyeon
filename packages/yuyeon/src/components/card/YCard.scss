@@ -8,6 +8,7 @@ $card__padding: 24px;
   --y-card__border-radius: #{$card__border-radius};
   --y-card__default-background: #ffffff;
   --y-card__background: var(--y-theme-surface, var(--y-card__default-background));
+  --y-card__outline-color: var(--y-theme-outline);
 
   background-color: var(--y-card__background);
   border-radius: var(--y-card__border-radius, $card__border-radius);
@@ -32,5 +33,11 @@ $card__padding: 24px;
   &-title {
     font-weight: bolder;
     font-size: 1.12em;
+  }
+
+  &--outlined {
+    border-width: 1px;
+    border-style: solid;
+    border-color: var(--y-card__outline-color);
   }
 }

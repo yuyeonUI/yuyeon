@@ -209,3 +209,5 @@ export const YSnackbar = defineComponent({
     };
   },
 });
+
+export type YSnackbar = InstanceType<typeof YSnackbar>;

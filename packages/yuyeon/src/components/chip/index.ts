@@ -1,3 +1,1 @@
-import YChip from './YChip';
-
-export { YChip };
+export * from './YChip';

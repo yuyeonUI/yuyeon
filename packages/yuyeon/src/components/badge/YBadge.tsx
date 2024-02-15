@@ -1,20 +1,99 @@
-import { defineComponent } from 'vue';
+import { PropType, SlotsType, defineComponent } from 'vue';
 
 import { useRender } from '../../composables/component';
+import { useI18n } from '../../composables/i18n';
+import { IconValue } from '../../composables/icon';
+import { PolyTransition } from '../../composables/transition';
 import { propsFactory } from '../../util/vue-component';
+import { YIcon } from '../icon/YIcon';
 
 import './YBadge.scss';
 
-export const pressYBadgePropsOptions = propsFactory({
-
-}, 'YBadge');
+export const pressYBadgePropsOptions = propsFactory(
+  {
+    tag: {
+      type: String as PropType<string>,
+      default: 'div',
+    },
+    dot: Boolean,
+    bordered: Boolean,
+    floating: Boolean,
+    inline: Boolean,
+    icon: IconValue,
+    color: String,
+    hide: Boolean,
+    label: {
+      type: String,
+      default: '$yuyeon.badge',
+    },
+    content: [Number, String],
+    max: Number,
+    transition: {
+      type: String,
+      default: 'fade',
+    },
+  },
+  'YBadge',
+);
 
 export const YBadge = defineComponent({
   name: 'YBadge',
   props: pressYBadgePropsOptions(),
-  setup(props, ctx) {
+  slots: Object as SlotsType<{
+    default: any;
+    badge: any;
+  }>,
+  setup(props, { slots }) {
+    const { t } = useI18n();
     useRender(() => {
-      return <></>;
+      const ElTag = props.tag as keyof HTMLElementTagNameMap;
+      const value = Number(props.content);
+      const content =
+        !props.max || isNaN(value)
+          ? props.content
+          : value <= +props.max
+          ? value
+          : `${props.max}+`;
+      return (
+        <ElTag
+          class={[
+            'y-badge',
+            {
+              'y-badge--bordered': props.bordered,
+              'y-badge--dot': props.dot,
+              'y-badge--floating': props.floating,
+              'y-badge--inline': props.inline,
+            },
+          ]}
+        >
+          <div class="y-badge__base">
+            {slots.default?.()}
+            <PolyTransition
+              is={props.transition}
+              transitionProps={{ name: props.transition }}
+            >
+              <span
+                v-show={!props.hide}
+                class={['y-badge__badge']}
+                aria-atomic="true"
+                aria-label={t(props.label, value)}
+                aria-live="polite"
+                role="status"
+              >
+                {props.dot ? undefined : slots.badge ? (
+                  slots.badge?.()
+                ) : props.icon ? (
+                  <YIcon icon={props.icon} />
+                ) : (
+                  content
+                )}
+              </span>
+            </PolyTransition>
+          </div>
+        </ElTag>
+      );
     });
   },
 });
+
+export type YBadge = InstanceType<typeof YBadge>;
