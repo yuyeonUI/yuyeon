@@ -5,7 +5,7 @@ import {
   defineComponent,
   h,
   inject,
-  ref,
+  ref, onBeforeMount, getCurrentInstance,
 } from 'vue';
 
 import { pressItemsPropsOptions } from '../../abstract/items';
@@ -57,6 +57,7 @@ export const YTreeViewNode = defineComponent({
     ...pressYTreeViewNodeProps(),
   },
   setup(props, { slots, expose }) {
+    const vm = getCurrentInstance();
     const treeView = inject<any>('tree-view');
 
     const expanded = ref(false);
@@ -259,6 +260,10 @@ export const YTreeViewNode = defineComponent({
       immediate,
     });
 
+    onBeforeMount(() => {
+      treeView?.register?.(myKey.value, vm!.exposed);
+    });
+
     return {
       treeView,
       myKey,
@@ -267,9 +272,6 @@ export const YTreeViewNode = defineComponent({
       selected,
       immediate,
     };
-  },
-  created() {
-    this.treeView?.register?.(this.myKey, this);
   },
 });
 

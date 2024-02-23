@@ -235,6 +235,7 @@ export const YTreeView = defineComponent({
       if (to) {
         activeSet.value.add(key);
         node.active = true;
+        issueVnodeState(key);
       } else {
         if (
           props.requiredActive &&
@@ -369,12 +370,16 @@ export const YTreeView = defineComponent({
 
         // init
         const oldSelected = [...selectedSet.value];
+        const oldActive = [...activeSet.value];
         selectedSet.value.clear();
         expandedSet.value.clear();
         activeSet.value.clear();
         updateNodes(neo);
         if (!deepEqual(oldSelected, [...selectedSet.value])) {
           emitSelected();
+        }
+        if (!deepEqual(oldActive, [...activeSet.value])) {
+          emitActive();
         }
       },
       { deep: true },
@@ -449,7 +454,7 @@ export const YTreeView = defineComponent({
     });
 
     onMounted(() => {
-      if (props.defaultExpand !== undefined) {
+      if (props.defaultExpand != null && props.defaultExpand !== false) {
         expandedCache.value = [...expand(props.defaultExpand)];
       } else {
         expanded.value.forEach((v: any) => updateExpanded(getNodeKey(v), true));
