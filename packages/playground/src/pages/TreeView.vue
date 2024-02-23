@@ -37,18 +37,44 @@ const groups = ref([
     ],
   },
 ]);
-const activeGroups = ref(["1-1", "1-3"]);
-const selected = ref(["2", "1-1"]);
+
+const active0 = ref(["1-1"]);
+const opened0 = ref([]);
+const search0 = ref('');
+
 const opened = ref([]);
 const search = ref("");
+const activeGroups = ref(["1-1", "1-3"]);
+const selected = ref(["2", "1-1"]);
 
 const opened2 = ref([]);
 const active2 = ref([]);
 const search2 = ref('');
+
+setTimeout(() => {
+  active0.value = ["2"]
+}, 3000)
 </script>
 
 <template>
   <section class="d-flex pa-2" style="gap: 8px">
+    <y-card class="pa-4 ma-1" style="width: 320px">
+      <y-field-input
+        v-model="search0"
+        clearable
+        ceramic
+        class="mb-2"
+      ></y-field-input>
+      <y-tree-view
+        v-model:expanded="opened0"
+        v-model:active="active0"
+        :items="groups"
+        :search="search0"
+        enable-active
+        required-active
+      ></y-tree-view>
+    </y-card>
+
     <y-card class="pa-4 ma-1" style="width: 320px">
       <y-field-input
         v-model="search"
@@ -92,6 +118,7 @@ const search2 = ref('');
           default-expand="0"
       ></y-tree-view>
     </y-card>
+
   </section>
 </template>
 
