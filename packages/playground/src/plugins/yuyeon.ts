@@ -1,6 +1,7 @@
+import ConversionStatusChip from "@/components/ConversionStatusChip.vue";
+import type { Plugin } from "vue";
 import { init } from "yuyeon";
 import { ko } from "yuyeon/locales";
-import ConversionStatusChip from "@/components/ConversionStatusChip.vue";
 
 const yuyeon = init({
   theme: {
@@ -31,12 +32,12 @@ const yuyeon = init({
       conversionStatusChip: {
         component: ConversionStatusChip,
         props: {
-          status: 'TEST'
-        }
-      }
-    }
+          status: "TEST",
+        },
+      },
+    },
   },
   credit: true,
-});
+}) as unknown as Plugin;
 
 export default yuyeon;

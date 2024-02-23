@@ -229,3 +229,5 @@ export const YSwitch = defineComponent({
     );
   },
 });
+
+export type YSwitch = InstanceType<typeof YSwitch>;

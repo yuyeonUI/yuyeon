@@ -192,3 +192,5 @@ export const YTooltip = defineComponent({
     };
   },
 });
+
+export type YTooltip = InstanceType<typeof YTooltip>;

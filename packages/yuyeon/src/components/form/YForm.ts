@@ -14,8 +14,8 @@ import RebindAttrs from '../../mixins/rebind-attrs';
 const NAME = 'y-form';
 const rootTags = ['form', 'div', 'section', 'article'];
 
-export default defineComponent({
-  name: NAME,
+export const YForm = defineComponent({
+  name: 'YForm',
   inheritAttrs: false,
   mixins: [RebindAttrs],
   provide() {
@@ -89,3 +89,5 @@ export default defineComponent({
     );
   },
 });
+
+export type YForm = InstanceType<typeof YForm>;

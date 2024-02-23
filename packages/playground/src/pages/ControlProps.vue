@@ -309,6 +309,7 @@ function onClickFieldWrap() {
         <y-card-header> LAYER BASE </y-card-header>
         <y-card-body class="pt-4">
           <div class="d-flex align-center" style="gap: 8px">
+            <y-select></y-select>
             <!-- -->
             <y-dialog
               v-model="showDialog"
@@ -479,17 +480,8 @@ function onClickFieldWrap() {
                 </y-card-body>
               </y-card>
             </y-menu>
-
-            <y-menu
-              position="right"
-              align="top"
-              offset="8"
-              height="80"
-              eager
-              open-on-hover
-              :close-condition="onCloseMenuIn"
-              prevent-close-bubble
-            >
+            <!--            -->
+            <y-menu position="right" align="top" offset="8" height="400">
               <template #base="{ props: menuProps }">
                 <y-button class="mr-2" v-bind="{ ...menuProps }">
                   MENU
@@ -514,6 +506,8 @@ function onClickFieldWrap() {
                       <div>menu 0</div>
                     </y-card>
                   </y-menu>
+
+                  <y-select :items="[1, 2, 3]"></y-select>
                 </y-card-body>
               </y-card>
             </y-menu>
@@ -600,6 +594,7 @@ function onClickFieldWrap() {
         </y-card-body>
       </y-card>
     </section>
+    <!--  CHIPS, progress  -->
     <section class="pv-2" style="height: 200px">
       <y-card class="h-100 contain-paint">
         <y-progress-bar
@@ -617,6 +612,9 @@ function onClickFieldWrap() {
               @click="chipsSectionIndeterminate = !chipsSectionIndeterminate"
               >INDETERMINATE Toggle</y-chip
             >
+            <y-badge content="3">
+              <y-chip small class="mr-2 font-weight-700">BADGE CHIP</y-chip>
+            </y-badge>
           </div>
         </y-card-body>
       </y-card>

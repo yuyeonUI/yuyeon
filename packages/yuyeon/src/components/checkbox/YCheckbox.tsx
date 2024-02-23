@@ -13,7 +13,7 @@ import YInputCheckbox from './YInputCheckbox';
 
 import './YCheckbox.scss';
 
-export default defineComponent({
+export const YCheckbox = defineComponent({
   name: 'YCheckbox',
   components: { YInputCheckbox },
   emits: ['focus', 'blur', 'click', 'update:modelValue', 'change'],
@@ -170,3 +170,5 @@ export default defineComponent({
     };
   },
 });
+
+export type YCheckbox = InstanceType<typeof YCheckbox>;

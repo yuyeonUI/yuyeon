@@ -15,7 +15,7 @@ import { propsFactory } from '../../util/vue-component';
 import { YButton } from '../button';
 import { YIconCheckbox, YIconExpand } from '../icons';
 import { YPlate } from '../plate';
-import YTextHighlighter from '../text-highlighter/YTextHighlighter';
+import { YTextHighlighter } from '../text-highlighter/YTextHighlighter';
 import { YExpandVTransition } from '../transitions';
 
 export const pressYTreeViewNodeProps = propsFactory(

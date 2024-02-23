@@ -5,8 +5,8 @@ import { hasOwnProperty } from '../../util/common';
 import './YChip.scss';
 import { rgbFromHex } from "../../util/color";
 
-export default defineComponent({
-  name: 'y-chip',
+export const YChip = defineComponent({
+  name: 'YChip',
   props: {
     color: String,
     background: String,
@@ -66,3 +66,5 @@ export default defineComponent({
     );
   },
 });
+
+export type YChip = InstanceType<typeof YChip>;

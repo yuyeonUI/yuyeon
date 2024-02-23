@@ -33,9 +33,13 @@ $table-cell-border-bottom-color: rgba(var(--y-theme-outline-rgb), var(--y-theme-
     top: 0;
   }
 
-  &--fixed-head.y-table &__container &__wrapper > table > thead > tr > th {
-    z-index: 1;
+  &--fixed-head.y-table &__container &__wrapper > table > thead {
     background: $table-head-background;
+
+    > tr > th {
+      z-index: 1;
+      background: $table-head-background;
+    }
   }
 
   .y-table__wrapper {

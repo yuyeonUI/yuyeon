@@ -1,8 +1,10 @@
 import { defineComponent, h } from 'vue';
 
-export default defineComponent({
-  name: 'y-card-body',
+export const YCardBody =  defineComponent({
+  name: 'YCardBody',
   render() {
     return h('div', { class: 'y-card__body' }, this.$slots.default?.());
   },
 });
+
+export type YCardBody = InstanceType<typeof YCardBody>;

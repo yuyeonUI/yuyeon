@@ -24,7 +24,6 @@ export function createI18nModule(options?: LocaleOptions & RtlOptions) {
 export function useI18n(): LocaleModule & RtlModule {
   const i18n = inject<any>(YUYEON_I18N_KEY);
   if (!i18n) throw new Error('Not found provided "I18nModule"');
-
   return i18n;
 }
 

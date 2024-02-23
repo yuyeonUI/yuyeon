@@ -362,3 +362,5 @@ export const YPagination = defineComponent({
     };
   },
 });
+
+export type YPagination = InstanceType<typeof YPagination>;

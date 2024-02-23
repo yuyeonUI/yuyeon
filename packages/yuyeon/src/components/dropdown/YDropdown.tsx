@@ -9,7 +9,6 @@ import { chooseProps, propsFactory } from '../../util/vue-component';
 import { YButton } from '../button';
 import { YCard } from '../card';
 import { YIcon, YIconIconProp } from '../icon';
-import { YIconDropdown } from '../icons/YIconDropdown';
 import { YList, YListItem } from '../list';
 import { YMenu } from '../menu';
 

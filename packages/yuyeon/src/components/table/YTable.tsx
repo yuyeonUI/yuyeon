@@ -86,3 +86,5 @@ export const YTable = defineComponent({
     });
   },
 });
+
+export type YTable = InstanceType<typeof YTable>;

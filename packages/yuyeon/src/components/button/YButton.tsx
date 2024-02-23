@@ -13,7 +13,7 @@ import {
 } from '../../composables/vue-router';
 import { PlateWave } from '../../directives/plate-wave';
 import { isColorValue } from '../../util/color';
-import { propsFactory } from '../../util/vue-component';
+import { EventProp, propsFactory } from '../../util/vue-component';
 import { YSpinnerRing } from '../loading/YSpinnerRing';
 import { Y_TOGGLE_BUTTON_KEY } from '../toggle-button';
 
@@ -68,7 +68,7 @@ export const YButton = defineComponent({
   },
   props: pressYButtonProps(),
   emits: {
-    'click': (event: MouseEvent) => true,
+    click: (event: MouseEvent) => true,
     'choice:selected': (choice: { value: boolean }) => true,
   },
   setup(props, { attrs, slots, emit }) {
@@ -132,25 +132,21 @@ export const YButton = defineComponent({
 
     /// Events
     function onClick(e: MouseEvent) {
-      function guardEvent(e: MouseEvent) {
-        // don't redirect with control keys
-        if (e.metaKey || e.altKey || e.ctrlKey || e.shiftKey) return;
-        // don't redirect when preventDefault called
-        if (e.defaultPrevented) return;
-        // don't redirect on right click
-        if (e.button !== undefined && e.button !== 0) return;
-        // don't redirect if `target="_blank"`
-        if (/\b_blank\b/i.test(attrs.target as string)) {
-          return;
-        }
-        return true;
-      }
-      if (!guardEvent(e) || props.loading || isDisabled.value) {
+      if (
+        isDisabled.value ||
+        props.loading ||
+        (link.isLink.value &&
+          (e.metaKey ||
+            e.altKey ||
+            e.ctrlKey ||
+            e.shiftKey ||
+            e.button !== 0 ||
+            attrs.target === '_blank'))
+      ) {
         return;
       }
       emit('click', e);
       link.navigate?.(e);
-      if (e.preventDefault) e.preventDefault();
       choice?.toggle();
     }
 

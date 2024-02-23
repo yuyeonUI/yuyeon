@@ -1,6 +1,7 @@
 import {
   YAlert,
   YApp,
+  YBadge,
   YButton,
   YCard,
   YCardBody,
@@ -88,5 +89,6 @@ declare module '@vue/runtime-core' {
     YIcon: typeof YIcon;
     YDatePicker: typeof YDatePicker;
     YMonthPicker: typeof YMonthPicker;
+    YBadge: typeof YBadge;
   }
 }

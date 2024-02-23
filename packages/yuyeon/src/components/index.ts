@@ -29,3 +29,4 @@ export * from './alert';
 export * from './divider';
 export * from './date-picker';
 export * from './icon';
+export * from './badge';
