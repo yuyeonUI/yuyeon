@@ -4,7 +4,7 @@ import { LocaleModule } from '../../i18n/types';
 import { useI18n } from '../i18n';
 import { constructAdapter } from './factory';
 import { configureOptions } from './setting';
-import {DateInstance, DateOptions} from './types';
+import { DateInstance, DateOptions } from './types';
 
 export const YUYEON_DATE_KEY = Symbol.for('yuyeon.date');
 export const YUYEON_DATE_OPTIONS_KEY = Symbol.for('yuyeon.date-options');

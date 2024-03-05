@@ -187,6 +187,14 @@ export interface DateAdapter<T = unknown> {
    * @param date
    */
   getNextMonth(date: T): T;
+
+  getHour(date: T): number;
+
+  setHour(date: T, hour: number): T;
+
+  getMinute(date: T): number;
+
+  setMinute(date:T, minute: number): T;
 }
 
 export type DateFormatOptions =

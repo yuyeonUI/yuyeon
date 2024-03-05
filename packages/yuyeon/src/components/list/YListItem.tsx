@@ -35,7 +35,7 @@ export const YListItem = defineComponent({
     }
 
     const clickable = computed(() => {
-      return !props.disabled;
+      return !props.disabled && !!props.onClick;
     });
 
     useRender(() => {
