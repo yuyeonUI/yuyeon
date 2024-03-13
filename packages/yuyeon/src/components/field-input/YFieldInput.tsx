@@ -1,4 +1,4 @@
-import type {PropType, SlotsType} from 'vue';
+import type { PropType, SlotsType } from 'vue';
 import {
   computed,
   defineComponent,
@@ -10,7 +10,7 @@ import {
 } from 'vue';
 
 import { useRender } from '../../composables/component';
-import {pressFocusPropsOptions, useFocus} from '../../composables/focus';
+import { pressFocusPropsOptions, useFocus } from '../../composables/focus';
 import { chooseProps, propsFactory } from '../../util/vue-component';
 import { YIconClear } from '../icons/YIconClear';
 import { YInput, pressYInputPropsOptions } from '../input';
@@ -62,13 +62,13 @@ export const YFieldInput = defineComponent({
     'mousedown:display',
   ],
   slots: Object as SlotsType<{
-    prepend: any,
-    append: any,
-    label: any,
-    default: { value: any, formLoading: boolean, attrId: string },
-    leading: { error: boolean },
-    trailing: any,
-    'helper-text': { error: boolean, errorResult: string | undefined }
+    prepend: any;
+    append: any;
+    label: any;
+    default: { value: any; formLoading: boolean; attrId: string };
+    leading: { error: boolean };
+    trailing: any;
+    'helper-text': { error: boolean; errorResult: string | undefined };
   }>,
   setup(props, { attrs, expose, emit, slots }) {
     const yInput$ = ref<YInput>();
@@ -179,19 +179,24 @@ export const YFieldInput = defineComponent({
       },
     );
 
-    watch(inValue, (neo: string) => {
-      if (!focused.value) {
-        changeDisplay();
-      } else {
-        displayValue.value = neo;
-      }
-    });
+    watch(
+      inValue,
+      (neo: string) => {
+        if (!focused.value) {
+          changeDisplay();
+        } else {
+          displayValue.value = neo;
+        }
+      },
+      { immediate: true },
+    );
 
     expose({
       focus,
       select,
       clear,
       input$,
+      validate: () => yInput$.value?.invokeValidators(),
     });
 
     function onUpdateModel(value: any) {
@@ -228,9 +233,7 @@ export const YFieldInput = defineComponent({
               data-id={defaultProps.attrId}
               ref={'field'}
             >
-              {props.floating
-                ? yInput$.value?.createLabel?.()
-                : undefined}
+              {props.floating ? yInput$.value?.createLabel?.() : undefined}
               {slots.default?.(defaultProps)}
               {
                 <input
@@ -291,7 +294,8 @@ export const YFieldInput = defineComponent({
               : undefined,
           label: slots.label ? () => slots.label?.() : undefined,
           'helper-text': slots['helper-text']
-            ? ({ error, errorResult }: any) => slots['helper-text']?.({ error, errorResult })
+            ? ({ error, errorResult }: any) =>
+                slots['helper-text']?.({ error, errorResult })
             : undefined,
         }}
       </YInput>
