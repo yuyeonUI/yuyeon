@@ -5,6 +5,7 @@ import { mergeProps, ref, shallowRef } from "vue";
 import { useTheme } from "yuyeon";
 
 const outlinedFieldInput = ref("");
+const displayInput = ref(0);
 
 const showDialog = ref(false);
 
@@ -95,6 +96,15 @@ function onClickFieldWrap() {
               label="label slot"
               placeholder="variation outlined"
               :validators="[(v: string) => !!v || 'REQUIRED']"
+            >
+            </y-field-input>
+            <y-field-input
+              v-model="displayInput"
+              variation="outlined"
+              label="label slot"
+              placeholder="variation outlined"
+              :validators="[(v: string) => !!v || 'REQUIRED']"
+              :display-text="(v: string) => `${v}MHz`"
             >
             </y-field-input>
             <y-select

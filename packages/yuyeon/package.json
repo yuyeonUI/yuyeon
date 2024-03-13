@@ -1,6 +1,6 @@
 {
   "name": "yuyeon",
-  "version": "0.0.46",
+  "version": "0.0.46-rc.8",
   "keywords": [
     "UI Library",
     "Vue"
@@ -62,7 +62,7 @@
     }
   },
   "scripts": {
-    "build": "vue-tsc && vite build",
+    "build": "vue-tsc && vite build && yarn run build:lib",
     "build:lib": "cross-env NODE_ENV=lib babel src --out-dir lib --source-maps --extensions \".ts\",\".tsx\" --copy-files --no-copy-ignored --out-file-extension .mjs"
   },
   "dependencies": {

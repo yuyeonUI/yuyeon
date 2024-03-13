@@ -90,7 +90,7 @@ export const YDataTableHead = defineComponent({
           type="head"
           align={column.align}
           fixed={
-            column.fixed ? (column.lastFixed ? 'trail' : 'lead') : undefined
+            column.fixed ? (column.lastFixed ? 'last' : 'lead') : undefined
           }
           class={[
             'y-data-table-header',

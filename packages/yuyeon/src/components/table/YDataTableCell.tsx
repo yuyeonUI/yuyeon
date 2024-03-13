@@ -12,7 +12,7 @@ export const YDataTableCell = defineComponent({
       default: 'data',
     },
     fixed: {
-      type: String as PropType<'lead' | 'trail'>,
+      type: String as PropType<'lead' | 'last'>,
     },
     fixedOffset: {
       type: Number as PropType<number>,
@@ -38,8 +38,8 @@ export const YDataTableCell = defineComponent({
       if (props.fixed && props.fixedOffset !== undefined) {
         if (props.fixed === 'lead') {
           ret['left'] = toStyleSizeValue(props.fixedOffset);
-        } else if (props.fixed === 'trail') {
-          ret['right'] = toStyleSizeValue(props.fixedOffset);
+        } else if (props.fixed === 'last') {
+          ret['left'] = toStyleSizeValue(props.fixedOffset);
         }
       }
       return ret;
