@@ -42,7 +42,7 @@ import {
 import { bindClasses, propsFactory } from '../../util/vue-component';
 
 import './YLayer.scss';
-import {useBase} from "./base";
+import { pressBasePropsOptions, useBase } from './base';
 
 export const pressYLayerProps = propsFactory(
   {
@@ -93,6 +93,7 @@ export const pressYLayerProps = propsFactory(
     },
     ...pressThemePropsOptions(),
     ...polyTransitionPropOptions,
+    ...pressBasePropsOptions(),
     ...pressCoordinateProps(),
     ...pressDimensionPropsOptions(),
   },
@@ -127,7 +128,7 @@ export const YLayer = defineComponent({
     const scrim$ = ref<HTMLElement>();
     const content$ = ref<HTMLElement>();
 
-    const { base$, baseEl, baseSlot } = useBase();
+    const { base, base$, baseEl, baseSlot } = useBase(props);
 
     const { themeClasses } = useLocalTheme(props);
     const { layerGroup, layerGroupState, getActiveLayers } = useLayerGroup();
@@ -152,7 +153,7 @@ export const YLayer = defineComponent({
 
     const { coordinateStyles, updateCoordinate } = useCoordinate(props, {
       contentEl: content$,
-      baseEl,
+      base,
       active,
     });
 

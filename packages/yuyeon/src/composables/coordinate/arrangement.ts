@@ -10,7 +10,7 @@ export function applyArrangement(
   coordinate: Ref<Rect | undefined>,
   coordinateStyles: Ref<CSSProperties>,
 ) {
-  const { contentEl, baseEl, active } = state;
+  const { contentEl, base, active } = state;
 
   function updateCoordinate(): any {
     //

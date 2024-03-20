@@ -42,6 +42,10 @@ const routes: Array<RouteRecordRaw> = [
     path: "/max-dialog",
     component: () => import("@/pages/MaxDialog.vue"),
   },
+  {
+    path: "/menu",
+    component: () => import("@/pages/MenuIsolation.vue"),
+  },
 ];
 
 const router = createRouter({
