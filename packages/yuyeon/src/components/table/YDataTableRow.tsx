@@ -62,7 +62,7 @@ export const YDataTableRow = defineComponent({
                   fixed={
                     column.fixed
                       ? column.lastFixed
-                        ? 'trail'
+                        ? 'last'
                         : 'lead'
                       : undefined
                   }

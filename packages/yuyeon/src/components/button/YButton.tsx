@@ -161,7 +161,7 @@ export const YButton = defineComponent({
               ...classes.value,
             },
           ]}
-          href={link.href.value}
+          href={props.disabled ? undefined : link.href.value}
           style={styles.value}
           onClick={onClick}
           disabled={props.disabled ? true : undefined}

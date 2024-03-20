@@ -1,4 +1,4 @@
-import type {DateAdapter, DateFormatOptions} from './types';
+import type { DateAdapter, DateFormatOptions } from './types';
 
 const FIRST_DAY_INDEX: Record<string, number> = {
   AD: 1,
@@ -246,10 +246,14 @@ export class DateUtil {
   }
 
   static toISO(adapter: DateAdapter<any>, value: Date): string {
-    const date = adapter.toJsDate(value)
-    const year = date.getFullYear()
-    const month = date.getMonth() + 1 < 10 ? `0${date.getMonth() + 1}` : `${date.getMonth() + 1}`;
-    const day = date.getDate() < 10 ? `0${date.getDate()}` : `${date.getDate()}`;
+    const date = adapter.toJsDate(value);
+    const year = date.getFullYear();
+    const month =
+      date.getMonth() + 1 < 10
+        ? `0${date.getMonth() + 1}`
+        : `${date.getMonth() + 1}`;
+    const day =
+      date.getDate() < 10 ? `0${date.getDate()}` : `${date.getDate()}`;
     return `${year}-${month}-${day}`;
   }
 
@@ -356,6 +360,26 @@ export class DateUtil {
     });
   }
 
+  static getMeridians(locale: string) {
+    const amDate = new Date(FIRST_SUNDAY).setHours(11);
+    const pmDate = new Date(FIRST_SUNDAY).setHours(13);
+    const formatter = Intl.DateTimeFormat(locale, {
+      minute: 'numeric',
+      hour: 'numeric',
+      hour12: true,
+    });
+    return [
+      formatter
+        .format(amDate)
+        .replace(/\d+:\d+/, '')
+        .trim(),
+      formatter
+        .format(pmDate)
+        .replace(/\d+:\d+/, '')
+        .trim(),
+    ];
+  }
+
   static isAfter(date: Date, comparing: Date): boolean {
     return date.getTime() > comparing.getTime();
   }
@@ -433,6 +457,26 @@ export class DateUtil {
   static setYear(date: Date, year: number) {
     const d = new Date(date);
     d.setFullYear(year);
+    return d;
+  }
+
+  static getHour(date: Date): number {
+    return date.getHours();
+  }
+
+  static setHour(date: Date, hour: number) {
+    const d = new Date(date);
+    d.setHours(hour);
+    return d;
+  }
+
+  static getMinute(date: Date): number {
+    return date.getMinutes();
+  }
+
+  static setMinute(date: Date, minute: number) {
+    const d = new Date(date);
+    d.setMinutes(minute);
     return d;
   }
 }

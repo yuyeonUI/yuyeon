@@ -49,29 +49,27 @@ export const YTab = defineComponent({
     useRender(() => {
       const yButtonProps = chooseProps(props, YButton.props);
       return (
-        <>
-          <YButton
-            class={['y-tab']}
-            active={false}
-            {...attrsProps.value}
-            {...attrs}
-            {...yButtonProps}
-            injectSymbol={Y_TABS_KEY}
-            onChoice:selected={onChoice}
-          >
-            {{
-              default: () => slots.default?.() ?? props.text,
-              append: () =>
-                !props.hideIndicator && (
-                  <div
-                    ref={indicator$}
-                    class={['y-tab__indicator']}
-                    style={indicatorStyles.value}
-                  ></div>
-                ),
-            }}
-          </YButton>
-        </>
+        <YButton
+          class={['y-tab']}
+          active={false}
+          {...attrsProps.value}
+          {...attrs}
+          {...yButtonProps}
+          injectSymbol={Y_TABS_KEY}
+          onChoice:selected={onChoice}
+        >
+          {{
+            default: () => slots.default?.() ?? props.text,
+            append: () =>
+              !props.hideIndicator && (
+                <div
+                  ref={indicator$}
+                  class={['y-tab__indicator']}
+                  style={indicatorStyles.value}
+                ></div>
+              ),
+          }}
+        </YButton>
       );
     });
 

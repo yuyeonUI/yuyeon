@@ -1,4 +1,4 @@
-import { PropType, computed, defineComponent, ref } from 'vue';
+import { PropType, SlotsType, computed, defineComponent, ref } from 'vue';
 
 import { useRender } from '../../composables/component';
 import { toKebabCase } from '../../util/string';
@@ -27,6 +27,12 @@ export const YAlert = defineComponent({
   props: {
     ...YAlertPropOptions,
   },
+  slots: Object as SlotsType<{
+    leading: any;
+    trailing: any;
+    title: any;
+    default: any;
+  }>,
   setup(props, { slots }) {
     const el$ = ref<HTMLElement>();
 
@@ -64,7 +70,7 @@ export const YAlert = defineComponent({
         ret['--y-alert-outline-color'] = props.outlineColor;
       }
       return ret;
-    })
+    });
 
     useRender(() => (
       <div

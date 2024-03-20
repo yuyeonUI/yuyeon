@@ -1,6 +1,6 @@
 {
   "name": "yuyeon",
-  "version": "0.0.45",
+  "version": "0.0.46",
   "keywords": [
     "UI Library",
     "Vue"
@@ -62,7 +62,7 @@
     }
   },
   "scripts": {
-    "build": "vue-tsc && vite build",
+    "build": "vue-tsc && vite build && yarn run build:lib",
     "build:lib": "cross-env NODE_ENV=lib babel src --out-dir lib --source-maps --extensions \".ts\",\".tsx\" --copy-files --no-copy-ignored --out-file-extension .mjs"
   },
   "dependencies": {
@@ -101,7 +101,7 @@
     "rollup-plugin-sourcemaps": "^0.6.3",
     "rollup-plugin-terser": "^7.0.2",
     "sass": "^1.63.3",
-    "vite": "^4.3.8",
+    "vite": "^5.1.2",
     "vite-plugin-dts": "^2.2.0",
     "vue": "^3.3.4",
     "vue-router": "^4.2.5",
