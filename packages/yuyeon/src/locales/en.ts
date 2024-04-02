@@ -1,4 +1,5 @@
 export default {
   search: 'search',
-  noItems: 'No Options'
+  noItems: 'No Options',
+  noData: 'No Data'
 };

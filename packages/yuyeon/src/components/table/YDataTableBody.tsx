@@ -1,11 +1,11 @@
-import { PropType, defineComponent } from 'vue';
+import { PropType, defineComponent, mergeProps } from 'vue';
 
 import { useRender } from '../../composables/component';
 import { propsFactory } from '../../util/vue-component';
 import { YDataTableRow } from './YDataTableRow';
 import { useHeader } from './composibles/header';
 import { useSelection } from './composibles/selection';
-import { DataTableItem } from './types';
+import { DataTableItem, RowProps } from './types';
 
 export const pressYDataTableBodyProps = propsFactory(
   {
@@ -20,6 +20,7 @@ export const pressYDataTableBodyProps = propsFactory(
       type: String,
       default: '',
     },
+    rowProps: [Function, Object] as PropType<RowProps<any>>,
     rowHeight: Number,
     'onClick:row': Function as PropType<(e: Event, value: any) => void>,
     'onDblclick:row': Function as PropType<(e: Event, value: any) => void>,
@@ -64,37 +65,46 @@ export const YDataTableBody = defineComponent({
             : props.items.map((item, index) => {
                 const stateProps = {
                   index,
-                  item,
+                  item: item.raw,
+                  internalItem: item,
                   columns: columns.value,
                   isSelected,
                   toggleSelect,
                 };
                 const slotProps = {
                   ...stateProps,
-                  props: {
-                    key: `item__${item.value}`,
-                    onClick: props['onClick:row']
-                      ? (event: Event) => {
-                          props['onClick:row']?.(event, { ...stateProps });
-                        }
-                      : undefined,
-                    onDblclick: props['onDblclick:row']
-                      ? (event: Event) => {
-                          props['onDblclick:row']?.(event, { ...stateProps });
-                        }
-                      : undefined,
-                    onContextmenu: props['onContextmenu:row']
-                      ? (event: Event) => {
-                          props['onContextmenu:row']?.(event, {
-                            ...stateProps,
-                          });
-                        }
-                      : undefined,
-                    index,
-                    item,
-                  },
+                  props: mergeProps(
+                    {
+                      key: `item__${item.value ?? item.index}`,
+                      item,
+                      onClick: props['onClick:row']
+                        ? (event: Event) => {
+                            props['onClick:row']?.(event, { ...stateProps });
+                          }
+                        : undefined,
+                      onDblclick: props['onDblclick:row']
+                        ? (event: Event) => {
+                            props['onDblclick:row']?.(event, { ...stateProps });
+                          }
+                        : undefined,
+                      onContextmenu: props['onContextmenu:row']
+                        ? (event: Event) => {
+                            props['onContextmenu:row']?.(event, {
+                              ...stateProps,
+                            });
+                          }
+                        : undefined,
+                      index,
+                    },
+                    typeof props.rowProps === 'function'
+                      ? props.rowProps({
+                          item: stateProps.item,
+                          index: stateProps.index,
+                          internalItem: stateProps.internalItem,
+                        })
+                      : props.rowProps,
+                  ),
                 };
-
                 return (
                   <>
                     {slots.item ? (

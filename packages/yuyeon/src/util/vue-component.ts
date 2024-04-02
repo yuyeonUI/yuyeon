@@ -70,9 +70,14 @@ export function bindClasses(
 export function getHtmlElement<N extends object | undefined>(
   node: N,
 ): Exclude<N, ComponentPublicInstance> | HTMLElement {
-  return node && hasOwnProperty(node, '$el')
-    ? ((node as ComponentPublicInstance).$el as HTMLElement)
-    : (node as HTMLElement);
+  if (node && '$el' in node) {
+    const el = ((node as ComponentPublicInstance).$el as HTMLElement);
+    if (el.nodeType === Node.TEXT_NODE) {
+      return el.nextElementSibling as HTMLElement;
+    }
+    return el;
+  }
+  return (node as HTMLElement);
 }
 
 export function findChildrenWithProvide(
