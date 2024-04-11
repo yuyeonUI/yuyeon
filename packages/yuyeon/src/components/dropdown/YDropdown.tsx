@@ -1,4 +1,4 @@
-import { PropType, defineComponent, mergeProps } from 'vue';
+import { PropType, defineComponent, mergeProps, SlotsType } from 'vue';
 
 import { pressItemsPropsOptions } from '../../abstract/items';
 import { useModelDuplex } from '../../composables/communication';
@@ -40,6 +40,13 @@ export const YDropdown = defineComponent({
   props: {
     ...pressYDropdownPropsOptions(),
   },
+  slots: Object as SlotsType<{
+    base: any,
+    default: any,
+    'dropdown-icon': any,
+    menu: any,
+    item: { text: string, item: any },
+  }>,
   emits: ['update:modelValue', 'click'],
   setup(props, { slots, attrs, emit }) {
     const opened = useModelDuplex(props);
@@ -106,7 +113,7 @@ export const YDropdown = defineComponent({
                           );
                           return (
                             <YListItem onClick={(e) => onClickItem(item)}>
-                              {text}
+                              {slots.item ? slots.item({ text, item }) : text}
                             </YListItem>
                           );
                         })}

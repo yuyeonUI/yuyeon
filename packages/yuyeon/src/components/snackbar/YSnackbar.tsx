@@ -1,3 +1,4 @@
+import { toRef } from '@vue/runtime-core';
 import { animate } from 'motion';
 import {
   PropType,
@@ -81,10 +82,15 @@ export const YSnackbar = defineComponent({
       type: Number as PropType<number>,
       default: 4000,
     },
+    closeClickContent: {
+      type: Boolean,
+      default: true,
+    },
   },
   setup(props, { emit, slots }) {
     const active = useModelDuplex(props);
     const hover = ref(false);
+    const duration = toRef(props, 'duration');
 
     const classes = computed(() => {
       return {
@@ -107,6 +113,8 @@ export const YSnackbar = defineComponent({
       if (second) {
         x = second;
         y = first;
+      } else if (first === 'bottom') {
+        y = 'bottom';
       } else {
         x = first;
       }
@@ -124,7 +132,7 @@ export const YSnackbar = defineComponent({
       active.value = false;
     }
 
-    const { start, stop, reset } = useTimer(dismiss, props.duration);
+    const { start, stop, reset } = useTimer(dismiss, duration);
     function setTimer() {
       if (props.duration > 0) {
         start();
@@ -140,6 +148,18 @@ export const YSnackbar = defineComponent({
     });
 
     watch(
+      () => props.duration,
+      (neo) => {
+        if (!isNaN(neo) && active.value) {
+          reset();
+          if (!hover.value) {
+            setTimer();
+          }
+        }
+      },
+    );
+
+    watch(
       active,
       (neo: boolean) => {
         if (neo) {
@@ -153,7 +173,9 @@ export const YSnackbar = defineComponent({
 
     function onClickContent(event: MouseEvent) {
       emit('click', event);
-      active.value = false;
+      if (props.closeClickContent) {
+        active.value = false;
+      }
     }
 
     const proxyTransition = computed(() => {

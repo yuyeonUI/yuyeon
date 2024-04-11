@@ -1,9 +1,9 @@
 import { InjectionKey, PropType, Ref, computed, inject, provide } from 'vue';
 
 import { useModelDuplex } from '../../../composables/communication';
+import { deepEqual } from '../../../util';
 import { wrapInArray } from '../../../util/array';
 import { propsFactory } from '../../../util/vue-component';
-
 import { DataTableProvideSelectionData } from '../types';
 import { DataTableItemsProps } from './items';
 
@@ -42,6 +42,10 @@ export const pressDataTableSelectionProps = propsFactory(
       type: Array as PropType<readonly any[]>,
       default: () => [],
     },
+    valueEqual: {
+      type: Function as PropType<typeof deepEqual>,
+      default: deepEqual,
+    },
   },
   'YDataTable--selection',
 );
@@ -50,6 +54,7 @@ type DataTableSelectionProps = Pick<DataTableItemsProps, 'itemKey'> & {
   modelValue: readonly any[];
   selectStrategy: 'single' | 'page' | 'all';
   'onUpdate:modelValue': ((value: any[]) => void) | undefined;
+  valueEqual: (a: any, b: any) => boolean;
 };
 
 const singleSelectStrategy: DataTableSelectStrategy = {
@@ -107,7 +112,14 @@ export function provideSelection(
     'modelValue',
     props.modelValue,
     (v) => {
-      return new Set(v);
+      return new Set(
+        wrapInArray(v).map((v) => {
+          return (
+            allItems.value.find((item) => props.valueEqual(v, item.value))
+              ?.value ?? v
+          );
+        }),
+      );
     },
     (v) => {
       return [...v.values()];
@@ -173,7 +185,9 @@ export function provideSelection(
     });
   });
 
-  const someSelected = computed(() => selected.value.size > 0);
+  const someSelected = computed(() => {
+    return isSomeSelected(pageSelectables.value);
+  });
 
   const allSelected = computed(() => {
     return isSelected(selectables.value);

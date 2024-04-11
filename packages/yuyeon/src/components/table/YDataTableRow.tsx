@@ -1,4 +1,4 @@
-import { PropType, computed, defineComponent } from 'vue';
+import { PropType, computed, defineComponent, ref } from 'vue';
 
 import { useRender } from '../../composables/component';
 import { getPropertyFromItem } from '../../util/common';
@@ -15,6 +15,7 @@ export const pressYDataTableRowProps = propsFactory(
     onClick: Function as PropType<(...args: any[]) => void>,
     onContextmenu: Function as PropType<(...args: any[]) => void>,
     onDblclick: Function as PropType<(...args: any[]) => void>,
+    onHover: Function as PropType<(...args: any[]) => void>,
   },
   'YDataTableRow',
 );
