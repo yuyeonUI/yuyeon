@@ -51,7 +51,7 @@ export const YDataTableBody = defineComponent({
       }
       if (!props.loading && props.items.length < 1 && !props.hideNoData) {
         return (
-          <tr key="no-data">
+          <tr key="no-data" class="y-data-table__no-data">
             <td colspan={columns.value.length}>
               {slots['no-data']?.() ?? props.noDataText}
             </td>
