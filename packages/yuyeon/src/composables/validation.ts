@@ -1,8 +1,20 @@
-import { PropType, computed, ref, watch } from 'vue';
+import {
+  PropType,
+  computed,
+  getCurrentInstance,
+  onBeforeMount,
+  ref,
+  watch,
+} from 'vue';
 
 import { getUid, propsFactory } from '../util';
 import { useModelDuplex } from './communication';
+import { useForm } from './form';
 import { useToggleScope } from './scope';
+
+export interface ValidationProps {
+  validateOn: 'input' | 'blur' | 'lazy' | 'submit' | string;
+}
 
 export const pressValidationPropsOptions = propsFactory(
   {
@@ -17,7 +29,7 @@ export const pressValidationPropsOptions = propsFactory(
     helperText: String,
     validators: Array as PropType<((v: any) => boolean | string)[] | string[]>,
     validateOn: {
-      type: String as PropType<string>,
+      type: String as PropType<ValidationProps['validateOn']>,
     },
     validationValue: null,
     maxErrors: {
@@ -29,11 +41,13 @@ export const pressValidationPropsOptions = propsFactory(
 );
 
 export function useValidation(props: any, name: string, uid = getUid()) {
+  const cid = computed(() => props.name ?? uid);
   const model = useModelDuplex(props, 'modelValue');
   const validationModel = computed(() =>
     props.validationValue === undefined ? model.value : props.validationValue,
   );
-
+  const vm = getCurrentInstance()!;
+  const form = useForm();
   const validating = ref(false);
   const validateOn = computed(() => {
     let value = props.validateOn || 'input';
@@ -50,6 +64,12 @@ export function useValidation(props: any, name: string, uid = getUid()) {
 
   const errorResult = ref();
   const errors = ref<any[]>([]);
+
+  const isReadonly = computed(() => props.readonly ?? form?.isReadonly.value);
+
+  const isDisabled = computed(() => props.disabled ?? form?.isDisabled.value);
+
+  const isLoading = computed(() => props.loading ?? form?.isLoading.value);
 
   const isError = computed(() => {
     return props.status === 'error' || errors.value.length > 0;
@@ -116,6 +136,23 @@ export function useValidation(props: any, name: string, uid = getUid()) {
     errorResult.value = undefined;
   }
 
+  async function resetValidation() {
+    if (!validateOn.value.lazy) {
+      await invokeValidators();
+    } else {
+      resetError();
+    }
+  }
+
+  onBeforeMount(() => {
+    form?.register({
+      id: cid.value,
+      vnode: vm.vnode,
+      resetValidation,
+      validate: invokeValidators,
+    });
+  });
+
   return {
     invokeValidators,
     resetError,
@@ -123,6 +160,9 @@ export function useValidation(props: any, name: string, uid = getUid()) {
     validateOn,
     errorResult,
     errors,
+    isReadonly,
+    isDisabled,
+    isLoading,
     isError,
     isSuccess,
   };

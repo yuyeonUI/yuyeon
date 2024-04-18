@@ -57,6 +57,7 @@ export const YDataTable = defineComponent({
     'update:sortBy': (sortBy: any) => true,
     'update:options': (options: any) => true,
     'click:row': (e: Event, value: { row: any }) => true,
+    'scroll': (e: Event) => true,
   },
   setup(props, { slots, emit }) {
     const { page, pageSize } = createPagination(props);

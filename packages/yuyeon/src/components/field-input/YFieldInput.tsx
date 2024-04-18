@@ -13,7 +13,11 @@ import { useRender } from '../../composables/component';
 import { pressFocusPropsOptions, useFocus } from '../../composables/focus';
 import { chooseProps, propsFactory } from '../../util/vue-component';
 import { YIconClear } from '../icons/YIconClear';
-import { YInput, pressYInputPropsOptions } from '../input';
+import {
+  YInput,
+  YInputDefaultSlotProps,
+  pressYInputPropsOptions,
+} from '../input';
 
 import './YFieldInput.scss';
 
@@ -65,7 +69,7 @@ export const YFieldInput = defineComponent({
     prepend: any;
     append: any;
     label: any;
-    default: { value: any; formLoading: boolean; attrId: string };
+    default: YInputDefaultSlotProps;
     leading: { error: boolean };
     trailing: any;
     'helper-text': { error: boolean; errorResult: string | undefined };
@@ -84,10 +88,6 @@ export const YFieldInput = defineComponent({
       };
     });
 
-    const invokeValidators = () => {
-      //
-    };
-
     function onClick(event: MouseEvent) {
       emit('click', event);
     }
@@ -100,7 +100,6 @@ export const YFieldInput = defineComponent({
 
     function onBlur(event: FocusEvent) {
       whenBlur();
-      invokeValidators();
       emit('blur', event);
       changeDisplay();
     }
@@ -110,9 +109,6 @@ export const YFieldInput = defineComponent({
       const target = event.target as HTMLInputElement | null;
       inValue.value = target?.value;
       displayValue.value = target?.value as string;
-      if (props.whenInputValid) {
-        invokeValidators();
-      }
     }
 
     function onChange(event: Event) {
@@ -191,10 +187,14 @@ export const YFieldInput = defineComponent({
       { immediate: true },
     );
 
-    expose({
+    const extended = {
       focus,
       select,
       clear,
+    };
+
+    expose({
+      ...extended,
       input$,
       validate: () => yInput$.value?.invokeValidators(),
     });
@@ -209,8 +209,9 @@ export const YFieldInput = defineComponent({
         ref={yInput$}
         {...chooseProps(props, YInput.props)}
         modelValue={inValue.value}
-        onUpdate:modelValue={onUpdateModel}
         focused={focused.value}
+        extended={extended}
+        onUpdate:modelValue={onUpdateModel}
         onClick={onClick}
         onMousedown:display={($event) => emit('mousedown:display', $event)}
       >
@@ -227,7 +228,7 @@ export const YFieldInput = defineComponent({
                 return leadingChildren;
               }
             : undefined,
-          default: (defaultProps: any) => (
+          default: (defaultProps: YInputDefaultSlotProps) => (
             <div
               class={[`${NAME}__field`]}
               data-id={defaultProps.attrId}
@@ -243,7 +244,7 @@ export const YFieldInput = defineComponent({
                   id={defaultProps.attrId}
                   type={inputType.value}
                   readonly={
-                    props.readonly || props.loading || defaultProps.formLoading
+                    props.readonly || props.loading || defaultProps.loading
                   }
                   placeholder={props.placeholder}
                   disabled={props.disabled}

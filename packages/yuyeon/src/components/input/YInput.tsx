@@ -54,9 +54,16 @@ export const pressYInputPropsOptions = propsFactory(
     // validate
     ...pressValidationPropsOptions(),
     ...pressFocusPropsOptions(),
+    extended: Object as PropType<any>,
   },
   'YInput',
 );
+
+export interface YInputDefaultSlotProps {
+  value: any;
+  loading: boolean;
+  attrId: string;
+}
 
 export const YInput = defineComponent({
   name: 'YInput',
@@ -81,10 +88,14 @@ export const YInput = defineComponent({
     prepend: any;
     append: any;
     label: any;
-    default: { value: any; formLoading: boolean; attrId: string };
+    default: YInputDefaultSlotProps;
     leading: { error: boolean };
     trailing: any;
-    'helper-text': { error: boolean; errorResult: string | undefined };
+    'helper-text': {
+      error: boolean;
+      errorResult: string | undefined;
+      errors: any[];
+    };
   }>,
   setup(props, { slots, attrs, expose, emit }) {
     const UID = getUid();
@@ -96,11 +107,16 @@ export const YInput = defineComponent({
       whenBlur,
     } = useFocus(props, 'y-input');
 
-    const { invokeValidators, isError, isSuccess, errorResult } = useValidation(
-      props,
-      NAME,
-      UID,
-    );
+    const {
+      isDisabled,
+      isReadonly,
+      isLoading,
+      invokeValidators,
+      isError,
+      isSuccess,
+      errors,
+      errorResult,
+    } = useValidation(props, NAME, UID);
 
     const stack$ = ref();
     const display$ = ref();
@@ -129,19 +145,22 @@ export const YInput = defineComponent({
 
     const classes = computed(() => {
       return {
+        // Style
+        [themeClasses.value as string]: true,
         'y-input--ceramic': !!props.ceramic,
         'y-input--outlined':
           !props.ceramic &&
           (variations.value.includes('outlined') || !!props.outlined),
         'y-input--filled':
           variations.value.includes('filled') || !!props.filled,
-        'y-input--focused': isFocused.value,
-        'y-input--readonly': !!props.readonly,
+        // Value
+        'y-input--loading': isLoading.value,
         'y-input--has-value': !!inValue.value,
-        'y-input--disabled': !!props.disabled,
+        'y-input--focused': isFocused.value,
+        'y-input--readonly': isReadonly.value,
+        'y-input--disabled': isDisabled.value,
         'y-input--error': isError.value,
         'y-input--success': isSuccess.value,
-        [themeClasses.value as string]: true,
       };
     });
 
@@ -150,15 +169,6 @@ export const YInput = defineComponent({
         width: toStyleSizeValue(props.width),
         height: toStyleSizeValue(props.height),
       };
-    });
-
-    const formLoading = computed(() => {
-      // TODO: composable `form` binding
-      // const form$ = (this as any)?.form$ as any;
-      // if (form$) {
-      //   return form$.loading;
-      // }
-      return false;
     });
 
     watch(
@@ -178,13 +188,13 @@ export const YInput = defineComponent({
     );
 
     watch(inValue, (neo) => {
-      if (!props.readonly) {
+      if (!isReadonly.value && !isLoading.value) {
         emit('update:modelValue', neo);
       }
     });
 
     watch(isError, (neo) => {
-      emit('error', neo);
+      emit('error', neo, errors.value);
     });
 
     watch(
@@ -263,8 +273,10 @@ export const YInput = defineComponent({
     }
 
     expose({
+      ...(props.extended ?? {}),
       createLabel,
       invokeValidators,
+      validate: invokeValidators,
     });
 
     useRender(() => {
@@ -292,7 +304,7 @@ export const YInput = defineComponent({
               {slots.default ? (
                 slots.default({
                   value: props.modelValue,
-                  formLoading: formLoading.value,
+                  loading: isLoading.value,
                   attrId: `y-input--${UID}`,
                 })
               ) : (
@@ -314,6 +326,7 @@ export const YInput = defineComponent({
                 <span>
                   {slots['helper-text']({
                     error: isError.value,
+                    errors: errors.value,
                     errorResult: errorResult.value,
                   })}
                 </span>
@@ -330,6 +343,7 @@ export const YInput = defineComponent({
     });
 
     return {
+      ...(props.extended ?? {}),
       themeClasses,
       isFocused,
       focusedClasses,

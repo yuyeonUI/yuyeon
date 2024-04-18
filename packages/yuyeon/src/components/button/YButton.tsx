@@ -13,7 +13,7 @@ import {
 } from '../../composables/vue-router';
 import { PlateWave } from '../../directives/plate-wave';
 import { isColorValue } from '../../util/color';
-import { EventProp, propsFactory } from '../../util/vue-component';
+import { propsFactory } from '../../util/vue-component';
 import { YSpinnerRing } from '../loading/YSpinnerRing';
 import { Y_TOGGLE_BUTTON_KEY } from '../toggle-button';
 
@@ -154,6 +154,7 @@ export const YButton = defineComponent({
       const Tag = link.isLink.value ? 'a' : 'button';
       return (
         <Tag
+          type={Tag === 'a' ? undefined : 'button'}
           class={[
             `${NAME}`,
             choice?.selectedClass.value,

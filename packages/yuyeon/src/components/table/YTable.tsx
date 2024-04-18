@@ -22,6 +22,7 @@ export const pressYTableProps = propsFactory(
     flexHeight: {
       type: Boolean as PropType<boolean>,
     },
+    onScroll: Function as PropType<(e: Event) => void>,
   },
   'YTable',
 );
@@ -31,13 +32,19 @@ export const YTable = defineComponent({
   props: {
     ...pressYTableProps(),
   },
-  setup(props, { slots }) {
+  emits: ['scroll'],
+  setup(props, { slots, emit }) {
     const { resizeObservedRef, contentRect } = useResizeObserver();
     const { resizeObservedRef: wrapperRef, contentRect: wrapperRect } =
       useResizeObserver();
     const { resizeObservedRef: tableRef, contentRect: tableRect } =
       useResizeObserver();
     provide('YTable', { containerRect: contentRect });
+
+    function onScroll(e: Event) {
+      emit('scroll', e);
+    }
+
     useRender(() => {
       const ElTag = (props.tag as keyof HTMLElementTagNameMap) ?? 'div';
       const containerHeight = props.flexHeight
@@ -64,7 +71,7 @@ export const YTable = defineComponent({
         >
           {slots.top?.()}
           {slots.default ? (
-            <div ref={resizeObservedRef} class={['y-table__container']}>
+            <div ref={resizeObservedRef} class={['y-table__container']} >
               {slots.leading?.()}
               <div
                 ref={wrapperRef}
@@ -72,6 +79,7 @@ export const YTable = defineComponent({
                 style={{
                   height: toStyleSizeValue(containerHeight),
                 }}
+                onScroll={onScroll}
               >
                 <table ref={tableRef}>{slots.default()}</table>
               </div>
