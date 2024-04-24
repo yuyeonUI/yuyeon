@@ -52,19 +52,23 @@ export function useBase(props: BaseProps) {
 
   watchEffect(() => {
     if (!base$.value) {
+      if (!baseFromSlotEl.value && props.base) {
+        baseEl.value = base.value;
+        return;
+      }
       baseEl.value = baseFromSlotEl.value;
       return;
     }
-    let base = base$.value;
-    if (base.baseEl) {
-      base = base.baseEl;
+    let toEl = base$.value;
+    if (toEl.baseEl) {
+      toEl = toEl.baseEl;
     }
     if (base$.value?.$el) {
       if (base$.value.$el.nodeType === Node.ELEMENT_NODE) {
-        base = base$.value.$el;
+        toEl = base$.value.$el;
       }
     }
-    baseEl.value = base;
+    baseEl.value = toEl;
   });
 
   return {
