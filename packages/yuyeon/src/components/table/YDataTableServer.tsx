@@ -129,7 +129,13 @@ export const YDataTableServer = defineComponent({
       const yTableProps = chooseProps(props, YTable.props);
       return (
         <YTable
-          class={['y-data-table']}
+          class={[
+            'y-data-table',
+            {
+              'y-data-table--no-data':
+                !props.loading && props.items.length < 1 && !props.hideNoData,
+            },
+          ]}
           {...yTableProps}
           style={{
             '--y-table-head-height': toStyleSizeValue(headRect.value?.height),

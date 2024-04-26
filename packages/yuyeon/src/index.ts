@@ -1,6 +1,6 @@
 import { Component, ComponentInternalInstance } from '@vue/runtime-core';
 import type { App } from 'vue';
-import { nextTick, reactive } from 'vue';
+import { getCurrentInstance, nextTick, reactive } from 'vue';
 
 import * as components from './components';
 import {
@@ -94,6 +94,13 @@ export function init(options: any = defaultOptions) {
   return {
     install,
   };
+}
+
+export function useYuyeon() {
+  const vm = getCurrentInstance();
+  if (!vm) throw new Error('[yuyeon] Called outside of setup context');
+
+  return vm.appContext.config.globalProperties.$yuyeon;
 }
 
 export { useTheme };

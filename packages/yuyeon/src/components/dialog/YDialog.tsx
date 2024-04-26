@@ -32,6 +32,9 @@ export const pressYDialogPropsOptions = propsFactory(
       >,
     },
     maximized: Boolean as PropType<boolean>,
+    focusTrap: [Boolean, String, Object, Array] as PropType<
+      false | string | string[] | HTMLElement
+    >,
     offset: {
       type: String as PropType<string>,
     },
@@ -78,8 +81,39 @@ export const YDialog = defineComponent({
     const { children } = useActiveStack(layer$, active, shallowRef(true));
 
     function onFocusin(e: FocusEvent) {
+      if (props.focusTrap === false) {
+        return;
+      }
+
       const prevTarget = e.relatedTarget as HTMLElement | null;
       const target = e.target as HTMLElement | null;
+
+      const excludeTarget = props.focusTrap;
+
+      if (
+        typeof excludeTarget === 'string' &&
+        document.querySelector(excludeTarget) == target
+      ) {
+        return;
+      }
+
+      if (typeof excludeTarget === 'object') {
+        if (Array.isArray(excludeTarget)) {
+          const excluded = excludeTarget.some((exclude) => {
+            if (typeof exclude === 'string') {
+              return document.querySelector(exclude) == target;
+            }
+            if (typeof exclude === 'object') {
+              return exclude == target;
+            }
+          });
+          if (excluded) {
+            return;
+          }
+        } else if (excludeTarget == target) {
+          return;
+        }
+      }
 
       function testChildrenContains(layers: YLayer[]) {
         return layers.some((layer) => {

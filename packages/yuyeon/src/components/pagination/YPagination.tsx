@@ -35,6 +35,7 @@ export const pressYPaginationProps = propsFactory(
       validator: (val: number) => val % 1 === 0,
     },
     totalVisible: [Number, String],
+    maxVisible: [Number, String],
     showEndButton: Boolean,
     gap: {
       type: [String, Number],
@@ -99,11 +100,22 @@ export const YPagination = defineComponent({
         0,
         Math.floor(+((listWidth - fixedWidth) / (itemWidth + gap)).toFixed(2)),
       );
+      const maxVisible = Number(props.maxVisible);
+      if (!isNaN(maxVisible)) {
+        return Math.min(maxVisible, count);
+      }
       return count;
     }
 
     const totalVisible = computed(() => {
-      if (props.totalVisible) return parseInt(props.totalVisible as string, 10);
+      const maxVisible = Number(props.maxVisible);
+      if (props.totalVisible) {
+        const total = parseInt(props.totalVisible as string, 10);
+        if (!isNaN(maxVisible)) {
+          return Math.min(total, maxVisible)
+        }
+        return total;
+      }
       else if (itemCount.value >= 0) return itemCount.value;
       return calcItemCount(innerWidth, 58);
     });

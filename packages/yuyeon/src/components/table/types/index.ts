@@ -1,39 +1,20 @@
 import { ComputedRef, Ref, UnwrapRef } from 'vue';
 
-import { SelectableItem, provideSelection } from '../composibles/selection';
+import { SelectableItem } from '../composibles/selection';
+import type { DataTableCompareFn } from './common';
+import type { DataTableHeader, InternalDataTableHeader } from './header';
+import type { DataTableItem, ItemKeySlot } from './item';
+import type { RowProps, CellProps } from './row';
 
-export type DataTableCompareFn<T = any> = (a: T, b: T) => number;
-
-export type DataTableHeader = {
-  key: string;
-  text: string;
-  value?: any;
-
-  colspan?: number;
-  rowspan?: number;
-  fixed?: boolean;
-
-  classes?: string | string[];
-  align?: 'start' | 'end' | 'center';
-  width?: number | string;
-  minWidth?: string;
-  maxWidth?: string;
-  sortable?: boolean;
-  sort?: DataTableCompareFn;
-  mustSort?: boolean;
+export type {
+  ItemKeySlot,
+  RowProps,
+  CellProps,
+  DataTableHeader,
+  InternalDataTableHeader,
+  DataTableItem,
+  DataTableCompareFn,
 };
-
-export type InternalDataTableHeader = DataTableHeader & {
-  sortable: boolean;
-  fixedOffset?: number;
-  lastFixed?: boolean;
-};
-
-export interface DataTableItem<T = any> extends SelectableItem {
-  index: number;
-  columns: Record<string, any>;
-  raw: T;
-}
 
 export type SortOption = { key: string; order?: boolean | 'asc' | 'desc' };
 
@@ -89,26 +70,3 @@ export type YDataTableSlotProps = {
   columns: InternalDataTableHeader[];
   headers: InternalDataTableHeader[][];
 };
-
-type ItemSlotBase<T> = {
-  index: number;
-  item: T;
-  internalItem: DataTableItem<T>;
-  selected: boolean;
-  isSelected: ReturnType<typeof provideSelection>['isSelected'];
-  toggleSelect: ReturnType<typeof provideSelection>['toggleSelect'];
-};
-
-export type ItemKeySlot<T> = ItemSlotBase<T> & {
-  value: any;
-  column: InternalDataTableHeader;
-};
-
-export type CellProps<T = any> =
-  | Record<string, any>
-  | ((
-      data: Pick<
-        ItemKeySlot<T>,
-        'index' | 'item' | 'internalItem' | 'value' | 'column' | 'selected'
-      >,
-    ) => Record<string, any>);

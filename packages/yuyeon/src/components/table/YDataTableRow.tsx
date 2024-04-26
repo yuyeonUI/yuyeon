@@ -1,4 +1,4 @@
-import {PropType, defineComponent, computed} from 'vue';
+import { PropType, computed, defineComponent, ref } from 'vue';
 
 import { useRender } from '../../composables/component';
 import { getPropertyFromItem } from '../../util/common';
@@ -12,7 +12,10 @@ import { CellProps, DataTableItem } from './types';
 export const pressYDataTableRowProps = propsFactory(
   {
     index: Number as PropType<number>,
-    onClick: Function as PropType<(e: MouseEvent) => void>,
+    onClick: Function as PropType<(...args: any[]) => void>,
+    onContextmenu: Function as PropType<(...args: any[]) => void>,
+    onDblclick: Function as PropType<(...args: any[]) => void>,
+    onHover: Function as PropType<(...args: any[]) => void>,
   },
   'YDataTableRow',
 );
@@ -30,7 +33,12 @@ export const YDataTableRow = defineComponent({
 
     useRender(() => {
       return (
-        <tr class={['y-data-table__row']} onClick={(e) => emit('click:row', e)}>
+        <tr
+          class={['y-data-table__row']}
+          onClick={props.onClick as any}
+          onContextmenu={props.onContextmenu as any}
+          onDblclick={props.onDblclick as any}
+        >
           {props.item &&
             columns.value.map((column, colIndex) => {
               const item = props.item!;

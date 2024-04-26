@@ -1,10 +1,10 @@
+import { WritableComputedRef } from '@vue/runtime-core';
 import { computed, getCurrentInstance, ref, toRaw, watch } from 'vue';
 import type { Ref } from 'vue';
 
 import { hasOwnProperty } from '../util/common';
 import { kebabToCamel, toKebabCase } from '../util/string';
 import { useToggleScope } from './scope';
-import {WritableComputedRef} from "@vue/runtime-core";
 
 export function useModelDuplex(
   props: any,

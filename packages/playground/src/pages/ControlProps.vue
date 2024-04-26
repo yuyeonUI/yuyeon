@@ -6,9 +6,7 @@ import { useTheme } from "yuyeon";
 
 const outlinedFieldInput = ref("");
 const displayInput = ref(0);
-
 const showDialog = ref(false);
-
 const loadingButton = ref(false);
 
 function onClickLoadingButton() {
@@ -21,7 +19,6 @@ function onClickLoadingButton() {
 const progress0 = ref(40);
 const progress0Reverse = shallowRef(false);
 const chipsSectionIndeterminate = shallowRef(false);
-
 const dropdownItems = [
   {
     key: "cut",
@@ -55,7 +52,6 @@ function toggleThemeMode() {
 }
 
 const innerMenu = shallowRef(false);
-
 const defaultSelectV = ref([]);
 
 function onCloseMenuIn() {
@@ -63,20 +59,18 @@ function onCloseMenuIn() {
 }
 
 const tab = ref();
-
 const focusTrapTest = ref("");
-
 const parentDialog = ref(false);
 const childDialog = ref(false);
 const maximizedDialog = ref(false);
-
 const textarea = ref("content");
-
 const validSelectValue = ref();
 
 function onClickFieldWrap() {
   console.log("activate my trap");
 }
+
+
 </script>
 
 <template>
@@ -600,6 +594,7 @@ function onClickFieldWrap() {
               default-select
               style="max-width: 140px"
             ></y-select>
+
           </div>
         </y-card-body>
       </y-card>

@@ -79,18 +79,11 @@ export const YTextarea = defineComponent({
       }
     }
 
-    function invokeValidators() {
-      //
-    }
-
     function onInput(event: Event) {
       emit('input', event);
       const target = event.target as HTMLInputElement | null;
       inValue.value = target?.value;
       displayValue.value = target?.value as string;
-      if (props.whenInputValid) {
-        invokeValidators();
-      }
     }
 
     function onChange(event: Event) {
@@ -105,7 +98,6 @@ export const YTextarea = defineComponent({
 
     function onBlur(event: FocusEvent) {
       whenBlur();
-      invokeValidators();
       emit('blur', event);
       changeDisplay();
     }
@@ -144,6 +136,7 @@ export const YTextarea = defineComponent({
     expose({
       el$,
       input$,
+      validate: () => el$.value?.invokeValidators(),
     });
 
     useRender(() => {

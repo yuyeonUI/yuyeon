@@ -22,7 +22,7 @@ export function useResizeObserver(callback?: ResizeObserverCallback) {
         resizeObservedRef,
         (neo, old) => {
           if (old) {
-            observer.unobserve(old);
+            observer.unobserve(getHtmlElement(old));
             contentRect.value = undefined;
           }
           if (neo) {

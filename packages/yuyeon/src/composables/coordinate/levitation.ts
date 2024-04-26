@@ -1,18 +1,26 @@
 import type { CSSProperties, Ref } from 'vue';
-import { computed, nextTick, onScopeDispose, ref, watch } from "vue";
+import { computed, nextTick, onScopeDispose, ref, watch } from 'vue';
 
-import { MutableRect, Rect, getOverflow } from '../../util/rect';
-import { $computed } from '../../util/reactivity';
-import { getScrollParents } from '../../util/scroll';
-import { getBoundingPureRect, pixelCeil, pixelRound, toStyleSizeValue } from "../../util/ui";
 import {
-  anchorToPoint,
-  getOffset,
-} from './utils/point';
-
+  Anchor,
+  flipAlign,
+  flipCorner,
+  flipSide,
+  getAxis,
+  parseAnchor,
+} from '../../util/anchor';
+import { clamp } from '../../util/common';
+import { $computed } from '../../util/reactivity';
+import { MutableRect, Rect, getOverflow } from '../../util/rect';
+import { getScrollParents } from '../../util/scroll';
+import {
+  getBoundingPureRect,
+  pixelCeil,
+  pixelRound,
+  toStyleSizeValue,
+} from '../../util/ui';
 import { CoordinateState } from './types';
-import { Anchor, flipAlign, flipCorner, flipSide, getAxis, parseAnchor } from "../../util/anchor";
-import { clamp } from "../../util/common";
+import { anchorToPoint, getOffset } from './utils/point';
 
 export function applyLevitation(
   props: any,
@@ -20,7 +28,7 @@ export function applyLevitation(
   coordinate: Ref<Rect | undefined>,
   coordinateStyles: Ref<CSSProperties>,
 ) {
-  const { contentEl, baseEl, active } = state;
+  const { contentEl, base, active } = state;
 
   const isRtl = ref(false);
 
@@ -53,10 +61,12 @@ export function applyLevitation(
     if (observe) updateCoordinate();
   });
   watch(
-    [state.baseEl, state.contentEl],
+    [state.base, state.contentEl],
     ([neoBaseEl, neoContentEl], [oldBaseEl, oldContentEl]) => {
-      if (oldBaseEl) resizeObserver.unobserve(oldBaseEl);
-      if (neoBaseEl) resizeObserver.observe(neoBaseEl);
+      if (oldBaseEl && !Array.isArray(oldBaseEl) && oldBaseEl.nodeType === 1)
+        resizeObserver.unobserve(oldBaseEl);
+      if (neoBaseEl && !Array.isArray(neoBaseEl) && neoBaseEl.nodeType === 1)
+        resizeObserver.observe(neoBaseEl);
 
       if (oldContentEl) resizeObserver.unobserve(oldContentEl);
       if (neoContentEl) resizeObserver.observe(neoContentEl);
@@ -76,7 +86,7 @@ export function applyLevitation(
 
   function updateCoordinate(): any {
     observe = false;
-    const $base = baseEl.value;
+    const $base = base.value;
     const $content = contentEl.value;
     requestAnimationFrame(() => {
       requestAnimationFrame(() => (observe = true));
@@ -86,7 +96,14 @@ export function applyLevitation(
 
     const { viewportMargin } = props;
 
-    const baseRect = $base.getBoundingClientRect();
+    const baseRect = Array.isArray($base)
+      ? new MutableRect({
+          x: $base?.[0] ?? 0,
+          y: $base?.[1] ?? 0,
+          width: 0,
+          height: 0,
+        })
+      : $base.getBoundingClientRect();
     const contentRect = getIgnoreInsetRect($content);
     const scrollParents = getScrollParents($content);
 
