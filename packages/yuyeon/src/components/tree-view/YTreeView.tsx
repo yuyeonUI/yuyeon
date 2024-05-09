@@ -123,14 +123,22 @@ export const YTreeView = defineComponent({
 
     // Util Methods
     function getDescendants(
-      key: CandidateKey,
-      descendants: CandidateKey[] = [],
+      key: CandidateKey
     ) {
+      const descendants: CandidateKey[] = [];
       const { childKeys } = nodes.value[key];
       descendants.push(...childKeys);
-      for (const childKey of childKeys) {
-        descendants = getDescendants(childKey, descendants);
+      const remains: CandidateKey[] = childKeys.slice();
+
+      while(remains.length > 0) {
+        const childKey: CandidateKey = remains.splice(0, 1)[0];
+        const item = nodes.value[childKey];
+        if (item) {
+          descendants.push(...item.childKeys);
+          remains.push(...item.childKeys);
+        }
       }
+
       return descendants;
     }
 
@@ -230,7 +238,7 @@ export const YTreeView = defineComponent({
       const node = nodes.value[key];
       let inactiveKey = !to ? key : '';
       if (!props.multipleActive) {
-        [inactiveKey] = activeSet.value.keys();
+        [inactiveKey] = [...activeSet.value];
       }
       if (to) {
         activeSet.value.add(key);
@@ -382,7 +390,7 @@ export const YTreeView = defineComponent({
           emitActive();
         }
       },
-      { deep: true },
+      { deep: true, flush: 'sync' },
     );
 
     // Search
@@ -411,14 +419,6 @@ export const YTreeView = defineComponent({
 
     updateNodes(props.items);
 
-    for (const activeValue of props.active.map(getNodeKey)) {
-      updateActive(activeValue, true);
-    }
-
-    for (const selectedValue of props.selected.map(getNodeKey)) {
-      updateSelected(selectedValue, true);
-    }
-
     provide('tree-view', {
       register,
       updateExpanded,
@@ -432,7 +432,7 @@ export const YTreeView = defineComponent({
     });
 
     const renderLeaves = computed(() => {
-      return props.items.filter((leaf) => {
+      return props.items.slice().filter((leaf) => {
         return !isExcluded(getObjectValueByPath(leaf, props.itemKey));
       });
     });
@@ -460,6 +460,14 @@ export const YTreeView = defineComponent({
         expanded.value.forEach((v: any) => updateExpanded(getNodeKey(v), true));
         emitExpanded();
       }
+
+      for (const activeValue of props.active.map(getNodeKey)) {
+        updateActive(activeValue, true);
+      }
+
+      for (const selectedValue of props.selected.map(getNodeKey)) {
+        updateSelected(selectedValue, true);
+      }
     });
 
     expose({
@@ -472,7 +480,7 @@ export const YTreeView = defineComponent({
           <div class={classes.value} style={styles.value} role="tree">
             {searchLoading.value && <YProgressBar indeterminate />}
             {renderLeaves.value.length > 0 ? (
-              renderLeaves.value.map((leaf) => {
+              renderLeaves.value.slice().map((leaf) => {
                 return (
                   <YTreeViewNode
                     v-slots={slots}
