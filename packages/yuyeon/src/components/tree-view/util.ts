@@ -5,15 +5,18 @@ import { TreeviewFilterFn } from './types';
 
 export function getKeys(items: any[], itemKey: string, childrenKey: string) {
   const keys: CandidateKey[] = [];
-  for (const item of items) {
+  const remains: any[] = items.slice();
+
+  while(remains.length > 0) {
+    const item = remains.splice(0, 1);
     const key = getObjectValueByPath(item, itemKey);
     keys.push(key);
     const children = getObjectValueByPath(item, childrenKey);
     if (Array.isArray(children)) {
-      const childrenKeys = getKeys(children, itemKey, childrenKey);
-      keys.push(...childrenKeys);
+      remains.push(...children);
     }
   }
+
   return keys;
 }
 
