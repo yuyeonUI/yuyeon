@@ -52,7 +52,7 @@ export function useBase(props: BaseProps) {
 
   watchEffect(() => {
     if (!base$.value) {
-      if (!baseFromSlotEl.value && props.base) {
+      if (!baseFromSlotEl.value && props.base && !Array.isArray(props.base)) {
         baseEl.value = base.value;
         return;
       }
