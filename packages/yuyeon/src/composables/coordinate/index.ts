@@ -45,7 +45,7 @@ export const pressCoordinateProps = propsFactory(
       type: [Number, String, Array] as PropType<number | string | string[]>,
     },
     viewportMargin: {
-      type: Number,
+      type: [Number, String, Array],
       default: 16,
     }
   },
