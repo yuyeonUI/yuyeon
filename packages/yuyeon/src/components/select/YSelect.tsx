@@ -1,5 +1,5 @@
 import { shallowRef } from '@vue/runtime-core';
-import { PropType, SlotsType, nextTick } from 'vue';
+import { PropType, SlotsType } from 'vue';
 import { computed, defineComponent, mergeProps, onMounted, ref } from 'vue';
 
 import { useModelDuplex } from '../../composables/communication';
@@ -99,7 +99,12 @@ export const YSelect = defineComponent({
   },
   slots: Object as SlotsType<{
     base: any;
-    selection: any;
+    selection: {
+      displayText: string;
+      placeholder: undefined | string;
+      items: any[];
+      internalItems: ListItem[];
+    };
     leading: any;
     'helper-text': any;
     menu: any;
@@ -108,6 +113,7 @@ export const YSelect = defineComponent({
     'dropdown-icon': any;
     item: { item: any; selected: boolean; select: () => void };
     'item-leading': { item: any; selected: boolean; select: () => void };
+    'item-trailing': { item: any; selected: boolean; select: () => void };
   }>,
   setup(props, { slots, attrs, expose }) {
     const fieldInputRef = ref();
@@ -275,10 +281,16 @@ export const YSelect = defineComponent({
                 >
                   {{
                     default: () => {
+                      const selectionProps = {
+                        items: selections.value.map((item) => item.raw),
+                        displayText: displayText.value,
+                        placeholder: props.placeholder,
+                        internalItems: selections.value,
+                      };
                       return (
                         <div class={['y-select__selection']}>
                           {slots.selection
-                            ? slots.selection?.()
+                            ? slots.selection?.(selectionProps)
                             : selected.value.length > 0
                             ? displayText.value
                             : props.placeholder}
@@ -311,7 +323,7 @@ export const YSelect = defineComponent({
                   <YCard>
                     {slots['menu-prepend']?.()}
                     {items.value.length > 0 ? (
-                      <YList ref={listRef} {...{ tabindex: '-1' }}>
+                      <YList ref={listRef}>
                         {items.value.map((item) => {
                           const itemProps = {
                             item,
@@ -327,15 +339,18 @@ export const YSelect = defineComponent({
                                 'y-list-item--active': isSelected(item),
                               }}
                             >
-                              {slots.item
-                                ? slots.item(itemProps)
-                                : {
-                                    default: item.text,
-                                    leading:
-                                      slots['item-leading'] &&
-                                      (() =>
-                                        slots['item-leading']?.(itemProps)),
-                                  }}
+                              {{
+                                default: () =>
+                                  slots.item
+                                    ? slots.item?.(itemProps)
+                                    : item.text,
+                                leading:
+                                  slots['item-leading'] &&
+                                  (() => slots['item-leading']?.(itemProps)),
+                                trailing:
+                                  slots['item-trailing'] &&
+                                  (() => slots['item-trailing']?.(itemProps)),
+                              }}
                             </YListItem>
                           );
                         })}
