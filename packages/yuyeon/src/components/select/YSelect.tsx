@@ -107,6 +107,7 @@ export const YSelect = defineComponent({
     'menu-append': any;
     'dropdown-icon': any;
     item: { item: any; selected: boolean; select: () => void };
+    'item-leading': { item: any; selected: boolean; select: () => void };
   }>,
   setup(props, { slots, attrs, expose }) {
     const fieldInputRef = ref();
@@ -310,8 +311,15 @@ export const YSelect = defineComponent({
                   <YCard>
                     {slots['menu-prepend']?.()}
                     {items.value.length > 0 ? (
-                      <YList ref={listRef}>
+                      <YList ref={listRef} {...{ tabindex: '-1' }}>
                         {items.value.map((item) => {
+                          const itemProps = {
+                            item,
+                            selected: isSelected(item),
+                            select: () => {
+                              select(item);
+                            },
+                          };
                           return (
                             <YListItem
                               onClick={(e) => onClickItem(item, e)}
@@ -320,14 +328,14 @@ export const YSelect = defineComponent({
                               }}
                             >
                               {slots.item
-                                ? slots.item({
-                                    item,
-                                    selected: isSelected(item),
-                                    select: () => {
-                                      select(item);
-                                    },
-                                  })
-                                : item.text}
+                                ? slots.item(itemProps)
+                                : {
+                                    default: item.text,
+                                    leading:
+                                      slots['item-leading'] &&
+                                      (() =>
+                                        slots['item-leading']?.(itemProps)),
+                                  }}
                             </YListItem>
                           );
                         })}

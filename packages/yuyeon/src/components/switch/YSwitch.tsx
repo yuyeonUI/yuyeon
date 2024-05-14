@@ -189,7 +189,7 @@ export const YSwitch = defineComponent({
         <div class="y-switch__slot">
           <div
             class="y-switch__input"
-            onClick={withModifiers(onClick, ['capture'])}
+            onClick={withModifiers(onClick, ['exact'])}
             onKeydown={onKeydown}
           >
             <input

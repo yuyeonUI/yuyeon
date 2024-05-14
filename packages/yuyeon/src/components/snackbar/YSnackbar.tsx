@@ -171,7 +171,7 @@ export const YSnackbar = defineComponent({
       { immediate: true },
     );
 
-    function onClickContent(event: MouseEvent) {
+    function onClickContent(event: Event) {
       emit('click', event);
       if (props.closeClickContent) {
         active.value = false;
@@ -207,7 +207,7 @@ export const YSnackbar = defineComponent({
                 <YPlate></YPlate>
                 <div
                   class="y-snackbar__content"
-                  onClick={withModifiers(onClickContent, ['capture'])}
+                  onClick={withModifiers(onClickContent, ['exact'])}
                   onMouseenter={() => (hover.value = true)}
                   onMouseleave={() => (hover.value = false)}
                 >
