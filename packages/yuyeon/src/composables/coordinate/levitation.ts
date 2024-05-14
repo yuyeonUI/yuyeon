@@ -55,6 +55,21 @@ export function applyLevitation(
     return typeof props.offset === 'number' ? [props.offset, 0] : [0, 0];
   });
 
+  /* Viewport Margin */
+  const viewportMargin = computed(() => {
+    if (Array.isArray(props.viewportMargin)) {
+      return props.viewportMargin;
+    }
+    if (typeof props.viewportMargin === 'string') {
+      const offset = props.viewportMargin.split(' ').map(parseFloat);
+      if (offset.length < 2) offset.push(0);
+      return offset;
+    }
+    return typeof props.viewportMargin === 'number'
+      ? [props.viewportMargin, 0]
+      : [0, 0];
+  });
+
   /* Observing Update */
   let observe = false;
   const resizeObserver = new ResizeObserver(() => {
@@ -93,8 +108,6 @@ export function applyLevitation(
     });
 
     if (!$base || !$content) return;
-
-    const { viewportMargin } = props;
 
     const baseRect = Array.isArray($base)
       ? new MutableRect({
@@ -140,10 +153,10 @@ export function applyLevitation(
       },
       undefined!,
     );
-    viewport.x += viewportMargin;
-    viewport.y += viewportMargin;
-    viewport.width -= viewportMargin * 2;
-    viewport.height -= viewportMargin * 2;
+    viewport.x += viewportMargin.value[0];
+    viewport.y += viewportMargin.value[1];
+    viewport.width -= viewportMargin.value[0] * 2;
+    viewport.height -= viewportMargin.value[1] * 2;
 
     const { preferredAnchor, preferredOrigin } = $computed(() => {
       const location = `${props.position} ${props.align}` as Anchor;

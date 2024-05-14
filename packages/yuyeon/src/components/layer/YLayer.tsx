@@ -91,6 +91,10 @@ export const pressYLayerProps = propsFactory(
       type: Number as PropType<number>,
       default: 200,
     },
+    zIndex: {
+      type: [Number, String] as PropType<number | string>,
+      default: 2000,
+    },
     ...pressThemePropsOptions(),
     ...polyTransitionPropOptions,
     ...pressBasePropsOptions(),
@@ -211,7 +215,7 @@ export const YLayer = defineComponent({
 
     const computedStyle = computed(() => {
       return {
-        zIndex: '2000',
+        zIndex: (props.zIndex ?? '2000').toString(),
       };
     });
 
