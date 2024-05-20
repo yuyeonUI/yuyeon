@@ -132,7 +132,7 @@ export const YLayer = defineComponent({
     const scrim$ = ref<HTMLElement>();
     const content$ = ref<HTMLElement>();
 
-    const { base, base$, baseEl, baseSlot } = useBase(props);
+    const { base, base$, baseEl, baseSlot, baseFromSlotEl } = useBase(props);
 
     const { themeClasses } = useLocalTheme(props);
     const { layerGroup, layerGroupState, getActiveLayers } = useLayerGroup();
@@ -335,6 +335,7 @@ export const YLayer = defineComponent({
       content$,
       base$,
       baseEl,
+      baseFromSlotEl,
       polyTransitionBindProps,
       coordinateStyles,
       layerGroupState,

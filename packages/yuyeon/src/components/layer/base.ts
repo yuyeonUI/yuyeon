@@ -68,6 +68,9 @@ export function useBase(props: BaseProps) {
         toEl = base$.value.$el;
       }
     }
+    if (toEl?.nodeType !== Node.ELEMENT_NODE) {
+      toEl = baseFromSlotEl.value;
+    }
     baseEl.value = toEl;
   });
 
@@ -76,6 +79,7 @@ export function useBase(props: BaseProps) {
     baseEl,
     baseSlot,
     base,
+    baseFromSlotEl,
   };
 }
 
