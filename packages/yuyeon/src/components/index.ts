@@ -30,3 +30,4 @@ export * from './divider';
 export * from './date-picker';
 export * from './icon';
 export * from './badge';
+export * from './text-ellipsis';
