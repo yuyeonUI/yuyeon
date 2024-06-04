@@ -2,30 +2,27 @@ import { shallowRef } from '@vue/runtime-core';
 import { PropType, SlotsType, nextTick, watch } from 'vue';
 import { computed, defineComponent, mergeProps, onMounted, ref } from 'vue';
 
+
+
 import { useModelDuplex } from '../../composables/communication';
 import { useRender } from '../../composables/component';
 import { pressCoordinateProps } from '../../composables/coordinate';
 import { useI18n } from '../../composables/i18n';
-import {
-  ListItem,
-  pressListItemsPropsOptions,
-  useItems,
-} from '../../composables/list-items';
+import { ListItem, pressListItemsPropsOptions, useItems } from '../../composables/list-items';
 import { getScrollParent } from '../../util';
 import { wrapInArray } from '../../util/array';
 import { deepEqual, getObjectValueByPath, omit } from '../../util/common';
-import {
-  chooseProps,
-  getHtmlElement,
-  propsFactory,
-} from '../../util/vue-component';
+import { chooseProps, getHtmlElement, propsFactory } from '../../util/vue-component';
 import { YCard } from '../card';
 import { YFieldInput, pressYFieldInputPropsOptions } from '../field-input';
 import { YIcon, YIconIconProp } from '../icon';
 import { YList, YListItem } from '../list';
 import { YMenu } from '../menu';
 
+
+
 import './YSelect.scss';
+
 
 export type SelectEquals = (
   optionsItem: any,
@@ -253,9 +250,13 @@ export const YSelect = defineComponent({
         const activeEl = listEl?.querySelector('.y-list-item--active') as
           | HTMLElement
           | undefined;
-        if (activeEl) {
+        const contentEl = (menuRef.value as any)?.layer$?.content$ as HTMLElement;
+        if (activeEl && contentEl) {
           const scrollEl = getScrollParent(activeEl);
-          if (scrollEl) {
+          if (
+            scrollEl &&
+            (contentEl.contains(scrollEl) || contentEl.isSameNode(scrollEl))
+          ) {
             scrollEl.scrollTo({ top: activeEl.offsetTop, behavior: 'smooth' });
           }
         }
