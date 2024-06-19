@@ -42,7 +42,7 @@ export const pressCoordinateProps = propsFactory(
       default: 'auto'
     },
     offset: {
-      type: [Number, String, Array] as PropType<number | string | string[]>,
+      type: [Number, String, Array] as PropType<number | string | number[]>,
     },
     viewportMargin: {
       type: [Number, String, Array],

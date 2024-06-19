@@ -1,4 +1,4 @@
-import { DataTableCompareFn } from './common';
+import { type DataTableCellClassesFn, type DataTableCompareFn } from './common';
 
 export type DataTableHeader = {
   key: string;
@@ -9,7 +9,7 @@ export type DataTableHeader = {
   rowspan?: number;
   fixed?: boolean;
 
-  classes?: string | string[];
+  classes?: string | string[] | DataTableCellClassesFn;
   align?: 'start' | 'end' | 'center';
   width?: number | string;
   minWidth?: string;
