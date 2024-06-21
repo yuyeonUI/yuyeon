@@ -271,7 +271,6 @@ export const YSelect = defineComponent({
       );
       return (
         <YMenu
-          v-model={opened.value}
           ref={menuRef}
           offset={props.offset}
           position={props.position}
@@ -285,6 +284,7 @@ export const YSelect = defineComponent({
           close-delay={props.closeDelay}
           closeCondition={closeCondition}
           {...extraMenuProps.value}
+          v-model={opened.value}
         >
           {{
             base: (...args: any[]) =>
@@ -421,6 +421,7 @@ export const YSelect = defineComponent({
     expose({
       fieldInputRef,
       baseEl,
+      opened,
     });
 
     return {
@@ -430,6 +431,7 @@ export const YSelect = defineComponent({
       selected,
       menuRef,
       baseEl,
+      opened,
     };
   },
 });

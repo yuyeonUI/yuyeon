@@ -18,6 +18,7 @@ import {
   watchEffect,
 } from 'vue';
 
+import { useModelDuplex } from '../../composables/communication';
 import { useRender } from '../../composables/component';
 import {
   pressCoordinateProps,
@@ -40,9 +41,10 @@ import {
   ComplementClickBindingOptions,
 } from '../../directives/complement-click';
 import { bindClasses, propsFactory } from '../../util/vue-component';
+import { pressBasePropsOptions, useBase } from './base';
+import { pressContentPropsOptions, useContent } from './content';
 
 import './YLayer.scss';
-import { pressBasePropsOptions, useBase } from './base';
 
 export const pressYLayerProps = propsFactory(
   {
@@ -98,6 +100,7 @@ export const pressYLayerProps = propsFactory(
     ...pressThemePropsOptions(),
     ...polyTransitionPropOptions,
     ...pressBasePropsOptions(),
+    ...pressContentPropsOptions(),
     ...pressCoordinateProps(),
     ...pressDimensionPropsOptions(),
   },
@@ -138,14 +141,17 @@ export const YLayer = defineComponent({
     const { layerGroup, layerGroupState, getActiveLayers } = useLayerGroup();
     const { polyTransitionBindProps } = usePolyTransition(props);
     const { dimensionStyles } = useDimension(props);
-    const active = computed<boolean>({
+    const model = useModelDuplex(props);
+
+    const active = computed({
       get: (): boolean => {
-        return !!props.modelValue;
+        return !!model.value;
       },
       set: (v: boolean) => {
-        emit('update:modelValue', v);
+        if (!(v && props.disabled)) model.value = v;
       },
     });
+    const { contentEvents } = useContent(props, active);
     const finish = shallowRef(false);
     const hovered = ref(false);
 
@@ -179,7 +185,8 @@ export const YLayer = defineComponent({
     function closeConditional(): boolean {
       return (
         (!props.openOnHover || (props.openOnHover && !hovered.value)) &&
-        active.value && finish.value
+        active.value &&
+        finish.value
       ); // TODO: && groupTopLevel.value;
     }
 
@@ -311,6 +318,7 @@ export const YLayer = defineComponent({
                         ...props.contentStyles,
                       },
                     ]}
+                    {...contentEvents.value}
                     ref={content$}
                   >
                     {slots.default?.({ active: active.value })}

@@ -134,7 +134,7 @@ export function createIconModule(options?: IconModuleOptions) {
       },
     },
     options,
-  );
+  ) as Required<IconModuleOptions>;
 }
 
 type IconInstance = {
