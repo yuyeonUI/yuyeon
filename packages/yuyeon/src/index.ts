@@ -10,6 +10,7 @@ import {
 } from './composables/date';
 import { createI18nModule } from './composables/i18n';
 import { YUYEON_I18N_KEY } from './composables/i18n/share';
+import { YUYEON_ICON_KEY, createIconModule } from './composables/icon';
 import {
   YUYEON_THEME_KEY,
   createThemeModule,
@@ -20,7 +21,6 @@ import { YUYEON_LOGO } from './etc';
 
 //
 import './styles/base.scss';
-import {createIconModule, YUYEON_ICON_KEY} from "./composables/icon";
 
 const defaultOptions = {
   credit: true,

@@ -1,21 +1,27 @@
-import { PropType, defineComponent, mergeProps, SlotsType } from 'vue';
+import { PropType, SlotsType, defineComponent, mergeProps } from 'vue';
 
 import { pressItemsPropsOptions } from '../../abstract/items';
 import { useModelDuplex } from '../../composables/communication';
 import { useRender } from '../../composables/component';
 import { pressCoordinateProps } from '../../composables/coordinate';
+import { polyTransitionPropOptions } from '../../composables/transition';
 import { getObjectValueByPath, omit } from '../../util/common';
-import { chooseProps, propsFactory } from '../../util/vue-component';
+import {
+  bindClasses,
+  chooseProps,
+  propsFactory,
+} from '../../util/vue-component';
 import { YButton } from '../button';
 import { YCard } from '../card';
 import { YIcon, YIconIconProp } from '../icon';
 import { YList, YListItem } from '../list';
-import { YMenu } from '../menu';
+import { YMenu, YMenuPropOptions } from '../menu';
 
 import './YDropdown.scss';
 
 export const pressYDropdownPropsOptions = propsFactory(
   {
+    ...omit(YMenuPropOptions, ['modelValue', 'coordinateStrategy']),
     modelValue: Boolean as PropType<boolean>,
     variation: String as PropType<string>,
     color: String as PropType<string>,
@@ -27,6 +33,10 @@ export const pressYDropdownPropsOptions = propsFactory(
       default: '$dropdown',
     },
     ...pressItemsPropsOptions(),
+    transition: {
+      ...polyTransitionPropOptions.transition,
+      default: 'fade',
+    },
   },
   'YDropdown',
 );
@@ -41,11 +51,11 @@ export const YDropdown = defineComponent({
     ...pressYDropdownPropsOptions(),
   },
   slots: Object as SlotsType<{
-    base: any,
-    default: any,
-    'dropdown-icon': any,
-    menu: any,
-    item: { text: string, item: any },
+    base: any;
+    default: any;
+    'dropdown-icon': any;
+    menu: any;
+    item: { text: string; item: any };
   }>,
   emits: ['update:modelValue', 'click'],
   setup(props, { slots, attrs, emit }) {
@@ -67,7 +77,10 @@ export const YDropdown = defineComponent({
           <YMenu
             {...menuProps}
             v-model={opened.value}
-            content-classes={['y-dropdown__content']}
+            content-classes={bindClasses([
+              'y-dropdown__content',
+              props.contentClasses,
+            ])}
           >
             {{
               base: (...args: any[]) =>

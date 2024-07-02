@@ -38,9 +38,10 @@ export function updateItem(
   index: number,
   columns: InternalDataTableHeader[],
 ): DataTableItem {
+  const key = getPropertyFromItem(item, props.itemKey);
   const value = props.returnItem
     ? item
-    : getPropertyFromItem(item, props.itemKey);
+    : key;
   const selectable = getPropertyFromItem(item, props.itemSelectable, true);
   const itemColumns = columns.reduce((acc, column) => {
     acc[column.key] = getPropertyFromItem(item, column.value ?? column.key);
@@ -49,6 +50,7 @@ export function updateItem(
 
   return {
     index,
+    key,
     value,
     selectable,
     columns: itemColumns,

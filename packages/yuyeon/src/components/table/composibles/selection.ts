@@ -8,6 +8,7 @@ import { DataTableProvideSelectionData } from '../types';
 import { DataTableItemsProps } from './items';
 
 export interface SelectableItem {
+  key: string;
   value: any;
   selectable: boolean;
 }

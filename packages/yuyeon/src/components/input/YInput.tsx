@@ -91,6 +91,8 @@ export const YInput = defineComponent({
     default: YInputDefaultSlotProps;
     leading: { error: boolean };
     trailing: any;
+    'leading-out': any;
+    'trailing-out': any;
     'helper-text': {
       error: boolean;
       errorResult: string | undefined;
@@ -282,11 +284,12 @@ export const YInput = defineComponent({
     useRender(() => {
       return (
         <div class={[`${NAME}`, { ...classes.value }]}>
-          {slots.prepend
-            ? () => <div class={`${NAME}__prepend`}>slots.prepend()</div>
-            : undefined}
+          {slots.prepend && (
+            <div class={`${NAME}__prepend`}>{slots.prepend()}</div>
+          )}
           <div ref={stack$} class={[`${NAME}__stack`]}>
             {!props.floating && createLabel()}
+            {slots['leading-out'] && slots['leading-out']()}
             <div
               ref={display$}
               class={`${NAME}__display`}
@@ -321,6 +324,7 @@ export const YInput = defineComponent({
               )}
               {slots.trailing?.()}
             </div>
+            {slots['trailing-out'] && slots['trailing-out']()}
             <div class={`${NAME}__helper-text`}>
               {slots['helper-text'] ? (
                 <span>
@@ -335,9 +339,9 @@ export const YInput = defineComponent({
               )}
             </div>
           </div>
-          {slots.append
-            ? () => <div class={`${NAME}__append`}>slots.append()</div>
-            : undefined}
+          {slots.append && (
+            <div class={`${NAME}__append`}>{slots.append()}</div>
+          )}
         </div>
       );
     });

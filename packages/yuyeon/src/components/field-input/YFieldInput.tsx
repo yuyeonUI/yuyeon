@@ -72,6 +72,8 @@ export const YFieldInput = defineComponent({
     default: YInputDefaultSlotProps;
     leading: { error: boolean };
     trailing: any;
+    'leading-out': any;
+    'trailing-out': any;
     'helper-text': { error: boolean; errorResult: string | undefined };
   }>,
   setup(props, { attrs, expose, emit, slots }) {
@@ -294,6 +296,10 @@ export const YFieldInput = defineComponent({
                 )
               : undefined,
           label: slots.label ? () => slots.label?.() : undefined,
+          prepend: slots.prepend ? () => slots.prepend?.() : undefined,
+          append: slots.append ? () => slots.append?.() : undefined,
+          'leading-out': slots['leading-out'] ? () => slots['leading-out']?.() : undefined,
+          'trailing-out': slots['trailing-out'] ? () => slots['trailing-out']?.() : undefined,
           'helper-text': slots['helper-text']
             ? ({ error, errorResult }: any) =>
                 slots['helper-text']?.({ error, errorResult })

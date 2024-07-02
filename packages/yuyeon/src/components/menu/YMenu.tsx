@@ -1,4 +1,4 @@
-import type { PropType } from 'vue';
+import type { PropType, SlotsType } from 'vue';
 import { computed, defineComponent, ref, toRef, watch } from 'vue';
 
 import { useModelDuplex } from '../../composables/communication';
@@ -53,6 +53,10 @@ export const YMenu = defineComponent({
     },
   },
   emits: ['update:modelValue', 'afterLeave'],
+  slots: Object as SlotsType<{
+    default: any;
+    base: any;
+  }>,
   expose: ['layer$', 'baseEl'],
   setup(props, { slots, emit, expose }) {
     const layer$ = ref<typeof YLayer>();
@@ -65,17 +69,7 @@ export const YMenu = defineComponent({
       };
     });
 
-    const model = useModelDuplex(props);
-
-    const active = computed({
-      get: (): boolean => {
-        return !!model.value;
-      },
-      set: (v: boolean) => {
-        if (!(v && props.disabled)) model.value = v;
-      },
-    });
-
+    const active = useModelDuplex(props);
     const hovered = computed(() => !!layer$.value?.hovered);
     const finish = computed(() => !!layer$.value?.finish);
     const { children, parent } = useActiveStack(

@@ -32,9 +32,12 @@ export const pressYDialogPropsOptions = propsFactory(
       >,
     },
     maximized: Boolean as PropType<boolean>,
-    focusTrap: [Boolean, String, Object, Array] as PropType<
-      false | string | string[] | HTMLElement
-    >,
+    focusTrap: {
+      type: [Boolean, String, Object, Array] as PropType<
+        false | string | string[] | HTMLElement
+      >,
+      default: true,
+    },
     offset: {
       type: String as PropType<string>,
     },

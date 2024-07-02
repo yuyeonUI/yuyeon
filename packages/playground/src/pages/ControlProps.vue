@@ -70,7 +70,48 @@ function onClickFieldWrap() {
   console.log("activate my trap");
 }
 
-
+const selectItems = [
+  {
+    key: '1',
+    text: '1'
+  },
+  {
+    key: '2',
+    text: '2'
+  },
+  {
+    key: '3',
+    text: '3'
+  },
+  {
+    key: '4',
+    text: '4'
+  },{
+    key: '5',
+    text: '5'
+  },
+  {
+    key: '6',
+    text: '6'
+  },
+  {
+    key: '7',
+    text: '7'
+  },{
+    key: '8',
+    text: '8'
+  },
+  {
+    key: '9',
+    text: '9'
+  },{
+    key: '10',
+    text: '10'
+  },{
+    key: '11',
+    text: '11'
+  },
+]
 </script>
 
 <template>
@@ -588,7 +629,7 @@ function onClickFieldWrap() {
             </y-menu>
             <y-select
               v-model="defaultSelectV"
-              :items="dropdownItems"
+              :items="selectItems"
               :label="'y-select'"
               origin="overlap"
               default-select
