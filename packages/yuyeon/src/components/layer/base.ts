@@ -44,7 +44,7 @@ export function useBase(props: BaseProps) {
   });
 
   const base = computed(() => {
-    if (baseEl.value) {
+    if (baseEl.value && !props.base) {
       return baseEl.value;
     }
     return getBase(props.base, vm);

@@ -52,7 +52,7 @@ export const YMenu = defineComponent({
       default: 'fade',
     },
   },
-  emits: ['update:modelValue', 'afterLeave'],
+  emits: ['update:modelValue', 'afterLeave', 'hoverContent'],
   slots: Object as SlotsType<{
     default: any;
     base: any;
@@ -106,6 +106,7 @@ export const YMenu = defineComponent({
     }
 
     watch(hovered, (value) => {
+      emit('hoverContent', value);
       if (!value) {
         startCloseDelay();
       }

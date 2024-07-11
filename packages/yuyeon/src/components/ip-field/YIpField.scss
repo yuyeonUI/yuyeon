@@ -1,0 +1,74 @@
+.y-ip-field {
+  font-size: 1rem;
+  max-width: 12.8em;
+  color: var(--y-theme-on-background);
+
+  &.y-input--rounded .y-input__plate {
+    border-radius: calc(var(--display-height) / 2);
+  }
+
+  &--text {
+    color: inherit;
+    pointer-events: none;
+
+    input {
+      color: inherit;
+    }
+  }
+
+  .y-input {
+    &__display {
+      cursor: default;
+    }
+  }
+
+  &.y-input--error {
+    input {
+      color: inherit;
+    }
+  }
+
+  &__field {
+    flex: 1 1;
+    min-width: 0;
+    display: flex;
+    position: relative;
+    padding: 2px 16px;
+  }
+
+  &__part {
+    flex: 1 1;
+    display: flex;
+    align-items: center;
+    outline: none;
+
+    &-input {
+      position: relative;
+      flex: 1 1;
+      width: 2em;
+      text-align: center;
+      padding: 4px 0;
+      color: var(--y-theme-on-background);
+
+      &:focus {
+        outline: none;
+      }
+
+      &--fixed {
+        opacity: 0.4;
+      }
+    }
+  }
+
+  &__part-delimiter {
+    flex: 0 0 auto;
+    font-size: inherit;
+    padding: 0 0.2em;
+    align-items: center;
+    display: inline-flex;
+  }
+
+  .y-input__leading {
+    padding-right: 0;
+  }
+}

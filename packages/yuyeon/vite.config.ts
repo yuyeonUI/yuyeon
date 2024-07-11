@@ -19,8 +19,8 @@ export default defineConfig({
       output: {
         globals: {
           vue: 'Vue',
-        }
-      }
+        },
+      },
     },
   },
   esbuild: {
@@ -30,6 +30,10 @@ export default defineConfig({
   plugins: [
     vue(),
     vueJsx({ optimize: false, enableObjectSlots: true }),
-    dts({ outputDir: 'types', copyDtsFiles: true, exclude: ['src/vite-env.d.ts'] }),
+    dts({
+      outDir: 'types',
+      copyDtsFiles: true,
+      exclude: ['src/vite-env.d.ts'],
+    }),
   ],
 });

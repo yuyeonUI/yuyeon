@@ -21,9 +21,11 @@ import {
   YExpandVTransition,
   YFieldInput,
   YForm,
+  YHover,
   YIcon,
   YInput,
   YInputCheckbox,
+  YIpv4Field,
   YLayer,
   YList,
   YListItem,
@@ -90,5 +92,7 @@ declare module '@vue/runtime-core' {
     YDatePicker: typeof YDatePicker;
     YMonthPicker: typeof YMonthPicker;
     YBadge: typeof YBadge;
+    YIpv4Field: typeof YIpv4Field;
+    YHover: typeof YHover;
   }
 }

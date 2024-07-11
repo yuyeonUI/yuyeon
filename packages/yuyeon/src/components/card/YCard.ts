@@ -1,7 +1,8 @@
 import type { Directive, PropType, VNode } from 'vue';
 import { defineComponent, h, withDirectives } from 'vue';
 
-import ThemeClass from '../../directives/theme-class';
+import { useRender } from '../../composables';
+import { pressThemePropsOptions, useLocalTheme } from '../../composables/theme';
 
 import './YCard.scss';
 
@@ -11,18 +12,19 @@ export const YCard = defineComponent({
     outline: {
       type: Boolean as PropType<boolean>,
     },
+    ...pressThemePropsOptions(),
   },
-  render(): VNode {
-    const theme = ThemeClass as Directive;
-    return withDirectives(
+  setup(props, { slots }) {
+    const { themeClasses } = useLocalTheme(props);
+
+    useRender(() =>
       h(
         'div',
         {
-          class: ['y-card', { 'y-card--outlined': this.$props.outline }],
+          class: ['y-card', { 'y-card--outlined': props.outline }, themeClasses.value],
         },
-        this.$slots.default?.call(this),
+        slots.default?.(),
       ),
-      [[theme]],
     );
   },
 });

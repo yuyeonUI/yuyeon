@@ -1,4 +1,4 @@
-import type {App, ComputedRef, PropType, Ref} from 'vue';
+import type { App, ComputedRef, PropType, Ref } from 'vue';
 import {
   computed,
   effectScope,
@@ -245,11 +245,12 @@ export function useLocalTheme(props: { theme?: string }) {
 
   const currentThemeKey = computed<string>(() => {
     if (props.theme) {
+      const moduleTheme = unref(themeModule.theme);
       switch (props.theme) {
         case 'light':
-          return themeModule.theme.value?.[0] ?? 'light';
+          return moduleTheme?.[0] ?? 'light';
         case 'dark':
-          return themeModule.theme.value?.[1] ?? 'dark';
+          return moduleTheme?.[1] ?? 'dark';
         // TODO: props.theme(themeKey) validation in themes
         default:
           return props.theme;
@@ -258,7 +259,9 @@ export function useLocalTheme(props: { theme?: string }) {
     return unref(themeModule.currentThemeKey);
   });
 
-  const themeClasses = computed(() => `y-theme--${currentThemeKey.value}`);
+  const themeClasses = computed(() => {
+    return `y-theme--${currentThemeKey.value}`;
+  });
 
   const newTheme: ThemeModuleInstance = {
     ...themeModule,

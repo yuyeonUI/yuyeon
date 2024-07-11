@@ -13,7 +13,7 @@ export interface ScrollStrategyData {
   contentEl: Ref<HTMLElement | undefined>;
   baseEl: Ref<HTMLElement | undefined>;
   active: Ref<boolean>;
-  updateLevitation: Ref<((e: Event) => void) | undefined>;
+  updateCoordinate: Ref<((e: Event) => void) | undefined>;
 }
 
 type ScrollStrategyFn = (
@@ -158,7 +158,7 @@ function repositionScrollStrategy(
   function update(e: Event) {
     frameScheduler.requestNewFrame(() => {
       const start = performance.now();
-      data.updateLevitation.value?.(e);
+      data.updateCoordinate.value?.(e);
       const time = performance.now() - start;
       slow = time / (1000 / 60) > 2;
     });

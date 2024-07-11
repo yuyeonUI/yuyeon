@@ -43,6 +43,10 @@ import {
 import { bindClasses, propsFactory } from '../../util/vue-component';
 import { pressBasePropsOptions, useBase } from './base';
 import { pressContentPropsOptions, useContent } from './content';
+import {
+  pressScrollStrategyProps,
+  useScrollStrategies,
+} from './scroll-strategies';
 
 import './YLayer.scss';
 
@@ -97,11 +101,13 @@ export const pressYLayerProps = propsFactory(
       type: [Number, String] as PropType<number | string>,
       default: 2000,
     },
+    contained: Boolean,
     ...pressThemePropsOptions(),
     ...polyTransitionPropOptions,
     ...pressBasePropsOptions(),
     ...pressContentPropsOptions(),
     ...pressCoordinateProps(),
+    ...pressScrollStrategyProps(),
     ...pressDimensionPropsOptions(),
   },
   'YLayer',
@@ -134,6 +140,7 @@ export const YLayer = defineComponent({
 
     const scrim$ = ref<HTMLElement>();
     const content$ = ref<HTMLElement>();
+    const root$ = ref<HTMLElement>();
 
     const { base, base$, baseEl, baseSlot, baseFromSlotEl } = useBase(props);
 
@@ -165,6 +172,13 @@ export const YLayer = defineComponent({
       contentEl: content$,
       base,
       active,
+    });
+    useScrollStrategies(props, {
+      root: root$,
+      contentEl: content$,
+      active,
+      baseEl: base,
+      updateCoordinate,
     });
 
     function onClickComplementLayer(mouseEvent: MouseEvent) {
@@ -277,15 +291,19 @@ export const YLayer = defineComponent({
           <Teleport disabled={!layerGroup.value} to={layerGroup.value as any}>
             {rendered.value && (
               <div
-                class={{
-                  'y-layer': true,
-                  'y-layer--finish': finish.value,
-                  ...computedClass.value,
-                  [themeClasses.value ?? '']: true,
-                }}
+                class={[
+                  {
+                    'y-layer': true,
+                    'y-layer--finish': finish.value,
+                    'y-layer--contained': props.contained,
+                    ...computedClass.value,
+                  },
+                  themeClasses.value,
+                ]}
                 onMouseenter={onMouseenter}
                 onMouseleave={onMouseleave}
                 style={computedStyle.value}
+                ref={ root$ }
                 {...attrs}
               >
                 <Transition name="fade" appear>
