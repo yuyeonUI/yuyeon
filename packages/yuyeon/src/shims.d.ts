@@ -44,6 +44,7 @@ import {
   YTooltip,
   YTreeView,
   YTreeViewNode,
+  YTi,
 } from 'yuyeon/components';
 
 declare module '@vue/runtime-core' {
@@ -94,5 +95,6 @@ declare module '@vue/runtime-core' {
     YBadge: typeof YBadge;
     YIpv4Field: typeof YIpv4Field;
     YHover: typeof YHover;
+    YTi: typeof YTi;
   }
 }

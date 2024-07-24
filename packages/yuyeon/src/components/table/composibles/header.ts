@@ -16,7 +16,7 @@ import { DataTableHeader, InternalDataTableHeader } from '../types';
 export const pressDataTableHeader = propsFactory(
   {
     headers: {
-      type: Array as PropType<DataTableHeader[] | DataTableHeader[][]>,
+      type: Array as PropType<(DataTableHeader[] | DataTableHeader[][])>,
       default: () => [],
     },
   },

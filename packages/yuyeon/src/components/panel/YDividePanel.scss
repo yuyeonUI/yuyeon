@@ -22,7 +22,7 @@ $side-padding: 16px !default;
       right: 0;
       bottom: 4px;
       height: 1px;
-      background: #eee;
+      background: var(--y-theme-outline);
     }
 
     &:hover {
