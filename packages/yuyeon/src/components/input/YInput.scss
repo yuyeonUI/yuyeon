@@ -186,7 +186,7 @@ $input-border-radius: variables.$border-radius-root !default;
         }
       }
 
-      &__display:hover {
+      &__display:not(&--disabled):hover {
         --y-input-outlined-opacity: var(--y-input-outlined-opacity-hover);
       }
     }

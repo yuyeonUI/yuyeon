@@ -1,5 +1,5 @@
 import { toRef } from '@vue/runtime-core';
-import type { InjectionKey, PropType, Ref } from 'vue';
+import type { DeepReadonly, InjectionKey, PropType, Ref } from 'vue';
 import { inject, provide } from 'vue';
 
 import { useModelDuplex } from '../../../composables/communication';
@@ -20,7 +20,7 @@ const Y_DATA_TABLE_SORTING_KEY: InjectionKey<{
 export const pressDataTableSortProps = propsFactory(
   {
     sortBy: {
-      type: Array as PropType<readonly SortOption[]>,
+      type: Array as PropType<DeepReadonly<SortOption[]>>,
       default: () => [],
     },
     multiSort: Boolean,

@@ -1,8 +1,8 @@
 import {
-  DeepReadonly,
-  InjectionKey,
-  PropType,
-  Ref,
+  type DeepReadonly,
+  type InjectionKey,
+  type PropType,
+  type Ref,
   inject,
   provide,
   ref,
@@ -11,12 +11,12 @@ import {
 
 import { getRangeArr } from '../../../util/common';
 import { propsFactory } from '../../../util/vue-component';
-import { DataTableHeader, InternalDataTableHeader } from '../types';
+import { type DataTableHeader, type InternalDataTableHeader } from '../types';
 
 export const pressDataTableHeader = propsFactory(
   {
     headers: {
-      type: Array as PropType<(DataTableHeader[] | DataTableHeader[][])>,
+      type: Array as PropType<DeepReadonly<DataTableHeader[]>>,
       default: () => [],
     },
   },
@@ -29,7 +29,7 @@ export const Y_DATA_TABLE_HEADER_KEY: InjectionKey<{
 }> = Symbol.for('yuyeon.data-table.header');
 
 type HeaderProps = {
-  headers: DeepReadonly<DataTableHeader[] | DataTableHeader[][]>;
+  headers: DeepReadonly<DataTableHeader[]> | undefined;
 };
 
 export function createHeader(
@@ -42,12 +42,9 @@ export function createHeader(
   const columns = ref<InternalDataTableHeader[]>([]);
 
   watchEffect(() => {
-    const rows =
-      props.headers.length > 0
-        ? Array.isArray(props.headers[0])
-          ? (props.headers as DataTableHeader[][])
-          : [props.headers as DataTableHeader[]]
-        : [];
+    const rows = props.headers?.length
+      ? [props.headers as DataTableHeader[]]
+      : [];
     const flat = rows.flatMap((row, index) =>
       row.map((column) => ({ column, rowIndex: index })),
     );

@@ -41,7 +41,8 @@ export const YTooltip = defineComponent({
   props: {
     ...YTooltipPropOptions,
     ...pressYLayerProps({
-      coordinateStrategy: 'levitation',
+      coordinateStrategy: 'levitation' as const,
+      scrollStrategy: 'reposition' as const,
       openOnHover: true,
       align: 'center',
       offset: 8,

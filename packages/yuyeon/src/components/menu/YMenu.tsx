@@ -35,7 +35,8 @@ export const YMenuPropOptions = {
     default: true,
   },
   ...pressYLayerProps({
-    coordinateStrategy: 'levitation',
+    coordinateStrategy: 'levitation' as const,
+    scrollStrategy: 'reposition' as const,
   }),
   preventCloseBubble: Boolean as PropType<boolean>,
 };
