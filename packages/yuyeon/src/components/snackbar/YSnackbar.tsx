@@ -12,8 +12,13 @@ import {
 import { useModelDuplex } from '../../composables/communication';
 import { useRender } from '../../composables/component';
 import { useTimer } from '../../composables/timing';
-import { bindClasses } from '../../util/vue-component';
-import { YLayer } from '../layer';
+import { omit } from '../../util';
+import {
+  bindClasses,
+  chooseProps,
+  propsFactory,
+} from '../../util/vue-component';
+import { YLayer, pressYLayerProps } from '../layer';
 import { YPlate } from '../plate';
 
 import './YSnackbar.scss';
@@ -51,11 +56,12 @@ const defaultSnackbarTransition = {
   },
 };
 
-export const YSnackbar = defineComponent({
-  name: 'YSnackbar',
-  components: { YPlate, YLayer },
-  emits: ['update:modelValue', 'click'],
-  props: {
+export const pressYSnackbarPropsOptions = propsFactory(
+  {
+    ...pressYLayerProps({
+      scrollStrategy: 'none' as const,
+      position: 'top center',
+    }),
     modelValue: {
       type: Boolean as PropType<boolean>,
     },
@@ -63,10 +69,6 @@ export const YSnackbar = defineComponent({
       type: [Array, String, Object] as PropType<
         string[] | string | Record<string, any>
       >,
-    },
-    position: {
-      type: String as PropType<string>,
-      default: 'top center',
     },
     transition: {
       type: [String, Object] as PropType<string | any>,
@@ -86,6 +88,16 @@ export const YSnackbar = defineComponent({
       type: Boolean,
       default: true,
     },
+  },
+  'YSnackbar',
+);
+
+export const YSnackbar = defineComponent({
+  name: 'YSnackbar',
+  components: { YPlate, YLayer },
+  emits: ['update:modelValue', 'click'],
+  props: {
+    ...pressYSnackbarPropsOptions(),
   },
   setup(props, { emit, slots }) {
     const active = useModelDuplex(props);
@@ -171,7 +183,7 @@ export const YSnackbar = defineComponent({
       { immediate: true },
     );
 
-    function onClickContent(event: MouseEvent) {
+    function onClickContent(event: Event) {
       emit('click', event);
       if (props.closeClickContent) {
         active.value = false;
@@ -192,6 +204,13 @@ export const YSnackbar = defineComponent({
     useRender(() => {
       return (
         <YLayer
+          ref="layer"
+          {...omit(chooseProps(props, YLayer.props), [
+            'scrim',
+            'transition',
+            'content-classes',
+            'classes',
+          ])}
           modelValue={active.value}
           onUpdate:modelValue={(v) => (active.value = v)}
           classes={classes.value}
@@ -199,7 +218,6 @@ export const YSnackbar = defineComponent({
           scrim={false}
           content-styles={computedInset.value}
           transition={proxyTransition.value as any}
-          ref="layer"
         >
           {{
             default: () => (
@@ -207,7 +225,7 @@ export const YSnackbar = defineComponent({
                 <YPlate></YPlate>
                 <div
                   class="y-snackbar__content"
-                  onClick={withModifiers(onClickContent, ['capture'])}
+                  onClick={withModifiers(onClickContent, ['exact'])}
                   onMouseenter={() => (hover.value = true)}
                   onMouseleave={() => (hover.value = false)}
                 >

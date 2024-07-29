@@ -2,7 +2,7 @@ import { PropType, computed, defineComponent, ref } from 'vue';
 
 import { useRender } from '../../composables/component';
 import { getPropertyFromItem } from '../../util/common';
-import { propsFactory } from '../../util/vue-component';
+import { bindClasses, propsFactory } from '../../util/vue-component';
 import { YIconCheckbox } from '../icons';
 import { YDataTableCell } from './YDataTableCell';
 import { useHeader } from './composibles/header';
@@ -31,10 +31,28 @@ export const YDataTableRow = defineComponent({
     const { isSelected, toggleSelect } = useSelection();
     const { columns } = useHeader();
 
+    const selected = computed(() => props.item && isSelected(props.item));
+
+    function arrayClasses(classes: string | string[]) {
+      const ret: string[] = [];
+      if (typeof classes === 'string') {
+        ret.push(classes);
+      }
+      if (Array.isArray(classes)) {
+        classes.forEach((c) => {
+          if (typeof c === 'string') ret.push(c);
+        });
+      }
+      return ret;
+    }
+
     useRender(() => {
       return (
         <tr
-          class={['y-data-table__row']}
+          class={[
+            'y-data-table__row',
+            { 'y-data-table__row--selected': selected.value },
+          ]}
           onClick={props.onClick as any}
           onContextmenu={props.onContextmenu as any}
           onDblclick={props.onDblclick as any}
@@ -48,9 +66,28 @@ export const YDataTableRow = defineComponent({
                 internalItem: props.item!,
                 columns: columns.value,
                 value: getPropertyFromItem(item.columns, column.key),
-                selected: computed(() => isSelected(item)).value,
+                selected: selected.value,
                 toggleSelect,
               };
+
+              const classes = computed(() => {
+                const ret: string[] = [];
+                if (typeof column.classes === 'function') {
+                  const result = column.classes.call(
+                    null,
+                    slotProps.item,
+                    slotProps.index,
+                    column,
+                  );
+                  if (result) {
+                    ret.push(...arrayClasses(result));
+                  }
+                } else if (column.classes) {
+                  ret.push(...arrayClasses(column.classes));
+                }
+
+                return ret;
+              });
 
               const cellProps =
                 typeof props.cellProps === 'function'
@@ -83,6 +120,7 @@ export const YDataTableRow = defineComponent({
                       'y-data-table-data--select':
                         column.key === 'data-table-select',
                     },
+                    ...classes.value,
                   ]}
                   {...cellProps}
                 >

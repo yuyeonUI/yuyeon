@@ -23,6 +23,7 @@ export const pressYDatePickerPropsOptions = propsFactory(
 export const YDatePicker = defineComponent({
   name: 'YDatePicker',
   props: pressYDatePickerPropsOptions(),
+  emits: ['update:month', 'update:year', 'update:modelValue', 'update:mode'],
   setup(props, { emit }) {
     const yearPicker$ = ref<typeof YYearPicker>();
     const dateUtil = useDate();

@@ -7,3 +7,4 @@ export * from './scope';
 export * from './timing';
 export * from './transition';
 export * from './vue-router';
+export * from './theme';

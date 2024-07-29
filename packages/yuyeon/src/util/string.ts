@@ -1,5 +1,3 @@
-
-
 export function camelToPascal(str: string) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
@@ -41,4 +39,39 @@ export function randomCharOne(str: string) {
     return str.charAt(Math.floor(Math.random() * str.length));
   }
   return '';
+}
+
+export function simpleBraceParse(input: string) {
+  const pattern = /\{([^{}]+)\}/g;
+  const results = [];
+  let match;
+  let pointer = 0;
+
+  while ((match = pattern.exec(input)) !== null) {
+    const variable = match[1];
+    const start = match.index;
+    const end = pattern.lastIndex;
+    if (start > 0) {
+      const prevText = input.substring(pointer, start);
+      results.push({
+        type: 'text',
+        content: prevText,
+      });
+    }
+    if (variable.trim()) {
+      results.push({
+        type: 'variable',
+        content: variable.trim(),
+      });
+    }
+
+    pointer = end;
+  }
+
+  results.push({
+    type: 'text',
+    content: input.substring(pointer, input.length),
+  });
+
+  return results;
 }

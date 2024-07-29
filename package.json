@@ -7,16 +7,17 @@
     "url": "git@github.com:yuyeonUI/yuyeon.git"
   },
   "engines": {
-    "node": ">=14.13"
+    "node": "^18.0.0 || >=20.0.0"
   },
   "devDependencies": {
-    "@trivago/prettier-plugin-sort-imports": "^4.1.1",
-    "@types/node": "^18.16.1",
-    "prettier": "^2.8.8",
+    "@trivago/prettier-plugin-sort-imports": "^4.3.0",
+    "@types/node": "^18.19.1",
+    "@vue/compiler-sfc": "^3.4.31",
+    "prettier": "^3.2.5",
     "sass": "^1.57.1",
-    "typescript": "^5.3.3",
-    "vite": "^5.1.4",
-    "vue": "^3.3.4"
+    "typescript": "^5.4.2",
+    "vite": "^5.3.1",
+    "vue": "^3.4.31"
   },
   "packageManager": "yarn@3.5.0"
 }

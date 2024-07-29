@@ -41,7 +41,8 @@ export const YTooltip = defineComponent({
   props: {
     ...YTooltipPropOptions,
     ...pressYLayerProps({
-      coordinateStrategy: 'levitation',
+      coordinateStrategy: 'levitation' as const,
+      scrollStrategy: 'reposition' as const,
       openOnHover: true,
       align: 'center',
       offset: 8,
@@ -54,10 +55,10 @@ export const YTooltip = defineComponent({
   emits: ['update:modelValue'],
   setup(props, { slots, emit, expose }) {
     const layer$ = ref<typeof YLayer>();
-    const base$ = ref();
-    const baseSlot = ref();
-    const baseEl = ref<HTMLElement>();
     const contentEl = ref<HTMLElement>();
+    const baseEl = computed(() => {
+      return layer$.value?.baseEl;
+    });
 
     const classes = computed(() => {
       const boundClasses = bindClasses(props.tooltipClasses);
@@ -79,21 +80,6 @@ export const YTooltip = defineComponent({
     });
 
     const hovered = computed(() => !!layer$.value?.hovered);
-
-    const baseFromSlotEl = computed(() => {
-      return baseSlot.value?.[0]?.el;
-    });
-
-    watchEffect(() => {
-      if (!base$.value) {
-        if (baseFromSlotEl.value?.nodeType !== 3) {
-          baseEl.value = baseFromSlotEl.value;
-        }
-        return;
-      }
-      const base = base$.value;
-      baseEl.value = base$.value?.$el ? base$.value?.$el : base;
-    });
 
     watch(active, (neo) => {
       if (neo) {
@@ -134,13 +120,13 @@ export const YTooltip = defineComponent({
     });
 
     function bindHover(el: HTMLElement) {
-      el.addEventListener('mouseenter', onMouseenter);
-      el.addEventListener('mouseleave', onMouseleave);
+      el.addEventListener?.('mouseenter', onMouseenter);
+      el.addEventListener?.('mouseleave', onMouseleave);
     }
 
     function unbindHover(el: HTMLElement) {
-      el.removeEventListener('mouseenter', onMouseenter);
-      el.removeEventListener('mouseleave', onMouseleave);
+      el.removeEventListener?.('mouseenter', onMouseenter);
+      el.removeEventListener?.('mouseleave', onMouseleave);
     }
 
     watch(
@@ -153,6 +139,12 @@ export const YTooltip = defineComponent({
         }
       },
     );
+
+
+    expose({
+      layer$,
+      baseEl,
+    });
 
     useRender(() => {
       return (
@@ -184,10 +176,9 @@ export const YTooltip = defineComponent({
     });
 
     return {
-      base$,
+      layer$,
       el$: layer$,
       baseEl,
-      baseSlot,
       active,
     };
   },

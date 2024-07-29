@@ -1,0 +1,43 @@
+.y-text-ellipsis {
+  display: inline-flex;
+  max-width: 100%;
+  position: relative;
+
+  &__origin {
+    white-space: nowrap;
+    overflow: hidden;
+    flex: 0 1 auto;
+  }
+
+  &__start {
+    position: absolute;
+    left: 0;
+    overflow: hidden;
+    width: calc(52%);
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  &__end {
+    position: absolute;
+    right: 0;
+    overflow: hidden;
+    width: calc(45% + 1rem);
+    white-space: nowrap;
+    display: inline-flex;
+    justify-content: flex-end;
+    mask-image: linear-gradient(
+                    to right,
+                    transparent 0%,
+                    rgb(0, 0, 0) 1rem,
+                    rgb(0, 0, 0) 100%
+    );
+  }
+
+  &.overflowed & {
+    &__origin {
+      color: transparent;
+      user-select: none;
+    }
+  }
+}

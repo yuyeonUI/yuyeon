@@ -49,7 +49,7 @@
     }
   }
 
-  &--active {
+  &--active, .y-button--active {
     font-weight: 700;
     color: var(--y-tab-active-color);
 
@@ -58,12 +58,12 @@
     }
   }
 
-  &:hover:not(&--active) &__indicator {
+  &:hover:not(&--active) &__indicator, &:hover:not(.y-button--active) &__indicator {
     transform: scaleY(1);
     color: var(--y-tab-hover-indicator-color);
   }
 
-  &--active &__indicator {
+  &--active &__indicator, .y-button--active &__indicator {
     color: var(--y-tab-active-indicator-color);
     transform: scaleY(1);
   }

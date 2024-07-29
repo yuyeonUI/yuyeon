@@ -75,6 +75,7 @@ export function applyLevitation(
   const resizeObserver = new ResizeObserver(() => {
     if (observe) updateCoordinate();
   });
+
   watch(
     [state.base, state.contentEl],
     ([neoBaseEl, neoContentEl], [oldBaseEl, oldContentEl]) => {
@@ -88,6 +89,7 @@ export function applyLevitation(
     },
     { immediate: true },
   );
+
   onScopeDispose(() => {
     resizeObserver.disconnect();
   });
@@ -274,12 +276,8 @@ export function applyLevitation(
             };
             const flip =
               key === 'x'
-                ? axis === 'y'
-                  ? flipAlign
-                  : flipSide
-                : axis === 'y'
-                ? flipSide
-                : flipAlign;
+                ? axis === 'y' ? flipAlign : flipSide
+                : axis === 'y' ? flipSide : flipAlign;
             newPlacement.anchor = flip(newPlacement.anchor);
             newPlacement.origin = flip(newPlacement.origin);
             const { overflows: newOverflows } = checkOverflow(newPlacement);

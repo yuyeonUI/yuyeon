@@ -150,6 +150,7 @@ export const YSwitch = defineComponent({
     onChange($event: Event) {
       const $checkbox = $event.target as HTMLInputElement;
       const { checked } = $checkbox;
+      $event.stopImmediatePropagation();
       this.changeInput(checked, $event);
     },
     changeInput(checked: boolean, event?: Event) {
@@ -189,7 +190,7 @@ export const YSwitch = defineComponent({
         <div class="y-switch__slot">
           <div
             class="y-switch__input"
-            onClick={withModifiers(onClick, ['capture'])}
+            onClick={withModifiers(onClick, ['exact'])}
             onKeydown={onKeydown}
           >
             <input
@@ -220,10 +221,12 @@ export const YSwitch = defineComponent({
               {loading && <div class="y-switch__spinner"></div>}
             </div>
           </div>
-          <label for={inputId} class="y-switch__label">
-            {$slots.label?.()}
-            <input hidden />
-          </label>
+          {$slots.label && (
+            <label for={inputId} class="y-switch__label">
+              {$slots.label?.()}
+              <input hidden />
+            </label>
+          )}
         </div>
       </div>
     );

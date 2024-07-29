@@ -75,7 +75,7 @@ export const YDataTableBody = defineComponent({
                   ...stateProps,
                   props: mergeProps(
                     {
-                      key: `item__${item.value ?? item.index}`,
+                      key: `item__${item.key ?? item.index}`,
                       item,
                       onClick: props['onClick:row']
                         ? (event: Event) => {

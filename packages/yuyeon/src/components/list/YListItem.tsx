@@ -1,4 +1,4 @@
-import { computed, defineComponent } from 'vue';
+import { SlotsType, computed, defineComponent } from 'vue';
 
 import { useRender } from '../../composables/component';
 import { pressThemePropsOptions, useLocalTheme } from '../../composables/theme';
@@ -27,6 +27,11 @@ export const YListItem = defineComponent({
   emits: {
     click: (e: MouseEvent) => true,
   },
+  slots: Object as SlotsType<{
+    default: any;
+    leading: any;
+    trailing: any;
+  }>,
   setup(props, { slots, emit }) {
     const { themeClasses } = useLocalTheme(props);
 

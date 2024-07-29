@@ -1,25 +1,18 @@
 import type { PropType, SlotsType } from 'vue';
-import {
-  computed,
-  defineComponent,
-  getCurrentInstance,
-  nextTick,
-  ref,
-  toRef,
-  watch,
-} from 'vue';
+import { computed, defineComponent, getCurrentInstance, nextTick, ref, toRef, watch } from 'vue';
+
+
 
 import { useRender } from '../../composables/component';
 import { pressFocusPropsOptions, useFocus } from '../../composables/focus';
 import { chooseProps, propsFactory } from '../../util/vue-component';
 import { YIconClear } from '../icons/YIconClear';
-import {
-  YInput,
-  YInputDefaultSlotProps,
-  pressYInputPropsOptions,
-} from '../input';
+import { YInput, YInputDefaultSlotProps, pressYInputPropsOptions } from '../input';
+
+
 
 import './YFieldInput.scss';
+
 
 const NAME = 'y-field-input';
 
@@ -72,6 +65,8 @@ export const YFieldInput = defineComponent({
     default: YInputDefaultSlotProps;
     leading: { error: boolean };
     trailing: any;
+    'leading-out': any;
+    'trailing-out': any;
     'helper-text': { error: boolean; errorResult: string | undefined };
   }>,
   setup(props, { attrs, expose, emit, slots }) {
@@ -294,6 +289,14 @@ export const YFieldInput = defineComponent({
                 )
               : undefined,
           label: slots.label ? () => slots.label?.() : undefined,
+          prepend: slots.prepend ? () => slots.prepend?.() : undefined,
+          append: slots.append ? () => slots.append?.() : undefined,
+          'leading-out': slots['leading-out']
+            ? () => slots['leading-out']?.()
+            : undefined,
+          'trailing-out': slots['trailing-out']
+            ? () => slots['trailing-out']?.()
+            : undefined,
           'helper-text': slots['helper-text']
             ? ({ error, errorResult }: any) =>
                 slots['helper-text']?.({ error, errorResult })

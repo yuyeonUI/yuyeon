@@ -1,4 +1,4 @@
-import { defineComponent } from 'vue';
+import { defineComponent, ref, watch } from 'vue';
 import { useModelDuplex } from 'yuyeon/composables';
 
 import { useRender } from '../../composables/component';
@@ -27,7 +27,8 @@ export const pressYHoverPropsOptions = propsFactory(
 export const YHover = defineComponent({
   name: 'YHover',
   props: pressYHoverPropsOptions(),
-  setup(props, { slots }) {
+  emits: ['update:modelValue', 'hover'],
+  setup(props, { slots, emit }) {
     const isHovering = useModelDuplex(props, 'modelValue');
     const { startOpenDelay, startCloseDelay } = useDelay(
       props,
@@ -36,18 +37,23 @@ export const YHover = defineComponent({
       },
     );
 
+    const defaultSlot = ref<any>();
+
+    watch(isHovering, (neo) => {
+      emit('hover', neo, defaultSlot);
+    });
+
     useRender(() => {
-      return (
-        <>
-          {slots.default?.({
-            isHovering: isHovering.value,
-            props: {
-              onMouseenter: () => startOpenDelay(),
-              onMouseleave: () => startCloseDelay(),
-            },
-          })}
-        </>
-      );
+      defaultSlot.value = slots.default?.({
+        isHovering: isHovering.value,
+        props: {
+          onMouseenter: () => startOpenDelay(),
+          onMouseleave: () => startCloseDelay(),
+        },
+      });
+      return <>{defaultSlot.value}</>;
     });
   },
 });
+
+export type YHover = InstanceType<typeof YHover>;

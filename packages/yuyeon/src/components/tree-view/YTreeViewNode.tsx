@@ -35,6 +35,9 @@ export const pressYTreeViewNodeProps = propsFactory(
       default: 'primary',
     },
     enableSelect: Boolean,
+    onMouseenterContainer: Function,
+    onMouseleaveContainer: Function,
+    onMousemoveContainer: Function,
     ...pressItemsPropsOptions({
       itemKey: 'id',
     }),
@@ -70,34 +73,12 @@ export const YTreeViewNode = defineComponent({
     const YTreeNode = resolveComponent('YTreeViewNode', true) as any;
     const vm = getCurrentInstance();
     const treeView = inject<any>('tree-view');
+    const container$ = ref<HTMLElement>();
 
     const expanded = ref(false);
     const active = ref(false);
     const selected = ref(false);
     const immediate = ref(false);
-
-    function onClick(e: MouseEvent) {
-      const to = !active.value;
-      active.value = to;
-      treeView.updateActive(myKey.value, to, e);
-      treeView.emitActive();
-    }
-
-    function onClickExpand(e: MouseEvent) {
-      e.stopPropagation();
-      const to = !expanded.value;
-      expanded.value = to;
-      treeView.updateExpanded(myKey.value, to);
-      treeView.emitExpanded();
-    }
-
-    function onClickSelect(e: MouseEvent) {
-      e.stopPropagation();
-      const to = !selected.value;
-      selected.value = to;
-      treeView.updateSelected(myKey.value, to);
-      treeView.emitSelected();
-    }
 
     const children = computed(() => {
       return (getObjectValueByPath(props.item, props.itemChildren as string) ?? []).slice();
@@ -141,6 +122,41 @@ export const YTreeViewNode = defineComponent({
       });
     });
 
+    function onClick(e: MouseEvent) {
+      const to = !active.value;
+      active.value = to;
+      treeView.updateActive(myKey.value, to, e);
+      treeView.emitActive();
+    }
+
+    function onClickExpand(e: MouseEvent) {
+      e.stopPropagation();
+      const to = !expanded.value;
+      expanded.value = to;
+      treeView.updateExpanded(myKey.value, to);
+      treeView.emitExpanded();
+    }
+
+    function onClickSelect(e: MouseEvent) {
+      e.stopPropagation();
+      const to = !selected.value;
+      selected.value = to;
+      treeView.updateSelected(myKey.value, to);
+      treeView.emitSelected();
+    }
+
+    function onMouseenterContainer(e: MouseEvent) {
+      props.onMouseenterContainer?.(e, { ...slotProps.value, item: props.item });
+    }
+
+    function onMouseleaveContainer(e: MouseEvent) {
+      props.onMouseleaveContainer?.(e, { ...slotProps.value, item: props.item });
+    }
+
+    function onMousemoveContainer(e: MouseEvent) {
+      props.onMousemoveContainer?.(e, { ...slotProps.value, item: props.item });
+    }
+
     useRender(() => {
       const indentSpacer: VNodeArrayChildren = [];
       for (let i = 0; i < props.level; i += 1) {
@@ -157,10 +173,14 @@ export const YTreeViewNode = defineComponent({
           data-level={props.level}
         >
           <div
+            ref={container$}
             class={'y-tree-view-node__container'}
             onClick={(e: MouseEvent) =>
               props.enableActive ? onClick(e) : void 0
             }
+            onMouseenter={props.onMouseenterContainer && onMouseenterContainer}
+            onMouseleave={props.onMouseleaveContainer && onMouseleaveContainer}
+            onMousemove={props.onMousemoveContainer && onMousemoveContainer}
           >
             <YPlate />
             <div class={'y-tree-view-node__indents'}>{indentSpacer}</div>

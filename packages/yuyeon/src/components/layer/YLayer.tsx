@@ -18,6 +18,7 @@ import {
   watchEffect,
 } from 'vue';
 
+import { useModelDuplex } from '../../composables/communication';
 import { useRender } from '../../composables/component';
 import {
   pressCoordinateProps,
@@ -40,9 +41,14 @@ import {
   ComplementClickBindingOptions,
 } from '../../directives/complement-click';
 import { bindClasses, propsFactory } from '../../util/vue-component';
+import { pressBasePropsOptions, useBase } from './base';
+import { pressContentPropsOptions, useContent } from './content';
+import {
+  pressScrollStrategyProps,
+  useScrollStrategies,
+} from './scroll-strategies';
 
 import './YLayer.scss';
-import { pressBasePropsOptions, useBase } from './base';
 
 export const pressYLayerProps = propsFactory(
   {
@@ -95,10 +101,13 @@ export const pressYLayerProps = propsFactory(
       type: [Number, String] as PropType<number | string>,
       default: 2000,
     },
+    contained: Boolean,
     ...pressThemePropsOptions(),
     ...polyTransitionPropOptions,
     ...pressBasePropsOptions(),
+    ...pressContentPropsOptions(),
     ...pressCoordinateProps(),
+    ...pressScrollStrategyProps(),
     ...pressDimensionPropsOptions(),
   },
   'YLayer',
@@ -131,21 +140,25 @@ export const YLayer = defineComponent({
 
     const scrim$ = ref<HTMLElement>();
     const content$ = ref<HTMLElement>();
+    const root$ = ref<HTMLElement>();
 
-    const { base, base$, baseEl, baseSlot } = useBase(props);
+    const { base, base$, baseEl, baseSlot, baseFromSlotEl } = useBase(props);
 
     const { themeClasses } = useLocalTheme(props);
     const { layerGroup, layerGroupState, getActiveLayers } = useLayerGroup();
     const { polyTransitionBindProps } = usePolyTransition(props);
     const { dimensionStyles } = useDimension(props);
-    const active = computed<boolean>({
+    const model = useModelDuplex(props);
+
+    const active = computed({
       get: (): boolean => {
-        return !!props.modelValue;
+        return !!model.value;
       },
       set: (v: boolean) => {
-        emit('update:modelValue', v);
+        if (!(v && props.disabled)) model.value = v;
       },
     });
+    const { contentEvents } = useContent(props, active);
     const finish = shallowRef(false);
     const hovered = ref(false);
 
@@ -159,6 +172,13 @@ export const YLayer = defineComponent({
       contentEl: content$,
       base,
       active,
+    });
+    useScrollStrategies(props, {
+      root: root$,
+      contentEl: content$,
+      active,
+      baseEl: base,
+      updateCoordinate,
     });
 
     function onClickComplementLayer(mouseEvent: MouseEvent) {
@@ -179,7 +199,8 @@ export const YLayer = defineComponent({
     function closeConditional(): boolean {
       return (
         (!props.openOnHover || (props.openOnHover && !hovered.value)) &&
-        active.value && finish.value
+        active.value &&
+        finish.value
       ); // TODO: && groupTopLevel.value;
     }
 
@@ -270,15 +291,19 @@ export const YLayer = defineComponent({
           <Teleport disabled={!layerGroup.value} to={layerGroup.value as any}>
             {rendered.value && (
               <div
-                class={{
-                  'y-layer': true,
-                  'y-layer--finish': finish.value,
-                  ...computedClass.value,
-                  [themeClasses.value ?? '']: true,
-                }}
+                class={[
+                  {
+                    'y-layer': true,
+                    'y-layer--finish': finish.value,
+                    'y-layer--contained': props.contained,
+                    ...computedClass.value,
+                  },
+                  themeClasses.value,
+                ]}
                 onMouseenter={onMouseenter}
                 onMouseleave={onMouseleave}
                 style={computedStyle.value}
+                ref={ root$ }
                 {...attrs}
               >
                 <Transition name="fade" appear>
@@ -311,6 +336,7 @@ export const YLayer = defineComponent({
                         ...props.contentStyles,
                       },
                     ]}
+                    {...contentEvents.value}
                     ref={content$}
                   >
                     {slots.default?.({ active: active.value })}
@@ -335,6 +361,7 @@ export const YLayer = defineComponent({
       content$,
       base$,
       baseEl,
+      baseFromSlotEl,
       polyTransitionBindProps,
       coordinateStyles,
       layerGroupState,
