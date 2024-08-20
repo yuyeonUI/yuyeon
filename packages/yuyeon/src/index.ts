@@ -53,6 +53,7 @@ export function init(options: any = defaultOptions) {
 
     Object.keys(components).forEach((componentName) => {
       const comp = components[componentName as keyof typeof components];
+      if (typeof comp === 'object')
       app.component(componentName, comp as Component);
     });
 
@@ -69,21 +70,39 @@ export function init(options: any = defaultOptions) {
 
     app.config.globalProperties.$yuyeon = yuyeon;
 
+
     nextTick(() => {
-      yuyeon.app = app._instance as any;
       yuyeon.root = app._container;
-      if (!yuyeon.root) {
-        throw new Error(`yuyeon: Can't found instance`);
+      yuyeon.app = app._instance as any;
+      if (yuyeon.root) {
+        yuyeon.root.classList.add('y-root');
+        yuyeon.root.setAttribute('data-y-root', '');
+        themeModule.init(yuyeon);
       }
-      const $el = yuyeon.root;
-      $el.classList.add('y-root');
-      $el.setAttribute('data-y-root', '');
-      themeModule.init(yuyeon);
     });
+
     if (options?.credit) {
       console.log(YUYEON_LOGO);
     }
-    const { unmount } = app;
+    const { unmount, mount } = app;
+    app.mount = (...args) => {
+      const vm = mount(...args)
+      if (!yuyeon.app) {
+        yuyeon.app = app._instance as any;
+      }
+      if (!yuyeon.root) {
+        nextTick(() => {
+          yuyeon.root = app._container;
+          if (yuyeon.root) {
+            yuyeon.root.classList.add('y-root');
+            yuyeon.root.setAttribute('data-y-root', '');
+            themeModule.init(yuyeon);
+          }
+        });
+      }
+      app.mount = mount
+      return vm
+    }
     app.unmount = () => {
       unmount();
       themeModule.scope.stop();

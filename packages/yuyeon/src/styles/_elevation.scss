@@ -7,8 +7,10 @@
   @each $level, $core-dimension in $core-shadow-dimension {
     $ambient-dimension: map.get($ambient-shadow-dimension, $level);
     $var: --y-elevation--level#{$level};
-    #{$var}: #{$core-dimension} rgba(var(--y-elevation-color), #{$core-shadow-opacity}), #{$ambient-dimension} rgba(var(--y-elevation-color), #{$ambient-shadow-opacity});
+
     .elevation-#{$level} {
+      #{$var}: #{$core-dimension} rgba(var(--y-elevation-color), #{$core-shadow-opacity}), #{$ambient-dimension} rgba(var(--y-elevation-color), #{$ambient-shadow-opacity});
+
       box-shadow: var(#{$var});
     }
   }
