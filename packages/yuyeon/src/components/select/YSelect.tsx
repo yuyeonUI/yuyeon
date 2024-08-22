@@ -186,6 +186,7 @@ export const YSelect = defineComponent({
 
     // Menu Contents
     function onClickItem(item: ListItem, e: MouseEvent) {
+      if (item.disabled) return;
       select(item);
       if (!props.multiple) {
         setTimeout(() => {
@@ -378,9 +379,11 @@ export const YSelect = defineComponent({
                               onClick={(e) => onClickItem(item, e)}
                               class={[
                                 {
-                                  'y-list-item--active': isSelected(item),
+                                  'y-list-item--active': isSelected(item)
                                 },
                               ]}
+                              disabled={item.disabled}
+                              v-show={!item.hide}
                             >
                               {{
                                 default: () =>

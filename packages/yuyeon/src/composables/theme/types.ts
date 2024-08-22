@@ -6,6 +6,7 @@ export interface ThemeOptions {
   themes: Record<string, ThemeDefinition>;
   palette?: PaletteOption;
   cspNonce?: string;
+  separation?: string;
 }
 
 export interface PaletteOption {

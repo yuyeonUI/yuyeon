@@ -111,6 +111,7 @@ export function createThemeModule(options: ThemeOptions) {
   });
 
   const styles = computed(() => {
+    const separationId = config.separation ? `#${config.separation}` : '';
     const lines = [];
     lines.push(
       ...cssClass(':root', cssVariables(computedPalette.value, 'palette')),
@@ -130,7 +131,7 @@ export function createThemeModule(options: ThemeOptions) {
           ...cssClass(
             `@media (prefers-color-scheme: ${themeScheme})`,
             cssClass(
-              `[data-theme-scheme='auto'][data-${themeScheme}-theme='${themeKey}']`,
+              `${separationId}[data-theme-scheme='auto'][data-${themeScheme}-theme='${themeKey}']`,
               cssVariables(records, 'theme'),
             ),
           ),
@@ -138,14 +139,14 @@ export function createThemeModule(options: ThemeOptions) {
       } else {
         lines.push(
           ...cssClass(
-            `[data-theme-scheme='${themeScheme}'][data-${themeScheme}-theme='${themeKey}']`,
+            `${separationId}[data-theme-scheme='${themeScheme}'][data-${themeScheme}-theme='${themeKey}']`,
             cssVariables(records, 'theme'),
           ),
         );
       }
 
       lines.push(
-        ...cssClass(`.y-theme--${themeKey}`, cssVariables(records, 'theme')),
+        ...cssClass(`${separationId} .y-theme--${themeKey}`, cssVariables(records, 'theme')),
       );
     }
     return lines.join('');
@@ -154,7 +155,7 @@ export function createThemeModule(options: ThemeOptions) {
   function install(app: App) {
     app.directive('theme', bindThemeClass);
 
-    let styleEl = document.getElementById('yuyeon-theme-palette');
+    let styleEl = document.getElementById('yuyeon-theme-palette' + `${config.separation ? '__' + config.separation : ''}`);
 
     watch(styles, updateStyleEl, { immediate: true });
 
@@ -162,7 +163,7 @@ export function createThemeModule(options: ThemeOptions) {
       if (typeof document !== 'undefined' && !styleEl) {
         const el = document.createElement('style');
         el.type = 'text/css';
-        el.id = 'yuyeon-theme-palette';
+        el.id = 'yuyeon-theme-palette' + `${config.separation ? '__' + config.separation : ''}`;
         if (options?.cspNonce) el.setAttribute('nonce', options.cspNonce);
         styleEl = el;
         document.head.appendChild(styleEl);
