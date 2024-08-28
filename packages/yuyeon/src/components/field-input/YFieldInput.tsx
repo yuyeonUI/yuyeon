@@ -1,18 +1,25 @@
 import type { PropType, SlotsType } from 'vue';
-import { computed, defineComponent, getCurrentInstance, nextTick, ref, toRef, watch } from 'vue';
-
-
+import {
+  computed,
+  defineComponent,
+  getCurrentInstance,
+  nextTick,
+  ref,
+  toRef,
+  watch,
+} from 'vue';
 
 import { useRender } from '../../composables/component';
 import { pressFocusPropsOptions, useFocus } from '../../composables/focus';
 import { chooseProps, propsFactory } from '../../util/vue-component';
 import { YIconClear } from '../icons/YIconClear';
-import { YInput, YInputDefaultSlotProps, pressYInputPropsOptions } from '../input';
-
-
+import {
+  YInput,
+  YInputDefaultSlotProps,
+  pressYInputPropsOptions,
+} from '../input';
 
 import './YFieldInput.scss';
-
 
 const NAME = 'y-field-input';
 
@@ -140,6 +147,7 @@ export const YFieldInput = defineComponent({
       inValue.value = '';
       displayValue.value = '';
       emit('update:modelValue', inValue.value);
+      emit('change', inValue.value);
     }
 
     function changeDisplay() {

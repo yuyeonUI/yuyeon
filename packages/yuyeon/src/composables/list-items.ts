@@ -49,8 +49,8 @@ export function refineListItem(
   props: Omit<ListItemProps, 'items'>,
   item: any,
 ): ListItem {
-  const hide = !!item.hide;
-  const disabled = !!item.disabled;
+  const hide = !!item?.hide;
+  const disabled = !!item?.disabled;
   const text = getPropertyFromItem(item, props.itemText, item);
   const value = props.returnItem
     ? item

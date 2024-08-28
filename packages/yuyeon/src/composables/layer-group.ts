@@ -1,5 +1,6 @@
 import {computed, getCurrentInstance, onBeforeUnmount, watch} from 'vue';
 import type { Ref, ComponentInternalInstance } from 'vue';
+import { useYuyeon } from '../index';
 
 export const Y_LAYER_GROUP_CLASS_NAME = 'y-layer-group';
 
@@ -7,12 +8,13 @@ const layerGroupState = new WeakMap<HTMLElement, Set<any>>();
 
 export function useLayerGroup(target?: Ref<string | Element>) {
   const vm = getCurrentInstance()!;
+  const yuyeon = useYuyeon();
 
   const layerGroup = computed<HTMLElement>(() => {
     const refTarget = target?.value;
     let targetEl: Element = document.body;
 
-    const rootEl = vm.root.vnode.el?.parentElement as HTMLElement;
+    const rootEl = yuyeon.root;
     if (rootEl) {
       targetEl = rootEl;
     }
