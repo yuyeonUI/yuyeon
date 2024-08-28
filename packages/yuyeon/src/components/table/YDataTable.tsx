@@ -28,6 +28,7 @@ import {
   provideSorting,
 } from './composibles/sorting';
 import { YDataTableSlotProps } from './types';
+import { useSortedItems } from './composibles/sorted-items';
 
 export const pressDataTableProps = propsFactory(
   {
@@ -66,7 +67,6 @@ export const YDataTable = defineComponent({
       enableSelect: toRef(props, 'enableSelect'),
     });
     const { items } = useItems(props, columns);
-
     const { toggleSort } = provideSorting({ sortBy, multiSort, page });
     const total = computed(() => items.value.length);
     const { startIndex, endIndex, pageLength, setPageSize, setPage } =
@@ -75,8 +75,9 @@ export const YDataTable = defineComponent({
         pageSize,
         total,
       });
+    const { sortedItems } = useSortedItems(props, items, sortBy);
     const { paginatedItems } = usePaginatedItems({
-      items,
+      items: sortedItems,
       startIndex,
       endIndex,
       pageSize,

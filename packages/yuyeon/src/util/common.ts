@@ -135,8 +135,15 @@ export function isObject(obj: unknown) {
   return obj !== null && (type === 'object' || type === 'function');
 }
 
-export function omit<T extends object, U extends Extract<keyof T, string>>(obj: T, excludes: U[]): Omit<T, U> {
+export function isEmpty(target: any) {
+  return target == null || target?.trim() === '';
+}
+
+export function omit<T extends object, U extends Extract<keyof T, string>>(
+  obj: T,
+  excludes: U[],
+): Omit<T, U> {
   const ret = { ...obj };
-  excludes.forEach(prop => delete ret[prop]);
+  excludes.forEach((prop) => delete ret[prop]);
   return ret;
 }
