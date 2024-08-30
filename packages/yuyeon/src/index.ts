@@ -53,8 +53,8 @@ export function init(options: any = defaultOptions) {
 
     Object.keys(components).forEach((componentName) => {
       const comp = components[componentName as keyof typeof components];
-      if (typeof comp === 'object')
-      app.component(componentName, comp as Component);
+      if (typeof comp === 'object' && 'name' in comp)
+        app.component(componentName, comp as Component);
     });
 
     app.directive('plate-wave', PlateWave);
@@ -69,7 +69,6 @@ export function init(options: any = defaultOptions) {
     app.provide(YUYEON_DATE_KEY, dateModule.instance);
 
     app.config.globalProperties.$yuyeon = yuyeon;
-
 
     nextTick(() => {
       yuyeon.root = app._container;
@@ -86,7 +85,7 @@ export function init(options: any = defaultOptions) {
     }
     const { unmount, mount } = app;
     app.mount = (...args) => {
-      const vm = mount(...args)
+      const vm = mount(...args);
       if (!yuyeon.app) {
         yuyeon.app = app._instance as any;
       }
@@ -100,9 +99,9 @@ export function init(options: any = defaultOptions) {
           }
         });
       }
-      app.mount = mount
-      return vm
-    }
+      app.mount = mount;
+      return vm;
+    };
     app.unmount = () => {
       unmount();
       themeModule.scope.stop();

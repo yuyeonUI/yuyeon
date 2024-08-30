@@ -257,6 +257,7 @@ export const YFieldInput = defineComponent({
                   min={attrs.min as number | string}
                   max={attrs.max as number | string}
                   style={[attrs?.style, { textAlign: props.inputAlign } as any]}
+                  size={(attrs.size ?? 1) as number}
                   onInput={onInput}
                   onFocus={onFocus}
                   onBlur={onBlur}
