@@ -12,6 +12,7 @@ export const pressYDividerPropsOptions = propsFactory(
 );
 
 export const YDivider = defineComponent({
+  name: 'YDivider',
   props: pressYDividerPropsOptions(),
   setup(props) {
     useRender(() => {
