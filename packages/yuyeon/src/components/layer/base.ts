@@ -72,7 +72,7 @@ export function useBase(props: BaseProps) {
       toEl = baseFromSlotEl.value;
     }
     baseEl.value = toEl;
-  });
+  }, { flush: 'post' });
 
   return {
     base$,
@@ -90,10 +90,15 @@ function getBase(selector: BaseType, vm: ComponentInternalInstance) {
 
   if (selector === 'parent') {
     let el = vm?.proxy?.$el?.parentNode;
-    while (el?.hasAttribute('data-base-parent')) {
+    let parentEl = el;
+    while (el) {
+      if (el?.hasAttribute('data-base-parent')) {
+        parentEl = el;
+        break;
+      }
       el = el.parentNode;
     }
-    ret = el;
+    ret = parentEl;
   }
   // Selector
   else if (typeof selector === 'string') {

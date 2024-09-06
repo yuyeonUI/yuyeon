@@ -1,4 +1,4 @@
-import { defineComponent, getCurrentInstance, h, onMounted } from 'vue';
+import { defineComponent, h } from 'vue';
 
 import './YApp.scss';
 
@@ -8,19 +8,9 @@ import './YApp.scss';
 export const YApp = defineComponent({
   name: 'YApp',
   setup(props, { slots }) {
-    // onMounted(() => {
-    //   const vm = getCurrentInstance()!;
-    //   if (vm.parent === vm.root) {
-    //     const rootEl = vm.root.vnode.el?.parentElement as HTMLElement;
-    //     if (rootEl) {
-    //       rootEl.classList.add('y-root');
-    //     }
-    //   }
-    // });
-
     return () =>
       h(
-        'y-app',
+        'div',
         { class: 'y-app' },
         h('div', { class: 'y-app__container' }, slots),
       );

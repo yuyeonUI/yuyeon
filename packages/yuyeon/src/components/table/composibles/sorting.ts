@@ -1,10 +1,15 @@
 import { toRef } from '@vue/runtime-core';
-import type { DeepReadonly, InjectionKey, PropType, Ref } from 'vue';
-import { inject, provide } from 'vue';
+import {
+  DeepReadonly,
+  InjectionKey,
+  PropType,
+  Ref,
+  inject,
+  provide,
+} from 'vue';
 
 import { useModelDuplex } from '../../../composables/communication';
 import { propsFactory } from '../../../util/vue-component';
-
 import type {
   DataTableProvideSortingData,
   InternalDataTableHeader,

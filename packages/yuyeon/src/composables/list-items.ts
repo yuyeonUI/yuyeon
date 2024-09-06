@@ -8,6 +8,8 @@ import { propsFactory } from '../util/vue-component';
 export interface ListItem<T = any> {
   value: any;
   text: string;
+  hide: boolean;
+  disabled: boolean;
   props: {
     [key: string]: any;
     value: any;
@@ -47,6 +49,8 @@ export function refineListItem(
   props: Omit<ListItemProps, 'items'>,
   item: any,
 ): ListItem {
+  const hide = !!item?.hide;
+  const disabled = !!item?.disabled;
   const text = getPropertyFromItem(item, props.itemText, item);
   const value = props.returnItem
     ? item
@@ -56,6 +60,8 @@ export function refineListItem(
   return {
     value,
     text,
+    hide,
+    disabled,
     props: {
       value,
       text,

@@ -49,7 +49,10 @@ export const YListItem = defineComponent({
         <ElTag
           class={[
             'y-list-item',
-            { 'y-list-item--pointer': clickable.value },
+            {
+              'y-list-item--pointer': clickable.value,
+              'y-list-item--disabled': props.disabled,
+            },
             themeClasses.value,
           ]}
           onClick={onClick}

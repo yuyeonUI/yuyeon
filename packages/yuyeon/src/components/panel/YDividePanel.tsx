@@ -12,6 +12,7 @@ import { useRender } from '../../composables/component';
 import './YDividePanel.scss';
 
 export const YDividePanel = defineComponent({
+  name: 'YDividePanel',
   setup(props, { slots }) {
     const contentRate = ref(50);
     const isResizing = ref(false);

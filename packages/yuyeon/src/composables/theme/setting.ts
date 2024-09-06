@@ -104,5 +104,6 @@ export function configureOptions(options?: ThemeOptions): any {
     theme: ['light', 'dark'],
     themes: { ...mergeDeep(defaultThemesValues, options.themes) },
     palette: { ...mergeDeep(defaultPalette, options.palette) },
+    separation: options?.separation,
   };
 }
