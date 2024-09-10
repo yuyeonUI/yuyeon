@@ -4,7 +4,7 @@ import { pressItemsPropsOptions } from '../../abstract/items';
 import { useModelDuplex } from '../../composables/communication';
 import { useRender } from '../../composables/component';
 import { pressCoordinateProps } from '../../composables/coordinate';
-import { polyTransitionPropOptions } from '../../composables/transition';
+import { pressPolyTransitionPropsOptions } from '../../composables/transition';
 import { getObjectValueByPath, omit } from '../../util/common';
 import {
   bindClasses,
@@ -33,10 +33,9 @@ export const pressYDropdownPropsOptions = propsFactory(
       default: '$dropdown',
     },
     ...pressItemsPropsOptions(),
-    transition: {
-      ...polyTransitionPropOptions.transition,
-      default: 'fade',
-    },
+    ...pressPolyTransitionPropsOptions({
+      transition: 'fade'
+    }),
   },
   'YDropdown',
 );

@@ -3,11 +3,12 @@ import { onBeforeUnmount } from 'vue';
 import { watch } from 'vue';
 
 import { getHtmlElement } from '../util/vue-component';
+import Environments from '../util/environments';
 
 export function useResizeObserver(callback?: ResizeObserverCallback) {
   const resizeObservedRef = ref<HTMLElement>();
   const contentRect = ref<DOMRectReadOnly>();
-  if (window) {
+  if (Environments.canUseResizeObserver) {
     const observer = new ResizeObserver((entries, observer) => {
       callback?.(entries, observer);
       if (!entries.length) return;

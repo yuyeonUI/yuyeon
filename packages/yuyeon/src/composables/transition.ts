@@ -7,15 +7,16 @@ import {
   computed,
   h,
 } from 'vue';
+import { propsFactory } from '../util';
 
-export const polyTransitionPropOptions = {
+export const pressPolyTransitionPropsOptions = propsFactory({
   transition: {
     type: [String, Object] as PropType<
       string | (TransitionProps & { is?: Component })
     >,
     default: 'slide-fade',
   },
-};
+}, 'PolyTransition');
 
 export function usePolyTransition(props: { transition: any }) {
   const polyTransitionBindProps = computed(() => {

@@ -33,7 +33,7 @@ import { pressThemePropsOptions, useLocalTheme } from '../../composables/theme';
 import { useLazy } from '../../composables/timing';
 import {
   PolyTransition,
-  polyTransitionPropOptions,
+  pressPolyTransitionPropsOptions,
   usePolyTransition,
 } from '../../composables/transition';
 import {
@@ -103,7 +103,7 @@ export const pressYLayerProps = propsFactory(
     },
     contained: Boolean,
     ...pressThemePropsOptions(),
-    ...polyTransitionPropOptions,
+    ...pressPolyTransitionPropsOptions(),
     ...pressBasePropsOptions(),
     ...pressContentPropsOptions(),
     ...pressCoordinateProps(),

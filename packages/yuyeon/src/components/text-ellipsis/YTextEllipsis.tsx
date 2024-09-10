@@ -53,7 +53,7 @@ export const YTextEllipsis = defineComponent({
       return (
         <span
           title={title.value}
-          class={['y-text-ellipsis', { overflowed: isOverflow }]}
+          class={['y-text-ellipsis', { overflowed: isOverflow.value }]}
         >
           <span ref={resizeObservedRef} class="y-text-ellipsis__origin">
             {props.text}

@@ -3,7 +3,7 @@ import { computed, defineComponent, ref, toRef, watch } from 'vue';
 
 import { useModelDuplex } from '../../composables/communication';
 import { useRender } from '../../composables/component';
-import { polyTransitionPropOptions } from '../../composables/transition';
+import { pressPolyTransitionPropsOptions } from '../../composables/transition';
 import { hasElementMouseEvent } from '../../util/dom';
 import { toKebabCase } from '../../util/string';
 import { bindClasses, chooseProps } from '../../util/vue-component';
@@ -48,10 +48,9 @@ export const YMenu = defineComponent({
   name: NAME,
   props: {
     ...YMenuPropOptions,
-    transition: {
-      ...polyTransitionPropOptions.transition,
-      default: 'fade',
-    },
+    ...pressPolyTransitionPropsOptions({
+      transition: 'fade'
+    }),
   },
   emits: ['update:modelValue', 'afterLeave', 'hoverContent'],
   slots: Object as SlotsType<{
