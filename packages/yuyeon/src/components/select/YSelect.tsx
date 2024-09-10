@@ -1,5 +1,12 @@
 import { shallowRef } from '@vue/runtime-core';
-import { PropType, SlotsType, nextTick, watch } from 'vue';
+import {
+  PropType,
+  SlotsType,
+  nextTick,
+  vShow,
+  watch,
+  withDirectives,
+} from 'vue';
 import { computed, defineComponent, mergeProps, onMounted, ref } from 'vue';
 
 import { useModelDuplex } from '../../composables/communication';
@@ -374,16 +381,15 @@ export const YSelect = defineComponent({
                               select(item);
                             },
                           };
-                          return (
+                          return withDirectives(
                             <YListItem
                               onClick={(e) => onClickItem(item, e)}
                               class={[
                                 {
-                                  'y-list-item--active': isSelected(item)
+                                  'y-list-item--active': isSelected(item),
                                 },
                               ]}
                               disabled={item.disabled}
-                              v-show={!item.hide}
                             >
                               {{
                                 default: () =>
@@ -397,7 +403,8 @@ export const YSelect = defineComponent({
                                   slots['item-trailing'] &&
                                   (() => slots['item-trailing']?.(itemProps)),
                               }}
-                            </YListItem>
+                            </YListItem>,
+                            [[vShow, !item.hide]],
                           );
                         })}
                       </YList>
