@@ -1,6 +1,8 @@
-import { defineComponent, h } from 'vue';
+import { h } from 'vue';
 
-export const YCardBody =  defineComponent({
+import { defineComponent } from '@/util/component';
+
+export const YCardBody = defineComponent({
   name: 'YCardBody',
   render() {
     return h('div', { class: 'y-card__body' }, this.$slots.default?.());

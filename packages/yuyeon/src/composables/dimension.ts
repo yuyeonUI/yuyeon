@@ -1,7 +1,7 @@
-import { ExtractPropTypes, PropType, computed } from 'vue';
+import { type ExtractPropTypes, type PropType, computed } from 'vue';
 
-import { toStyleSizeValue } from '../util/ui';
-import { propsFactory } from '../util/vue-component';
+import { propsFactory } from '@/util/component';
+import { toStyleSizeValue } from '@/util/ui';
 
 const dimensionPropsOptions = {
   minWidth: [Number, String] as PropType<number | string>,

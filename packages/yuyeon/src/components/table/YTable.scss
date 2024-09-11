@@ -1,6 +1,9 @@
 $table-cell-padding: 0 16px !default;
 $table-head-background: var(--y-theme-surface-variant, #dfe3eb) !default;
-$table-cell-border-bottom-color: rgba(var(--y-theme-outline-rgb), var(--y-theme-outline-opacity)) !default;
+$table-cell-border-bottom-color: rgba(
+  var(--y-theme-outline-rgb),
+  var(--y-theme-outline-opacity)
+) !default;
 
 .y-table {
   --y-table-border-bottom-color: #{$table-cell-border-bottom-color};
@@ -50,7 +53,8 @@ $table-cell-border-bottom-color: rgba(var(--y-theme-outline-rgb), var(--y-theme-
       > tbody,
       > tfoot {
         > tr {
-          > th, > td {
+          > th,
+          > td {
             padding: $table-cell-padding;
           }
         }
@@ -114,7 +118,8 @@ $table-cell-border-bottom-color: rgba(var(--y-theme-outline-rgb), var(--y-theme-
   }
 }
 
-.y-data-table-header--select, .y-data-table-data--select {
+.y-data-table-header--select,
+.y-data-table-data--select {
   > .y-icon-checkbox {
     &:not(&--disabled) {
       cursor: pointer;

@@ -1,10 +1,11 @@
-import { computed, defineComponent } from 'vue';
+import { computed } from 'vue';
 
-import { useModelDuplex } from '../../composables/communication';
-import { useRender } from '../../composables/component';
-import { useDate } from '../../composables/date';
-import { getRangeArr } from '../../util';
-import { propsFactory } from '../../util/vue-component';
+import { useModelDuplex } from '@/composables/communication';
+import { useRender } from '@/composables/component';
+import { useDate } from '@/composables/date';
+import { getRangeArr } from '@/util/common';
+import { defineComponent, propsFactory } from '@/util/component';
+
 import { YButton } from '../button';
 
 import './YMonthPicker.scss';
@@ -48,8 +49,8 @@ export const YMonthPicker = defineComponent({
         <div class={['y-month-picker']}>
           {months.value.map((month, index) => {
             const item = {
-              active: index === model.value
-            }
+              active: index === model.value,
+            };
             return (
               <div class={['y-month-picker__cell', 'y-month-picker__month']}>
                 <YButton

@@ -2,23 +2,24 @@ import type { CSSProperties, Ref } from 'vue';
 import { computed, nextTick, onScopeDispose, ref, watch } from 'vue';
 
 import {
-  Anchor,
+  type Anchor,
   flipAlign,
   flipCorner,
   flipSide,
   getAxis,
   parseAnchor,
-} from '../../util/anchor';
-import { clamp } from '../../util/common';
-import { $computed } from '../../util/reactivity';
-import { MutableRect, Rect, getOverflow } from '../../util/rect';
-import { getScrollParents } from '../../util/scroll';
+} from '@/util/anchor';
+import { clamp } from '@/util/common';
+import { $computed } from '@/util/reactivity';
+import { MutableRect, Rect, getOverflow } from '@/util/rect';
+import { getScrollParents } from '@/util/scroll';
 import {
   getBoundingPureRect,
   pixelCeil,
   pixelRound,
   toStyleSizeValue,
-} from '../../util/ui';
+} from '@/util/ui';
+
 import { CoordinateState } from './types';
 import { anchorToPoint, getOffset } from './utils/point';
 
@@ -167,8 +168,8 @@ export function applyLevitation(
         props.origin === 'overlap'
           ? parsedAnchor
           : props.origin === 'auto'
-          ? flipSide(parsedAnchor)
-          : parseAnchor(props.origin, false);
+            ? flipSide(parsedAnchor)
+            : parseAnchor(props.origin, false);
 
       // Some combinations of props may produce an invalid origin
       if (
@@ -276,8 +277,12 @@ export function applyLevitation(
             };
             const flip =
               key === 'x'
-                ? axis === 'y' ? flipAlign : flipSide
-                : axis === 'y' ? flipSide : flipAlign;
+                ? axis === 'y'
+                  ? flipAlign
+                  : flipSide
+                : axis === 'y'
+                  ? flipSide
+                  : flipAlign;
             newPlacement.anchor = flip(newPlacement.anchor);
             newPlacement.origin = flip(newPlacement.origin);
             const { overflows: newOverflows } = checkOverflow(newPlacement);

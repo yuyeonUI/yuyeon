@@ -1,8 +1,7 @@
-import { defineComponent } from 'vue';
-import type { PropType } from 'vue';
+import { type PropType } from 'vue';
 
-import { useRender } from '../../composables/component';
-import { propsFactory } from '../../util';
+import { useRender } from '@/composables/component';
+import { defineComponent, propsFactory } from '@/util/component';
 
 export const pressYDividerPropsOptions = propsFactory(
   {

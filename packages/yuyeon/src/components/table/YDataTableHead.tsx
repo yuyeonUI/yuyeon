@@ -1,15 +1,15 @@
-import { CSSProperties, defineComponent } from 'vue';
+import { type CSSProperties } from 'vue';
 
-import { useRender } from '../../composables/component';
-import { toStyleSizeValue } from '../../util/ui';
-import { propsFactory } from '../../util/vue-component';
+import { useRender } from '@/composables/component';
+import { defineComponent, propsFactory } from '@/util/component';
+import { toStyleSizeValue } from '@/util/ui';
+
+import { YIconCheckbox } from '../icons/YIconCheckbox';
 import { YIconSort } from '../icons/YIconSort';
 import { YDataTableCell } from './YDataTableCell';
 import { useHeader } from './composibles/header';
 import { useSelection } from './composibles/selection';
 import { useSorting } from './composibles/sorting';
-
-import { YIconCheckbox } from '../icons';
 import { InternalDataTableHeader } from './types';
 
 export const pressYDataTableHeadProps = propsFactory(

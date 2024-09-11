@@ -1,10 +1,9 @@
-import { PropType, defineComponent, ref } from 'vue';
+import { type PropType, ref } from 'vue';
 
-import { useRender } from '../../composables/component';
-import { toKebabCase } from '../../util/string';
+import { useRender } from '@/composables/component';
+import { defineComponent } from '@/util/component';
 
 const NAME = 'YBench';
-const KEBAB_NAME = toKebabCase(NAME);
 
 const YBenchPropOptions = {
   tag: {

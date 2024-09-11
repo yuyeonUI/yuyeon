@@ -1,7 +1,7 @@
-import { defineComponent, inject } from 'vue';
-import type { PropType, Ref } from 'vue';
+import { type PropType, type Ref, inject } from 'vue';
 
-import { useRender } from '../../composables/component';
+import { useRender } from '@/composables/component';
+import { defineComponent } from '@/util/component';
 
 export const YDataTableLayer = defineComponent({
   name: 'YDataTableLayer',

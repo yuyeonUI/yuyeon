@@ -1,9 +1,17 @@
-import { InjectionKey, PropType, Ref, computed, inject, provide } from 'vue';
+import {
+  type InjectionKey,
+  type PropType,
+  type Ref,
+  computed,
+  inject,
+  provide,
+} from 'vue';
 
-import { useModelDuplex } from '../../../composables/communication';
-import { deepEqual } from '../../../util';
-import { wrapInArray } from '../../../util/array';
-import { propsFactory } from '../../../util/vue-component';
+import { useModelDuplex } from '@/composables/communication';
+import { wrapInArray } from '@/util/array';
+import { deepEqual } from '@/util/common';
+import { propsFactory } from '@/util/component';
+
 import { DataTableProvideSelectionData } from '../types';
 import { DataTableItemsProps } from './items';
 

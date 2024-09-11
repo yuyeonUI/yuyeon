@@ -1,4 +1,6 @@
-import { PropType, defineComponent, h } from 'vue';
+import { type PropType, h } from 'vue';
+
+import { defineComponent } from '@/util/component';
 
 import { YIconCheckbox } from '../icons/YIconCheckbox';
 
@@ -108,8 +110,11 @@ export default defineComponent({
           />
           {this.$slots.icon ? (
             this.$slots.icon({ checked })
-          ) : iconComponent ? h(iconComponent) :
-            <YIconCheckbox></YIconCheckbox>}
+          ) : iconComponent ? (
+            h(iconComponent)
+          ) : (
+            <YIconCheckbox></YIconCheckbox>
+          )}
         </div>
       </>
     );

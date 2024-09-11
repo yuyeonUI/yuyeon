@@ -7,7 +7,7 @@ import type {
 } from 'vue-router';
 import { useLink as _useLink } from 'vue-router';
 
-import { EventProp, hasEventProp, propsFactory } from '../util';
+import { type EventProp, hasEventProp, propsFactory } from '@/util/component';
 
 export interface LinkProps {
   href: string | undefined;

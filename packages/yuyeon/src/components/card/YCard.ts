@@ -1,8 +1,8 @@
-import type { Directive, PropType, VNode } from 'vue';
-import { defineComponent, h, withDirectives } from 'vue';
+import { type PropType, h } from 'vue';
 
-import { useRender } from '../../composables';
-import { pressThemePropsOptions, useLocalTheme } from '../../composables/theme';
+import { useRender } from '@/composables/component';
+import { pressThemePropsOptions, useLocalTheme } from '@/composables/theme';
+import { defineComponent } from '@/util/component';
 
 import './YCard.scss';
 
@@ -21,7 +21,11 @@ export const YCard = defineComponent({
       h(
         'div',
         {
-          class: ['y-card', { 'y-card--outlined': props.outline }, themeClasses.value],
+          class: [
+            'y-card',
+            { 'y-card--outlined': props.outline },
+            themeClasses.value,
+          ],
         },
         slots.default?.(),
       ),

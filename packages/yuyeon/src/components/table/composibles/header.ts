@@ -9,8 +9,9 @@ import {
   watchEffect,
 } from 'vue';
 
-import { getRangeArr } from '../../../util/common';
-import { propsFactory } from '../../../util/vue-component';
+import { getRangeArr } from '@/util/common';
+import { propsFactory } from '@/util/component';
+
 import { type DataTableHeader, type InternalDataTableHeader } from '../types';
 
 export const pressDataTableHeader = propsFactory(

@@ -1,7 +1,7 @@
-import type { PropType, SlotsType } from 'vue';
 import {
+  type PropType,
+  type SlotsType,
   computed,
-  defineComponent,
   getCurrentInstance,
   nextTick,
   ref,
@@ -9,9 +9,10 @@ import {
   watch,
 } from 'vue';
 
-import { useRender } from '../../composables/component';
-import { pressFocusPropsOptions, useFocus } from '../../composables/focus';
-import { chooseProps, propsFactory } from '../../util/vue-component';
+import { useRender } from '@/composables/component';
+import { useFocus } from '@/composables/focus';
+import { chooseProps, defineComponent, propsFactory } from '@/util/component';
+
 import { YIconClear } from '../icons/YIconClear';
 import {
   YInput,

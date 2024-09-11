@@ -1,5 +1,6 @@
-import { mergeDeep } from '../../util/common';
-import { PaletteOption, ThemeOptions } from './types';
+import { mergeDeep } from '@/util/common';
+
+import type { PaletteOption, ThemeOptions } from './types';
 
 export const ThemeScheme = {
   light: 'light',

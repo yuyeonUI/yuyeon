@@ -4,7 +4,7 @@ import { SelectableItem } from '../composibles/selection';
 import type { DataTableCompareFn } from './common';
 import type { DataTableHeader, InternalDataTableHeader } from './header';
 import type { DataTableItem, ItemKeySlot } from './item';
-import type { RowProps, CellProps } from './row';
+import type { CellProps, RowProps } from './row';
 
 export type {
   ItemKeySlot,

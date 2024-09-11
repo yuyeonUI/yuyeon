@@ -1,9 +1,9 @@
-import { PropType, defineComponent, provide } from 'vue';
+import { type PropType, provide } from 'vue';
 
-import { useRender } from '../../composables/component';
-import { useResizeObserver } from '../../composables/resize-observer';
-import { toStyleSizeValue } from '../../util/ui';
-import { propsFactory } from '../../util/vue-component';
+import { useRender } from '@/composables/component';
+import { useResizeObserver } from '@/composables/resize-observer';
+import { defineComponent, propsFactory } from '@/util/component';
+import { toStyleSizeValue } from '@/util/ui';
 
 import './YTable.scss';
 
@@ -71,7 +71,7 @@ export const YTable = defineComponent({
         >
           {slots.top?.()}
           {slots.default ? (
-            <div ref={resizeObservedRef} class={['y-table__container']} >
+            <div ref={resizeObservedRef} class={['y-table__container']}>
               {slots.leading?.()}
               <div
                 ref={wrapperRef}

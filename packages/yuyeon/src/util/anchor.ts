@@ -1,4 +1,3 @@
-
 const includes = <T, A extends T>(
   array: ReadonlyArray<A>,
   item: T,
@@ -23,8 +22,8 @@ export type ParsedAnchor =
 /** Parse a raw anchor string into an object */
 export function parseAnchor(anchor: Anchor, isRtl: boolean) {
   let [side, align] = anchor.split(' ') as [
-      Tblock | Tinline | 'center',
-      Tblock | Tinline | 'center' | undefined,
+    Tblock | Tinline | 'center',
+    Tblock | Tinline | 'center' | undefined,
   ];
   if (!align) {
     align = includes(block, side)

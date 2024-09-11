@@ -1,14 +1,14 @@
 import {
-  ComponentInternalInstance,
-  ComponentPublicInstance,
-  PropType,
+  type ComponentInternalInstance,
+  type ComponentPublicInstance,
+  type PropType,
   computed,
   getCurrentInstance,
   ref,
   watchEffect,
 } from 'vue';
 
-import { propsFactory } from '../../util/vue-component';
+import { propsFactory } from '@/util/component';
 
 export type BaseType =
   | string
@@ -50,29 +50,32 @@ export function useBase(props: BaseProps) {
     return getBase(props.base, vm);
   });
 
-  watchEffect(() => {
-    if (!base$.value) {
-      if (!baseFromSlotEl.value && props.base && !Array.isArray(props.base)) {
-        baseEl.value = base.value;
+  watchEffect(
+    () => {
+      if (!base$.value) {
+        if (!baseFromSlotEl.value && props.base && !Array.isArray(props.base)) {
+          baseEl.value = base.value;
+          return;
+        }
+        baseEl.value = baseFromSlotEl.value;
         return;
       }
-      baseEl.value = baseFromSlotEl.value;
-      return;
-    }
-    let toEl = base$.value;
-    if (toEl.baseEl) {
-      toEl = toEl.baseEl;
-    }
-    if (base$.value?.$el) {
-      if (base$.value.$el.nodeType === Node.ELEMENT_NODE) {
-        toEl = base$.value.$el;
+      let toEl = base$.value;
+      if (toEl.baseEl) {
+        toEl = toEl.baseEl;
       }
-    }
-    if (toEl?.nodeType !== Node.ELEMENT_NODE) {
-      toEl = baseFromSlotEl.value;
-    }
-    baseEl.value = toEl;
-  }, { flush: 'post' });
+      if (base$.value?.$el) {
+        if (base$.value.$el.nodeType === Node.ELEMENT_NODE) {
+          toEl = base$.value.$el;
+        }
+      }
+      if (toEl?.nodeType !== Node.ELEMENT_NODE) {
+        toEl = baseFromSlotEl.value;
+      }
+      baseEl.value = toEl;
+    },
+    { flush: 'post' },
+  );
 
   return {
     base$,

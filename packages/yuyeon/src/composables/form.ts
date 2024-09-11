@@ -1,19 +1,21 @@
 import {
-  ComputedRef,
-  InjectionKey,
-  PropType,
-  Ref,
+  type ComputedRef,
+  type InjectionKey,
+  type PropType,
+  type Ref,
+  type VNode,
   computed,
   inject,
   provide,
   ref,
   shallowRef,
-  toRef, VNode,
+  toRef,
 } from 'vue';
 
-import { EventProp, propsFactory } from '../util/vue-component';
+import { type EventProp, propsFactory } from '@/util/component';
+
 import { useModelDuplex } from './communication';
-import { ValidationProps } from './validation';
+import { type ValidationProps } from './validation';
 
 export interface FormInput {
   id: number | string;

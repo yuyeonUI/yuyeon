@@ -1,13 +1,12 @@
-import { getObjectValueByPath } from '../../util/common';
-
 import { CandidateKey } from '../../types';
+import { getObjectValueByPath } from '../../util/common';
 import { TreeviewFilterFn } from './types';
 
 export function getKeys(items: any[], itemKey: string, childrenKey: string) {
   const keys: CandidateKey[] = [];
   const remains: any[] = items.slice();
 
-  while(remains.length > 0) {
+  while (remains.length > 0) {
     const item = remains.splice(0, 1);
     const key = getObjectValueByPath(item, itemKey);
     keys.push(key);

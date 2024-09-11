@@ -1,21 +1,22 @@
 import {
-  PropType,
-  SlotsType,
-  VNodeArrayChildren,
+  type PropType,
+  type SlotsType,
+  type VNodeArrayChildren,
   computed,
-  defineComponent,
   getCurrentInstance,
-  h,
   inject,
   mergeProps,
   onBeforeMount,
-  ref, resolveComponent,
+  ref,
+  resolveComponent,
 } from 'vue';
 
-import { pressItemsPropsOptions } from '../../abstract/items';
-import { useRender } from '../../composables/component';
-import { getObjectValueByPath } from '../../util/common';
-import { propsFactory } from '../../util/vue-component';
+import { pressItemsPropsOptions } from '@/abstract/items';
+import { useRender } from '@/composables/component';
+import { getObjectValueByPath } from '@/util/common';
+import { defineComponent } from '@/util/component';
+import { propsFactory } from '@/util/component';
+
 import { YButton } from '../button';
 import { YIconCheckbox, YIconExpand } from '../icons';
 import { YPlate } from '../plate';
@@ -81,7 +82,9 @@ export const YTreeViewNode = defineComponent({
     const immediate = ref(false);
 
     const children = computed(() => {
-      return (getObjectValueByPath(props.item, props.itemChildren as string) ?? []).slice();
+      return (
+        getObjectValueByPath(props.item, props.itemChildren as string) ?? []
+      ).slice();
     });
 
     const imLeaf = computed(() => children.value.length < 1);
@@ -146,11 +149,17 @@ export const YTreeViewNode = defineComponent({
     }
 
     function onMouseenterContainer(e: MouseEvent) {
-      props.onMouseenterContainer?.(e, { ...slotProps.value, item: props.item });
+      props.onMouseenterContainer?.(e, {
+        ...slotProps.value,
+        item: props.item,
+      });
     }
 
     function onMouseleaveContainer(e: MouseEvent) {
-      props.onMouseleaveContainer?.(e, { ...slotProps.value, item: props.item });
+      props.onMouseleaveContainer?.(e, {
+        ...slotProps.value,
+        item: props.item,
+      });
     }
 
     function onMousemoveContainer(e: MouseEvent) {

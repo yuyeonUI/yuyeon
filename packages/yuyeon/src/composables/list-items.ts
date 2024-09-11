@@ -1,9 +1,8 @@
-import type { ExtractPropTypes, Ref } from 'vue';
-import { computed } from 'vue';
+import { type ExtractPropTypes, computed } from 'vue';
 
-import { pressItemsPropsOptions } from '../abstract/items';
-import { deepEqual, getPropertyFromItem } from '../util/common';
-import { propsFactory } from '../util/vue-component';
+import { pressItemsPropsOptions } from '@/abstract/items';
+import { deepEqual, getPropertyFromItem } from '@/util/common';
+import { propsFactory } from '@/util/component';
 
 export interface ListItem<T = any> {
   value: any;

@@ -1,7 +1,8 @@
-import { Ref, computed, unref } from 'vue';
+import { type Ref, computed, unref } from 'vue';
 
-import { useI18n } from '../../../composables/i18n';
-import { getObjectValueByPath, isEmpty } from '../../../util';
+import { useI18n } from '@/composables/i18n';
+import { getObjectValueByPath, isEmpty } from '@/util/common';
+
 import type { SortOption } from '../types';
 
 export function useSortedItems(

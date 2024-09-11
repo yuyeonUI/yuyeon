@@ -1,4 +1,4 @@
-import { Ref, computed, ref, watch, MaybeRef, unref } from 'vue';
+import { type MaybeRef, type Ref, computed, ref, unref, watch } from 'vue';
 
 export function useLazy(eager: Ref<boolean | undefined>, updated: Ref<any>) {
   const tick = ref(false);
@@ -80,7 +80,7 @@ export function useTimer(
     reset,
     drift,
     isWork,
-  }
+  };
 }
 
 type DelayType = 'closeDelay' | 'openDelay';
@@ -116,4 +116,3 @@ export function useDelay(props: any, callback?: (active: boolean) => void) {
     startCloseDelay: generateDelay('closeDelay'),
   };
 }
-

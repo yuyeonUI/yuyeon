@@ -1,16 +1,11 @@
-import {
-  PropType,
-  SlotsType,
-  defineComponent,
-  vShow,
-  withDirectives,
-} from 'vue';
+import { type PropType, type SlotsType, vShow, withDirectives } from 'vue';
 
-import { useRender } from '../../composables/component';
-import { useI18n } from '../../composables/i18n';
-import { IconValue } from '../../composables/icon';
-import { PolyTransition } from '../../composables/transition';
-import { propsFactory } from '../../util/vue-component';
+import { useRender } from '@/composables/component';
+import { useI18n } from '@/composables/i18n';
+import { IconValue } from '@/composables/icon';
+import { PolyTransition } from '@/composables/transition';
+import { defineComponent, propsFactory } from '@/util/component';
+
 import { YIcon } from '../icon/YIcon';
 
 import './YBadge.scss';

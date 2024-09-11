@@ -1,10 +1,11 @@
-import { PropType, computed, defineComponent, ref } from 'vue';
+import { type PropType, computed, ref } from 'vue';
 
-import { useRender } from '../../composables/component';
-import { IconValue, useIcon } from '../../composables/icon';
-import { pressThemePropsOptions, useLocalTheme } from '../../composables/theme';
-import { toStyleSizeValue } from '../../util';
-import { propsFactory } from '../../util/vue-component';
+import { useRender } from '@/composables/component';
+import { IconValue, useIcon } from '@/composables/icon';
+import { pressThemePropsOptions, useLocalTheme } from '@/composables/theme';
+import { defineComponent } from '@/util/component';
+import { propsFactory } from '@/util/component';
+import { toStyleSizeValue } from '@/util/ui';
 
 import './YIcon.scss';
 

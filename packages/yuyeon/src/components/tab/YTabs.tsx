@@ -1,9 +1,10 @@
-import { PropType, computed, defineComponent } from 'vue';
+import { type PropType, computed } from 'vue';
 
-import { pressChoicePropsOptions, useChoice } from '../../composables/choice';
-import { useRender } from '../../composables/component';
-import { useResizeObserver } from '../../composables/resize-observer';
-import { propsFactory } from '../../util/vue-component';
+import { pressChoicePropsOptions, useChoice } from '@/composables/choice';
+import { useRender } from '@/composables/component';
+import { useResizeObserver } from '@/composables/resize-observer';
+import { defineComponent, propsFactory } from '@/util/component';
+
 import { YTab } from './YTab';
 import { Y_TABS_KEY } from './shared';
 import { YTabPropItem } from './types';

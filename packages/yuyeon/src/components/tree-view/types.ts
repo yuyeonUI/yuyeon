@@ -1,5 +1,6 @@
-import { ComponentPublicInstance } from 'vue';
-import { CandidateKey } from "../../types";
+import { type ComponentPublicInstance } from 'vue';
+
+import type { CandidateKey } from '@/types';
 
 export interface NodeState {
   childKeys: CandidateKey[];
@@ -14,4 +15,8 @@ export interface NodeState {
   expanded: false;
 }
 
-export type TreeviewFilterFn = (item: any, search: string, itemText: string) => boolean;
+export type TreeviewFilterFn = (
+  item: any,
+  search: string,
+  itemText: string,
+) => boolean;

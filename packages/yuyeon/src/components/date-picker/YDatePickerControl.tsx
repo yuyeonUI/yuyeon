@@ -1,8 +1,9 @@
-import { computed, defineComponent } from 'vue';
 import type { PropType } from 'vue';
+import { computed } from 'vue';
 
-import { useRender } from '../../composables/component';
-import { propsFactory } from '../../util/vue-component';
+import { useRender } from '@/composables/component';
+import { defineComponent, propsFactory } from '@/util/component';
+
 import { YButton } from '../button';
 import { YIcon } from '../icon';
 

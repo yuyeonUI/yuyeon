@@ -1,16 +1,18 @@
-import { PropType, SlotsType, defineComponent, mergeProps } from 'vue';
+import { type PropType, type SlotsType, mergeProps } from 'vue';
 
-import { pressItemsPropsOptions } from '../../abstract/items';
-import { useModelDuplex } from '../../composables/communication';
-import { useRender } from '../../composables/component';
-import { pressCoordinateProps } from '../../composables/coordinate';
-import { pressPolyTransitionPropsOptions } from '../../composables/transition';
-import { getObjectValueByPath, omit } from '../../util/common';
+import { pressItemsPropsOptions } from '@/abstract/items';
+import { useModelDuplex } from '@/composables/communication';
+import { useRender } from '@/composables/component';
+import { pressCoordinateProps } from '@/composables/coordinate';
+import { pressPolyTransitionPropsOptions } from '@/composables/transition';
+import { getObjectValueByPath, omit } from '@/util/common';
 import {
   bindClasses,
   chooseProps,
+  defineComponent,
   propsFactory,
-} from '../../util/vue-component';
+} from '@/util/component';
+
 import { YButton } from '../button';
 import { YCard } from '../card';
 import { YIcon, YIconIconProp } from '../icon';
@@ -18,6 +20,7 @@ import { YList, YListItem } from '../list';
 import { YMenu, YMenuPropOptions } from '../menu';
 
 import './YDropdown.scss';
+
 
 export const pressYDropdownPropsOptions = propsFactory(
   {
@@ -34,7 +37,7 @@ export const pressYDropdownPropsOptions = propsFactory(
     },
     ...pressItemsPropsOptions(),
     ...pressPolyTransitionPropsOptions({
-      transition: 'fade'
+      transition: 'fade',
     }),
   },
   'YDropdown',

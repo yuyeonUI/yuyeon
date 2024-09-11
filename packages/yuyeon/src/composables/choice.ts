@@ -19,13 +19,14 @@ import {
   watch,
 } from 'vue';
 
-import { wrapInArray } from '../util/array';
-import { deepEqual } from '../util/common';
+import { wrapInArray } from '@/util/array';
+import { deepEqual } from '@/util/common';
 import {
   findChildrenWithProvide,
   getUid,
   propsFactory,
-} from '../util/vue-component';
+} from '@/util/component';
+
 import { useModelDuplex } from './communication';
 
 export interface ChoiceItem {

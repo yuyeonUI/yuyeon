@@ -1,5 +1,5 @@
-import { MutableRect } from '../../../util/rect';
-import { ParsedAnchor } from '../../../util/anchor';
+import { type ParsedAnchor } from '@/util/anchor';
+import { type MutableRect } from '@/util/rect';
 
 type Point = { x: number; y: number };
 declare class As<T extends string> {
@@ -51,10 +51,10 @@ export function anchorToPoint(
       align === 'left'
         ? 0
         : align === 'center'
-        ? box.width / 2
-        : align === 'right'
-        ? box.width
-        : align;
+          ? box.width / 2
+          : align === 'right'
+            ? box.width
+            : align;
     const y: number =
       side === 'top' ? 0 : side === 'bottom' ? box.height : side;
 
@@ -67,10 +67,10 @@ export function anchorToPoint(
       align === 'top'
         ? 0
         : align === 'center'
-        ? box.height / 2
-        : align === 'bottom'
-        ? box.height
-        : align;
+          ? box.height / 2
+          : align === 'bottom'
+            ? box.height
+            : align;
 
     return elementToViewport({ x, y } as ElementPoint, box);
   }

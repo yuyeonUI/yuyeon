@@ -1,5 +1,3 @@
-import { ThemeScheme } from "./setting";
-
 export interface ThemeOptions {
   scheme: 'light' | 'dark' | 'auto';
   theme: [string, string?];

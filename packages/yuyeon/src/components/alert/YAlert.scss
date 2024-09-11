@@ -25,7 +25,8 @@
     position: relative;
   }
 
-  &__leading, &__trailing {
+  &__leading,
+  &__trailing {
     flex: 0 0 auto;
     position: relative;
   }
@@ -71,6 +72,4 @@
   @each $name in $semantics {
     @include defineSemantic($name);
   }
-
-
 }

@@ -1,13 +1,6 @@
-import {
-  CSSProperties,
-  computed,
-  defineComponent,
-  ref,
-  toRef,
-  watch,
-} from 'vue';
+import { type CSSProperties, computed, defineComponent, ref, watch } from 'vue';
 
-import { useRender } from '../../composables/component';
+import { useRender } from '@/composables/component';
 
 import './YDividePanel.scss';
 

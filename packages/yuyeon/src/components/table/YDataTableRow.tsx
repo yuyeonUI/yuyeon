@@ -1,8 +1,10 @@
-import { PropType, computed, defineComponent, ref } from 'vue';
+import { type PropType, computed } from 'vue';
 
-import { useRender } from '../../composables/component';
-import { getPropertyFromItem } from '../../util/common';
-import { bindClasses, propsFactory } from '../../util/vue-component';
+import { useRender } from '@/composables/component';
+import { getPropertyFromItem } from '@/util/common';
+import { defineComponent } from '@/util/component';
+import { propsFactory } from '@/util/component';
+
 import { YIconCheckbox } from '../icons';
 import { YDataTableCell } from './YDataTableCell';
 import { useHeader } from './composibles/header';

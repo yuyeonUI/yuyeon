@@ -9,7 +9,9 @@
     padding: 0 8px;
     min-height: 2rem;
     border-radius: 8px;
-    transition: all 180ms ease-in, border-radius 300ms 100ms ease-in-out;
+    transition:
+      all 180ms ease-in,
+      border-radius 300ms 100ms ease-in-out;
 
     &:hover {
       background: rgba(124, 124, 124, 0.14);

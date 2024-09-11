@@ -1,9 +1,8 @@
-import { defineComponent } from 'vue';
-
-import { hasOwnProperty } from '../../util/common';
+import { rgbFromHex } from '@/util/color';
+import { hasOwnProperty } from '@/util/common';
+import { defineComponent } from '@/util/component';
 
 import './YChip.scss';
-import { rgbFromHex } from "../../util/color";
 
 export const YChip = defineComponent({
   name: 'YChip',
@@ -59,9 +58,7 @@ export const YChip = defineComponent({
     const { classes, styles } = this;
     return (
       <span class={classes} style={styles}>
-        <span class="y-chip__content">
-          {this.$slots.default?.()}
-        </span>
+        <span class="y-chip__content">{this.$slots.default?.()}</span>
       </span>
     );
   },

@@ -1,31 +1,36 @@
-import { shallowRef } from '@vue/runtime-core';
 import {
-  PropType,
-  SlotsType,
+  type PropType,
+  type SlotsType,
+  computed,
+  mergeProps,
   nextTick,
+  onMounted,
+  ref,
+  shallowRef,
   vShow,
   watch,
   withDirectives,
 } from 'vue';
-import { computed, defineComponent, mergeProps, onMounted, ref } from 'vue';
 
-import { useModelDuplex } from '../../composables/communication';
-import { useRender } from '../../composables/component';
-import { pressCoordinateProps } from '../../composables/coordinate';
-import { useI18n } from '../../composables/i18n';
+import { useModelDuplex } from '@/composables/communication';
+import { useRender } from '@/composables/component';
+import { pressCoordinateProps } from '@/composables/coordinate';
+import { useI18n } from '@/composables/i18n';
 import {
   ListItem,
   pressListItemsPropsOptions,
   useItems,
-} from '../../composables/list-items';
-import { getScrollParent } from '../../util';
-import { wrapInArray } from '../../util/array';
-import { deepEqual, getObjectValueByPath, omit } from '../../util/common';
+} from '@/composables/list-items';
+import { wrapInArray } from '@/util/array';
+import { deepEqual, getObjectValueByPath, omit } from '@/util/common';
 import {
   chooseProps,
+  defineComponent,
   getHtmlElement,
   propsFactory,
-} from '../../util/vue-component';
+} from '@/util/component';
+import { getScrollParent } from '@/util/scroll';
+
 import { YCard } from '../card';
 import { YFieldInput, pressYFieldInputPropsOptions } from '../field-input';
 import { YIcon, YIconIconProp } from '../icon';

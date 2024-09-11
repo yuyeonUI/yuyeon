@@ -1,12 +1,12 @@
-import { computed, defineComponent, ref } from 'vue';
-import type { PropType } from 'vue';
+import { type PropType, computed, ref } from 'vue';
 
-import { useModelDuplex } from '../../composables/communication';
-import { useRender } from '../../composables/component';
-import { useDate } from '../../composables/date';
-import { useI18n } from '../../composables/i18n';
-import { wrapInArray } from '../../util';
-import { propsFactory } from '../../util/vue-component';
+import { useModelDuplex } from '@/composables/communication';
+import { useRender } from '@/composables/component';
+import { useDate } from '@/composables/date';
+import { useI18n } from '@/composables/i18n';
+import { wrapInArray } from '@/util/array';
+import { defineComponent, propsFactory } from '@/util/component';
+
 import { YButton } from '../button';
 
 import './YDateCalendar.scss';
@@ -328,8 +328,8 @@ export const YDateCalendar = defineComponent({
                                 item.selected
                                   ? 'filled'
                                   : item.today
-                                  ? 'outlined'
-                                  : 'text',
+                                    ? 'outlined'
+                                    : 'text',
                               ].join(',')}
                               {...slotProps.props}
                             >

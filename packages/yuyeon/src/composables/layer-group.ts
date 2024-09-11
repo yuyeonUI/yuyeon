@@ -1,6 +1,7 @@
-import {computed, getCurrentInstance, onBeforeUnmount, watch} from 'vue';
-import type { Ref, ComponentInternalInstance } from 'vue';
-import { useYuyeon } from '../index';
+import { computed, getCurrentInstance, onBeforeUnmount, watch } from 'vue';
+import type { ComponentInternalInstance, Ref } from 'vue';
+
+import { useYuyeon } from '@/index';
 
 export const Y_LAYER_GROUP_CLASS_NAME = 'y-layer-group';
 

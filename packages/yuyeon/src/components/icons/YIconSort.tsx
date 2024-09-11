@@ -1,4 +1,6 @@
-import { PropType, defineComponent } from 'vue';
+import { type PropType } from 'vue';
+
+import { defineComponent } from '@/util/component';
 
 import './YIconSort.scss';
 

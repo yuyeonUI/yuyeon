@@ -10,7 +10,7 @@ export * from './rect';
 export * from './anchor';
 export * from './scroll';
 export * from './frame-scheduler';
-export * from './vue-component';
+export * from './component';
 export * from './reactivity';
 export * from './color';
 export * from './date';

@@ -1,32 +1,29 @@
-import { shallowRef } from '@vue/runtime-core';
 import {
+  type CSSProperties,
+  type ImgHTMLAttributes,
+  type PropType,
+  type SlotsType,
   computed,
-  defineComponent,
   getCurrentInstance,
   nextTick,
   onBeforeMount,
   onBeforeUnmount,
   ref,
+  shallowRef,
   vShow,
   watch,
   withDirectives,
 } from 'vue';
-import type {
-  CSSProperties,
-  ImgHTMLAttributes,
-  PropType,
-  SlotsType,
-} from 'vue';
 
-import { useRender } from '../../composables/component';
-import { pressDimensionPropsOptions } from '../../composables/dimension';
+import { useRender } from '@/composables/component';
+import { pressDimensionPropsOptions } from '@/composables/dimension';
 import {
   PolyTransition,
   pressPolyTransitionPropsOptions,
   usePolyTransition,
-} from '../../composables/transition';
-import Environments from '../../util/environments';
-import { propsFactory } from '../../util/vue-component';
+} from '@/composables/transition';
+import { propsFactory, defineComponent } from '@/util/component';
+import Environments from '@/util/environments';
 
 import './YImg.scss';
 
