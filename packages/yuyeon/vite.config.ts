@@ -35,4 +35,12 @@ export default defineConfig({
       exclude: ['src/vite-env.d.ts'],
     }),
   ],
+  resolve: {
+    alias: [
+      {
+        find: '@/',
+        replacement: `${resolve('./src')}/`,
+      },
+    ],
+  },
 });
