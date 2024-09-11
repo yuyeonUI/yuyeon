@@ -10,7 +10,7 @@ import {
 
 import { useModelDuplex } from '../../composables/communication';
 import { useRender } from '../../composables/component';
-import { polyTransitionPropOptions } from '../../composables/transition';
+import { pressPolyTransitionPropsOptions } from '../../composables/transition';
 import { omit } from '../../util';
 import { bindClasses, chooseProps } from '../../util/vue-component';
 import { YLayer, pressYLayerProps } from '../layer';
@@ -47,10 +47,9 @@ export const YTooltip = defineComponent({
       align: 'center',
       offset: 8,
     }),
-    transition: {
-      ...polyTransitionPropOptions.transition,
-      default: 'fade',
-    },
+    ...pressPolyTransitionPropsOptions({
+      transition: 'fade'
+    }),
   },
   emits: ['update:modelValue'],
   setup(props, { slots, emit, expose }) {

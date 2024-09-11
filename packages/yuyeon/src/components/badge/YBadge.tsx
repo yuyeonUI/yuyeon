@@ -1,4 +1,10 @@
-import { PropType, SlotsType, defineComponent } from 'vue';
+import {
+  PropType,
+  SlotsType,
+  defineComponent,
+  vShow,
+  withDirectives,
+} from 'vue';
 
 import { useRender } from '../../composables/component';
 import { useI18n } from '../../composables/i18n';
@@ -45,6 +51,7 @@ export const YBadge = defineComponent({
   }>,
   setup(props, { slots }) {
     const { t } = useI18n();
+
     useRender(() => {
       const ElTag = props.tag as keyof HTMLElementTagNameMap;
       const value = Number(props.content);
@@ -52,8 +59,8 @@ export const YBadge = defineComponent({
         !props.max || isNaN(value)
           ? props.content
           : value <= +props.max
-          ? value
-          : `${props.max}+`;
+            ? value
+            : `${props.max}+`;
       return (
         <ElTag
           class={[
@@ -72,22 +79,24 @@ export const YBadge = defineComponent({
               is={props.transition}
               transitionProps={{ name: props.transition }}
             >
-              <span
-                v-show={!props.hide}
-                class={['y-badge__badge']}
-                aria-atomic="true"
-                aria-label={t(props.label, value)}
-                aria-live="polite"
-                role="status"
-              >
-                {props.dot ? undefined : slots.badge ? (
-                  slots.badge?.()
-                ) : props.icon ? (
-                  <YIcon icon={props.icon} />
-                ) : (
-                  content
-                )}
-              </span>
+              {withDirectives(
+                <span
+                  class={['y-badge__badge']}
+                  aria-atomic="true"
+                  aria-label={t(props.label, value)}
+                  aria-live="polite"
+                  role="status"
+                >
+                  {props.dot ? undefined : slots.badge ? (
+                    slots.badge?.()
+                  ) : props.icon ? (
+                    <YIcon icon={props.icon} />
+                  ) : (
+                    content
+                  )}
+                </span>,
+                [[vShow, !props.hide]],
+              )}
             </PolyTransition>
           </div>
         </ElTag>

@@ -1,0 +1,31 @@
+.y-img {
+  z-index: 0;
+
+  .y-img__img,
+  .y-img__placeholder {
+    z-index: -1;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+  }
+
+  .y-img__img {
+    &--contain {
+      object-fit: contain;
+    }
+
+    &--cover {
+      object-fit: cover;
+    }
+
+    &--fill {
+      object-fit: fill;
+    }
+
+    &--scale-down {
+      object-fit: scale-down;
+    }
+  }
+}

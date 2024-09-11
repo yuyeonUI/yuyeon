@@ -195,8 +195,10 @@ export const YDialog = defineComponent({
           document.documentElement.classList.remove('y-dialog--prevent-scroll');
           root$.style.top = '';
           root$.style.left = '';
-          document.documentElement.scrollTop = tempScrollTop.value;
-          document.documentElement.scrollLeft = tempScrollLeft.value;
+          requestAnimationFrame(() => {
+            document.documentElement.scrollTop = tempScrollTop.value;
+            document.documentElement.scrollLeft = tempScrollLeft.value;
+          });
         }
       }
     }
