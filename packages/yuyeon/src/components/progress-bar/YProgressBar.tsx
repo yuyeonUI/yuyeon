@@ -1,5 +1,6 @@
-import { type PropType, type StyleValue } from 'vue';
+import { type PropType, computed, shallowRef } from 'vue';
 
+import { useRender } from '@/composables';
 import { useProgress } from '@/composables/progress';
 import { isColorValue } from '@/util/color';
 import { defineComponent } from '@/util/component';
@@ -40,89 +41,71 @@ export const YProgressBar = defineComponent({
     indeterminate: Boolean,
     reverse: Boolean,
   },
-  setup(props) {
-    const { numValue } = useProgress(props);
+  setup(props, { slots }) {
+    const { numValue, delta } = useProgress(props);
 
-    return {
-      numValue,
-    };
-  },
-  data() {
-    return {
-      delta: 0,
-    };
-  },
-  computed: {
-    classes(): Record<string, boolean> {
+    const classes = computed(() => {
       let noTransition = false;
-      if (this.noRewindTransition && this.delta < 0) {
+      if (props.noRewindTransition && delta.value < 0) {
         noTransition = true;
       }
+
       return {
         'y-progress--no-trans': noTransition,
-        'y-progress--outlined': !!this.outlined,
-        'y-progress--indeterminate': !!this.indeterminate,
-        'y-progress-bar--rounded': !!this.rounded,
-        'y-progress-bar--reverse': !!this.reverse,
+        'y-progress--outlined': props.outlined,
+        'y-progress--indeterminate': props.indeterminate,
+        'y-progress-bar--rounded': props.rounded,
+        'y-progress-bar--reverse': props.reverse,
       };
-    },
-    leadColor(): string {
-      let color = this.color ?? '';
+    });
+
+    const leadColor = computed(() => {
+      let color = props.color ?? '';
       if (!isColorValue(color)) {
         color = `var(--y-theme-${color})`;
       }
       return color;
-    },
-    styles(): StyleValue {
+    });
+
+    const styles = computed(() => {
       let minWidth;
-      if (this.innerText && this.numValue < 5 && this.numValue > 0) {
+      if (props.innerText && numValue.value < 5 && numValue.value > 0) {
         minWidth = '2rem';
       }
       return {
-        width: `${this.numValue}%`,
+        width: `${numValue.value}%`,
         minWidth,
       };
-    },
-  },
-  render() {
-    const {
-      classes,
-      numValue,
-      height,
-      outlineColor,
-      textColor,
-      styles,
-      innerText,
-    } = this;
-    const slots = this.$slots;
-    return (
+    });
+
+    useRender(() => (
       <div
-        class={{ 'y-progress y-progress-bar': true, ...classes }}
+        class={{ 'y-progress y-progress-bar': true, ...classes.value }}
         role="progressbar"
         aria-valuemin="0"
         aria-valuemax="100"
-        aria-valuenow={numValue}
+        aria-valuenow={numValue.value}
         style={{
           '--y-progress-bar__height':
-            height !== undefined ? `${height}px` : undefined,
+            props.height !== undefined ? `${props.height}px` : undefined,
           '--y-progress-bar__outline-color':
-            outlineColor !== undefined ? outlineColor : undefined,
-          '--y-progress-bar__color': this.leadColor,
-          '--y-progress-bar__value': this.numValue,
+            props.outlineColor !== undefined ? props.outlineColor : undefined,
+          '--y-progress-bar__color': leadColor.value,
+          '--y-progress-bar__value': numValue.value,
         }}
       >
         <div class="y-progress__track"></div>
         <div class="y-progress__tube">
-          <div class="y-progress__lead" style={styles}>
+          <div class="y-progress__lead" style={styles.value}>
             {slots['lead-inner']
               ? slots['lead-inner']()
-              : innerText && (
+              : props.innerText && (
                   <div
                     class={{
                       'y-progress__lead-inner': true,
-                      'y-progress__lead-inner--fixed': numValue < 3,
+                      'y-progress__lead-inner--fixed': numValue.value < 3,
                     }}
-                    style={{ color: textColor }}
+                    style={{ color: props.textColor }}
                   >
                     <span>{numValue} %</span>
                   </div>
@@ -130,7 +113,12 @@ export const YProgressBar = defineComponent({
           </div>
         </div>
       </div>
-    );
+    ));
+
+    return {
+      numValue,
+      delta,
+    };
   },
 });
 

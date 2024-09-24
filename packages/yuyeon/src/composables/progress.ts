@@ -1,6 +1,8 @@
-import { computed } from 'vue';
+import { computed, shallowRef, watch } from 'vue';
 
 export function useProgress(props: any) {
+  const delta = shallowRef(0);
+
   const numValue = computed(() => {
     const { value } = props;
     const numValue = Number(value);
@@ -13,7 +15,12 @@ export function useProgress(props: any) {
     return numValue;
   });
 
+  watch(numValue, (neo, old) => {
+    delta.value = neo - old;
+  });
+
   return {
     numValue,
+    delta,
   };
 }

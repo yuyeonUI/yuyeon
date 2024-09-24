@@ -38,7 +38,7 @@ export function init(options: any = defaultOptions) {
   const i18nModule = createI18nModule(options?.i18n);
   const dateModule = createDateModule(options?.date, i18nModule.localeModule);
   const iconModule = createIconModule(options?.icon);
-  const install = (app: App): any => {
+  const install = (app: App) => {
     themeModule.install(app);
 
     const yuyeon = reactive({
@@ -53,7 +53,7 @@ export function init(options: any = defaultOptions) {
       defaults: defaultsModule,
     });
 
-    Object.keys(components).forEach((componentName) => {
+    Object.keys(options?.components ?? components).forEach((componentName) => {
       const comp = components[componentName as keyof typeof components];
       if (typeof comp === 'object' && 'name' in comp)
         app.component(componentName, comp as Component);

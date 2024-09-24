@@ -1,44 +1,57 @@
-import { rgbFromHex } from '@/util/color';
-import { hasOwnProperty } from '@/util/common';
-import { defineComponent } from '@/util/component';
+import { computed } from 'vue';
+
+import { useRender } from '@/composables';
+import { isColorValue, rgbFromHex } from '@/util/color';
+import { defineComponent, hasEventProp, propsFactory } from '@/util/component';
 
 import './YChip.scss';
+
+export const pressYChipPropsOptions = propsFactory(
+  {
+    color: String,
+    background: String,
+    backgroundOpacity: {
+      type: Number,
+      default: 0.14,
+    },
+    small: Boolean,
+  },
+  'YChip',
+);
 
 export const YChip = defineComponent({
   name: 'YChip',
   props: {
-    color: String,
-    background: String,
-    small: Boolean,
-    bgOpacity: {
-      type: Number,
-      default: 0.14,
-    },
+    ...pressYChipPropsOptions(),
   },
-  computed: {
-    clickable() {
-      return hasOwnProperty(this.$attrs, 'onClick');
-    },
-    classes() {
+  setup(props, { slots, emit }) {
+    const clickable = computed(() => {
+      return hasEventProp(props, 'click');
+    });
+
+    const styles = computed(() => {
+      let { color, background } = props;
+      if (!background) background = color;
+
+      if (color && !isColorValue(color)) {
+        color = `var(--y-theme-${color})`;
+      }
+
+      if (background) {
+        if (isColorValue(background)) {
+          background = colorRgb(background);
+        } else if (!background.startsWith('var(')) {
+          background = `var(--y-theme-${background}-rgb)`;
+        }
+      }
+
       return {
-        'y-chip': true,
-        'y-chip--small': this.small,
-        'y-chip--clickable': this.clickable,
+        color,
+        background: `rgba(${background}, ${props.backgroundOpacity})`,
       };
-    },
-    backgroundColor() {
-      const color = (this.background as string) ?? this.color;
-      return this.colorRgb(color);
-    },
-    styles() {
-      return {
-        color: this.color,
-        background: `rgba(${this.backgroundColor}, ${this.bgOpacity})`,
-      };
-    },
-  },
-  methods: {
-    colorRgb(color: string): string {
+    });
+
+    function colorRgb(color: string): string {
       if (color?.startsWith('#')) {
         return rgbFromHex(color)?.join(',') || '';
       }
@@ -52,15 +65,24 @@ export const YChip = defineComponent({
         }
       }
       return '';
-    },
-  },
-  render() {
-    const { classes, styles } = this;
-    return (
-      <span class={classes} style={styles}>
-        <span class="y-chip__content">{this.$slots.default?.()}</span>
+    }
+
+    useRender(() => (
+      <span
+        class={[
+          'y-chip',
+          {
+            'y-chip--small': props.small,
+            'y-chip--clickable': clickable.value,
+          },
+        ]}
+        style={styles.value}
+      >
+        <span class="y-chip__content">{slots.default?.()}</span>
       </span>
-    );
+    ));
+
+    return {};
   },
 });
 

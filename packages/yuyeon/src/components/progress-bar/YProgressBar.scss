@@ -113,4 +113,8 @@
   &--indeterminate &__lead {
     visibility: hidden;
   }
+
+  &--no-trans &__lead {
+    transition: none;
+  }
 }
