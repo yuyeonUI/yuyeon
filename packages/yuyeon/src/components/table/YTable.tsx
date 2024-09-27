@@ -1,7 +1,7 @@
 import { type PropType, provide } from 'vue';
 
+import { useRectMeasure } from '@/components/table/composibles/measure';
 import { useRender } from '@/composables/component';
-import { useResizeObserver } from '@/composables/resize-observer';
 import { defineComponent, propsFactory } from '@/util/component';
 import { toStyleSizeValue } from '@/util/ui';
 
@@ -34,12 +34,10 @@ export const YTable = defineComponent({
   },
   emits: ['scroll'],
   setup(props, { slots, emit }) {
-    const { resizeObservedRef, contentRect } = useResizeObserver();
-    const { resizeObservedRef: wrapperRef, contentRect: wrapperRect } =
-      useResizeObserver();
-    const { resizeObservedRef: tableRef, contentRect: tableRect } =
-      useResizeObserver();
-    provide('YTable', { containerRect: contentRect });
+    const { containerRef, wrapperRef, tableRef, containerRect, wrapperRect } =
+      useRectMeasure();
+
+    provide('YTable', { containerRect });
 
     function onScroll(e: Event) {
       emit('scroll', e);
@@ -48,7 +46,7 @@ export const YTable = defineComponent({
     useRender(() => {
       const ElTag = (props.tag as keyof HTMLElementTagNameMap) ?? 'div';
       const containerHeight = props.flexHeight
-        ? contentRect.value?.height ?? props.height
+        ? containerRect.value?.height ?? props.height
         : props.height;
       return (
         <ElTag
@@ -62,7 +60,7 @@ export const YTable = defineComponent({
           ]}
           style={{
             '--y-table-container-width': toStyleSizeValue(
-              contentRect.value?.width,
+              containerRect.value?.width,
             ),
             '--y-table-wrapper-width': toStyleSizeValue(
               wrapperRect.value?.width,
@@ -71,7 +69,7 @@ export const YTable = defineComponent({
         >
           {slots.top?.()}
           {slots.default ? (
-            <div ref={resizeObservedRef} class={['y-table__container']}>
+            <div ref={containerRef} class={['y-table__container']}>
               {slots.leading?.()}
               <div
                 ref={wrapperRef}
@@ -86,7 +84,7 @@ export const YTable = defineComponent({
               {slots.trailing?.()}
             </div>
           ) : (
-            slots.container?.(resizeObservedRef, contentRect)
+            slots.container?.(containerRef, containerRect)
           )}
           {slots.bottom?.()}
         </ElTag>

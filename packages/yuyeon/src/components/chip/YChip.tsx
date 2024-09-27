@@ -41,13 +41,13 @@ export const YChip = defineComponent({
         if (isColorValue(background)) {
           background = colorRgb(background);
         } else if (!background.startsWith('var(')) {
-          background = `var(--y-theme-${background}-rgb)`;
+          background = `rgba(${`var(--y-theme-${background}-rgb)`}, ${props.backgroundOpacity})`
         }
       }
 
       return {
-        color,
-        background: `rgba(${background}, ${props.backgroundOpacity})`,
+        '--y-chip__color': color,
+        '--y-chip__background': background,
       };
     });
 

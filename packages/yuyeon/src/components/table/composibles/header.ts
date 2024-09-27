@@ -1,18 +1,14 @@
-import {
-  type DeepReadonly,
-  type InjectionKey,
-  type PropType,
-  type Ref,
-  inject,
-  provide,
-  ref,
-  watchEffect,
-} from 'vue';
+import { type DeepReadonly, type InjectionKey, type PropType, type Ref, inject, provide, ref, watchEffect } from 'vue';
+
+
 
 import { getRangeArr } from '@/util/common';
 import { propsFactory } from '@/util/component';
 
+
+
 import { type DataTableHeader, type InternalDataTableHeader } from '../types';
+
 
 export const pressDataTableHeader = propsFactory(
   {
@@ -58,11 +54,13 @@ export function createHeader(
         ({ column }) => column.key === 'data-table-select',
       );
       if (foundIndex < 0) {
+        const fixed = flat.some(({ column }) => !!column?.fixed);
         flat.unshift({
           column: {
             ...defaultActionHeader,
             key: 'data-table-select',
             rowspan: rowCount,
+            fixed,
           },
           rowIndex: 0,
         });

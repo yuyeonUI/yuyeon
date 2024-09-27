@@ -3,10 +3,15 @@
 $chip-border-radius: variables.$border-radius-root;
 
 .y-chip {
+  --y-chip__background-opacity: 0.14;
+  --y-chip__color: var(--y-theme-on-surface);
+  --y-chip__background: rgba(var(--y-theme-on-surface), var(--y-chip__background-opacity));
+
   display: inline-flex;
   position: relative;
   padding: 4px 16px;
-  background: rgba(0, 0, 0, 0.14);
+  color: var(--y-chip__color);
+  background: var(--y-chip__background);
   border-radius: $chip-border-radius;
   align-items: center;
   align-self: center;
