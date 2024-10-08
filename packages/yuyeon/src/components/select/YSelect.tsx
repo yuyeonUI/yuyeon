@@ -39,32 +39,18 @@ import { YMenu } from '../menu';
 
 import './YSelect.scss';
 
-export type SelectEquals = (
+export type ItemComparator = (
   optionsItem: any,
   valueItem: any,
   valueKey?: string,
 ) => boolean;
 
-export function returnItemEquals(
-  optionsItem: any,
-  valueItem: any,
-  valueKey = 'value',
-) {
-  const valueItemType = typeof valueItem;
-  const itemValue =
-    valueItemType === 'string' || valueItemType === 'number'
-      ? getObjectValueByPath(optionsItem, valueKey)
-      : optionsItem;
-  return deepEqual(itemValue, valueItem);
-}
-
 export const pressSelectPropsOptions = propsFactory(
   {
     opened: Boolean as PropType<boolean>,
     multiple: Boolean,
-    weakEquals: Boolean,
-    valueEquals: {
-      type: Function as PropType<SelectEquals>,
+    itemComparator: {
+      type: Function as PropType<ItemComparator>,
       default: deepEqual,
     },
     defaultSelect: Boolean,
@@ -159,7 +145,7 @@ export const YSelect = defineComponent({
       const ret: ListItem<any>[] = [];
       for (const v of model.value) {
         const found = items.value.find((item) => {
-          return props.valueEquals(item.value, v.value);
+          return props.itemComparator(item.value, v.value);
         });
         if (found !== undefined) {
           ret.push(found);

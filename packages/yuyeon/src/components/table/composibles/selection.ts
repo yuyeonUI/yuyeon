@@ -9,7 +9,7 @@ import {
 
 import { useModelDuplex } from '@/composables/communication';
 import { wrapInArray } from '@/util/array';
-import { deepEqual } from '@/util/common';
+import { deepEqual, getPropertyFromItem } from '@/util/common';
 import { propsFactory } from '@/util/component';
 
 import { DataTableProvideSelectionData } from '../types';
@@ -51,9 +51,9 @@ export const pressDataTableSelectionProps = propsFactory(
       type: Array as PropType<readonly any[]>,
       default: () => [],
     },
-    valueEqual: {
-      type: Function as PropType<typeof deepEqual>,
-      default: deepEqual,
+    itemComparator: {
+      type: [Function, String] as PropType<typeof deepEqual | string>,
+      default: () => deepEqual,
     },
   },
   'YDataTable--selection',
@@ -63,7 +63,7 @@ type DataTableSelectionProps = Pick<DataTableItemsProps, 'itemKey'> & {
   modelValue: readonly any[];
   selectStrategy: 'single' | 'page' | 'all';
   'onUpdate:modelValue': ((value: any[]) => void) | undefined;
-  valueEqual: (a: any, b: any) => boolean;
+  itemComparator: ((a: any, b: any) => boolean) | string;
 };
 
 const singleSelectStrategy: DataTableSelectStrategy = {
@@ -124,8 +124,13 @@ export function provideSelection(
       return new Set(
         wrapInArray(v).map((v) => {
           return (
-            allItems.value.find((item) => props.valueEqual(v, item.value))
-              ?.value ?? v
+            allItems.value.find((item) => {
+              const { itemComparator } = props;
+              if (typeof itemComparator === 'function') {
+                itemComparator(v, item.value);
+              }
+              return getPropertyFromItem(v, props.itemKey) === item.key;
+            })?.value ?? v
           );
         }),
       );
