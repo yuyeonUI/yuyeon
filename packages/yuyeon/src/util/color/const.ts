@@ -1,5 +1,5 @@
 export const RGBA_REGEX = /rgb(a?)\((?<v>.*)\)/;
-export const HEX_COLOR_REGEX = /#([0-9a-fA-F]{3,6,8})/;
+export const HEX_COLOR_REGEX = /^#([A-Fa-f0-9]{3}|[A-Fa-f0-9]{6}|[A-Fa-f0-9]{8})$/;
 
 export const SRGB_TO_XYZ = [
   [0.41233895, 0.35762064, 0.18051042],
