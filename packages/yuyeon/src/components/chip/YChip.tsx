@@ -39,7 +39,7 @@ export const YChip = defineComponent({
 
       if (background) {
         if (isColorValue(background)) {
-          background = colorRgb(background);
+          background = `rgba(${colorRgb(background)}, ${props.backgroundOpacity})`;
         } else if (!background.startsWith('var(')) {
           background = `rgba(${`var(--y-theme-${background}-rgb)`}, ${props.backgroundOpacity})`
         }
