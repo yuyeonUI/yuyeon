@@ -1,6 +1,7 @@
 import { type CSSProperties } from 'vue';
 
 import { useRender } from '@/composables/component';
+import { wrapInArray } from '@/util';
 import { defineComponent, propsFactory } from '@/util/component';
 import { toStyleSizeValue } from '@/util/ui';
 
@@ -99,6 +100,7 @@ export const YDataTableHead = defineComponent({
               'y-data-table-header--sorted': isSorted(column),
               'y-data-table-header--select': column.key === 'data-table-select',
             },
+            ...wrapInArray(column.headerClasses ?? []),
           ]}
           style={{
             width: toStyleSizeValue(column.width),

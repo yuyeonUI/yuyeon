@@ -10,6 +10,7 @@ export type DataTableHeader = {
   fixed?: boolean;
 
   classes?: string | string[] | DataTableCellClassesFn;
+  headerClasses?: string | string[];
   align?: 'start' | 'end' | 'center';
   width?: number | string;
   minWidth?: string;
