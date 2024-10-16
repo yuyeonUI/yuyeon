@@ -98,6 +98,7 @@ export const pressYLayerProps = propsFactory(
       default: 2000,
     },
     contained: Boolean,
+    layerGroup: [String, Object] as PropType<string | Element>,
     ...pressThemePropsOptions(),
     ...pressPolyTransitionPropsOptions(),
     ...pressBasePropsOptions(),
@@ -141,7 +142,9 @@ export const YLayer = defineComponent({
     const { base, base$, baseEl, baseSlot, baseFromSlotEl } = useBase(props);
 
     const { themeClasses } = useLocalTheme(props);
-    const { layerGroup, layerGroupState, getActiveLayers } = useLayerGroup();
+    const { layerGroup, layerGroupState, getActiveLayers } = useLayerGroup(
+      computed(() => props.layerGroup),
+    );
     const { polyTransitionBindProps } = usePolyTransition(props);
     const { dimensionStyles } = useDimension(props);
     const model = useModelDuplex(props);
