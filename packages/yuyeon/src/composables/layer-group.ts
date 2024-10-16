@@ -1,4 +1,4 @@
-import { computed, getCurrentInstance, onBeforeUnmount, watch } from 'vue';
+import { computed, getCurrentInstance, onBeforeUnmount, unref, watch } from 'vue';
 import type { ComponentInternalInstance, Ref } from 'vue';
 
 import { useYuyeon } from '@/index';
@@ -7,19 +7,17 @@ export const Y_LAYER_GROUP_CLASS_NAME = 'y-layer-group';
 
 const layerGroupState = new WeakMap<HTMLElement, Set<any>>();
 
-export function useLayerGroup(target?: Ref<string | Element>) {
+export function useLayerGroup(target?: Ref<string | Element | undefined>) {
   const vm = getCurrentInstance()!;
   const yuyeon = useYuyeon();
 
   const layerGroup = computed<HTMLElement>(() => {
-    const refTarget = target?.value;
     let targetEl: Element = document.body;
-
     const rootEl = yuyeon.root;
     if (rootEl) {
       targetEl = rootEl;
     }
-
+    const refTarget = unref(target);
     if (typeof refTarget === 'string') {
       const el = document.querySelector(refTarget);
       if (el) {
