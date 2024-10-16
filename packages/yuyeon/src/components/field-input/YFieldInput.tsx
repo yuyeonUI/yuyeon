@@ -308,8 +308,7 @@ export const YFieldInput = defineComponent({
             ? () => slots['trailing-out']?.()
             : undefined,
           'helper-text': slots['helper-text']
-            ? ({ error, errorResult }: any) =>
-                slots['helper-text']?.({ error, errorResult })
+            ? (slotProps: any) => slots['helper-text']?.(slotProps)
             : undefined,
         }}
       </YInput>
