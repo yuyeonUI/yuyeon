@@ -22,7 +22,8 @@ export const pressYMonthPickerPropsOptions = propsFactory(
 export const YMonthPicker = defineComponent({
   name: 'YMonthPicker',
   props: pressYMonthPickerPropsOptions(),
-  setup(props) {
+  emits: ['mode'],
+  setup(props, { emit }) {
     const dateUtil = useDate();
     const model = useModelDuplex(props, 'modelValue');
 
@@ -41,6 +42,9 @@ export const YMonthPicker = defineComponent({
     });
 
     function onClick(index: number) {
+      if (model.value === index) {
+        emit('mode');
+      }
       model.value = index;
     }
 

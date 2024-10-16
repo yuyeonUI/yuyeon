@@ -114,9 +114,20 @@ export const YDatePicker = defineComponent({
         ></YDatePickerControl>
         <Transition name="fade" mode="out-in">
           {mode.value === 'month' ? (
-            <YMonthPicker v-model={month.value} />
+            <YMonthPicker
+              v-model={month.value}
+              onMode={() => {
+                mode.value = 'date';
+              }}
+            />
           ) : mode.value === 'year' ? (
-            <YYearPicker v-model={year.value} ref={yearPicker$} />
+            <YYearPicker
+              v-model={year.value}
+              ref={yearPicker$}
+              onMode={() => {
+                mode.value = 'month';
+              }}
+            />
           ) : (
             <YDateCalendar
               {...chooseProps(props, YDateCalendar.props)}
