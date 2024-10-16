@@ -143,7 +143,7 @@ export const YDataTableRow = defineComponent({
                               {...{
                                 onClick: (e: MouseEvent) => {
                                   e.stopPropagation();
-                                  toggleSelect(item);
+                                  if (item.selectable) toggleSelect(item);
                                 },
                               }}
                             ></YIconCheckbox>

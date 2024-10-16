@@ -39,7 +39,13 @@ export function updateItem(
 ): DataTableItem {
   const key = getPropertyFromItem(item, props.itemKey);
   const value = props.returnItem ? item : key;
-  const selectable = getPropertyFromItem(item, props.itemSelectable, true);
+  let selectable;
+  if (typeof props.itemSelectable === 'function') {
+    selectable = !!props.itemSelectable(item);
+  } else {
+    selectable = getPropertyFromItem(item, props.itemSelectable, true);
+  }
+
   const itemColumns = columns.reduce(
     (acc, column) => {
       acc[column.key] = getPropertyFromItem(item, column.value ?? column.key);
