@@ -1,7 +1,11 @@
-// vuetify/packages/vuetify/src/composables/toggleScope.ts
-
-import { effectScope, onScopeDispose, watch } from 'vue';
-import type { EffectScope, WatchSource } from 'vue';
+// vuetify/@/composables/toggleScope.ts
+import {
+  type EffectScope,
+  type WatchSource,
+  effectScope,
+  onScopeDispose,
+  watch,
+} from 'vue';
 
 export function useToggleScope(
   source: WatchSource<boolean>,

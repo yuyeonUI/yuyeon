@@ -1,9 +1,10 @@
-import { PropType, computed, defineComponent, provide, toRef } from 'vue';
+import { type PropType, computed, provide, toRef } from 'vue';
 
-import { useRender } from '../../composables/component';
-import { useResizeObserver } from '../../composables/resize-observer';
-import { toStyleSizeValue } from '../../util';
-import { chooseProps, propsFactory } from '../../util/vue-component';
+import { useRender } from '@/composables/component';
+import { useResizeObserver } from '@/composables/resize-observer';
+import { chooseProps, defineComponent, propsFactory } from '@/util/component';
+import { toStyleSizeValue } from '@/util/ui';
+
 import { YDataTableBody, pressYDataTableBodyProps } from './YDataTableBody';
 import { YDataTableControl } from './YDataTableControl';
 import { YDataTableHead, pressYDataTableHeadProps } from './YDataTableHead';
@@ -22,13 +23,13 @@ import {
   pressDataTableSelectionProps,
   provideSelection,
 } from './composibles/selection';
+import { useSortedItems } from './composibles/sorted-items';
 import {
   createSorting,
   pressDataTableSortProps,
   provideSorting,
 } from './composibles/sorting';
 import { YDataTableSlotProps } from './types';
-import { useSortedItems } from './composibles/sorted-items';
 
 export const pressDataTableProps = propsFactory(
   {
@@ -58,7 +59,7 @@ export const YDataTable = defineComponent({
     'update:sortBy': (sortBy: any) => true,
     'update:options': (options: any) => true,
     'click:row': (e: Event, value: { row: any }) => true,
-    'scroll': (e: Event) => true,
+    scroll: (e: Event) => true,
   },
   setup(props, { slots, emit }) {
     const { page, pageSize } = createPagination(props);

@@ -17,9 +17,19 @@ export class MutableRect implements Rect {
 
   public width: number;
 
-  public height: number
+  public height: number;
 
-  constructor({ x, y, width, height }: { x: number, y: number, width: number, height: number }) {
+  constructor({
+    x,
+    y,
+    width,
+    height,
+  }: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  }) {
     this.x = x ?? 0;
     this.y = y ?? 0;
     this.width = width ?? 0;
@@ -43,7 +53,7 @@ export class MutableRect implements Rect {
   }
 }
 
-export function getOverflow (a: MutableRect, b: MutableRect) {
+export function getOverflow(a: MutableRect, b: MutableRect) {
   return {
     x: {
       before: Math.max(0, b.left - a.left),
@@ -53,5 +63,5 @@ export function getOverflow (a: MutableRect, b: MutableRect) {
       before: Math.max(0, b.top - a.top),
       after: Math.max(0, a.bottom - b.bottom),
     },
-  }
+  };
 }

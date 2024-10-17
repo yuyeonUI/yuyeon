@@ -1,11 +1,12 @@
-import { defineComponent, ref, withKeys } from 'vue';
+import { ref, withKeys } from 'vue';
 
-import { useRender } from '../../composables';
+import { useRender } from '@/composables/component';
 import {
   SubmitEventPromise,
   createForm,
   pressFormPropsOptions,
-} from '../../composables/form';
+} from '@/composables/form';
+import { defineComponent } from '@/util/component';
 
 const NAME = 'y-form';
 

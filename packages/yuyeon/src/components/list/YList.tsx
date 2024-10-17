@@ -1,15 +1,10 @@
-import { defineComponent, ref, shallowRef } from 'vue';
+import { ref, shallowRef } from 'vue';
 
-
-
-import { useRender } from '../../composables/component';
-import { pressThemePropsOptions, useLocalTheme } from '../../composables/theme';
-import { propsFactory } from '../../util/vue-component';
-
-
+import { useRender } from '@/composables/component';
+import { pressThemePropsOptions, useLocalTheme } from '@/composables/theme';
+import { defineComponent, propsFactory } from '@/util/component';
 
 import './YList.scss';
-
 
 export const pressYListPropsOptions = propsFactory(
   {

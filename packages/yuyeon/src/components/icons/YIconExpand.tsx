@@ -1,4 +1,4 @@
-import { defineComponent } from 'vue';
+import { defineComponent } from '@/util/component';
 
 export const YIconExpand = defineComponent({
   name: 'YIconExpand',

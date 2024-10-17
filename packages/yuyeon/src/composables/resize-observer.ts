@@ -1,9 +1,7 @@
-import { readonly, ref } from 'vue';
-import { onBeforeUnmount } from 'vue';
-import { watch } from 'vue';
+import { onBeforeUnmount, readonly, ref, watch } from 'vue';
 
-import { getHtmlElement } from '../util/vue-component';
-import Environments from '../util/environments';
+import { getHtmlElement } from '@/util/component';
+import Environments from '@/util/environments';
 
 export function useResizeObserver(callback?: ResizeObserverCallback) {
   const resizeObservedRef = ref<HTMLElement>();
@@ -20,17 +18,17 @@ export function useResizeObserver(callback?: ResizeObserverCallback) {
     });
 
     watch(
-        resizeObservedRef,
-        (neo, old) => {
-          if (old) {
-            observer.unobserve(getHtmlElement(old));
-            contentRect.value = undefined;
-          }
-          if (neo) {
-            observer.observe(getHtmlElement(neo));
-          }
-        },
-        { flush: 'post' },
+      resizeObservedRef,
+      (neo, old) => {
+        if (old) {
+          observer.unobserve(getHtmlElement(old));
+          contentRect.value = undefined;
+        }
+        if (neo) {
+          observer.observe(getHtmlElement(neo));
+        }
+      },
+      { flush: 'post' },
     );
   }
 

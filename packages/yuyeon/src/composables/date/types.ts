@@ -1,4 +1,4 @@
-import type { DateAdapter } from '../../util/date/types';
+import type { DateAdapter } from '@/util/date/types';
 
 export interface DateOptions {
   adapter: any;

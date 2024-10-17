@@ -1,6 +1,8 @@
-import { computed, defineComponent, ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 
-import { useRender, useResizeObserver } from '../../composables';
+import { useRender } from '@/composables/component';
+import { useResizeObserver } from '@/composables/resize-observer';
+import { defineComponent } from '@/util/component';
 
 import './YTextEllipsis.scss';
 

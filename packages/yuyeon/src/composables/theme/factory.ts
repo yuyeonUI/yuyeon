@@ -1,5 +1,6 @@
-import { APCAcontrast, sRGBtoY } from '../../util/color/apca';
-import { rgbFromHex } from '../../util/color/conversion';
+import { APCAcontrast, sRGBtoY } from '@/util/color/apca';
+import { rgbFromHex } from '@/util/color/conversion';
+
 import { ThemeDefinition } from './types';
 
 export function createThemes(options: Record<string, any>) {

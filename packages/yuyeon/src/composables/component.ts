@@ -1,5 +1,8 @@
-import { ComponentInternalInstance } from '@vue/runtime-core';
-import { ComponentPublicInstance, VNode, getCurrentInstance } from 'vue';
+import {
+  type ComponentInternalInstance,
+  type VNode,
+  getCurrentInstance,
+} from 'vue';
 
 interface RedefinedComponentInternalInstance extends ComponentInternalInstance {
   render: () => VNode;

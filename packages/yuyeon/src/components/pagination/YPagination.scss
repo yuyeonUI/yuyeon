@@ -1,5 +1,4 @@
 .y-pagination {
-
   &__list {
     display: inline-flex;
     width: 100%;
@@ -45,7 +44,9 @@
     }
   }
 
-  &__first, &__last, &__prev, &__next {
-
+  &__first,
+  &__last,
+  &__prev,
+  &__next {
   }
 }

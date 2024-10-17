@@ -1,5 +1,10 @@
-import type { ComputedGetter } from 'vue';
-import { computed, reactive, toRefs, watchEffect } from 'vue';
+import {
+  type ComputedGetter,
+  computed,
+  reactive,
+  toRefs,
+  watchEffect,
+} from 'vue';
 
 /**
  * For Destructuring assignment

@@ -1,6 +1,8 @@
-import { propsFactory } from "../util/vue-component";
-import { computed, ExtractPropTypes, PropType } from "vue";
-import { useModelDuplex } from "./communication";
+import { type ExtractPropTypes, type PropType, computed } from 'vue';
+
+import { propsFactory } from '@/util/component';
+
+import { useModelDuplex } from './communication';
 
 const focusPropsOptions = {
   focused: Boolean,
@@ -9,7 +11,10 @@ const focusPropsOptions = {
 
 export const pressFocusPropsOptions = propsFactory(focusPropsOptions, 'focus');
 
-export function useFocus(props: ExtractPropTypes<typeof focusPropsOptions>, className: string) {
+export function useFocus(
+  props: ExtractPropTypes<typeof focusPropsOptions>,
+  className: string,
+) {
   const focused = useModelDuplex(props, 'focused');
 
   function whenFocus() {
@@ -23,13 +28,13 @@ export function useFocus(props: ExtractPropTypes<typeof focusPropsOptions>, clas
   const focusedClasses = computed(() => {
     return {
       [`${className}--focused`]: focused.value,
-    }
-  })
+    };
+  });
 
   return {
     focused,
     whenFocus,
     whenBlur,
     focusedClasses,
-  }
+  };
 }

@@ -1,9 +1,9 @@
-import { defineComponent, ref, watch } from 'vue';
+import { ref, watch } from 'vue';
 import { useModelDuplex } from 'yuyeon/composables';
 
-import { useRender } from '../../composables/component';
-import { useDelay } from '../../composables/timing';
-import { propsFactory } from '../../util';
+import { useRender } from '@/composables/component';
+import { useDelay } from '@/composables/timing';
+import { defineComponent, propsFactory } from '@/util/component';
 
 export const pressYHoverPropsOptions = propsFactory(
   {

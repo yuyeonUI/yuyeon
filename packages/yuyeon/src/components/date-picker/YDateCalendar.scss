@@ -60,11 +60,13 @@
       background: rgba(var(--y-theme-primary-rgb), 0.3);
     }
 
-    &--range-start:before, &--week-start:before {
+    &--range-start:before,
+    &--week-start:before {
       left: calc((40px - 36px) / 2);
     }
 
-    &--range-end:before, &--week-end:before {
+    &--range-end:before,
+    &--week-end:before {
       right: calc((40px - 36px) / 2);
     }
 

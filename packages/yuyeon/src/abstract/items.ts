@@ -1,6 +1,6 @@
 import { PropType } from 'vue';
 
-import { propsFactory } from '../util/vue-component';
+import { propsFactory } from '../util/component';
 
 export const pressItemsPropsOptions = propsFactory(
   {

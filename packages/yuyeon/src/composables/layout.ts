@@ -1,4 +1,4 @@
-import { InjectionKey, provide } from "vue";
+import { type InjectionKey, provide } from 'vue';
 
 declare function register(): void;
 
@@ -7,7 +7,8 @@ interface LayoutProvide {
   unregister: (id: string) => void;
 }
 
-export const YUYEON_LAYOUT_KEY: InjectionKey<LayoutProvide> = Symbol.for('yuyeon.layout');
+export const YUYEON_LAYOUT_KEY: InjectionKey<LayoutProvide> =
+  Symbol.for('yuyeon.layout');
 
 export function initLayoutSystem() {
   provide(YUYEON_LAYOUT_KEY, {
@@ -16,6 +17,6 @@ export function initLayoutSystem() {
     },
     unregister: () => {
       return;
-    }
-  })
+    },
+  });
 }

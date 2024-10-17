@@ -1,31 +1,36 @@
-import { shallowRef } from '@vue/runtime-core';
 import {
-  PropType,
-  SlotsType,
+  type PropType,
+  type SlotsType,
+  computed,
+  mergeProps,
   nextTick,
+  onMounted,
+  ref,
+  shallowRef,
   vShow,
   watch,
   withDirectives,
 } from 'vue';
-import { computed, defineComponent, mergeProps, onMounted, ref } from 'vue';
 
-import { useModelDuplex } from '../../composables/communication';
-import { useRender } from '../../composables/component';
-import { pressCoordinateProps } from '../../composables/coordinate';
-import { useI18n } from '../../composables/i18n';
+import { useModelDuplex } from '@/composables/communication';
+import { useRender } from '@/composables/component';
+import { pressCoordinateProps } from '@/composables/coordinate';
+import { useI18n } from '@/composables/i18n';
 import {
   ListItem,
   pressListItemsPropsOptions,
   useItems,
-} from '../../composables/list-items';
-import { getScrollParent } from '../../util';
-import { wrapInArray } from '../../util/array';
-import { deepEqual, getObjectValueByPath, omit } from '../../util/common';
+} from '@/composables/list-items';
+import { wrapInArray } from '@/util/array';
+import { deepEqual, getObjectValueByPath, omit } from '@/util/common';
 import {
   chooseProps,
+  defineComponent,
   getHtmlElement,
   propsFactory,
-} from '../../util/vue-component';
+} from '@/util/component';
+import { getScrollParent } from '@/util/scroll';
+
 import { YCard } from '../card';
 import { YFieldInput, pressYFieldInputPropsOptions } from '../field-input';
 import { YIcon, YIconIconProp } from '../icon';
@@ -34,32 +39,18 @@ import { YMenu } from '../menu';
 
 import './YSelect.scss';
 
-export type SelectEquals = (
+export type ItemComparator = (
   optionsItem: any,
   valueItem: any,
   valueKey?: string,
 ) => boolean;
 
-export function returnItemEquals(
-  optionsItem: any,
-  valueItem: any,
-  valueKey = 'value',
-) {
-  const valueItemType = typeof valueItem;
-  const itemValue =
-    valueItemType === 'string' || valueItemType === 'number'
-      ? getObjectValueByPath(optionsItem, valueKey)
-      : optionsItem;
-  return deepEqual(itemValue, valueItem);
-}
-
 export const pressSelectPropsOptions = propsFactory(
   {
     opened: Boolean as PropType<boolean>,
     multiple: Boolean,
-    weakEquals: Boolean,
-    valueEquals: {
-      type: Function as PropType<SelectEquals>,
+    itemComparator: {
+      type: Function as PropType<ItemComparator>,
       default: deepEqual,
     },
     defaultSelect: Boolean,
@@ -154,7 +145,7 @@ export const YSelect = defineComponent({
       const ret: ListItem<any>[] = [];
       for (const v of model.value) {
         const found = items.value.find((item) => {
-          return props.valueEquals(item.value, v.value);
+          return props.itemComparator(item.value, v.value);
         });
         if (found !== undefined) {
           ret.push(found);

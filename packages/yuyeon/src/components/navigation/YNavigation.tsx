@@ -1,5 +1,8 @@
-import { defineComponent, getCurrentInstance } from "vue";
-import { YBench } from "../bench/YBench";
+import { getCurrentInstance } from 'vue';
+
+import { defineComponent } from '@/util/component';
+
+import { YBench } from '../bench/YBench';
 
 export const YNavigation = defineComponent({
   name: 'YNavigation',
@@ -8,11 +11,6 @@ export const YNavigation = defineComponent({
   },
   setup(props, { slots }) {
     const vm = getCurrentInstance();
-    return (
-      <YBench>
-
-      </YBench>
-    )
-  }
+    return <YBench></YBench>;
+  },
 });
-

@@ -1,18 +1,18 @@
-import type { PropType } from 'vue';
 import {
+  type PropType,
   computed,
   defineComponent,
   nextTick,
   ref,
   watch,
-  watchEffect,
 } from 'vue';
 
-import { useModelDuplex } from '../../composables/communication';
-import { useRender } from '../../composables/component';
-import { pressPolyTransitionPropsOptions } from '../../composables/transition';
-import { omit } from '../../util';
-import { bindClasses, chooseProps } from '../../util/vue-component';
+import { useModelDuplex } from '@/composables/communication';
+import { useRender } from '@/composables/component';
+import { pressPolyTransitionPropsOptions } from '@/composables/transition';
+import { omit } from '@/util/common';
+import { bindClasses, chooseProps } from '@/util/component';
+
 import { YLayer, pressYLayerProps } from '../layer';
 import { useDelay } from '../layer/active-delay';
 import { YPlate } from '../plate';
@@ -48,7 +48,7 @@ export const YTooltip = defineComponent({
       offset: 8,
     }),
     ...pressPolyTransitionPropsOptions({
-      transition: 'fade'
+      transition: 'fade',
     }),
   },
   emits: ['update:modelValue'],
@@ -138,7 +138,6 @@ export const YTooltip = defineComponent({
         }
       },
     );
-
 
     expose({
       layer$,

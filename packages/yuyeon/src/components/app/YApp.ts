@@ -1,4 +1,6 @@
-import { defineComponent, h } from 'vue';
+import { h } from 'vue';
+
+import { defineComponent } from '@/util/component';
 
 import './YApp.scss';
 
@@ -7,7 +9,7 @@ import './YApp.scss';
  */
 export const YApp = defineComponent({
   name: 'YApp',
-  setup(props, { slots }) {
+  setup(_props, { slots }) {
     return () =>
       h(
         'div',

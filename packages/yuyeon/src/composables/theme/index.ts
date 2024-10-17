@@ -12,8 +12,9 @@ import {
   watch,
 } from 'vue';
 
-import bindThemeClass from '../../directives/theme-class';
-import { propsFactory } from '../../util/vue-component';
+import bindThemeClass from '@/directives/theme-class';
+import { propsFactory } from '@/util/component/props';
+
 import { createPalette, createThemes } from './factory';
 import { cssClass, cssVariables } from './helper';
 import { ThemeScheme, configureOptions } from './setting';
@@ -146,7 +147,10 @@ export function createThemeModule(options: ThemeOptions) {
       }
 
       lines.push(
-        ...cssClass(`${separationId} .y-theme--${themeKey}`, cssVariables(records, 'theme')),
+        ...cssClass(
+          `${separationId} .y-theme--${themeKey}`,
+          cssVariables(records, 'theme'),
+        ),
       );
     }
     return lines.join('');
@@ -155,7 +159,10 @@ export function createThemeModule(options: ThemeOptions) {
   function install(app: App) {
     app.directive('theme', bindThemeClass);
 
-    let styleEl = document.getElementById('yuyeon-theme-palette' + `${config.separation ? '__' + config.separation : ''}`);
+    let styleEl = document.getElementById(
+      'yuyeon-theme-palette' +
+        `${config.separation ? '__' + config.separation : ''}`,
+    );
 
     watch(styles, updateStyleEl, { immediate: true });
 
@@ -163,7 +170,9 @@ export function createThemeModule(options: ThemeOptions) {
       if (typeof document !== 'undefined' && !styleEl) {
         const el = document.createElement('style');
         el.type = 'text/css';
-        el.id = 'yuyeon-theme-palette' + `${config.separation ? '__' + config.separation : ''}`;
+        el.id =
+          'yuyeon-theme-palette' +
+          `${config.separation ? '__' + config.separation : ''}`;
         if (options?.cspNonce) el.setAttribute('nonce', options.cspNonce);
         styleEl = el;
         document.head.appendChild(styleEl);
@@ -280,7 +289,7 @@ export function useTheme() {
 
   const theme = inject<ThemeModuleInstance | null>(YUYEON_THEME_KEY, null);
 
-  if (!theme) throw new Error('Not found provided "ThemeModule"');
+  if (!theme) throw new Error('【yuyeon】 Not found provided "ThemeModule"');
 
   return theme;
 }

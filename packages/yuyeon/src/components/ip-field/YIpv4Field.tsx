@@ -1,7 +1,6 @@
 import {
-  PropType,
+  type PropType,
   computed,
-  defineComponent,
   mergeProps,
   nextTick,
   reactive,
@@ -10,9 +9,10 @@ import {
   watch,
 } from 'vue';
 
-import { useModelDuplex } from '../../composables/communication';
-import { useRender } from '../../composables/component';
-import { chooseProps } from '../../util/vue-component';
+import { useModelDuplex } from '@/composables/communication';
+import { useRender } from '@/composables/component';
+import { chooseProps, defineComponent } from '@/util/component';
+
 import { YInput, pressYInputPropsOptions } from '../input';
 
 import './YIpField.scss';

@@ -1,19 +1,17 @@
 import type { PropType } from 'vue';
-import { computed, defineComponent, mergeProps } from 'vue';
+import { computed, mergeProps } from 'vue';
 
 import {
   pressChoiceItemPropsOptions,
   useChoiceItem,
-} from '../../composables/choice';
-import { useChoiceByLink } from '../../composables/choice-link';
-import { useRender } from '../../composables/component';
-import {
-  pressVueRouterPropsOptions,
-  useLink,
-} from '../../composables/vue-router';
-import { PlateWave } from '../../directives/plate-wave';
-import { isColorValue } from '../../util/color';
-import { propsFactory } from '../../util/vue-component';
+} from '@/composables/choice';
+import { useChoiceByLink } from '@/composables/choice-link';
+import { useRender } from '@/composables/component';
+import { pressVueRouterPropsOptions, useLink } from '@/composables/vue-router';
+import { PlateWave } from '@/directives/plate-wave';
+import { isColorValue } from '@/util/color';
+import { defineComponent, propsFactory } from '@/util/component';
+
 import { YSpinnerRing } from '../loading/YSpinnerRing';
 import { Y_TOGGLE_BUTTON_KEY } from '../toggle-button';
 

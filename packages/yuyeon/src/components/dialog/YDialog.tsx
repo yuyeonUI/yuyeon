@@ -1,7 +1,6 @@
-import type { PropType } from 'vue';
 import {
+  type PropType,
   computed,
-  defineComponent,
   getCurrentInstance,
   onBeforeUnmount,
   ref,
@@ -9,11 +8,17 @@ import {
   watch,
 } from 'vue';
 
-import { useModelDuplex } from '../../composables/communication';
-import { useRender } from '../../composables/component';
-import { chooseProps, omit } from '../../util';
-import { toStyleSizeValue } from '../../util/ui';
-import { bindClasses, propsFactory } from '../../util/vue-component';
+import { useModelDuplex } from '@/composables/communication';
+import { useRender } from '@/composables/component';
+import { omit } from '@/util/common';
+import {
+  bindClasses,
+  chooseProps,
+  defineComponent,
+  propsFactory,
+} from '@/util/component';
+import { toStyleSizeValue } from '@/util/ui';
+
 import { YCard } from '../card';
 import { YLayer, pressYLayerProps } from '../layer';
 import { useActiveStack } from '../layer/active-stack';

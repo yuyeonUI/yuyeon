@@ -1,7 +1,7 @@
 import {
-  PropType,
-  Ref,
-  VNode,
+  type PropType,
+  type Ref,
+  type VNode,
   computed,
   defineComponent,
   onMounted,
@@ -12,18 +12,15 @@ import {
   watchEffect,
 } from 'vue';
 
-import { useModelDuplex } from '../../composables/communication';
-import { useRender } from '../../composables/component';
-import { CandidateKey } from '../../types';
-import { differenceBetween } from '../../util/array';
-import { isColorValue } from '../../util/color';
-import {
-  deepEqual,
-  getObjectValueByPath,
-  hasOwnProperty,
-} from '../../util/common';
-import { debounce } from '../../util/debounce';
-import { chooseProps } from '../../util/vue-component';
+import { useModelDuplex } from '@/composables/communication';
+import { useRender } from '@/composables/component';
+import { CandidateKey } from '@/types';
+import { differenceBetween } from '@/util/array';
+import { isColorValue } from '@/util/color';
+import { deepEqual, getObjectValueByPath, hasOwnProperty } from '@/util/common';
+import { chooseProps } from '@/util/component';
+import { debounce } from '@/util/debounce';
+
 import { YProgressBar } from '../progress-bar';
 import { YTreeViewNode, pressYTreeViewNodeProps } from './YTreeViewNode';
 import { NodeState, TreeviewFilterFn } from './types';
@@ -122,15 +119,13 @@ export const YTreeView = defineComponent({
     });
 
     // Util Methods
-    function getDescendants(
-      key: CandidateKey
-    ) {
+    function getDescendants(key: CandidateKey) {
       const descendants: CandidateKey[] = [];
       const { childKeys } = nodes.value[key];
       descendants.push(...childKeys);
       const remains: CandidateKey[] = childKeys.slice();
 
-      while(remains.length > 0) {
+      while (remains.length > 0) {
         const childKey: CandidateKey = remains.splice(0, 1)[0];
         const item = nodes.value[childKey];
         if (item) {

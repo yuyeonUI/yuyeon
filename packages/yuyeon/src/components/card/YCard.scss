@@ -1,4 +1,3 @@
-
 @use '../../styles/variables';
 
 $card__border-radius: variables.$border-radius-root !default;
@@ -7,7 +6,10 @@ $card__padding: 24px;
 .y-card {
   --y-card__border-radius: #{$card__border-radius};
   --y-card__default-background: #ffffff;
-  --y-card__background: var(--y-theme-surface, var(--y-card__default-background));
+  --y-card__background: var(
+    --y-theme-surface,
+    var(--y-card__default-background)
+  );
   --y-card__outline-color: var(--y-theme-outline);
 
   background-color: var(--y-card__background);

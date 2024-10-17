@@ -1,10 +1,10 @@
-import { toRef } from '@vue/runtime-core';
-import { PropType, computed, defineComponent, provide } from 'vue';
+import { type PropType, computed, provide, ref, toRef } from 'vue';
 
-import { useRender } from '../../composables/component';
-import { useResizeObserver } from '../../composables/resize-observer';
-import { toStyleSizeValue } from '../../util';
-import { chooseProps, propsFactory } from '../../util/vue-component';
+import { useRender } from '@/composables/component';
+import { useResizeObserver } from '@/composables/resize-observer';
+import { chooseProps, defineComponent, propsFactory } from '@/util/component';
+import { toStyleSizeValue } from '@/util/ui';
+
 import { pressDataTableProps } from './YDataTable';
 import { YDataTableBody } from './YDataTableBody';
 import { YDataTableControl } from './YDataTableControl';
@@ -79,8 +79,14 @@ export const YDataTableServer = defineComponent({
       allSelected,
     } = provideSelection(props, { allItems: items, pageItems: items });
 
-    const { resizeObservedRef: headObserveRef, contentRect: headRect } =
-      useResizeObserver();
+    const headRect = ref<DOMRectReadOnly>();
+    const { resizeObservedRef: headObserveRef } = useResizeObserver(
+      (entries) => {
+        requestAnimationFrame(
+          () => (headRect.value = entries?.[0].contentRect),
+        );
+      },
+    );
 
     useOptions(
       {

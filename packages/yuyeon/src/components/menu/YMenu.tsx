@@ -1,12 +1,14 @@
 import type { PropType, SlotsType } from 'vue';
-import { computed, defineComponent, ref, toRef, watch } from 'vue';
+import { computed, ref, toRef, watch } from 'vue';
 
-import { useModelDuplex } from '../../composables/communication';
-import { useRender } from '../../composables/component';
-import { pressPolyTransitionPropsOptions } from '../../composables/transition';
-import { hasElementMouseEvent } from '../../util/dom';
-import { toKebabCase } from '../../util/string';
-import { bindClasses, chooseProps } from '../../util/vue-component';
+import { useModelDuplex } from '@/composables/communication';
+import { useRender } from '@/composables/component';
+import { pressPolyTransitionPropsOptions } from '@/composables/transition';
+import { defineComponent } from '@/util/component';
+import { bindClasses, chooseProps } from '@/util/component';
+import { hasElementMouseEvent } from '@/util/dom';
+import { toKebabCase } from '@/util/string';
+
 import { YLayer, pressYLayerProps } from '../layer';
 import { useDelay } from '../layer/active-delay';
 import { useActiveStack } from '../layer/active-stack';
@@ -49,7 +51,7 @@ export const YMenu = defineComponent({
   props: {
     ...YMenuPropOptions,
     ...pressPolyTransitionPropsOptions({
-      transition: 'fade'
+      transition: 'fade',
     }),
   },
   emits: ['update:modelValue', 'afterLeave', 'hoverContent'],

@@ -1,7 +1,8 @@
-import { CSSProperties, PropType, computed, defineComponent } from 'vue';
+import { type CSSProperties, type PropType, computed } from 'vue';
 
-import { useRender } from '../../composables/component';
-import { toStyleSizeValue } from '../../util/ui';
+import { useRender } from '@/composables/component';
+import { defineComponent } from '@/util/component';
+import { toStyleSizeValue } from '@/util/ui';
 
 export const YDataTableCell = defineComponent({
   name: 'YDataTableCell',

@@ -2,7 +2,7 @@ import type { CSSProperties, PropType, Ref } from 'vue';
 import { onScopeDispose, ref, watch } from 'vue';
 
 import { Rect } from '../../util/rect';
-import { propsFactory } from '../../util/vue-component';
+import { propsFactory } from '../../util/component';
 import { useToggleScope } from '../scope';
 import { applyArrangement } from './arrangement';
 import { applyLevitation } from './levitation';

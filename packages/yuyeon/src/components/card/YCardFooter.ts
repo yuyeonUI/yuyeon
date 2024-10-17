@@ -1,4 +1,6 @@
-import { defineComponent, h } from 'vue';
+import { h } from 'vue';
+
+import { defineComponent } from '@/util/component';
 
 export const YCardFooter = defineComponent({
   name: 'YCardFooter',

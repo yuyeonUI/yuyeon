@@ -1,5 +1,5 @@
 import {
-  PropType,
+  type PropType,
   computed,
   getCurrentInstance,
   onBeforeMount,
@@ -7,7 +7,8 @@ import {
   watch,
 } from 'vue';
 
-import { getUid, propsFactory } from '../util';
+import { getUid, propsFactory } from '@/util/component';
+
 import { useModelDuplex } from './communication';
 import { useForm } from './form';
 import { useToggleScope } from './scope';

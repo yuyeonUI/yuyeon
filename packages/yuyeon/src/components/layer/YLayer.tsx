@@ -8,39 +8,35 @@ import {
   Teleport,
   Transition,
   computed,
-  defineComponent,
   getCurrentInstance,
   mergeProps,
   reactive,
   ref,
   shallowRef,
   toRef,
-  watchEffect,
 } from 'vue';
 
-import { useModelDuplex } from '../../composables/communication';
-import { useRender } from '../../composables/component';
-import {
-  pressCoordinateProps,
-  useCoordinate,
-} from '../../composables/coordinate';
+import { useModelDuplex } from '@/composables/communication';
+import { useRender } from '@/composables/component';
+import { pressCoordinateProps, useCoordinate } from '@/composables/coordinate';
 import {
   pressDimensionPropsOptions,
   useDimension,
-} from '../../composables/dimension';
-import { useLayerGroup } from '../../composables/layer-group';
-import { pressThemePropsOptions, useLocalTheme } from '../../composables/theme';
-import { useLazy } from '../../composables/timing';
+} from '@/composables/dimension';
+import { useLayerGroup } from '@/composables/layer-group';
+import { pressThemePropsOptions, useLocalTheme } from '@/composables/theme';
+import { useLazy } from '@/composables/timing';
 import {
   PolyTransition,
   pressPolyTransitionPropsOptions,
   usePolyTransition,
-} from '../../composables/transition';
+} from '@/composables/transition';
 import {
   ComplementClick,
   ComplementClickBindingOptions,
-} from '../../directives/complement-click';
-import { bindClasses, propsFactory } from '../../util/vue-component';
+} from '@/directives/complement-click';
+import { bindClasses, defineComponent, propsFactory } from '@/util/component';
+
 import { pressBasePropsOptions, useBase } from './base';
 import { pressContentPropsOptions, useContent } from './content';
 import {
@@ -102,6 +98,7 @@ export const pressYLayerProps = propsFactory(
       default: 2000,
     },
     contained: Boolean,
+    layerGroup: [String, Object] as PropType<string | Element>,
     ...pressThemePropsOptions(),
     ...pressPolyTransitionPropsOptions(),
     ...pressBasePropsOptions(),
@@ -145,7 +142,9 @@ export const YLayer = defineComponent({
     const { base, base$, baseEl, baseSlot, baseFromSlotEl } = useBase(props);
 
     const { themeClasses } = useLocalTheme(props);
-    const { layerGroup, layerGroupState, getActiveLayers } = useLayerGroup();
+    const { layerGroup, layerGroupState, getActiveLayers } = useLayerGroup(
+      computed(() => props.layerGroup),
+    );
     const { polyTransitionBindProps } = usePolyTransition(props);
     const { dimensionStyles } = useDimension(props);
     const model = useModelDuplex(props);
@@ -303,7 +302,7 @@ export const YLayer = defineComponent({
                 onMouseenter={onMouseenter}
                 onMouseleave={onMouseleave}
                 style={computedStyle.value}
-                ref={ root$ }
+                ref={root$}
                 {...attrs}
               >
                 <Transition name="fade" appear>

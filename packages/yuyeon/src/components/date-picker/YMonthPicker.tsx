@@ -1,10 +1,11 @@
-import { computed, defineComponent } from 'vue';
+import { computed } from 'vue';
 
-import { useModelDuplex } from '../../composables/communication';
-import { useRender } from '../../composables/component';
-import { useDate } from '../../composables/date';
-import { getRangeArr } from '../../util';
-import { propsFactory } from '../../util/vue-component';
+import { useModelDuplex } from '@/composables/communication';
+import { useRender } from '@/composables/component';
+import { useDate } from '@/composables/date';
+import { getRangeArr } from '@/util/common';
+import { defineComponent, propsFactory } from '@/util/component';
+
 import { YButton } from '../button';
 
 import './YMonthPicker.scss';
@@ -21,7 +22,8 @@ export const pressYMonthPickerPropsOptions = propsFactory(
 export const YMonthPicker = defineComponent({
   name: 'YMonthPicker',
   props: pressYMonthPickerPropsOptions(),
-  setup(props) {
+  emits: ['mode'],
+  setup(props, { emit }) {
     const dateUtil = useDate();
     const model = useModelDuplex(props, 'modelValue');
 
@@ -40,6 +42,9 @@ export const YMonthPicker = defineComponent({
     });
 
     function onClick(index: number) {
+      if (model.value === index) {
+        emit('mode');
+      }
       model.value = index;
     }
 
@@ -48,8 +53,8 @@ export const YMonthPicker = defineComponent({
         <div class={['y-month-picker']}>
           {months.value.map((month, index) => {
             const item = {
-              active: index === model.value
-            }
+              active: index === model.value,
+            };
             return (
               <div class={['y-month-picker__cell', 'y-month-picker__month']}>
                 <YButton

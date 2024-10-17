@@ -1,14 +1,8 @@
-import {
-  PropType,
-  computed,
-  defineComponent,
-  ref,
-  watch,
-  withModifiers,
-} from 'vue';
+import { type PropType, computed, ref, watch, withModifiers } from 'vue';
 
-import { useRender } from '../../composables/component';
-import { getUid } from '../../util/vue-component';
+import { useRender } from '@/composables/component';
+import { defineComponent, getUid } from '@/util/component';
+
 import YInputCheckbox from './YInputCheckbox';
 
 import './YCheckbox.scss';

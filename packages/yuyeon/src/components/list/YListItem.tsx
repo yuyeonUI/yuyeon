@@ -1,8 +1,8 @@
-import { SlotsType, computed, defineComponent } from 'vue';
+import { SlotsType, computed } from 'vue';
 
-import { useRender } from '../../composables/component';
-import { pressThemePropsOptions, useLocalTheme } from '../../composables/theme';
-import { propsFactory } from '../../util/vue-component';
+import { useRender } from '@/composables/component';
+import { pressThemePropsOptions, useLocalTheme } from '@/composables/theme';
+import { defineComponent, propsFactory } from '@/util/component';
 
 import './YListItem.scss';
 

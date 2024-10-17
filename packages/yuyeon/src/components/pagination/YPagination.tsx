@@ -1,18 +1,18 @@
 import {
-  ComponentPublicInstance,
-  PropType,
+  type ComponentPublicInstance,
+  type PropType,
   computed,
-  defineComponent,
   shallowRef,
 } from 'vue';
 
-import { useModelDuplex } from '../../composables/communication';
-import { useRender } from '../../composables/component';
-import { useRefs } from '../../composables/ref';
-import { useResizeObserver } from '../../composables/resize-observer';
-import { getRangeArr } from '../../util/common';
-import { toStyleSizeValue } from '../../util/ui';
-import { propsFactory } from '../../util/vue-component';
+import { useModelDuplex } from '@/composables/communication';
+import { useRender } from '@/composables/component';
+import { useRefs } from '@/composables/ref';
+import { useResizeObserver } from '@/composables/resize-observer';
+import { getRangeArr } from '@/util/common';
+import { defineComponent, propsFactory } from '@/util/component';
+import { toStyleSizeValue } from '@/util/ui';
+
 import { YButton } from '../button';
 import { YIconPageControl } from '../icons/YIconPageControl';
 
@@ -112,11 +112,10 @@ export const YPagination = defineComponent({
       if (props.totalVisible) {
         const total = parseInt(props.totalVisible as string, 10);
         if (!isNaN(maxVisible)) {
-          return Math.min(total, maxVisible)
+          return Math.min(total, maxVisible);
         }
         return total;
-      }
-      else if (itemCount.value >= 0) return itemCount.value;
+      } else if (itemCount.value >= 0) return itemCount.value;
       return calcItemCount(innerWidth, 58);
     });
 

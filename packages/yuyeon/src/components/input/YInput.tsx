@@ -1,28 +1,26 @@
 import {
-  PropType,
-  SlotsType,
-  VNode,
+  type PropType,
+  type SlotsType,
+  type VNode,
   computed,
-  defineComponent,
   ref,
   shallowRef,
   watch,
 } from 'vue';
 
-import { useRender } from '../../composables/component';
-import { pressFocusPropsOptions, useFocus } from '../../composables/focus';
-import { pressThemePropsOptions, useLocalTheme } from '../../composables/theme';
+import { useRender } from '@/composables/component';
+import { pressFocusPropsOptions, useFocus } from '@/composables/focus';
+import { pressThemePropsOptions, useLocalTheme } from '@/composables/theme';
 import {
   pressValidationPropsOptions,
   useValidation,
-} from '../../composables/validation';
-import { getUid, toStyleSizeValue } from '../../util';
-import { propsFactory } from '../../util/vue-component';
+} from '@/composables/validation';
+import { defineComponent, getUid, propsFactory } from '@/util/component';
+import { toStyleSizeValue } from '@/util/ui';
 
 import './YInput.scss';
 
 const NAME = 'y-input';
-let uidCounter = 0;
 
 export const pressYInputPropsOptions = propsFactory(
   {

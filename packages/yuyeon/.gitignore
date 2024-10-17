@@ -29,3 +29,4 @@ node_modules
 .npmrc
 
 vite.config.ts.timestamp*
+yuyeon-*.tgz

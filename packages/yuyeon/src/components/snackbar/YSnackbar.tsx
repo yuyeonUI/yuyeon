@@ -1,23 +1,17 @@
-import { toRef } from '@vue/runtime-core';
 import { animate } from 'motion';
-import {
-  PropType,
-  computed,
-  defineComponent,
-  ref,
-  watch,
-  withModifiers,
-} from 'vue';
+import { type PropType, computed, ref, toRef, watch, withModifiers } from 'vue';
 
-import { useModelDuplex } from '../../composables/communication';
-import { useRender } from '../../composables/component';
-import { useTimer } from '../../composables/timing';
-import { omit } from '../../util';
+import { useModelDuplex } from '@/composables/communication';
+import { useRender } from '@/composables/component';
+import { useTimer } from '@/composables/timing';
+import { omit } from '@/util/common';
 import {
   bindClasses,
   chooseProps,
+  defineComponent,
   propsFactory,
-} from '../../util/vue-component';
+} from '@/util/component';
+
 import { YLayer, pressYLayerProps } from '../layer';
 import { YPlate } from '../plate';
 

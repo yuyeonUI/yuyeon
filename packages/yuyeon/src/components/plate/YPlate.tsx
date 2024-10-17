@@ -1,6 +1,7 @@
-import { PropType, computed, defineComponent } from 'vue';
+import { type PropType, computed } from 'vue';
 
-import { useRender } from '../../composables/component';
+import { useRender } from '@/composables/component';
+import { defineComponent } from '@/util/component';
 
 import './YPlate.scss';
 
@@ -15,7 +16,7 @@ export const YPlate = defineComponent({
   setup() {
     const classes = computed<Record<string, boolean>>(() => {
       return {
-        'y-plate': true
+        'y-plate': true,
       };
     });
 

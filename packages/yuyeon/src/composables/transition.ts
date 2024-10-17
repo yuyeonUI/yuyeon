@@ -1,22 +1,26 @@
 import {
-  Component,
-  FunctionalComponent,
-  PropType,
+  type Component,
+  type FunctionalComponent,
+  type PropType,
   Transition,
-  TransitionProps,
+  type TransitionProps,
   computed,
   h,
 } from 'vue';
-import { propsFactory } from '../util';
 
-export const pressPolyTransitionPropsOptions = propsFactory({
-  transition: {
-    type: [String, Object] as PropType<
-      string | (TransitionProps & { is?: Component })
-    >,
-    default: 'slide-fade',
+import { propsFactory } from '@/util/component/props';
+
+export const pressPolyTransitionPropsOptions = propsFactory(
+  {
+    transition: {
+      type: [String, Object] as PropType<
+        string | (TransitionProps & { is?: Component })
+      >,
+      default: 'slide-fade',
+    },
   },
-}, 'PolyTransition');
+  'PolyTransition',
+);
 
 export function usePolyTransition(props: { transition: any }) {
   const polyTransitionBindProps = computed(() => {

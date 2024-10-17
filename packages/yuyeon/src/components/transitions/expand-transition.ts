@@ -1,6 +1,6 @@
-import { PropType, Transition, defineComponent, h } from 'vue';
+import { type PropType, Transition, defineComponent, h } from 'vue';
 
-import { kebabToCamel } from '../../util/string';
+import { kebabToCamel } from '@/util/string';
 
 type HTMLParentElement = (Node & ParentNode & HTMLElement) | null;
 interface HTMLExpandElement extends HTMLElement {
@@ -73,7 +73,7 @@ export function createExpandTransition(isHorizon = false) {
 
         requestAnimationFrame(() => {
           el.style[sizeProperty] = '0';
-        })
+        });
       },
       onAfterLeave(el: HTMLExpandElement) {
         resetStyle(el);
@@ -96,7 +96,11 @@ export function createExpandTransition(isHorizon = false) {
       return () =>
         h(
           Transition,
-          { name: props.disabled ? '' : name, css: !props.disabled, ...(props.disabled ? {} : getExpandTransitionHooks()) },
+          {
+            name: props.disabled ? '' : name,
+            css: !props.disabled,
+            ...(props.disabled ? {} : getExpandTransitionHooks()),
+          },
           slots.default,
         );
     },

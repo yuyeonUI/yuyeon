@@ -1,10 +1,11 @@
-import { Transition, computed, defineComponent, ref, watch } from 'vue';
+import { Transition, computed, ref, watch } from 'vue';
 
-import { useModelDuplex } from '../../composables/communication';
-import { useRender } from '../../composables/component';
-import { useDate } from '../../composables/date';
-import { omit } from '../../util';
-import { chooseProps, propsFactory } from '../../util/vue-component';
+import { useModelDuplex } from '@/composables/communication';
+import { useRender } from '@/composables/component';
+import { useDate } from '@/composables/date';
+import { omit } from '@/util';
+import { chooseProps, defineComponent, propsFactory } from '@/util/component';
+
 import { YDateCalendar, pressYDateCalendarPropsOptions } from './YDateCalendar';
 import { YDatePickerControl } from './YDatePickerControl';
 import { YMonthPicker } from './YMonthPicker';
@@ -113,9 +114,20 @@ export const YDatePicker = defineComponent({
         ></YDatePickerControl>
         <Transition name="fade" mode="out-in">
           {mode.value === 'month' ? (
-            <YMonthPicker v-model={month.value} />
+            <YMonthPicker
+              v-model={month.value}
+              onMode={() => {
+                mode.value = 'date';
+              }}
+            />
           ) : mode.value === 'year' ? (
-            <YYearPicker v-model={year.value} ref={yearPicker$} />
+            <YYearPicker
+              v-model={year.value}
+              ref={yearPicker$}
+              onMode={() => {
+                mode.value = 'month';
+              }}
+            />
           ) : (
             <YDateCalendar
               {...chooseProps(props, YDateCalendar.props)}

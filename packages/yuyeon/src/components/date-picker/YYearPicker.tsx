@@ -1,10 +1,12 @@
-import { PropType, computed, defineComponent, ref } from 'vue';
+import { PropType, computed, ref } from 'vue';
 
-import { useModelDuplex } from '../../composables/communication';
-import { useRender } from '../../composables/component';
-import { useDate } from '../../composables/date';
-import { getRangeArr } from '../../util';
-import { propsFactory } from '../../util/vue-component';
+import { useModelDuplex } from '@/composables/communication';
+import { useRender } from '@/composables/component';
+import { useDate } from '@/composables/date';
+import { getRangeArr } from '@/util/common';
+import { defineComponent } from '@/util/component';
+import { propsFactory } from '@/util/component';
+
 import { YButton } from '../button';
 
 import './YYearPicker.scss';
@@ -25,6 +27,7 @@ const interval = 20;
 export const YYearPicker = defineComponent({
   name: 'YYearPicker',
   props: pressYYearPickerPropsOptions(),
+  emits: ['mode'],
   setup(props, { emit, expose }) {
     const dateUtil = useDate();
     const model = useModelDuplex(props, 'modelValue');
@@ -46,7 +49,10 @@ export const YYearPicker = defineComponent({
     });
 
     function onClick(value: number) {
-      model.value =  value;
+      if (model.value === value) {
+        emit('mode');
+      }
+      model.value = value;
     }
 
     function changePage(dir = 1) {
@@ -69,10 +75,10 @@ export const YYearPicker = defineComponent({
               item: year,
               props: {
                 onClick: () => {
-                  onClick(year.value)
-                }
-              }
-            }
+                  onClick(year.value);
+                },
+              },
+            };
             return (
               <div class={['y-year-picker__cell']}>
                 <YButton

@@ -1,7 +1,9 @@
-import { PropType, defineComponent } from 'vue';
+import { type PropType } from 'vue';
 
-import { useRender } from '../../composables/component';
-import { propsFactory } from '../../util';
+import { useRender } from '@/composables/component';
+import { propsFactory } from '@/util';
+import { defineComponent } from '@/util/component';
+
 import { YButton } from '../button';
 import { YFieldInput } from '../field-input';
 import { YIconExpand, YIconPageControl } from '../icons';

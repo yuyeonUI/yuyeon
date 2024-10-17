@@ -1,10 +1,11 @@
 import type { InjectionKey, PropType, Ref } from 'vue';
 import { computed, inject, provide, watchEffect } from 'vue';
 
-import { useModelDuplex } from '../../../composables/communication';
-import { clamp } from '../../../util/common';
-import { propsFactory } from '../../../util/vue-component';
-import { DataTableProvidePaginationData } from "../types";
+import { useModelDuplex } from '@/composables/communication';
+import { clamp } from '@/util/common';
+import { propsFactory } from '@/util/component';
+
+import { DataTableProvidePaginationData } from '../types';
 
 export const Y_DATA_TABLE_PAGINATION_KEY: InjectionKey<{
   page: Ref<number>;
@@ -129,18 +130,18 @@ export function usePagination() {
   return data;
 }
 
-export function usePaginatedItems <T> (options: {
-  items: Ref<readonly (T)[]>
-  startIndex: Ref<number>
-  endIndex: Ref<number>
-  pageSize: Ref<number>
+export function usePaginatedItems<T>(options: {
+  items: Ref<readonly T[]>;
+  startIndex: Ref<number>;
+  endIndex: Ref<number>;
+  pageSize: Ref<number>;
 }) {
-  const { items, startIndex, endIndex, pageSize } = options
+  const { items, startIndex, endIndex, pageSize } = options;
   const paginatedItems = computed(() => {
-    if (pageSize.value <= 0) return items.value
+    if (pageSize.value <= 0) return items.value;
 
-    return items.value.slice(startIndex.value, endIndex.value)
-  })
+    return items.value.slice(startIndex.value, endIndex.value);
+  });
 
-  return { paginatedItems }
+  return { paginatedItems };
 }

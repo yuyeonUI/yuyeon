@@ -1,8 +1,9 @@
-import { PropType, computed, defineComponent } from 'vue';
+import { type PropType, computed } from 'vue';
 
-import { useRender } from '../../composables/component';
-import { getObjectValueByPath } from '../../util/common';
-import { simpleBraceParse } from '../../util/string';
+import { useRender } from '@/composables/component';
+import { getObjectValueByPath } from '@/util/common';
+import { defineComponent } from '@/util/component';
+import { simpleBraceParse } from '@/util/string';
 
 export const YTi = defineComponent({
   name: 'YTi',

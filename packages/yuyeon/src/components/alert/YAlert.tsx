@@ -1,7 +1,9 @@
-import { PropType, SlotsType, computed, defineComponent, ref } from 'vue';
+import { type PropType, type SlotsType, computed, ref } from 'vue';
 
-import { useRender } from '../../composables/component';
-import { toKebabCase } from '../../util/string';
+import { useRender } from '@/composables/component';
+import { defineComponent } from '@/util/component';
+import { toKebabCase } from '@/util/string';
+
 import { YPlate } from '../plate';
 
 import './YAlert.scss';

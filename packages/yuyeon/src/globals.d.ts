@@ -16,5 +16,6 @@ declare module '@vue/runtime-core' {
   }
 
   export interface ComponentInternalInstance {
+    provides: Record<string, unknown>
   }
 }

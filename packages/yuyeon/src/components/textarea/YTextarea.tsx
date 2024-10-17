@@ -1,16 +1,21 @@
 import {
-  SlotsType,
-  defineComponent,
+  type PropType,
+  type SlotsType,
   getCurrentInstance,
   nextTick,
   ref,
   watch,
 } from 'vue';
-import type { PropType } from 'vue';
 
-import { useRender } from '../../composables/component';
-import { useFocus } from '../../composables/focus';
-import { chooseProps, getUid, propsFactory } from '../../util';
+import { useRender } from '@/composables/component';
+import { useFocus } from '@/composables/focus';
+import {
+  chooseProps,
+  defineComponent,
+  getUid,
+  propsFactory,
+} from '@/util/component';
+
 import { YInput, pressYInputPropsOptions } from '../input';
 
 import './YTextarea.scss';
@@ -158,9 +163,7 @@ export const YTextarea = defineComponent({
                 data-id={defaultProps.attrId}
                 ref={'field'}
               >
-                {props.floating
-                  ? el$.value?.createLabel?.()
-                  : undefined}
+                {props.floating ? el$.value?.createLabel?.() : undefined}
                 {slots.default ? () => slots.default(defaultProps) : undefined}
                 {
                   <textarea
@@ -184,8 +187,8 @@ export const YTextarea = defineComponent({
             ),
             label: slots.label ? () => slots.label?.() : undefined,
             'helper-text': slots['helper-text']
-                ? () => slots['helper-text']?.()
-                : undefined,
+              ? () => slots['helper-text']?.()
+              : undefined,
           }}
         </YInput>
       );

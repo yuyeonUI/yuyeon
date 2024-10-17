@@ -1,6 +1,6 @@
 import { reactive, watch } from 'vue';
 
-import { LocaleModule } from '../../i18n/types';
+import { LocaleModule } from '@/i18n/types';
 
 export function constructAdapter(options: any, locale: LocaleModule) {
   const instance = reactive(

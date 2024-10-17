@@ -1,12 +1,25 @@
-import { HTMLAttributes, SVGAttributes } from '@vue/runtime-dom';
-import { InjectionKey, PropType, Ref, h } from 'vue';
-import { computed, defineComponent, inject, mergeProps, unref } from 'vue';
+import {
+  type HTMLAttributes,
+  type InjectionKey,
+  type PropType,
+  type Ref,
+  type SVGAttributes,
+  computed,
+  h,
+  inject,
+  mergeProps,
+  unref,
+} from 'vue';
 
-import { builtSet } from '../components';
-import { JSXComponent } from '../types';
-import { mergeDeep, propsFactory } from '../util';
+import { builtSet } from '@/components/icons';
+import type { JSXComponent } from '@/types';
+import { mergeDeep } from '@/util/common';
+import { defineComponent } from '@/util/component/component';
+import { propsFactory } from '@/util/component/props';
 
-type IconComponent = JSXComponent<IconProps> | JSXComponent<SVGAttributes | HTMLAttributes>;
+type IconComponent =
+  | JSXComponent<IconProps>
+  | JSXComponent<SVGAttributes | HTMLAttributes>;
 
 export type IconValue =
   | string

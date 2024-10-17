@@ -1,6 +1,7 @@
-import { inject } from '@vue/runtime-core';
+import { inject } from 'vue';
 
-import { LocaleModule } from '../../i18n/types';
+import { LocaleModule } from '@/i18n/types';
+
 import { useI18n } from '../i18n';
 import { constructAdapter } from './factory';
 import { configureOptions } from './setting';
@@ -19,7 +20,8 @@ export function createDateModule(options: DateOptions, locale: LocaleModule) {
 
 export function useDate(): DateInstance {
   const options = inject<any>(YUYEON_DATE_OPTIONS_KEY);
-  if (!options) throw new Error('Not found provided "DateModule" for options');
+  if (!options)
+    throw new Error('【yuyeon】 Not found provided "DateModule" for options');
 
   const i18n = useI18n();
 

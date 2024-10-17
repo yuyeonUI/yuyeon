@@ -1,11 +1,12 @@
-import {inject, provide} from 'vue';
+import { inject, provide } from 'vue';
 
-import { LocaleModule, LocaleOptions } from '../../i18n/types';
+import type { LocaleModule, LocaleOptions } from '@/i18n/types';
+
 import { createLocaleModule } from './locale';
 import {
-  RtlModule,
-  RtlOptions,
-  RtlProps,
+  type RtlModule,
+  type RtlOptions,
+  type RtlProps,
   createRtlModule,
   createRtlProvideValue,
 } from './rtl';
@@ -23,13 +24,13 @@ export function createI18nModule(options?: LocaleOptions & RtlOptions) {
 
 export function useI18n(): LocaleModule & RtlModule {
   const i18n = inject<any>(YUYEON_I18N_KEY);
-  if (!i18n) throw new Error('Not found provided "I18nModule"');
+  if (!i18n) throw new Error('【yuyeon】 Not found provided "I18nModule"');
   return i18n;
 }
 
 export function provideI18n(props: LocaleOptions & RtlProps) {
   const i18n = inject<any>(YUYEON_I18N_KEY);
-  if (!i18n) throw new Error('Not found provided "I18nModule"');
+  if (!i18n) throw new Error('【yuyeon】 Not found provided "I18nModule"');
 
   const locale = i18n.getContext(props);
   const rtl = createRtlProvideValue(locale, i18n.rtl, props);

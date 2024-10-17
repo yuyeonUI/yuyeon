@@ -1,8 +1,8 @@
-import { shallowRef } from '@vue/runtime-core';
-import { PropType, SlotsType, computed, defineComponent, ref } from 'vue';
+import { type PropType, type SlotsType, computed, ref, shallowRef } from 'vue';
 
-import { useRender } from '../../composables/component';
-import { chooseProps, propsFactory } from '../../util';
+import { useRender } from '@/composables/component';
+import { chooseProps, defineComponent, propsFactory } from '@/util/component';
+
 import { YButton, pressYButtonProps } from '../button';
 import { Y_TABS_KEY } from './shared';
 

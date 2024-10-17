@@ -14,7 +14,7 @@ export interface ActiveStackProvide {
   push: (instance: any) => void;
   pop: (instance?: any) => void;
   clear: () => void;
-  $el: Ref<typeof YLayer | undefined>
+  $el: Ref<typeof YLayer | undefined>;
 }
 
 export const YUYEON_ACTIVE_STACK_KEY: InjectionKey<ActiveStackProvide> =

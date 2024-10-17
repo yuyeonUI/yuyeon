@@ -1,25 +1,25 @@
-import { Component, ComponentInternalInstance } from '@vue/runtime-core';
-import type { App } from 'vue';
+import type { App, Component, ComponentInternalInstance } from 'vue';
 import { getCurrentInstance, nextTick, reactive } from 'vue';
 
-import * as components from './components';
+import * as components from '@/components';
 import {
   YUYEON_DATE_KEY,
   YUYEON_DATE_OPTIONS_KEY,
   createDateModule,
-} from './composables/date';
-import { createI18nModule } from './composables/i18n';
-import { YUYEON_I18N_KEY } from './composables/i18n/share';
-import { YUYEON_ICON_KEY, createIconModule } from './composables/icon';
+} from '@/composables/date';
+import { createDefaultsModule } from '@/composables/defaults';
+import { YUYEON_DEFAULTS_KEY } from '@/composables/defaults/share';
+import { createI18nModule } from '@/composables/i18n';
+import { YUYEON_I18N_KEY } from '@/composables/i18n/share';
+import { YUYEON_ICON_KEY, createIconModule } from '@/composables/icon';
 import {
   YUYEON_THEME_KEY,
   createThemeModule,
   useTheme,
-} from './composables/theme';
-import PlateWave from './directives/plate-wave';
-import { YUYEON_LOGO } from './etc';
+} from '@/composables/theme';
+import PlateWave from '@/directives/plate-wave';
+import { YUYEON_LOGO } from '@/etc';
 
-//
 import './styles/base.scss';
 
 const defaultOptions = {
@@ -33,11 +33,12 @@ declare module 'vue' {
 }
 
 export function init(options: any = defaultOptions) {
+  const defaultsModule = createDefaultsModule(options?.defaults);
   const themeModule = createThemeModule(options?.theme);
   const i18nModule = createI18nModule(options?.i18n);
   const dateModule = createDateModule(options?.date, i18nModule.localeModule);
   const iconModule = createIconModule(options?.icon);
-  const install = (app: App): any => {
+  const install = (app: App) => {
     themeModule.install(app);
 
     const yuyeon = reactive({
@@ -49,9 +50,10 @@ export function init(options: any = defaultOptions) {
         ...i18nModule.rtlModule,
       },
       date: dateModule,
+      defaults: defaultsModule,
     });
 
-    Object.keys(components).forEach((componentName) => {
+    Object.keys(options?.components ?? components).forEach((componentName) => {
       const comp = components[componentName as keyof typeof components];
       if (typeof comp === 'object' && 'name' in comp)
         app.component(componentName, comp as Component);
@@ -59,6 +61,7 @@ export function init(options: any = defaultOptions) {
 
     app.directive('plate-wave', PlateWave);
 
+    app.provide(YUYEON_DEFAULTS_KEY, defaultsModule);
     app.provide(YUYEON_THEME_KEY, themeModule.instance);
     app.provide(YUYEON_ICON_KEY, iconModule);
     app.provide(YUYEON_I18N_KEY, {

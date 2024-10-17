@@ -1,7 +1,8 @@
-import { Ref, computed, watch } from 'vue';
+import { type Ref, computed, watch } from 'vue';
 
-import { deepEqual } from '../../../util/common';
-import { SortOption } from "../types";
+import { deepEqual } from '@/util/common';
+
+import { SortOption } from '../types';
 
 type DataTableOptionsState = {
   page: Ref<number>;

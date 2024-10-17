@@ -1,4 +1,6 @@
-import { VNode, defineComponent, h } from 'vue';
+import { type VNode, h } from 'vue';
+
+import { defineComponent } from '@/util/component';
 
 import './YTextHighlighter.scss';
 

@@ -1,15 +1,16 @@
-import { CSSProperties, defineComponent } from 'vue';
+import { type CSSProperties } from 'vue';
 
-import { useRender } from '../../composables/component';
-import { toStyleSizeValue } from '../../util/ui';
-import { propsFactory } from '../../util/vue-component';
+import { useRender } from '@/composables/component';
+import { wrapInArray } from '@/util';
+import { defineComponent, propsFactory } from '@/util/component';
+import { toStyleSizeValue } from '@/util/ui';
+
+import { YIconCheckbox } from '../icons/YIconCheckbox';
 import { YIconSort } from '../icons/YIconSort';
 import { YDataTableCell } from './YDataTableCell';
 import { useHeader } from './composibles/header';
 import { useSelection } from './composibles/selection';
 import { useSorting } from './composibles/sorting';
-
-import { YIconCheckbox } from '../icons';
 import { InternalDataTableHeader } from './types';
 
 export const pressYDataTableHeadProps = propsFactory(
@@ -99,6 +100,7 @@ export const YDataTableHead = defineComponent({
               'y-data-table-header--sorted': isSorted(column),
               'y-data-table-header--select': column.key === 'data-table-select',
             },
+            ...wrapInArray(column.headerClasses ?? []),
           ]}
           style={{
             width: toStyleSizeValue(column.width),

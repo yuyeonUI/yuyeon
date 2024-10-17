@@ -1,7 +1,8 @@
-import { PropType, defineComponent, mergeProps } from 'vue';
+import { type PropType, mergeProps } from 'vue';
 
-import { useRender } from '../../composables/component';
-import { propsFactory } from '../../util/vue-component';
+import { useRender } from '@/composables/component';
+import { defineComponent, propsFactory } from '@/util/component';
+
 import { YDataTableRow } from './YDataTableRow';
 import { useHeader } from './composibles/header';
 import { useSelection } from './composibles/selection';

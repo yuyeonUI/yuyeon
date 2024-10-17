@@ -1,4 +1,6 @@
-import { PropType, defineComponent, withModifiers } from 'vue';
+import { type PropType, withModifiers } from 'vue';
+
+import { defineComponent } from '@/util/component';
 
 import './YSwitch.scss';
 
