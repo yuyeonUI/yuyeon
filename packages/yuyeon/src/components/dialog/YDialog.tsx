@@ -240,7 +240,9 @@ export const YDialog = defineComponent({
     );
 
     onBeforeUnmount(() => {
-      preventInteractionBackground(false);
+      if (active.value) {
+        active.value = false;
+      }
     });
 
     useRender(() => {
