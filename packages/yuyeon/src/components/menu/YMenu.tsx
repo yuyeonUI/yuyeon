@@ -1,4 +1,4 @@
-import type { PropType, SlotsType } from 'vue';
+import { getCurrentInstance, PropType, SlotsType } from 'vue';
 import { computed, ref, toRef, watch } from 'vue';
 
 import { useModelDuplex } from '@/composables/communication';
@@ -61,6 +61,7 @@ export const YMenu = defineComponent({
   }>,
   expose: ['layer$', 'baseEl'],
   setup(props, { slots, emit, expose }) {
+    const vm = getCurrentInstance();
     const layer$ = ref<typeof YLayer>();
 
     const classes = computed(() => {
@@ -121,7 +122,7 @@ export const YMenu = defineComponent({
       }
       const currentActive = active.value;
       if (!props.disabled) {
-        if (props.openOnHover && finish.value && active.value) {
+        if (props.openOnHover && finish.value && currentActive) {
           return;
         }
         active.value = !currentActive;
@@ -139,7 +140,7 @@ export const YMenu = defineComponent({
         }
       }
       if (active.value) {
-        if ((!parent && children.value.length === 0) || parent) {
+        if ((children.value.length === 0)) {
           active.value = false;
         }
         const parentContent = parent?.$el.value?.content$;
