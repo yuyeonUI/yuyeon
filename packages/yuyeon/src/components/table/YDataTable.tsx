@@ -36,6 +36,7 @@ export const pressDataTableProps = propsFactory(
     ...pressYDataTableBodyProps(),
     width: [String, Number] as PropType<string | number>,
     search: String as PropType<string>,
+    hideDefaultTbody: Boolean,
     ...pressDataTableHeader(),
     ...pressDataTableItemsProps(),
     ...pressDataTableSortProps(),
@@ -130,7 +131,7 @@ export const YDataTable = defineComponent({
         selectAll,
         toggleSelect,
         //
-        items: items.value,
+        items: paginatedItems.value,
         columns: columns.value,
         headers: headers.value,
       };
@@ -179,13 +180,15 @@ export const YDataTable = defineComponent({
                     ></YDataTableHead>
                   </thead>
                   {slots.thead?.(slotProps.value)}
-                  <tbody>
-                    <YDataTableBody
-                      v-slots={slots}
-                      {...yDataTableBodyProps}
-                      items={paginatedItems.value}
-                    ></YDataTableBody>
-                  </tbody>
+                  {!props.hideDefaultTbody && (
+                    <tbody>
+                      <YDataTableBody
+                        v-slots={slots}
+                        {...yDataTableBodyProps}
+                        items={slotProps.value.items}
+                      ></YDataTableBody>
+                    </tbody>
+                  )}
                   {slots.tbody?.(slotProps.value)}
                   {slots.tfoot?.(slotProps.value)}
                 </>

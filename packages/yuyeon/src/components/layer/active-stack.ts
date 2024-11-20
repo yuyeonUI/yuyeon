@@ -45,6 +45,7 @@ export function useActiveStack(
   }
 
   function clear() {
+    if ($el.value?.modal) return;
     active.value = false;
     const bubble = () => {
       if (children.value.length === 0) {

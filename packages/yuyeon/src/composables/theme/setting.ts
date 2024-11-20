@@ -49,6 +49,7 @@ export const defaultThemesValues: any = {
       success: '#006d42',
       'on-success': '#ffffff',
       shadow: '#000000',
+      highlighter: '#ffff00',
     },
     variables: {
       'outline-opacity': 0.14,
@@ -82,6 +83,7 @@ export const defaultThemesValues: any = {
       success: '#61dd9a',
       'on-success': '#003920',
       shadow: '#000000',
+      highlighter: '#51510d',
     },
     variables: {
       'outline-opacity': 0.14,

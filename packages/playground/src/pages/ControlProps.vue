@@ -394,6 +394,34 @@ const selectItems = [
                           placeholder="No Trap!"
                         ></y-field-input>
                       </div>
+                      <div>
+                        <y-select :items="[1, 2, 3, 4]">
+                          <template #menu>
+                            <header>
+                              <y-field-input placeholder="search" />
+                            </header>
+                            <div>
+                              <y-list>
+                                <y-list-item v-for="_i in 3" :key="_i">
+                                  {{ 'item' + _i }}
+                                </y-list-item>
+                              </y-list>
+                            </div>
+                          </template>
+                        </y-select>
+                      </div>
+                      <div>
+                        <y-menu>
+                          <template #base>
+                            <y-button>
+                              menu in menu
+                            </y-button>
+                          </template>
+                          <y-card>
+                            <h1>menu!</h1>
+                          </y-card>
+                        </y-menu>
+                      </div>
                     </y-card>
                   </y-menu>
                 </y-card-body>

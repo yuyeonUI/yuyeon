@@ -1,4 +1,11 @@
-import { type PropType, Transition, defineComponent, h } from 'vue';
+import {
+  type PropType,
+  type Ref,
+  Transition,
+  defineComponent,
+  h,
+  ref,
+} from 'vue';
 
 import { kebabToCamel } from '@/util/string';
 
@@ -10,6 +17,7 @@ interface HTMLExpandElement extends HTMLElement {
     overflow: string;
     height?: string | null;
     width?: string | null;
+    flex: string;
   };
 }
 
@@ -21,16 +29,27 @@ export function createExpandTransition(isHorizon = false) {
     | 'offsetWidth'
     | 'offsetHeight';
 
-  function getExpandTransitionHooks(): Record<string, any> {
+  function getExpandTransitionHooks(
+    cache: Ref<number | undefined>,
+    relay: boolean,
+  ): Record<string, any> {
     function resetStyle(el: HTMLExpandElement) {
       if (el._originStyle) {
         el.style.overflow = el._originStyle.overflow;
+        el.style.flex = el._originStyle.flex;
         const size = el._originStyle[sizeProperty];
         if (size != null) {
           el.style[sizeProperty] = size;
         }
       }
       delete el._originStyle;
+    }
+
+    function cacheSize(el: HTMLExpandElement) {
+      if (relay && el) {
+        const rect = el.getBoundingClientRect();
+        cache.value = rect?.[sizeProperty];
+      }
     }
 
     return {
@@ -40,14 +59,20 @@ export function createExpandTransition(isHorizon = false) {
           transition: el.style.transition,
           overflow: el.style.overflow,
           [sizeProperty]: el.style[sizeProperty],
+          flex: el.style.flex,
         };
       },
       onEnter(el: HTMLExpandElement) {
         const originStyle = el._originStyle;
         el.style.setProperty('transition', 'none', 'important');
         el.style.overflow = 'hidden';
+        el.style.flex = '0 0 auto';
         const offsetSize = `${el[offsetProperty]}px`;
-        el.style[sizeProperty] = '0';
+        if (relay && cache.value != null) {
+          el.style[sizeProperty] = `${cache.value}px`;
+        } else {
+          el.style[sizeProperty] = '0';
+        }
         el.getBoundingClientRect();
         el.style.transition = originStyle?.transition ?? '';
 
@@ -62,15 +87,20 @@ export function createExpandTransition(isHorizon = false) {
         resetStyle(el);
       },
       onLeave(el: HTMLExpandElement) {
+        cacheSize(el);
+        if (relay) {
+          return;
+        }
         el._originStyle = {
           transition: '',
           overflow: el.style.overflow,
+          flex: el.style.flex,
           [sizeProperty]: el.style[sizeProperty],
         };
         el.style.overflow = 'hidden';
+        el.style.flex = '0 0 auto';
         el.style[sizeProperty] = `${el[offsetProperty]}px`;
         el.getBoundingClientRect();
-
         requestAnimationFrame(() => {
           el.style[sizeProperty] = '0';
         });
@@ -91,15 +121,19 @@ export function createExpandTransition(isHorizon = false) {
         type: Boolean as PropType<boolean>,
         default: false,
       },
+      relay: Boolean,
     },
     setup(props, { slots }) {
+      const cacheValue = ref<number | undefined>();
       return () =>
         h(
           Transition,
           {
             name: props.disabled ? '' : name,
             css: !props.disabled,
-            ...(props.disabled ? {} : getExpandTransitionHooks()),
+            ...(props.disabled
+              ? {}
+              : getExpandTransitionHooks(cacheValue, props.relay)),
           },
           slots.default,
         );

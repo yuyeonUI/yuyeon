@@ -5,7 +5,7 @@ $chip-border-radius: variables.$border-radius-root;
 .y-chip {
   --y-chip__background-opacity: 0.14;
   --y-chip__color: var(--y-theme-on-surface);
-  --y-chip__background: rgba(var(--y-theme-on-surface), var(--y-chip__background-opacity));
+  --y-chip__background: rgba(var(--y-theme-on-surface-rgb), var(--y-chip__background-opacity));
 
   display: inline-flex;
   position: relative;

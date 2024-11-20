@@ -72,29 +72,30 @@ export const YDataTableBody = defineComponent({
                   isSelected,
                   toggleSelect,
                 };
+
+                function onClick(event: Event) {
+                  props['onClick:row']?.(event, { ...stateProps });
+                }
+
+                function onDblclick(event: Event) {
+                  props['onDblclick:row']?.(event, { ...stateProps });
+                }
+
+                function onContextmenu(event: Event) {
+                  props['onContextmenu:row']?.(event, {
+                    ...stateProps,
+                  });
+                }
+
                 const slotProps = {
                   ...stateProps,
                   props: mergeProps(
                     {
                       key: `item__${item.key ?? item.index}`,
                       item,
-                      onClick: props['onClick:row']
-                        ? (event: Event) => {
-                            props['onClick:row']?.(event, { ...stateProps });
-                          }
-                        : undefined,
-                      onDblclick: props['onDblclick:row']
-                        ? (event: Event) => {
-                            props['onDblclick:row']?.(event, { ...stateProps });
-                          }
-                        : undefined,
-                      onContextmenu: props['onContextmenu:row']
-                        ? (event: Event) => {
-                            props['onContextmenu:row']?.(event, {
-                              ...stateProps,
-                            });
-                          }
-                        : undefined,
+                      onClick,
+                      onDblclick,
+                      onContextmenu,
                       index,
                     },
                     typeof props.rowProps === 'function'
