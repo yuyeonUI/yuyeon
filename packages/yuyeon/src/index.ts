@@ -1,7 +1,7 @@
 import type { App, Component, ComponentInternalInstance } from 'vue';
 import { getCurrentInstance, nextTick, reactive } from 'vue';
 
-import * as components from '@/components';
+import * as allComponents from '@/components/';
 import {
   YUYEON_DATE_KEY,
   YUYEON_DATE_OPTIONS_KEY,
@@ -38,6 +38,8 @@ export function init(options: any = defaultOptions) {
   const i18nModule = createI18nModule(options?.i18n);
   const dateModule = createDateModule(options?.date, i18nModule.localeModule);
   const iconModule = createIconModule(options?.icon);
+  const components = options?.components ?? allComponents;
+
   const install = (app: App) => {
     themeModule.install(app);
 
@@ -53,7 +55,7 @@ export function init(options: any = defaultOptions) {
       defaults: defaultsModule,
     });
 
-    Object.keys(options?.components ?? components).forEach((componentName) => {
+    Object.keys(components).forEach((componentName) => {
       const comp = components[componentName as keyof typeof components];
       if (typeof comp === 'object' && 'name' in comp)
         app.component(componentName, comp as Component);
