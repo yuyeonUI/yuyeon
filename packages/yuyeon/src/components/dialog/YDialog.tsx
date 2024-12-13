@@ -195,7 +195,7 @@ export const YDialog = defineComponent({
         const filtered = activeLayers?.filter((layer: any) => {
           return !layer$.value?.isMe(layer) && layer.ctx.modal;
         });
-        if (!filtered?.length) {
+        if (!filtered?.length && root$) {
           root$.classList.remove('y-dialog--virtual-scroll');
           document.documentElement.classList.remove('y-dialog--prevent-scroll');
           root$.style.top = '';
