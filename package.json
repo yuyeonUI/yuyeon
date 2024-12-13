@@ -9,14 +9,28 @@
   "engines": {
     "node": "^18.0.0 || >=20.0.0"
   },
+  "scripts": {
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
+  },
   "devDependencies": {
+    "@chromatic-com/storybook": "3.2.2",
+    "@storybook/addon-essentials": "8.4.6",
+    "@storybook/addon-interactions": "8.4.6",
+    "@storybook/addon-onboarding": "8.4.6",
+    "@storybook/blocks": "8.4.6",
+    "@storybook/test": "8.4.6",
+    "@storybook/vue3": "8.4.6",
+    "@storybook/vue3-vite": "8.4.6",
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
     "@types/node": "^18.19.1",
+    "@vitejs/plugin-vue": "^5.2.1",
     "@vue/compiler-sfc": "^3.4.31",
     "prettier": "^3.2.5",
     "sass": "^1.57.1",
+    "storybook": "8.4.6",
     "typescript": "^5.4.2",
-    "vite": "^5.3.1",
+    "vite": "^5.4.6",
     "vue": "^3.4.34"
   },
   "packageManager": "yarn@3.5.0"
