@@ -1,5 +1,5 @@
 import type { InjectionKey, PropType, Ref } from 'vue';
-import { computed, inject, provide, watchEffect } from 'vue';
+import { computed, inject, provide, watch } from 'vue';
 
 import { useModelDuplex } from '@/composables/communication';
 import { clamp } from '@/util/common';
@@ -69,6 +69,7 @@ export function providePagination(options: {
 
     return pageSize.value * (page.value - 1);
   });
+
   const endIndex = computed(() => {
     if (pageSize.value === -1) return total.value;
 
@@ -81,15 +82,17 @@ export function providePagination(options: {
     return Math.ceil(total.value / pageSize.value);
   });
 
-  watchEffect(() => {
+  watch([page, pageLength], () => {
     if (page.value > pageLength.value) {
       page.value = pageLength.value;
     }
   });
 
-  function setPageSize(value: number) {
+  function setPageSize(value: number, noReset?: boolean) {
     pageSize.value = value;
-    page.value = 1;
+    if (!noReset) {
+      page.value = 1;
+    }
   }
 
   function nextPage() {
