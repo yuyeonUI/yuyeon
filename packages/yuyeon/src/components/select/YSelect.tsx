@@ -99,6 +99,7 @@ export const YSelect = defineComponent({
     'update:modelValue': (value: any) => true,
     'update:opened': (opened: boolean) => true,
     'click:item': (item: any, e: MouseEvent) => true,
+    'change': (value: any) => true,
   },
   slots: Object as SlotsType<{
     base: any;
@@ -119,7 +120,7 @@ export const YSelect = defineComponent({
     'item-leading': { item: any; selected: boolean; select: () => void };
     'item-trailing': { item: any; selected: boolean; select: () => void };
   }>,
-  setup(props, { slots, attrs, expose }) {
+  setup(props, { slots, attrs, expose, emit }) {
     const fieldInputRef = ref();
     const menuRef = ref<InstanceType<typeof YMenu>>();
     const listRef = ref<InstanceType<typeof YList>>();
@@ -130,15 +131,16 @@ export const YSelect = defineComponent({
 
     const { items, toRefineItems, toEmitItems } = useItems(props);
     const { t } = useI18n();
+    const setOut = (v: any) => {
+      const emitValue = toEmitItems(wrapInArray(v));
+      return props.multiple ? emitValue : emitValue[0] ?? null;
+    };
     const model = useModelDuplex(
       props,
       'modelValue',
       [],
       (v) => toRefineItems(v === null ? [null] : wrapInArray(v)),
-      (v) => {
-        const emitValue = toEmitItems(wrapInArray(v));
-        return props.multiple ? emitValue : emitValue[0] ?? null;
-      },
+      setOut,
     );
 
     const selections = computed<ListItem[]>(() => {
@@ -208,20 +210,23 @@ export const YSelect = defineComponent({
     }
 
     function select(item: ListItem) {
+      let value;
       if (props.multiple) {
         const index = selections.value.findIndex((selectedItem) => {
           return selectedItem.value === item.value;
         });
         if (index === -1) {
-          model.value = [...model.value, item];
+          value = [...model.value, item];
         } else {
           const neo = model.value.slice();
           neo.splice(index, 1);
-          model.value = neo;
+          value = neo;
         }
       } else {
-        model.value = [item];
+        value = [item];
       }
+      model.value = value;
+      emit('change', setOut(value));
     }
 
     const displayText = computed(() => {
