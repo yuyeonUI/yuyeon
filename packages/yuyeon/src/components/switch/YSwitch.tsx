@@ -1,19 +1,21 @@
-import { type PropType, withModifiers } from 'vue';
+import {
+  type PropType,
+  computed,
+  nextTick,
+  ref,
+  watch,
+  withModifiers,
+} from 'vue';
 
-import { defineComponent } from '@/util/component';
+import { useModelDuplex } from '@/composables/communication';
+import { useRender } from '@/composables/component';
+import { defineComponent, getUid, propsFactory } from '@/util/component';
 
 import './YSwitch.scss';
 
-let uidCounter = 0;
-
-export const YSwitch = defineComponent({
-  name: 'YSwitch',
-  model: {
-    prop: 'input',
-    event: 'change',
-  },
-  props: {
-    input: {
+export const pressYSwitchPropsOptions = propsFactory(
+  {
+    modelValue: {
       type: [Boolean, Array] as PropType<boolean | any[]>,
       default: false,
     },
@@ -47,191 +49,173 @@ export const YSwitch = defineComponent({
       default: 'OFF',
     },
   },
-  data() {
-    return {
-      innerValue: false,
-      counterId: '',
-      focused: false,
-    };
-  },
-  created() {
-    const iid = uidCounter.toString();
-    uidCounter += 1;
-    this.counterId = iid;
-    if (Array.isArray(this.input)) {
-      this.inputByValue();
-    } else {
-      this.innerValue = this.input;
-    }
-  },
-  computed: {
-    isMultipleInput() {
-      return Array.isArray(this.input);
-    },
-    multipleInputIndex() {
-      if (!Array.isArray(this.input)) {
-        return -1;
-      }
-      return this.input.findIndex((inp) => {
-        return inp === this.value;
-      });
-    },
-    inputId() {
-      const id = this.counterId;
-      return `y-switch--${id}`;
-    },
-    trackStyles() {
-      return {
-        backgroundColor: this.color,
-      };
-    },
-    classes() {
-      return {
-        'y-switch--disabled': this.disabled,
-        'y-switch--loading': this.loading,
-        'y-switch--active': this.innerValue,
-        'y-switch--stick-out': this.stickOut,
-        'y-switch--focused': this.focused,
-      };
-    },
-  },
-  methods: {
-    inputByValue() {
-      if (Array.isArray(this.input)) {
-        const found = this.input.find((inp: any) => {
-          return inp === this.value;
-        });
+  'YSwitch',
+);
 
-        if (found !== undefined) {
-          this.innerValue = true;
-        } else {
-          this.innerValue = false;
-        }
-      } else if (typeof this.input === 'boolean') {
-        this.innerValue = this.input;
+export const YSwitch = defineComponent({
+  name: 'YSwitch',
+  props: {
+    ...pressYSwitchPropsOptions(),
+  },
+  emits: [
+    'update:modelValue',
+    'change',
+    'click',
+    'focus',
+    'blur',
+    'keydown',
+    'overmax',
+  ],
+  setup(props, { emit, slots }) {
+    const counterId = (getUid() ?? '').toString();
+    const inputId = `input-${counterId}`;
+    const input$ = ref<HTMLInputElement>();
+    const model = useModelDuplex(props);
+    const checked = ref(false);
+    const focused = ref(false);
+
+    const isMultipleInput = computed(() => {
+      return Array.isArray(model.value);
+    });
+
+    const multipleInputIndex = computed(() => {
+      if (!isMultipleInput.value) return -1;
+      return model.value.findIndex((item: any) => item === props.value);
+    });
+
+    const classes = computed(() => {
+      return {
+        'y-switch--active': checked.value,
+        'y-switch--focused': focused.value,
+        'y-switch--disabled': !!props.disabled,
+        'y-switch--loading': !!props.loading,
+        'y-switch--stick-out': !!props.stickOut,
+      };
+    });
+
+    watch(model, () => {
+      inputByProp();
+    }, { immediate: true });
+
+    function inputByProp() {
+      const modelValue = model.value;
+      if (Array.isArray(modelValue)) {
+        const found = modelValue.find((item: any) => {
+          return item === props.value;
+        });
+        checked.value = found !== undefined;
+      } else if (typeof modelValue === 'boolean') {
+        checked.value = modelValue;
       }
-    },
-    changeMultipleInput(checked: boolean) {
-      if (Array.isArray(this.input)) {
-        const multipleInput = this.input.slice();
+    }
+
+    function changeMultipleInput(to: boolean) {
+      const modelValue = model.value;
+      if (Array.isArray(modelValue)) {
+        const multipleInput = modelValue.slice();
         if (
-          checked &&
-          this.max !== undefined &&
-          multipleInput.length >= this.max
+          to &&
+          props.max !== undefined &&
+          multipleInput.length >= props.max
         ) {
-          this.$emit('overmax');
-          this.nextChange(false, multipleInput);
+          emit('overmax');
+          nextChange(false, multipleInput);
           return;
         }
-        if (checked && this.multipleInputIndex < 0) {
-          multipleInput.push(this.value);
-        } else if (this.multipleInputIndex > -1) {
-          multipleInput.splice(this.multipleInputIndex, 1);
+        if (to && multipleInputIndex.value < 0) {
+          multipleInput.push(props.value);
+        } else if (multipleInputIndex.value > -1) {
+          multipleInput.splice(multipleInputIndex.value, 1);
         }
-        this.$emit('change', multipleInput);
+        emit('change', multipleInput);
       }
-    },
-    nextChange(checked: boolean, value: any) {
-      this.$nextTick(() => {
-        this.innerValue = checked;
+    }
+
+    function nextChange(to: boolean, value: any) {
+      nextTick(() => {
+        checked.value = to;
       });
-    },
-    onClick($event: Event) {
-      if (this.disabled || this.loading) return;
-      this.changeInput(!this.innerValue, $event);
-    },
-    onFocus() {
-      this.focused = true;
-    },
-    onBlur() {
-      this.focused = false;
-    },
-    onKeydown($event: KeyboardEvent) {
-      // nothing
-    },
-    onChange($event: Event) {
-      const $checkbox = $event.target as HTMLInputElement;
-      const { checked } = $checkbox;
-      $event.stopImmediatePropagation();
-      this.changeInput(checked, $event);
-    },
-    changeInput(checked: boolean, event?: Event) {
-      this.innerValue = checked;
-      if (this.isMultipleInput) {
-        this.changeMultipleInput(checked);
+    }
+
+    function onFocus(e: FocusEvent) {
+      focused.value = true;
+      emit('focus', e);
+    }
+
+    function onBlur(e: FocusEvent) {
+      focused.value = false;
+      emit('blur', e);
+    }
+
+    function onClick($event: Event) {
+      if (props.disabled || props.loading) return;
+      changeInput(!checked.value, $event);
+    }
+
+    function changeInput(to: boolean, event?: Event) {
+      checked.value = to;
+      if (isMultipleInput.value) {
+        changeMultipleInput(to);
       } else {
-        this.$emit('change', checked);
+        model.value = to;
+        emit('change', to);
       }
-    },
-  },
-  watch: {
-    input() {
-      this.inputByValue();
-    },
-  },
-  render() {
-    const {
-      $slots,
-      classes,
-      onClick,
-      onKeydown,
-      onFocus,
-      onBlur,
-      onChange,
-      inputId,
-      innerValue,
-      disabled,
-      trackStyles,
-      stateLabel,
-      labelOn,
-      labelOff,
-      loading,
-    } = this;
-    return (
-      <div class={{ 'y-switch': true, ...classes }}>
-        <div class="y-switch__slot">
-          <div
-            class="y-switch__input"
-            onClick={withModifiers(onClick, ['exact'])}
-            onKeydown={onKeydown}
-          >
-            <input
-              id={inputId}
-              aria-checked={innerValue}
-              type="checkbox"
-              role="switch"
-              onFocus={onFocus}
-              onBlur={onBlur}
-              onChange={onChange}
-              disabled={disabled}
-              checked={innerValue}
-              ref="checkbox"
-            />
-            <div class="y-switch__track" style={trackStyles}>
-              {stateLabel && (
-                <div class="y-switch__state">
-                  <span class="y-switch__state-label y-switch__state-label--on">
-                    {{ labelOn }}
-                  </span>
-                  <span class="y-switch__state-label y-switch__state-label--off">
-                    {{ labelOff }}
-                  </span>
-                </div>
-              )}
+    }
+
+    function onKeydown($event: KeyboardEvent) {
+      emit('keydown', $event);
+    }
+
+    useRender(() => {
+      const trackStyles = {
+        backgroundColor: props.color,
+      };
+
+      return (
+        <div class={{ 'y-switch': true, ...classes.value }}>
+          <div class="y-switch__slot">
+            <div
+              class="y-switch__input"
+              onClick={withModifiers(onClick, ['exact'])}
+              onKeydown={onKeydown}
+            >
+              <input
+                ref={input$}
+                id={inputId}
+                aria-checked={checked.value}
+                type="checkbox"
+                role="switch"
+                onFocus={onFocus}
+                onBlur={onBlur}
+                disabled={props.disabled}
+                checked={checked.value}
+              />
+              <div class="y-switch__track" style={trackStyles}>
+                {props.stateLabel && (
+                  <div class="y-switch__state">
+                    <span class="y-switch__state-label y-switch__state-label--on">
+                      {props.labelOn}
+                    </span>
+                    <span class="y-switch__state-label y-switch__state-label--off">
+                      {props.labelOff}
+                    </span>
+                  </div>
+                )}
+              </div>
+              <div class="y-switch__thumb">
+                {props.loading && <div class="y-switch__spinner"></div>}
+              </div>
             </div>
-            <div class="y-switch__thumb">
-              {loading && <div class="y-switch__spinner"></div>}
-            </div>
+            {slots.label && (
+              <label for={inputId} class="y-switch__label">
+                {slots.label?.()}
+                <input hidden />
+              </label>
+            )}
           </div>
-          {$slots.label && (
-            <label for={inputId} class="y-switch__label">
-              {$slots.label?.()}
-              <input hidden />
-            </label>
-          )}
         </div>
-      </div>
-    );
+      );
+    });
   },
 });
 
