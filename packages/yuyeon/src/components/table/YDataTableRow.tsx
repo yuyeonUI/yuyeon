@@ -14,10 +14,11 @@ import { CellProps, DataTableItem } from './types';
 export const pressYDataTableRowProps = propsFactory(
   {
     index: Number as PropType<number>,
-    onClick: Function as PropType<(...args: any[]) => void>,
-    onContextmenu: Function as PropType<(...args: any[]) => void>,
-    onDblclick: Function as PropType<(...args: any[]) => void>,
     onHover: Function as PropType<(...args: any[]) => void>,
+    onMousedown: Function as PropType<(...args: any[]) => void>,
+    onClick: Function as PropType<(...args: any[]) => void>,
+    onDblclick: Function as PropType<(...args: any[]) => void>,
+    onContextmenu: Function as PropType<(...args: any[]) => void>,
   },
   'YDataTableRow',
 );
@@ -29,6 +30,7 @@ export const YDataTableRow = defineComponent({
     cellProps: [Object, Function] as PropType<CellProps>,
     ...pressYDataTableRowProps(),
   },
+  emits: ['hover', 'mousedown', 'click', 'dblclick', 'contextmenu'],
   setup(props, { emit, slots }) {
     const vm = getCurrentInstance();
     const { isSelected, toggleSelect } = useSelection();
@@ -47,6 +49,10 @@ export const YDataTableRow = defineComponent({
         });
       }
       return ret;
+    }
+
+    function onMousedown(event: MouseEvent) {
+      props.onMousedown?.(event, vm?.proxy?.$el);
     }
 
     function onClick(event: MouseEvent) {
@@ -71,6 +77,7 @@ export const YDataTableRow = defineComponent({
           onClick={props.onClick && onClick}
           onContextmenu={props.onContextmenu && onContextmenu}
           onDblclick={props.onDblclick && onDblclick}
+          onMousedown={props.onMousedown && onMousedown}
         >
           {props.item &&
             columns.value.map((column, colIndex) => {
