@@ -73,17 +73,18 @@ export const YDataTableBody = defineComponent({
                   toggleSelect,
                 };
 
-                function onClick(event: Event) {
-                  props['onClick:row']?.(event, { ...stateProps });
+                function onClick(event: Event, el: null | Element) {
+                  props['onClick:row']?.(event, { ...stateProps, el });
                 }
 
-                function onDblclick(event: Event) {
-                  props['onDblclick:row']?.(event, { ...stateProps });
+                function onDblclick(event: Event, el: null | Element) {
+                  props['onDblclick:row']?.(event, { ...stateProps, el });
                 }
 
-                function onContextmenu(event: Event) {
+                function onContextmenu(event: Event, el: null | Element) {
                   props['onContextmenu:row']?.(event, {
                     ...stateProps,
+                    el,
                   });
                 }
 
@@ -93,9 +94,6 @@ export const YDataTableBody = defineComponent({
                     {
                       key: `item__${item.key ?? item.index}`,
                       item,
-                      onClick,
-                      onDblclick,
-                      onContextmenu,
                       index,
                     },
                     typeof props.rowProps === 'function'
@@ -106,7 +104,11 @@ export const YDataTableBody = defineComponent({
                         })
                       : props.rowProps,
                   ),
+                  onClick,
+                  onContextmenu,
+                  onDblclick,
                 };
+
                 return (
                   <>
                     {slots.item ? (
@@ -115,6 +117,11 @@ export const YDataTableBody = defineComponent({
                       <YDataTableRow
                         v-slots={slots}
                         {...slotProps.props}
+                        onClick={props['onClick:row'] && onClick}
+                        onContextmenu={
+                          props['onContextmenu:row'] && onContextmenu
+                        }
+                        onDblclick={props['onDblclick:row'] && onDblclick}
                       ></YDataTableRow>
                     )}
                   </>

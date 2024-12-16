@@ -1,4 +1,4 @@
-import { type PropType, computed } from 'vue';
+import { type PropType, computed, getCurrentInstance } from 'vue';
 
 import { useRender } from '@/composables/component';
 import { getPropertyFromItem } from '@/util/common';
@@ -30,6 +30,7 @@ export const YDataTableRow = defineComponent({
     ...pressYDataTableRowProps(),
   },
   setup(props, { emit, slots }) {
+    const vm = getCurrentInstance();
     const { isSelected, toggleSelect } = useSelection();
     const { columns } = useHeader();
 
@@ -48,6 +49,18 @@ export const YDataTableRow = defineComponent({
       return ret;
     }
 
+    function onClick(event: MouseEvent) {
+      props.onClick?.(event, vm?.proxy?.$el);
+    }
+
+    function onContextmenu(event: MouseEvent) {
+      props.onContextmenu?.(event, vm?.proxy?.$el);
+    }
+
+    function onDblclick(event: MouseEvent) {
+      props.onDblclick?.(event, vm?.proxy?.$el);
+    }
+
     useRender(() => {
       return (
         <tr
@@ -55,9 +68,9 @@ export const YDataTableRow = defineComponent({
             'y-data-table__row',
             { 'y-data-table__row--selected': selected.value },
           ]}
-          onClick={props.onClick as any}
-          onContextmenu={props.onContextmenu as any}
-          onDblclick={props.onDblclick as any}
+          onClick={props.onClick && onClick}
+          onContextmenu={props.onContextmenu && onContextmenu}
+          onDblclick={props.onDblclick && onDblclick}
         >
           {props.item &&
             columns.value.map((column, colIndex) => {
@@ -70,6 +83,7 @@ export const YDataTableRow = defineComponent({
                 value: getPropertyFromItem(item.columns, column.key),
                 selected: selected.value,
                 toggleSelect,
+                el: vm?.proxy?.$el,
               };
 
               const classes = computed(() => {
