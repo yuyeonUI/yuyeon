@@ -76,7 +76,10 @@ function destroyListeners(el: HTMLElement) {
 
 function attachWave(el: HTMLElement, binding: PlateWaveBinding, init = false) {
   const { value, modifiers } = binding;
-  const enabled = !!value;
+  let enabled = value ?? true;
+  if (typeof value === 'boolean') {
+    enabled = value;
+  }
   if (!enabled) hideAnimation(el);
 
   if (enabled && init) {
