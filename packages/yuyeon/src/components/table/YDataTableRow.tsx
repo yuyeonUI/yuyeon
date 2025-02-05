@@ -19,6 +19,7 @@ export const pressYDataTableRowProps = propsFactory(
     onClick: Function as PropType<(...args: any[]) => void>,
     onDblclick: Function as PropType<(...args: any[]) => void>,
     onContextmenu: Function as PropType<(...args: any[]) => void>,
+    onKeydown: Function as PropType<(...args: any[]) => void>,
   },
   'YDataTableRow',
 );
@@ -67,6 +68,10 @@ export const YDataTableRow = defineComponent({
       props.onDblclick?.(event, vm?.proxy?.$el);
     }
 
+    function onKeydown(event: KeyboardEvent) {
+      props.onKeydown?.(event, vm?.proxy?.$el);
+    }
+
     useRender(() => {
       return (
         <tr
@@ -78,6 +83,7 @@ export const YDataTableRow = defineComponent({
           onContextmenu={props.onContextmenu && onContextmenu}
           onDblclick={props.onDblclick && onDblclick}
           onMousedown={props.onMousedown && onMousedown}
+          onKeydown={props.onKeydown && onKeydown}
         >
           {props.item &&
             columns.value.map((column, colIndex) => {

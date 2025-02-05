@@ -1,9 +1,10 @@
 import { ref, shallowRef } from 'vue';
 import type { Ref } from 'vue';
 
-import { useProvided } from '../composables';
-import en from '../locales/en';
-import { getObjectValueByPath } from '../util';
+import { useProvided } from '@/composables/communication';
+import en from '@/locales/en';
+import { getObjectValueByPath } from '@/util/common';
+
 import type { LocaleMessages, LocaleModule, LocaleOptions } from './types';
 
 const LOCALE_PREFIX = '$yuyeon';

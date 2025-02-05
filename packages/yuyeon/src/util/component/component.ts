@@ -1,4 +1,12 @@
-import { ComponentOptionsWithObjectProps, ComponentOptionsWithoutProps, defineComponent } from 'vue';
+import {
+  ComponentObjectPropsOptions,
+  ComponentOptionsWithObjectProps,
+  ComponentOptionsWithoutProps,
+  ExtractDefaultPropTypes,
+  ExtractPropTypes,
+  FunctionalComponent,
+  defineComponent,
+} from 'vue';
 import type {
   Component,
   ComponentInjectOptions,
@@ -72,7 +80,6 @@ function redefineComponent<
   E,
   EE
 >;
-
 
 // overload 2: defineComponent with options object, infer props from options
 function redefineComponent<
@@ -148,6 +155,19 @@ function redefineComponent(options: ComponentOptions) {
   }
 
   return options;
+}
+
+function defineFunctionalComponent<
+  T extends FunctionalComponent<Props>,
+  PropsOptions = ComponentObjectPropsOptions,
+  Defaults = ExtractDefaultPropTypes<PropsOptions>,
+  Props = Readonly<ExtractPropTypes<PropsOptions>>,
+>(
+  props: PropsOptions,
+  context: T,
+): FunctionalComponent<Partial<Defaults> & Omit<Props, keyof Defaults>> {
+  context.props = props as any;
+  return context as any;
 }
 
 export { redefineComponent as defineComponent };

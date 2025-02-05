@@ -1,26 +1,20 @@
-import {
-  type PropType,
-  type SlotsType,
-  computed,
-  getCurrentInstance,
-  nextTick,
-  ref,
-  toRef,
-  watch,
-} from 'vue';
+import { type PropType, type SlotsType, computed, getCurrentInstance, nextTick, ref, toRef, watch } from 'vue';
+
+
 
 import { useRender } from '@/composables/component';
 import { useFocus } from '@/composables/focus';
 import { chooseProps, defineComponent, propsFactory } from '@/util/component';
 
+
+
 import { YIconClear } from '../icons/YIconClear';
-import {
-  YInput,
-  YInputDefaultSlotProps,
-  pressYInputPropsOptions,
-} from '../input';
+import { YInput, YInputDefaultSlotProps, pressYInputPropsOptions } from '../input';
+
+
 
 import './YFieldInput.scss';
+
 
 const NAME = 'y-field-input';
 
@@ -65,6 +59,7 @@ export const YFieldInput = defineComponent({
     'focus',
     'blur',
     'mousedown:display',
+    'keydown:display',
   ],
   slots: Object as SlotsType<{
     prepend: any;
@@ -218,6 +213,7 @@ export const YFieldInput = defineComponent({
         onUpdate:modelValue={onUpdateModel}
         onClick={onClick}
         onMousedown:display={($event) => emit('mousedown:display', $event)}
+        onKeydown:display={($event) => emit('keydown:display', $event)}
       >
         {{
           leading: slots.leading
@@ -237,6 +233,7 @@ export const YFieldInput = defineComponent({
               class={[`${NAME}__field`]}
               data-id={defaultProps.attrId}
               ref={'field'}
+              data-base-parent
             >
               {props.floating ? yInput$.value?.createLabel?.() : undefined}
               {slots.default?.(defaultProps)}

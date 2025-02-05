@@ -78,6 +78,7 @@ export const YInput = defineComponent({
     'blur',
     'mousedown:display',
     'mouseup:display',
+    'keydown:display',
     'click:leading',
     'update:modelValue',
     'update:focused',
@@ -220,6 +221,10 @@ export const YInput = defineComponent({
       emit('mouseup:display', e);
     }
 
+    function onKeydown(e: Event) {
+      emit('keydown:display', e);
+    }
+
     function onFocus(event: FocusEvent) {
       whenFocus();
       emit('focus', event);
@@ -295,6 +300,7 @@ export const YInput = defineComponent({
               onClick={onClick}
               onMousedown={onMousedown}
               onMouseup={onMouseup}
+              onKeydown={onKeydown}
             >
               <div class={`${NAME}__plate`}></div>
               {slots.leading && (

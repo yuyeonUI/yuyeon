@@ -40,11 +40,12 @@ import {
   YTab,
   YTable,
   YTabs,
+  YTextHighlighter,
   YTextarea,
+  YTi,
   YTooltip,
   YTreeView,
   YTreeViewNode,
-  YTi,
 } from 'yuyeon/components';
 
 declare module '@vue/runtime-core' {
@@ -96,5 +97,6 @@ declare module '@vue/runtime-core' {
     YIpv4Field: typeof YIpv4Field;
     YHover: typeof YHover;
     YTi: typeof YTi;
+    YTextHighlighter: typeof YTextHighlighter;
   }
 }

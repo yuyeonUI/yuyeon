@@ -27,6 +27,7 @@ export const pressYDataTableBodyProps = propsFactory(
     'onDblclick:row': Function as PropType<(e: Event, value: any) => void>,
     'onContextmenu:row': Function as PropType<(e: Event, value: any) => void>,
     'onMousedown:row': Function as PropType<(e: Event, value: any) => void>,
+    'onKeydown:row': Function as PropType<(e: Event, value: any) => void>,
   },
   'YDataTableBody',
 );
@@ -93,6 +94,10 @@ export const YDataTableBody = defineComponent({
                   props['onMousedown:row']?.(event, { ...stateProps, el });
                 }
 
+              function onKeydown(event: Event, el: null | Element) {
+                props['onKeydown:row']?.(event, { ...stateProps, el });
+              }
+
                 const slotProps = {
                   ...stateProps,
                   props: mergeProps(
@@ -113,6 +118,7 @@ export const YDataTableBody = defineComponent({
                   onContextmenu,
                   onDblclick,
                   onMousedown,
+                  onKeydown,
                 };
 
                 return (
@@ -129,6 +135,7 @@ export const YDataTableBody = defineComponent({
                         }
                         onDblclick={props['onDblclick:row'] && onDblclick}
                         onMousedown={props['onMousedown:row'] && onMousedown}
+                        onKeydown={props['onKeydown:row'] && onKeydown}
                       ></YDataTableRow>
                     )}
                   </>

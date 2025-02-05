@@ -34,3 +34,4 @@ export * from './text-ellipsis';
 export * from './ip-field';
 export * from './hover';
 export * from './text-interpolation';
+export * from './text-highlighter';
