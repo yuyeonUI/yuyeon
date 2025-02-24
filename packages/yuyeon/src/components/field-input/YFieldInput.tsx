@@ -60,6 +60,7 @@ export const YFieldInput = defineComponent({
     'blur',
     'mousedown:display',
     'keydown:display',
+    'click:clear'
   ],
   slots: Object as SlotsType<{
     prepend: any;
@@ -122,6 +123,7 @@ export const YFieldInput = defineComponent({
     }
 
     function onClickClear(event: MouseEvent) {
+      emit('click:clear', event);
       clear();
     }
 
@@ -196,6 +198,7 @@ export const YFieldInput = defineComponent({
       ...extended,
       input$,
       validate: () => yInput$.value?.invokeValidators(),
+      resetError: () => yInput$.value?.resetError(),
     });
 
     function onUpdateModel(value: any) {
@@ -233,7 +236,6 @@ export const YFieldInput = defineComponent({
               class={[`${NAME}__field`]}
               data-id={defaultProps.attrId}
               ref={'field'}
-              data-base-parent
             >
               {props.floating ? yInput$.value?.createLabel?.() : undefined}
               {slots.default?.(defaultProps)}
@@ -279,6 +281,7 @@ export const YFieldInput = defineComponent({
                       >
                         <button
                           class={[`${NAME}__clear`]}
+                          disabled={props.disabled}
                           onClick={onClickClear}
                           onKeydown={onKeydownClear}
                           tabindex={2}
