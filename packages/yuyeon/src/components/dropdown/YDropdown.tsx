@@ -13,14 +13,13 @@ import {
   propsFactory,
 } from '@/util/component';
 
-import { YButton } from '../button';
+import { pressYButtonProps, YButton } from '../button';
 import { YCard } from '../card';
 import { YIcon, YIconIconProp } from '../icon';
 import { YList, YListItem } from '../list';
 import { YMenu, YMenuPropOptions } from '../menu';
 
 import './YDropdown.scss';
-
 
 export const pressYDropdownPropsOptions = propsFactory(
   {
@@ -39,9 +38,17 @@ export const pressYDropdownPropsOptions = propsFactory(
     ...pressPolyTransitionPropsOptions({
       transition: 'fade',
     }),
+    ...pressYButtonProps
   },
   'YDropdown',
 );
+
+type ItemScopedProps = {
+  text: string;
+  item: any;
+};
+
+type ItemSlotPrefix = `item.${string}`;
 
 export const YDropdown = defineComponent({
   name: 'YDropdown',
@@ -57,7 +64,8 @@ export const YDropdown = defineComponent({
     default: any;
     'dropdown-icon': any;
     menu: any;
-    item: { text: string; item: any };
+    item: ItemScopedProps;
+    [k: ItemSlotPrefix]: ItemScopedProps;
   }>,
   emits: ['update:modelValue', 'click'],
   setup(props, { slots, attrs, emit }) {
@@ -96,6 +104,7 @@ export const YDropdown = defineComponent({
                       'y-dropdown',
                       { 'y-dropdown--opened': opened.value },
                     ]}
+                    disabled={props.disabled}
                     {...attrs}
                   >
                     {
@@ -126,9 +135,14 @@ export const YDropdown = defineComponent({
                             item,
                             props.itemText,
                           );
+                          const slotName = `item.${item.key}` as const;
                           return (
                             <YListItem onClick={(e) => onClickItem(item)}>
-                              {slots.item ? slots.item({ text, item }) : text}
+                              {slots.item
+                                ? slots.item({ text, item })
+                                : slots?.[slotName]
+                                  ? slots[slotName]({ text, item })
+                                  : text}
                             </YListItem>
                           );
                         })}
