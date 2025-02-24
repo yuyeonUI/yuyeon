@@ -86,7 +86,7 @@ export const YDialog = defineComponent({
     });
 
     const layer$ = ref<typeof YLayer>();
-    const { children } = useActiveStack(layer$, active, shallowRef(true));
+    const { children  } = useActiveStack(layer$, active, shallowRef(true));
 
     function onFocusin(e: FocusEvent) {
       if (props.focusTrap === false) {
@@ -272,6 +272,7 @@ export const YDialog = defineComponent({
       active,
       layer: layer$,
       classes,
+      children,
     };
   },
 });
