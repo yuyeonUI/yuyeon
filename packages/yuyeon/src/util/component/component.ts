@@ -1,6 +1,5 @@
 import {
   ComponentObjectPropsOptions,
-  ComponentOptionsWithObjectProps,
   ComponentOptionsWithoutProps,
   ExtractDefaultPropTypes,
   ExtractPropTypes,
@@ -27,6 +26,7 @@ import {
   useSuperDefaults,
 } from '../../composables/defaults';
 import { EmitsToProps } from './types';
+import { ComponentOptionsWithObjectProps } from '@vue/runtime-core';
 
 type ToResolvedProps<Props, Emits extends EmitsOptions> = Readonly<Props> &
   Readonly<EmitsToProps<Emits>>;
@@ -84,9 +84,8 @@ function redefineComponent<
 // overload 2: defineComponent with options object, infer props from options
 function redefineComponent<
   // props
-  PropsOptions extends Readonly<ComponentPropsOptions>,
-  //
-  RawBindings,
+  PropsOptions = ComponentObjectPropsOptions,
+  RawBindings = {},
   // emits
   E extends EmitsOptions = {},
   EE extends string = string,
@@ -97,7 +96,8 @@ function redefineComponent<
   Methods extends MethodOptions = {},
   Mixin extends ComponentOptionsMixin = ComponentOptionsMixin,
   Extends extends ComponentOptionsMixin = ComponentOptionsMixin,
-  InjectOptions extends ComponentInjectOptions = {},
+  Defaults = ExtractDefaultPropTypes<PropsOptions>,
+  InjectOptions extends {} = {},
   InjectKeys extends string = string,
   Slots extends SlotsType = {},
   LocalComponents extends Record<string, Component> = {},
