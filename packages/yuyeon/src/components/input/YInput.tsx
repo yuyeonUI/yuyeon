@@ -113,6 +113,7 @@ export const YInput = defineComponent({
       isReadonly,
       isLoading,
       invokeValidators,
+      resetError,
       isError,
       isSuccess,
       errors,
@@ -282,6 +283,7 @@ export const YInput = defineComponent({
       createLabel,
       invokeValidators,
       validate: invokeValidators,
+      resetError,
     });
 
     useRender(() => {
@@ -297,6 +299,7 @@ export const YInput = defineComponent({
               ref={display$}
               class={`${NAME}__display`}
               style={[{ ...displayStyles.value }]}
+              data-base-parent={true}
               onClick={onClick}
               onMousedown={onMousedown}
               onMouseup={onMouseup}
