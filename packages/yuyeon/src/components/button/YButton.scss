@@ -111,6 +111,15 @@ $button-disabled-background: #d3d3d3 !default;
     border-radius: 50%;
 
     @at-root &.y-button--small {
+      width: 32px;
+      height: 32px;
+
+      .y-button__content {
+        padding: 4px;
+      }
+    }
+
+    @at-root &.y-button--x-small {
       width: 24px;
       height: 24px;
 

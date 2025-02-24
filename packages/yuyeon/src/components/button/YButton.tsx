@@ -103,6 +103,7 @@ export const YButton = defineComponent({
         [`${NAME}--filled`]: variations.value.includes('filled') || filled,
         [`${NAME}--text`]: variations.value.includes('text'),
         [`${NAME}--small`]: variations.value.includes('small') || small,
+        [`${NAME}--x-small`]: variations.value.includes('x-small') || small,
         [`${NAME}--icon`]: variations.value.includes('icon') || icon,
         [`${NAME}--color`]: props.color,
         [`${NAME}--loading`]: props.loading,
