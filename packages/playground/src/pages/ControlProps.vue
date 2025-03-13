@@ -65,7 +65,7 @@ const childDialog = ref(false);
 const maximizedDialog = ref(false);
 const textarea = ref("content");
 const validSelectValue = ref();
-const progress1 = shallowRef(30);
+const progress1 = shallowRef(50);
 
 function onClickFieldWrap() {
   console.log("activate my trap");
@@ -672,6 +672,7 @@ const selectItems = [
     <!--  CHIPS, progress  -->
     <section class="pv-2" style="height: 200px">
       <y-card class="h-100 contain-paint">
+        <y-progress-ring :model-value="progress1" :size="64" />
         <y-progress-bar
           :value="progress1"
           reverse
