@@ -20,12 +20,14 @@ export type BaseType =
 export const pressBasePropsOptions = propsFactory(
   {
     base: [String, Object, Array] as PropType<BaseType>,
+    baseProps: Object as PropType<Record<string, any>>,
   },
   'YLayer.base',
 );
 
 interface BaseProps {
   base: BaseType;
+  baseProps: Record<string, any> | undefined;
 }
 
 export function useBase(props: BaseProps) {

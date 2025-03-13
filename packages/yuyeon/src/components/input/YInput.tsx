@@ -78,6 +78,7 @@ export const YInput = defineComponent({
     'blur',
     'mousedown:display',
     'mouseup:display',
+    'keydown:display',
     'click:leading',
     'update:modelValue',
     'update:focused',
@@ -112,6 +113,7 @@ export const YInput = defineComponent({
       isReadonly,
       isLoading,
       invokeValidators,
+      resetError,
       isError,
       isSuccess,
       errors,
@@ -220,6 +222,10 @@ export const YInput = defineComponent({
       emit('mouseup:display', e);
     }
 
+    function onKeydown(e: Event) {
+      emit('keydown:display', e);
+    }
+
     function onFocus(event: FocusEvent) {
       whenFocus();
       emit('focus', event);
@@ -277,6 +283,7 @@ export const YInput = defineComponent({
       createLabel,
       invokeValidators,
       validate: invokeValidators,
+      resetError,
     });
 
     useRender(() => {
@@ -292,9 +299,11 @@ export const YInput = defineComponent({
               ref={display$}
               class={`${NAME}__display`}
               style={[{ ...displayStyles.value }]}
+              data-base-parent={true}
               onClick={onClick}
               onMousedown={onMousedown}
               onMouseup={onMouseup}
+              onKeydown={onKeydown}
             >
               <div class={`${NAME}__plate`}></div>
               {slots.leading && (

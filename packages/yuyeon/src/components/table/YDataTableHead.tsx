@@ -151,7 +151,10 @@ export const YDataTableHead = defineComponent({
 
               return (
                 <div class="y-data-table-header__content">
-                  <span class="y-data-table-header__text">{column.text}</span>
+                  <span class="y-data-table-header__text">
+                    {slots?.[`header-text.${column.key}`]?.(headerSlotProps) ??
+                      column.text}
+                  </span>
                   <span
                     class={[
                       'y-data-table-header__sorting-icon',

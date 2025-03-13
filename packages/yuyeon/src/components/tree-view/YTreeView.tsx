@@ -184,7 +184,7 @@ export const YTreeView = defineComponent({
           expandedSet.value.add(key);
         }
         if (nodes.value[key].selected) {
-          expandedSet.value.add(key);
+          selectedSet.value.add(key);
         }
         if (nodes.value[key].active) {
           activeSet.value.add(key);

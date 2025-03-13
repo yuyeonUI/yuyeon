@@ -1,4 +1,11 @@
-import { ComponentOptionsWithObjectProps, ComponentOptionsWithoutProps, defineComponent } from 'vue';
+import {
+  ComponentObjectPropsOptions,
+  ComponentOptionsWithoutProps,
+  ExtractDefaultPropTypes,
+  ExtractPropTypes,
+  FunctionalComponent,
+  defineComponent,
+} from 'vue';
 import type {
   Component,
   ComponentInjectOptions,
@@ -19,6 +26,7 @@ import {
   useSuperDefaults,
 } from '../../composables/defaults';
 import { EmitsToProps } from './types';
+import { ComponentOptionsWithObjectProps } from '@vue/runtime-core';
 
 type ToResolvedProps<Props, Emits extends EmitsOptions> = Readonly<Props> &
   Readonly<EmitsToProps<Emits>>;
@@ -73,13 +81,11 @@ function redefineComponent<
   EE
 >;
 
-
 // overload 2: defineComponent with options object, infer props from options
 function redefineComponent<
   // props
-  PropsOptions extends Readonly<ComponentPropsOptions>,
-  //
-  RawBindings,
+  PropsOptions = ComponentObjectPropsOptions,
+  RawBindings = {},
   // emits
   E extends EmitsOptions = {},
   EE extends string = string,
@@ -90,7 +96,8 @@ function redefineComponent<
   Methods extends MethodOptions = {},
   Mixin extends ComponentOptionsMixin = ComponentOptionsMixin,
   Extends extends ComponentOptionsMixin = ComponentOptionsMixin,
-  InjectOptions extends ComponentInjectOptions = {},
+  Defaults = ExtractDefaultPropTypes<PropsOptions>,
+  InjectOptions extends {} = {},
   InjectKeys extends string = string,
   Slots extends SlotsType = {},
   LocalComponents extends Record<string, Component> = {},
@@ -148,6 +155,19 @@ function redefineComponent(options: ComponentOptions) {
   }
 
   return options;
+}
+
+function defineFunctionalComponent<
+  T extends FunctionalComponent<Props>,
+  PropsOptions = ComponentObjectPropsOptions,
+  Defaults = ExtractDefaultPropTypes<PropsOptions>,
+  Props = Readonly<ExtractPropTypes<PropsOptions>>,
+>(
+  props: PropsOptions,
+  context: T,
+): FunctionalComponent<Partial<Defaults> & Omit<Props, keyof Defaults>> {
+  context.props = props as any;
+  return context as any;
 }
 
 export { redefineComponent as defineComponent };

@@ -1,17 +1,10 @@
-import {
-  type PropType,
-  computed,
-  defineComponent,
-  nextTick,
-  ref,
-  watch,
-} from 'vue';
+import { type PropType, computed, nextTick, ref, watch } from 'vue';
 
 import { useModelDuplex } from '@/composables/communication';
 import { useRender } from '@/composables/component';
 import { pressPolyTransitionPropsOptions } from '@/composables/transition';
 import { omit } from '@/util/common';
-import { bindClasses, chooseProps } from '@/util/component';
+import { bindClasses, chooseProps, defineComponent } from '@/util/component';
 
 import { YLayer, pressYLayerProps } from '../layer';
 import { useDelay } from '../layer/active-delay';

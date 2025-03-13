@@ -22,7 +22,7 @@ import {
   useItems,
 } from '@/composables/list-items';
 import { wrapInArray } from '@/util/array';
-import { deepEqual, getObjectValueByPath, omit } from '@/util/common';
+import { deepEqual, omit } from '@/util/common';
 import {
   chooseProps,
   defineComponent,
@@ -48,6 +48,7 @@ export type ItemComparator = (
 export const pressSelectPropsOptions = propsFactory(
   {
     opened: Boolean as PropType<boolean>,
+    closeOnBlur: Boolean as PropType<boolean>,
     multiple: Boolean,
     itemComparator: {
       type: Function as PropType<ItemComparator>,
@@ -99,6 +100,7 @@ export const YSelect = defineComponent({
     'update:modelValue': (value: any) => true,
     'update:opened': (opened: boolean) => true,
     'click:item': (item: any, e: MouseEvent) => true,
+    change: (value: any) => true,
   },
   slots: Object as SlotsType<{
     base: any;
@@ -119,7 +121,7 @@ export const YSelect = defineComponent({
     'item-leading': { item: any; selected: boolean; select: () => void };
     'item-trailing': { item: any; selected: boolean; select: () => void };
   }>,
-  setup(props, { slots, attrs, expose }) {
+  setup(props, { slots, attrs, expose, emit }) {
     const fieldInputRef = ref();
     const menuRef = ref<InstanceType<typeof YMenu>>();
     const listRef = ref<InstanceType<typeof YList>>();
@@ -130,15 +132,16 @@ export const YSelect = defineComponent({
 
     const { items, toRefineItems, toEmitItems } = useItems(props);
     const { t } = useI18n();
+    const setOut = (v: any) => {
+      const emitValue = toEmitItems(wrapInArray(v));
+      return props.multiple ? emitValue : emitValue[0] ?? null;
+    };
     const model = useModelDuplex(
       props,
       'modelValue',
       [],
       (v) => toRefineItems(v === null ? [null] : wrapInArray(v)),
-      (v) => {
-        const emitValue = toEmitItems(wrapInArray(v));
-        return props.multiple ? emitValue : emitValue[0] ?? null;
-      },
+      setOut,
     );
 
     const selections = computed<ListItem[]>(() => {
@@ -170,16 +173,28 @@ export const YSelect = defineComponent({
 
     // Field
     function onMousedownDisplay(event: MouseEvent) {
-      if (props.disabled) {
-        return;
-      }
+      if (props.disabled) return;
       opened.value = !opened.value;
     }
 
+    function onKeydownDisplay(event: KeyboardEvent) {
+      console.log(event);
+      if (props.disabled) return;
+      if (event.key === 'Enter' || event.key === ' ') {
+        opened.value = !opened.value;
+      }
+    }
+
     function onBlur(event: FocusEvent) {
-      // if (listRef.value?.$el.contains(event.relatedTarget)) {
-      //   opened.value = false;
-      // }
+      requestAnimationFrame(() => {
+        const contentEl = (menuRef.value as any)?.layer$?.content$;
+        if (contentEl?.contains(document.activeElement)) {
+          return;
+        }
+        if (opened.value && props.closeOnBlur) {
+          opened.value = false;
+        }
+      });
     }
 
     // Menu Contents
@@ -195,7 +210,7 @@ export const YSelect = defineComponent({
 
     function onAfterLeave() {
       if (!focused.value) {
-        fieldInputRef.value?.focus();
+        // fieldInputRef.value?.focus();
       }
     }
 
@@ -208,20 +223,23 @@ export const YSelect = defineComponent({
     }
 
     function select(item: ListItem) {
+      let value;
       if (props.multiple) {
         const index = selections.value.findIndex((selectedItem) => {
           return selectedItem.value === item.value;
         });
         if (index === -1) {
-          model.value = [...model.value, item];
+          value = [...model.value, item];
         } else {
           const neo = model.value.slice();
           neo.splice(index, 1);
-          model.value = neo;
+          value = neo;
         }
       } else {
-        model.value = [item];
+        value = [item];
       }
+      model.value = value;
+      emit('change', setOut(value));
     }
 
     const displayText = computed(() => {
@@ -273,142 +291,137 @@ export const YSelect = defineComponent({
         YIcon.props,
       );
       return (
-        <YMenu
-          ref={menuRef}
-          offset={props.offset}
-          position={props.position}
-          align={props.align}
-          origin={props.origin}
-          content-classes={['y-select__content']}
-          maxHeight={props.maxHeight}
-          open-on-click-base={false}
-          onAfterLeave={onAfterLeave}
-          open-delay={props.openDelay}
-          close-delay={props.closeDelay}
-          closeCondition={closeCondition}
-          {...extraMenuProps.value}
-          v-model={opened.value}
+        <YFieldInput
+          ref={fieldInputRef}
+          {...fieldInputProps}
+          modelValue={model.value
+            .map((v: any) => v.props.value)
+            .join(', ')}
+          validationValue={model.rxValue}
+          onMousedown:display={onMousedownDisplay}
+          onKeydown:display={onKeydownDisplay}
+          onBlur={onBlur}
+          readonly
+          class={[
+            'y-select',
+            {
+              'y-select--opened': opened.value,
+              'y-select--selected': selected.value.length > 0,
+            },
+          ]}
+          {...attrs}
+          focused={focused.value}
         >
           {{
-            base: (...args: any[]) =>
-              slots.base ? (
-                slots.base?.(...args)
-              ) : (
-                <YFieldInput
-                  {...{
-                    ...fieldInputProps,
-                    ...mergeProps({ ...args[0].props }, { ref: fieldInputRef }),
-                  }}
-                  modelValue={model.value
-                    .map((v: any) => v.props.value)
-                    .join(', ')}
-                  validationValue={model.rxValue}
-                  onMousedown:display={onMousedownDisplay}
-                  onBlur={onBlur}
-                  readonly
-                  class={[
-                    'y-select',
-                    {
-                      'y-select--opened': opened.value,
-                      'y-select--selected': selected.value.length > 0,
-                    },
-                  ]}
-                  {...attrs}
-                  focused={focused.value}
+            default: () => {
+              const selectionProps = {
+                items: selections.value.map((item) => item.raw),
+                displayText: displayText.value,
+                placeholder: props.placeholder,
+                internalItems: selections.value,
+              };
+              return <>
+                <div class={['y-select__selection']}>
+                  {slots.selection
+                    ? slots.selection?.(selectionProps)
+                    : selected.value.length > 0
+                      ? displayText.value
+                      : props.placeholder}
+                </div>
+                <YMenu
+                  ref={menuRef}
+                  offset={props.offset}
+                  position={props.position}
+                  align={props.align}
+                  origin={props.origin}
+                  content-classes={['y-select__content']}
+                  maxHeight={props.maxHeight}
+                  open-on-click-base={false}
+                  onAfterLeave={onAfterLeave}
+                  open-delay={props.openDelay}
+                  close-delay={props.closeDelay}
+                  closeCondition={closeCondition}
+                  base="parent"
+                  {...extraMenuProps.value}
+                  v-model={opened.value}
                 >
                   {{
-                    default: () => {
-                      const selectionProps = {
-                        items: selections.value.map((item) => item.raw),
-                        displayText: displayText.value,
-                        placeholder: props.placeholder,
-                        internalItems: selections.value,
-                      };
-                      return (
-                        <div class={['y-select__selection']}>
-                          {slots.selection
-                            ? slots.selection?.(selectionProps)
-                            : selected.value.length > 0
-                              ? displayText.value
-                              : props.placeholder}
-                        </div>
-                      );
-                    },
-                    leading: slots.leading
-                      ? (...args: any[]) => slots.leading?.(...args)
-                      : undefined,
-                    trailing: (...args: any[]) => {
-                      return slots['dropdown-icon'] ? (
-                        slots['dropdown-icon']()
-                      ) : (
-                        <YIcon
-                          {...mergeProps(dropdownIconProps)}
-                          icon={props.dropdownIcon}
-                          class={['y-select__icon']}
-                        ></YIcon>
-                      );
-                    },
-                    label: slots.label
-                      ? (...args: any[]) => slots.label?.(...args)
-                      : undefined,
-                    'helper-text': slots['helper-text']
-                      ? (...args: any[]) => slots['helper-text']?.(...args)
-                      : undefined,
+                    default: slots.menu
+                      ? () => slots.menu()
+                      : () => (
+                        <YCard ref={cardRef}>
+                          {slots['menu-prepend']?.()}
+                          {items.value.length > 0 ? (
+                            <YList ref={listRef}>
+                              {items.value.map((item) => {
+                                const itemProps = {
+                                  item,
+                                  selected: isSelected(item),
+                                  select: () => {
+                                    select(item);
+                                  },
+                                };
+                                return withDirectives(
+                                  <YListItem
+                                    onClick={(e) => onClickItem(item, e)}
+                                    class={[
+                                      {
+                                        'y-list-item--active': isSelected(item),
+                                      },
+                                    ]}
+                                    disabled={item.disabled}
+                                  >
+                                    {{
+                                      default: () =>
+                                        slots.item
+                                          ? slots.item?.(itemProps)
+                                          : item.text,
+                                      leading:
+                                        slots['item-leading'] &&
+                                        (() => slots['item-leading']?.(itemProps)),
+                                      trailing:
+                                        slots['item-trailing'] &&
+                                        (() => slots['item-trailing']?.(itemProps)),
+                                    }}
+                                  </YListItem>,
+                                  [[vShow, !item.hide]],
+                                );
+                              })}
+                            </YList>
+                          ) : (
+                            <div class="y-select__no-options">
+                              {t('$yuyeon.noItems')}
+                            </div>
+                          )}
+                          {slots['menu-append']?.()}
+                        </YCard>
+                      ),
                   }}
-                </YFieldInput>
-              ),
-            default: slots.menu
-              ? () => slots.menu()
-              : () => (
-                  <YCard ref={cardRef}>
-                    {slots['menu-prepend']?.()}
-                    {items.value.length > 0 ? (
-                      <YList ref={listRef}>
-                        {items.value.map((item) => {
-                          const itemProps = {
-                            item,
-                            selected: isSelected(item),
-                            select: () => {
-                              select(item);
-                            },
-                          };
-                          return withDirectives(
-                            <YListItem
-                              onClick={(e) => onClickItem(item, e)}
-                              class={[
-                                {
-                                  'y-list-item--active': isSelected(item),
-                                },
-                              ]}
-                              disabled={item.disabled}
-                            >
-                              {{
-                                default: () =>
-                                  slots.item
-                                    ? slots.item?.(itemProps)
-                                    : item.text,
-                                leading:
-                                  slots['item-leading'] &&
-                                  (() => slots['item-leading']?.(itemProps)),
-                                trailing:
-                                  slots['item-trailing'] &&
-                                  (() => slots['item-trailing']?.(itemProps)),
-                              }}
-                            </YListItem>,
-                            [[vShow, !item.hide]],
-                          );
-                        })}
-                      </YList>
-                    ) : (
-                      <div class="y-select__no-options">
-                        {t('$yuyeon.noItems')}
-                      </div>
-                    )}
-                    {slots['menu-append']?.()}
-                  </YCard>
-                ),
+                </YMenu>
+              </>
+            },
+            leading: slots.leading
+              ? (...args: any[]) => slots.leading?.(...args)
+              : undefined,
+            trailing: (...args: any[]) => {
+              return slots['dropdown-icon'] ? (
+                slots['dropdown-icon']()
+              ) : (
+                <YIcon
+                  {...mergeProps(dropdownIconProps)}
+                  icon={props.dropdownIcon}
+                  class={['y-select__icon']}
+                ></YIcon>
+              );
+            },
+            label: slots.label
+              ? (...args: any[]) => slots.label?.(...args)
+              : undefined,
+            'helper-text': slots['helper-text']
+              ? (...args: any[]) => slots['helper-text']?.(...args)
+              : undefined,
           }}
-        </YMenu>
+        </YFieldInput>
       );
     });
 

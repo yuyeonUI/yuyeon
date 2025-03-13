@@ -26,6 +26,8 @@ export const pressYDataTableBodyProps = propsFactory(
     'onClick:row': Function as PropType<(e: Event, value: any) => void>,
     'onDblclick:row': Function as PropType<(e: Event, value: any) => void>,
     'onContextmenu:row': Function as PropType<(e: Event, value: any) => void>,
+    'onMousedown:row': Function as PropType<(e: Event, value: any) => void>,
+    'onKeydown:row': Function as PropType<(e: Event, value: any) => void>,
   },
   'YDataTableBody',
 );
@@ -35,7 +37,7 @@ export const YDataTableBody = defineComponent({
   props: {
     ...pressYDataTableBodyProps(),
   },
-  emits: ['click:row'],
+  emits: ['click:row', 'dblclick:row', 'contextmenu:row', 'mousedown:row'],
   setup(props, { slots, emit }) {
     const { columns } = useHeader();
     const { isSelected, toggleSelect } = useSelection();
@@ -73,19 +75,28 @@ export const YDataTableBody = defineComponent({
                   toggleSelect,
                 };
 
-                function onClick(event: Event) {
-                  props['onClick:row']?.(event, { ...stateProps });
+                function onClick(event: Event, el: null | Element) {
+                  props['onClick:row']?.(event, { ...stateProps, el });
                 }
 
-                function onDblclick(event: Event) {
-                  props['onDblclick:row']?.(event, { ...stateProps });
+                function onDblclick(event: Event, el: null | Element) {
+                  props['onDblclick:row']?.(event, { ...stateProps, el });
                 }
 
-                function onContextmenu(event: Event) {
+                function onContextmenu(event: Event, el: null | Element) {
                   props['onContextmenu:row']?.(event, {
                     ...stateProps,
+                    el,
                   });
                 }
+
+                function onMousedown(event: Event, el: null | Element) {
+                  props['onMousedown:row']?.(event, { ...stateProps, el });
+                }
+
+              function onKeydown(event: Event, el: null | Element) {
+                props['onKeydown:row']?.(event, { ...stateProps, el });
+              }
 
                 const slotProps = {
                   ...stateProps,
@@ -93,9 +104,6 @@ export const YDataTableBody = defineComponent({
                     {
                       key: `item__${item.key ?? item.index}`,
                       item,
-                      onClick,
-                      onDblclick,
-                      onContextmenu,
                       index,
                     },
                     typeof props.rowProps === 'function'
@@ -106,7 +114,13 @@ export const YDataTableBody = defineComponent({
                         })
                       : props.rowProps,
                   ),
+                  onClick,
+                  onContextmenu,
+                  onDblclick,
+                  onMousedown,
+                  onKeydown,
                 };
+
                 return (
                   <>
                     {slots.item ? (
@@ -115,6 +129,13 @@ export const YDataTableBody = defineComponent({
                       <YDataTableRow
                         v-slots={slots}
                         {...slotProps.props}
+                        onClick={props['onClick:row'] && onClick}
+                        onContextmenu={
+                          props['onContextmenu:row'] && onContextmenu
+                        }
+                        onDblclick={props['onDblclick:row'] && onDblclick}
+                        onMousedown={props['onMousedown:row'] && onMousedown}
+                        onKeydown={props['onKeydown:row'] && onKeydown}
                       ></YDataTableRow>
                     )}
                   </>

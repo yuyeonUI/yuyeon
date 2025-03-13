@@ -154,7 +154,10 @@ export const YDataTableServer = defineComponent({
                 slots.leading(slotProps.value)
               ) : (
                 <>
-                  <YDataTableLayer v-slots={slots}></YDataTableLayer>
+                  <YDataTableLayer
+                    v-slots={slots}
+                    slotProps={slotProps.value}
+                  ></YDataTableLayer>
                 </>
               ),
             default: () =>

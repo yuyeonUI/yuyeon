@@ -1,4 +1,11 @@
-import { computed, getCurrentInstance, onBeforeUnmount, unref, watch } from 'vue';
+import {
+  type MaybeRef,
+  computed,
+  getCurrentInstance,
+  onBeforeUnmount,
+  unref,
+  watch,
+} from 'vue';
 import type { ComponentInternalInstance, Ref } from 'vue';
 
 import { useYuyeon } from '@/index';
@@ -7,17 +14,19 @@ export const Y_LAYER_GROUP_CLASS_NAME = 'y-layer-group';
 
 const layerGroupState = new WeakMap<HTMLElement, Set<any>>();
 
-export function useLayerGroup(target?: Ref<string | Element | undefined>) {
+export function useLayerGroup(props: {
+  layerGroup?: MaybeRef<string | Element | undefined>;
+}) {
   const vm = getCurrentInstance()!;
   const yuyeon = useYuyeon();
 
   const layerGroup = computed<HTMLElement>(() => {
     let targetEl: Element = document.body;
-    const rootEl = yuyeon.root;
+    const rootEl = vm.root.proxy?.$el;
     if (rootEl) {
       targetEl = rootEl;
     }
-    const refTarget = unref(target);
+    const refTarget = unref(props.layerGroup);
     if (typeof refTarget === 'string') {
       const el = document.querySelector(refTarget);
       if (el) {
@@ -28,7 +37,9 @@ export function useLayerGroup(target?: Ref<string | Element | undefined>) {
       targetEl = refTarget as Element;
     }
     //
-    let layerEl = targetEl.querySelector(`.${Y_LAYER_GROUP_CLASS_NAME}`);
+    let layerEl = targetEl.querySelector(
+      `:scope > .${Y_LAYER_GROUP_CLASS_NAME}`,
+    );
     if (!layerEl) {
       layerEl = document.createElement('div');
       layerEl.className = Y_LAYER_GROUP_CLASS_NAME;

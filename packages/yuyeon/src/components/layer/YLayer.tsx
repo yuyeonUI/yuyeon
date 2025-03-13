@@ -134,21 +134,10 @@ export const YLayer = defineComponent({
   }>,
   setup(props, { emit, expose, attrs, slots }) {
     const vm = getCurrentInstance();
-
     const scrim$ = ref<HTMLElement>();
     const content$ = ref<HTMLElement>();
     const root$ = ref<HTMLElement>();
-
-    const { base, base$, baseEl, baseSlot, baseFromSlotEl } = useBase(props);
-
-    const { themeClasses } = useLocalTheme(props);
-    const { layerGroup, layerGroupState, getActiveLayers } = useLayerGroup(
-      computed(() => props.layerGroup),
-    );
-    const { polyTransitionBindProps } = usePolyTransition(props);
-    const { dimensionStyles } = useDimension(props);
     const model = useModelDuplex(props);
-
     const active = computed({
       get: (): boolean => {
         return !!model.value;
@@ -157,12 +146,22 @@ export const YLayer = defineComponent({
         if (!(v && props.disabled)) model.value = v;
       },
     });
+    // Frags
+    const { base, base$, baseEl, baseSlot, baseFromSlotEl } = useBase(props);
     const { contentEvents } = useContent(props, active);
+    const { themeClasses } = useLocalTheme(props);
+    const { layerGroup, layerGroupState, getActiveLayers } = useLayerGroup(props);
+    const { polyTransitionBindProps } = usePolyTransition(props);
+    const { dimensionStyles } = useDimension(props);
+
+    const { lazyValue, onAfterUpdate } = useLazy(toRef(props, 'eager'), active);
+    // States
     const finish = shallowRef(false);
     const hovered = ref(false);
-
+    const focused = ref(false);
     const disabled = toRef(props, 'disabled');
-    const { lazyValue, onAfterUpdate } = useLazy(toRef(props, 'eager'), active);
+
+
     const rendered = computed<boolean>(
       () => !disabled.value && (lazyValue.value || active.value),
     );
@@ -281,6 +280,7 @@ export const YLayer = defineComponent({
             'y-layer-base': true,
             'y-layer-base--active': active.value,
           },
+          ...(props.baseProps ?? {}),
         }),
       });
       baseSlot.value = slotBase;

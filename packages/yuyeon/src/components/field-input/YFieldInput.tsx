@@ -1,26 +1,20 @@
-import {
-  type PropType,
-  type SlotsType,
-  computed,
-  getCurrentInstance,
-  nextTick,
-  ref,
-  toRef,
-  watch,
-} from 'vue';
+import { type PropType, type SlotsType, computed, getCurrentInstance, nextTick, ref, toRef, watch } from 'vue';
+
+
 
 import { useRender } from '@/composables/component';
 import { useFocus } from '@/composables/focus';
 import { chooseProps, defineComponent, propsFactory } from '@/util/component';
 
+
+
 import { YIconClear } from '../icons/YIconClear';
-import {
-  YInput,
-  YInputDefaultSlotProps,
-  pressYInputPropsOptions,
-} from '../input';
+import { YInput, YInputDefaultSlotProps, pressYInputPropsOptions } from '../input';
+
+
 
 import './YFieldInput.scss';
+
 
 const NAME = 'y-field-input';
 
@@ -65,6 +59,8 @@ export const YFieldInput = defineComponent({
     'focus',
     'blur',
     'mousedown:display',
+    'keydown:display',
+    'click:clear'
   ],
   slots: Object as SlotsType<{
     prepend: any;
@@ -127,6 +123,7 @@ export const YFieldInput = defineComponent({
     }
 
     function onClickClear(event: MouseEvent) {
+      emit('click:clear', event);
       clear();
     }
 
@@ -201,6 +198,7 @@ export const YFieldInput = defineComponent({
       ...extended,
       input$,
       validate: () => yInput$.value?.invokeValidators(),
+      resetError: () => yInput$.value?.resetError(),
     });
 
     function onUpdateModel(value: any) {
@@ -218,6 +216,7 @@ export const YFieldInput = defineComponent({
         onUpdate:modelValue={onUpdateModel}
         onClick={onClick}
         onMousedown:display={($event) => emit('mousedown:display', $event)}
+        onKeydown:display={($event) => emit('keydown:display', $event)}
       >
         {{
           leading: slots.leading
@@ -282,6 +281,7 @@ export const YFieldInput = defineComponent({
                       >
                         <button
                           class={[`${NAME}__clear`]}
+                          disabled={props.disabled}
                           onClick={onClickClear}
                           onKeydown={onKeydownClear}
                           tabindex={2}
