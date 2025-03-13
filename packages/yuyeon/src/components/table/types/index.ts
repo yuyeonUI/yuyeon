@@ -70,3 +70,5 @@ export type YDataTableSlotProps = {
   columns: InternalDataTableHeader[];
   headers: InternalDataTableHeader[][];
 };
+
+export type FixedPropType = 'lead' | 'trail' | 'lead-last' | 'trail-last';

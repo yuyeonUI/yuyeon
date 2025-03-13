@@ -46,6 +46,7 @@ import {
   YTooltip,
   YTreeView,
   YTreeViewNode,
+  YProgressRing,
 } from 'yuyeon/components';
 
 declare module '@vue/runtime-core' {
@@ -98,5 +99,6 @@ declare module '@vue/runtime-core' {
     YHover: typeof YHover;
     YTi: typeof YTi;
     YTextHighlighter: typeof YTextHighlighter;
+    YProgressRing: typeof YProgressRing;
   }
 }

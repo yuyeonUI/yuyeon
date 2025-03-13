@@ -1,5 +1,6 @@
 import { type PropType, computed, getCurrentInstance } from 'vue';
 
+import { YButton } from '@/components';
 import { useRender } from '@/composables/component';
 import { getPropertyFromItem } from '@/util/common';
 import { defineComponent } from '@/util/component';
@@ -9,7 +10,7 @@ import { YIconCheckbox } from '../icons';
 import { YDataTableCell } from './YDataTableCell';
 import { useHeader } from './composibles/header';
 import { useSelection } from './composibles/selection';
-import { CellProps, DataTableItem } from './types';
+import { CellProps, DataTableItem, type FixedPropType } from './types';
 
 export const pressYDataTableRowProps = propsFactory(
   {
@@ -135,12 +136,12 @@ export const YDataTableRow = defineComponent({
                   align={column.align}
                   fixed={
                     column.fixed
-                      ? column.lastFixed
-                        ? 'last'
-                        : 'lead'
+                      ? (((column.fixed === 'right' ? 'trail' : 'lead') +
+                          (column.lastFixed ? '-last' : '')) as FixedPropType)
                       : undefined
                   }
                   fixedOffset={column.fixedOffset}
+                  rightOffset={column.rightOffset}
                   width={column.width}
                   maxWidth={column.maxWidth}
                   class={[
@@ -164,16 +165,19 @@ export const YDataTableRow = defineComponent({
                       if (column.key === 'data-table-select') {
                         return (
                           slots['item.data-table-select']?.(slotProps) ?? (
-                            <YIconCheckbox
-                              checked={isSelected(item)}
+                            <YButton
+                              variation={'text,small'}
                               disabled={!item.selectable}
-                              {...{
-                                onClick: (e: MouseEvent) => {
-                                  e.stopPropagation();
-                                  if (item.selectable) toggleSelect(item);
-                                },
+                              onClick={(e: MouseEvent) => {
+                                e.stopPropagation();
+                                if (item.selectable) toggleSelect(item);
                               }}
-                            ></YIconCheckbox>
+                            >
+                              <YIconCheckbox
+                                checked={isSelected(item)}
+                                disabled={!item.selectable}
+                              ></YIconCheckbox>
+                            </YButton>
                           )
                         );
                       }

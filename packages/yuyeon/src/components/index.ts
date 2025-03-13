@@ -5,6 +5,7 @@ export * from './field-input';
 export * from './textarea';
 export * from './form';
 export * from './progress-bar';
+export * from './progress-ring';
 export * from './card';
 export * from './chip';
 export * from './switch';

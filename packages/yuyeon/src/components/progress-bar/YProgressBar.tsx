@@ -10,7 +10,7 @@ import './YProgressBar.scss';
 export const YProgressBar = defineComponent({
   name: 'YProgressBar',
   props: {
-    value: {
+    modelValue: {
       type: Number as PropType<number>,
     },
     rounded: {

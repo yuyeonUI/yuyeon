@@ -31,15 +31,23 @@ export const YDatePicker = defineComponent({
     const model = useModelDuplex(props, 'modelValue');
     const mode = useModelDuplex(props, 'mode');
 
-    const month = ref(dateUtil.getMonth(dateUtil.date()));
-    const year = ref(dateUtil.getYear(dateUtil.date()));
+    const month = ref<number>(dateUtil.getMonth(dateUtil.date()));
+    const year = ref<number>(dateUtil.getYear(dateUtil.date()));
+
+    const propMonth = Number(props.month);
+    if (!isNaN(propMonth)) month.value = propMonth;
+    const propYear = Number(props.year);
+    if (!isNaN(propYear)) year.value = propYear;
+
     const displayDate = computed(() => {
-      const date = dateUtil.setYear(dateUtil.date(), year.value);
-      return dateUtil.setMonth(date, month.value);
+      const date = dateUtil.setYear(dateUtil.date(), +year.value);
+      return dateUtil.setMonth(date, +month.value);
     });
+
     const monthText = computed(() => {
       return dateUtil.format(displayDate.value, 'month');
     });
+
     const yearText = computed(() => {
       return dateUtil.format(displayDate.value, 'year');
     });
