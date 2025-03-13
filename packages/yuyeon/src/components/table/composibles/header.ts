@@ -1,14 +1,18 @@
-import { type DeepReadonly, type InjectionKey, type PropType, type Ref, inject, provide, ref, watchEffect } from 'vue';
-
-
+import {
+  type DeepReadonly,
+  type InjectionKey,
+  type PropType,
+  type Ref,
+  inject,
+  provide,
+  ref,
+  watchEffect,
+} from 'vue';
 
 import { getRangeArr } from '@/util/common';
 import { propsFactory } from '@/util/component';
 
-
-
 import { type DataTableHeader, type InternalDataTableHeader } from '../types';
-
 
 export const pressDataTableHeader = propsFactory(
   {
@@ -54,7 +58,9 @@ export function createHeader(
         ({ column }) => column.key === 'data-table-select',
       );
       if (foundIndex < 0) {
-        const fixed = flat.some(({ column }) => !!column?.fixed);
+        const fixed = flat.some(
+          ({ column }) => column?.fixed === true || column?.fixed === 'left',
+        );
         flat.unshift({
           column: {
             ...defaultActionHeader,
@@ -98,10 +104,20 @@ export function createHeader(
     });
 
     fixedRows.forEach((row) => {
-      for (let i = row.length; (i -= 1); i >= 0) {
-        if (row[i].fixed) {
+      for (let i = row.length - 1; i >= 0; i--) {
+        if (row[i].fixed === true || row[i].fixed === 'left') {
           row[i].lastFixed = true;
-          return;
+          break;
+        }
+      }
+      // fixed right
+      const rightFixed = row.filter((col) => col.fixed === 'right');
+      let rightOffsets = 0;
+      for (let i = rightFixed.length - 1; i >= 0; i--) {
+        rightFixed[i].rightOffset = rightOffsets;
+        rightOffsets += Number(rightFixed[i].width ?? 0);
+        if (i === 0) {
+          rightFixed[i].lastFixed = true;
         }
       }
     });

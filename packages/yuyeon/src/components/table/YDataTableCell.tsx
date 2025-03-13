@@ -1,5 +1,6 @@
 import { type CSSProperties, type PropType, computed } from 'vue';
 
+import type { FixedPropType } from '@/components/table/types';
 import { useRender } from '@/composables/component';
 import { defineComponent } from '@/util/component';
 import { toStyleSizeValue } from '@/util/ui';
@@ -13,9 +14,12 @@ export const YDataTableCell = defineComponent({
       default: 'data',
     },
     fixed: {
-      type: String as PropType<'lead' | 'last'>,
+      type: String as PropType<FixedPropType>,
     },
     fixedOffset: {
+      type: Number as PropType<number>,
+    },
+    rightOffset: {
       type: Number as PropType<number>,
     },
     width: {
@@ -37,10 +41,10 @@ export const YDataTableCell = defineComponent({
     const offsetStyle = computed(() => {
       const ret: CSSProperties = {};
       if (props.fixed && props.fixedOffset !== undefined) {
-        if (props.fixed === 'lead') {
+        if (props.fixed.startsWith('lead')) {
           ret['left'] = toStyleSizeValue(props.fixedOffset);
-        } else if (props.fixed === 'last') {
-          ret['left'] = toStyleSizeValue(props.fixedOffset);
+        } else if (props.fixed.startsWith('trail')) {
+          ret['right'] = toStyleSizeValue(props.rightOffset);
         }
       }
       return ret;
@@ -55,7 +59,9 @@ export const YDataTableCell = defineComponent({
             'y-data-table-cell',
             {
               'y-data-table-cell--fixed': props.fixed,
-              [`y-data-table-cell--fixed-${props.fixed}`]: props.fixed,
+              'y-data-table-cell--fixed-last': props.fixed?.endsWith('last'),
+              [`y-data-table-cell--fixed-${props.fixed?.replace('-last', '')}`]:
+                props.fixed,
               [`y-data-table-cell--align-${props.align}`]: props.align,
             },
           ]}
