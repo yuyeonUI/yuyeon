@@ -14,9 +14,7 @@ export function useRectMeasure() {
   const debounceMeasure = debounce(measure, 100);
 
   const { resizeObservedRef: containerRef } = useResizeObserver((entries) => {
-    setTimeout(() => {
-      debounceMeasure(entries);
-    });
+    debounceMeasure(entries);
   });
 
   function measure(entries: any) {
