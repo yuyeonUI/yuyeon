@@ -1,28 +1,38 @@
-import { ref } from 'vue';
-import { useResizeObserver } from '@/composables';
+import { ref, shallowRef } from 'vue';
+
+import { useResizeObserver } from '@/composables/resize-observer';
+import { debounce } from '@/util/debounce';
 
 export function useRectMeasure() {
-  const containerRect = ref<DOMRectReadOnly>();
-  const wrapperRect = ref<DOMRectReadOnly>();
-  const tableRect = ref<DOMRectReadOnly>();
+  const tableRef = ref();
+  const wrapperRef = ref();
+
+  const containerRect = shallowRef<DOMRectReadOnly>();
+  const wrapperRect = shallowRef<DOMRectReadOnly>();
+  const tableRect = shallowRef<DOMRectReadOnly>();
+
+  const debounceMeasure = debounce(measure, 100);
 
   const { resizeObservedRef: containerRef } = useResizeObserver((entries) => {
-    requestAnimationFrame(() => {
-      containerRect.value = entries?.[0]?.contentRect;
-    })
+    setTimeout(() => {
+      debounceMeasure(entries);
+    });
   });
 
-  const { resizeObservedRef: wrapperRef } = useResizeObserver((entries) => {
-    requestAnimationFrame(() => {
-      wrapperRect.value = entries?.[0]?.contentRect;
-    })
-  });
-
-  const { resizeObservedRef: tableRef } = useResizeObserver((entries) => {
-    requestAnimationFrame(() => {
-      tableRect.value = entries?.[0]?.contentRect;
-    })
-  });
+  function measure(entries: any) {
+    containerRect.value = entries?.[0]?.contentRect;
+    const el = containerRef.value!;
+    const wrapperEl = el.querySelector('.y-table__wrapper');
+    if (wrapperEl) {
+      wrapperRect.value = wrapperEl.getBoundingClientRect();
+    }
+    if (tableRef.value) {
+      const rect = tableRef.value?.getBoundingClientRect();
+      if (rect) {
+        tableRect.value = rect;
+      }
+    }
+  }
 
   return {
     containerRef,
@@ -31,5 +41,5 @@ export function useRectMeasure() {
     containerRect,
     wrapperRect,
     tableRect,
-  }
+  };
 }
