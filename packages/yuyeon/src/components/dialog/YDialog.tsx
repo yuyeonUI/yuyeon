@@ -5,7 +5,7 @@ import {
   onBeforeUnmount,
   ref,
   shallowRef,
-  watch,
+  watch, onScopeDispose,
 } from 'vue';
 
 import { useModelDuplex } from '@/composables/communication';
@@ -36,7 +36,6 @@ export const pressYDialogPropsOptions = propsFactory(
         string[] | string | Record<string, any>
       >,
     },
-    maximized: Boolean as PropType<boolean>,
     focusTrap: {
       type: [Boolean, String, Object, Array] as PropType<
         false | string | string[] | HTMLElement
@@ -49,6 +48,7 @@ export const pressYDialogPropsOptions = propsFactory(
     ...omit(
       pressYLayerProps({
         scrim: true,
+        scrollStrategy: null,
       }),
       ['offset', 'classes'],
     ),
@@ -86,7 +86,7 @@ export const YDialog = defineComponent({
     });
 
     const layer$ = ref<typeof YLayer>();
-    const { children  } = useActiveStack(layer$, active, shallowRef(true));
+    const { children } = useActiveStack(layer$, active, shallowRef(true));
 
     function onFocusin(e: FocusEvent) {
       if (props.focusTrap === false) {
@@ -173,6 +173,9 @@ export const YDialog = defineComponent({
       const root$ = $yuyeon.root as HTMLElement;
       const activeLayers = layer$.value?.getActiveLayers();
       if (toggle) {
+        if (props.maximized) {
+          document.documentElement.classList.add('y-dialog--prevent-scroll');
+        }
         const filtered = activeLayers?.filter((layer: any) => {
           return layer.ctx.modal;
         });
@@ -184,9 +187,7 @@ export const YDialog = defineComponent({
           const scrollLeft = document.documentElement.scrollLeft;
           tempScrollTop.value = scrollTop;
           tempScrollLeft.value = scrollLeft;
-          if (props.maximized) {
-            document.documentElement.classList.add('y-dialog--prevent-scroll');
-          }
+
           root$.classList.add('y-dialog--virtual-scroll');
           root$.style.top = toStyleSizeValue(-1 * scrollTop) || '';
           root$.style.left = toStyleSizeValue(-1 * scrollLeft) || '';
@@ -195,15 +196,18 @@ export const YDialog = defineComponent({
         const filtered = activeLayers?.filter((layer: any) => {
           return !layer$.value?.isMe(layer) && layer.ctx.modal;
         });
+
         if (!filtered?.length && root$) {
-          root$.classList.remove('y-dialog--virtual-scroll');
           document.documentElement.classList.remove('y-dialog--prevent-scroll');
+          root$.classList.remove('y-dialog--virtual-scroll');
           root$.style.top = '';
           root$.style.left = '';
           requestAnimationFrame(() => {
             document.documentElement.scrollTop = tempScrollTop.value;
             document.documentElement.scrollLeft = tempScrollLeft.value;
           });
+        } else if (filtered.every((layer: any) => !layer.ctx?.maximized)) {
+          document.documentElement.classList.remove('y-dialog--prevent-scroll');
         }
       }
     }
@@ -230,23 +234,20 @@ export const YDialog = defineComponent({
       },
     );
 
-    watch(
-      () => active.value,
-      (neo) => {
-        neo ? installFocusTrap() : dismantleFocusTrap();
-        preventInteractionBackground(neo);
-      },
-      { immediate: true },
-    );
+    if (active.value) {
+      installFocusTrap()
+      preventInteractionBackground(true);
+    }
 
-    onBeforeUnmount(() => {
-      if (active.value) {
-        active.value = false;
-        setTimeout(() => {
-          preventInteractionBackground(false);
-        }, 100);
-      }
+    watch(active, (neo) => {
+      neo ? installFocusTrap() : dismantleFocusTrap();
+      preventInteractionBackground(neo);
     });
+
+    onScopeDispose(() => {
+      dismantleFocusTrap();
+      preventInteractionBackground(false);
+    })
 
     useRender(() => {
       return (
