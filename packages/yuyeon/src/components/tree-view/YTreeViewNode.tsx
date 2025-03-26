@@ -4,7 +4,6 @@ import {
   type VNodeArrayChildren,
   computed,
   getCurrentInstance,
-  inject,
   mergeProps,
   onBeforeMount,
   ref,
@@ -12,6 +11,7 @@ import {
 } from 'vue';
 
 import { pressItemsPropsOptions } from '@/abstract/items';
+import { useTreeView } from '@/components/tree-view/tree-view';
 import { useRender } from '@/composables/component';
 import { getObjectValueByPath } from '@/util/common';
 import { defineComponent } from '@/util/component';
@@ -73,7 +73,7 @@ export const YTreeViewNode = defineComponent({
   setup(props, { slots, expose }) {
     const YTreeNode = resolveComponent('YTreeViewNode', true) as any;
     const vm = getCurrentInstance();
-    const treeView = inject<any>('tree-view');
+    const treeView = useTreeView();
     const container$ = ref<HTMLElement>();
 
     const expanded = ref(false);
@@ -288,16 +288,18 @@ export const YTreeViewNode = defineComponent({
       return getObjectValueByPath(props.item, props.itemKey);
     });
 
-    expose({
+    const nodeState = {
       myKey,
       expanded,
       active,
       selected,
       immediate,
-    });
+    };
+
+    expose(nodeState);
 
     onBeforeMount(() => {
-      treeView?.register?.(myKey.value, vm!.exposed);
+      treeView?.register?.(myKey.value, nodeState);
     });
 
     return {

@@ -1,18 +1,15 @@
 import {
   type PropType,
   type Ref,
-  type VNode,
   computed,
   defineComponent,
   onMounted,
-  provide,
   ref,
   shallowRef,
   watch,
-  watchEffect,
 } from 'vue';
 
-import { useModelDuplex } from '@/composables/communication';
+import { provideTreeView } from '@/components/tree-view/tree-view';
 import { useRender } from '@/composables/component';
 import { CandidateKey } from '@/types';
 import { differenceBetween } from '@/util/array';
@@ -65,21 +62,30 @@ export const YTreeView = defineComponent({
   },
   emits: ['update:expanded', 'update:active', 'update:selected'],
   setup(props, { slots, emit, expose }) {
-    const nodes = ref<Record<CandidateKey, any>>({});
-
-    const expanded = useModelDuplex(props, 'expanded');
-    const active = useModelDuplex(props, 'active');
-    const selected = useModelDuplex(props, 'selected');
-
-    const expandedSet = ref(new Set<CandidateKey>());
-    const selectedSet = ref(new Set<CandidateKey>());
-    const activeSet = ref(new Set<CandidateKey>());
-    const excludedSet = ref(new Set<CandidateKey>());
     const filterItemsFn = shallowRef(
       debounce(excludeItem, props.searchDebounceWait),
     );
     const expandedCache = ref<CandidateKey[]>([]);
-    const searchLoading = shallowRef(false);
+
+    const {
+      nodes,
+      expanded,
+      active,
+      selected,
+      expandedSet,
+      selectedSet,
+      activeSet,
+      searchLoading,
+      excludedSet,
+      issueVnodeState,
+      updateExpanded,
+      updateActive,
+      updateSelected,
+      emitExpanded,
+      emitActive,
+      emitSelected,
+      isExcluded,
+    } = provideTreeView(props);
 
     function excludeItem(items: any[], search = '', filter = filterTreeItem) {
       const excluded = new Set<CandidateKey>();
@@ -113,30 +119,15 @@ export const YTreeView = defineComponent({
       expand();
     }
 
-    watchEffect(() => {
-      searchLoading.value = true;
-      filterItemsFn.value(props.items, props.search, props.filter);
-    });
+    watch(
+      () => props.search,
+      () => {
+        searchLoading.value = true;
+        filterItemsFn.value(props.items, props.search, props.filter);
+      },
+    );
 
     // Util Methods
-    function getDescendants(key: CandidateKey) {
-      const descendants: CandidateKey[] = [];
-      const { childKeys } = nodes.value[key];
-      descendants.push(...childKeys);
-      const remains: CandidateKey[] = childKeys.slice();
-
-      while (remains.length > 0) {
-        const childKey: CandidateKey = remains.splice(0, 1)[0];
-        const item = nodes.value[childKey];
-        if (item) {
-          descendants.push(...item.childKeys);
-          remains.push(...item.childKeys);
-        }
-      }
-
-      return descendants;
-    }
-
     function getNodeKey(itemOrKey: any) {
       return props.returnItem
         ? getObjectValueByPath(itemOrKey, props.itemKey)
@@ -158,10 +149,10 @@ export const YTreeView = defineComponent({
           ? nodes.value[key]
           : {
               vnode: null,
-              selected: false,
+              selected: selected.value?.includes(key) ?? false,
               indeterminate: false,
-              active: false,
-              expanded: false,
+              active: active.value?.includes(key) ?? false,
+              expanded: expanded.value?.includes(key) ?? false,
             };
         const node: NodeState = {
           vnode: existNode.vnode,
@@ -189,21 +180,6 @@ export const YTreeView = defineComponent({
         if (nodes.value[key].active) {
           activeSet.value.add(key);
         }
-
-        issueVnodeState(key);
-      }
-    }
-
-    function updateExpanded(key: CandidateKey, to: boolean) {
-      if (!(key in nodes.value)) return;
-      const node = nodes.value[key];
-      const children = getObjectValueByPath(
-        node.item,
-        props.itemChildren as string,
-      );
-      if (Array.isArray(children) && children.length > 0) {
-        to ? expandedSet.value.add(key) : expandedSet.value.delete(key);
-        node.expanded = to;
         issueVnodeState(key);
       }
     }
@@ -226,102 +202,6 @@ export const YTreeView = defineComponent({
       });
       emitExpanded();
       return expandedSet.value;
-    }
-
-    function updateActive(key: CandidateKey, to: boolean, event?: MouseEvent) {
-      if (!(key in nodes.value)) return;
-      const node = nodes.value[key];
-      let inactiveKey = !to ? key : '';
-      if (!props.multipleActive) {
-        [inactiveKey] = [...activeSet.value];
-      }
-      if (to) {
-        activeSet.value.add(key);
-        node.active = true;
-        issueVnodeState(key);
-      } else {
-        if (
-          props.requiredActive &&
-          activeSet.value.size === 1 &&
-          key === inactiveKey
-        ) {
-          issueVnodeState(key);
-          return;
-        }
-      }
-      if (inactiveKey && inactiveKey in nodes.value) {
-        activeSet.value.delete(inactiveKey);
-        nodes.value[inactiveKey].active = false;
-        issueVnodeState(inactiveKey);
-      }
-
-      if (
-        props.activeSingleModifier &&
-        event?.getModifierState(props.activeSingleModifier)
-      ) {
-        return;
-      }
-
-      if (props.multipleActive && props.activeStrategy === 'cascade') {
-        for (const descendant of getDescendants(key)) {
-          if (descendant in nodes.value) {
-            to
-              ? activeSet.value.add(descendant)
-              : activeSet.value.delete(descendant);
-            nodes.value[descendant].active = to;
-            issueVnodeState(descendant);
-          }
-        }
-      }
-    }
-
-    function updateSelected(key: CandidateKey, to: boolean) {
-      if (!(key in nodes.value)) return;
-      const node = nodes.value[key];
-
-      if (to) {
-        selectedSet.value.add(key);
-        node.selected = true;
-      }
-
-      if (!to && key in nodes.value) {
-        selectedSet.value.delete(key);
-        nodes.value[key].selected = false;
-        issueVnodeState(key);
-      }
-
-      if (props.selectStrategy === 'cascade') {
-        for (const descendant of getDescendants(key)) {
-          if (descendant in nodes.value) {
-            to
-              ? selectedSet.value.add(descendant)
-              : selectedSet.value.delete(descendant);
-            nodes.value[descendant].selected = to;
-            issueVnodeState(descendant);
-          }
-        }
-      }
-    }
-
-    function emitExpanded() {
-      const arr = [...expandedSet.value];
-      expanded.value = props.returnItem
-        ? arr.map((key) => nodes.value[key].item)
-        : arr;
-    }
-
-    function emitActive() {
-      const arr = [...activeSet.value];
-      active.value = props.returnItem
-        ? arr.map((key) => nodes.value[key].item)
-        : arr;
-    }
-
-    function emitSelected() {
-      const arr = [...selectedSet.value];
-      selected.value = props.returnItem
-        ? arr.map((key) => nodes.value[key].item)
-        : arr;
     }
 
     function stateWatcher(
@@ -388,43 +268,9 @@ export const YTreeView = defineComponent({
       { deep: true, flush: 'sync' },
     );
 
-    // Search
-    function isExcluded(key: CandidateKey) {
-      return !!props.search && excludedSet.value.has(key);
-    }
-
     // Provide & Issue
-    function issueVnodeState(key: CandidateKey) {
-      const node = nodes.value[key];
-      if (node && node.vnode) {
-        node.vnode.active = node.active;
-        node.vnode.selected = node.selected;
-        node.vnode.indeterminate = node.indeterminate;
-        node.vnode.expanded = node.expanded;
-      }
-    }
-
-    function register(key: CandidateKey, vnode: VNode) {
-      if (nodes.value[key]) {
-        nodes.value[key].vnode = vnode;
-      }
-
-      issueVnodeState(key);
-    }
 
     updateNodes(props.items);
-
-    provide('tree-view', {
-      register,
-      updateExpanded,
-      updateActive,
-      updateSelected,
-      emitExpanded,
-      emitActive,
-      emitSelected,
-      isExcluded,
-      searchLoading,
-    });
 
     const renderLeaves = computed(() => {
       return props.items.slice().filter((leaf) => {
