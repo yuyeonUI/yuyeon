@@ -41,6 +41,8 @@
   }
 
   .y-plate {
+    border-radius: inherit;
+
     &:before {
       content: '';
       position: absolute;
