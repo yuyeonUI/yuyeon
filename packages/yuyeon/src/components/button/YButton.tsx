@@ -168,11 +168,14 @@ export const YButton = defineComponent({
           v-plate-wave={!props.noWave && !props.loading}
         >
           <span class={['y-button__content']}>
-            {props.loading && (
-              <YSpinnerRing
-                {...mergeProps({ width: '24', height: '24' })}
-              ></YSpinnerRing>
-            )}
+            {props.loading &&
+              (slots.loading ? (
+                slots.loading?.()
+              ) : (
+                <YSpinnerRing
+                  {...mergeProps({ width: '24', height: '24' })}
+                ></YSpinnerRing>
+              ))}
             {slots.default?.()}
           </span>
           {slots.append?.()}
