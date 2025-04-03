@@ -81,11 +81,11 @@ export const YDateCalendar = defineComponent({
       (v) => {
         const value =
           v != null ? Number(v) : dateUtil.getMonth(displayValue.value);
-        const date = dateUtil.setYear(
+        let date = dateUtil.setYear(
           dateUtil.date(),
           dateUtil.getYear(year.value),
         );
-
+        date = dateUtil.startOfMonth(date);
         return dateUtil.setMonth(date, value);
       },
       (v) => dateUtil.getMonth(v),

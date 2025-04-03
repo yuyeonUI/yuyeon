@@ -40,7 +40,8 @@ export const YDatePicker = defineComponent({
     if (!isNaN(propYear)) year.value = propYear;
 
     const displayDate = computed(() => {
-      const date = dateUtil.setYear(dateUtil.date(), +year.value);
+      const date = dateUtil.startOfMonth(dateUtil.date());
+      dateUtil.setYear(date, +year.value);
       return dateUtil.setMonth(date, +month.value);
     });
 
