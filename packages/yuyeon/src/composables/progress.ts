@@ -4,8 +4,8 @@ export function useProgress(props: any) {
   const delta = shallowRef(0);
 
   const numValue = computed(() => {
-    const { value } = props;
-    const numValue = Number(value);
+    const { modelValue, value } = props;
+    const numValue = Number(modelValue ?? value);
     if (Number.isNaN(numValue) || numValue < 0) {
       return 0;
     }

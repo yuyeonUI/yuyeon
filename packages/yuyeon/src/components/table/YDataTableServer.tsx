@@ -3,6 +3,7 @@ import { type PropType, computed, provide, ref, toRef } from 'vue';
 import { useRender } from '@/composables/component';
 import { useResizeObserver } from '@/composables/resize-observer';
 import { chooseProps, defineComponent, propsFactory } from '@/util/component';
+import { debounce } from '@/util/debounce';
 import { toStyleSizeValue } from '@/util/ui';
 
 import { pressDataTableProps } from './YDataTable';
@@ -80,13 +81,16 @@ export const YDataTableServer = defineComponent({
     } = provideSelection(props, { allItems: items, pageItems: items });
 
     const headRect = ref<DOMRectReadOnly>();
+    const debounceMeasureHead = debounce(measureHead, 100);
     const { resizeObservedRef: headObserveRef } = useResizeObserver(
       (entries) => {
-        requestAnimationFrame(
-          () => (headRect.value = entries?.[0].contentRect),
-        );
+        debounceMeasureHead(entries);
       },
     );
+
+    function measureHead(entries: ResizeObserverEntry[]) {
+      headRect.value = entries?.[0].contentRect;
+    }
 
     useOptions(
       {

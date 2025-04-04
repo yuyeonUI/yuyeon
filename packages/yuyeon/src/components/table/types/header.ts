@@ -7,7 +7,7 @@ export type DataTableHeader = {
 
   colspan?: number;
   rowspan?: number;
-  fixed?: boolean;
+  fixed?: boolean | 'left' | 'right';
 
   classes?: string | string[] | DataTableCellClassesFn;
   headerClasses?: string | string[];
@@ -24,4 +24,5 @@ export type InternalDataTableHeader = DataTableHeader & {
   sortable: boolean;
   fixedOffset?: number;
   lastFixed?: boolean;
+  rightOffset?: number;
 };

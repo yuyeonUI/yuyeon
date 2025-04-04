@@ -5,13 +5,14 @@ import { wrapInArray } from '@/util';
 import { defineComponent, propsFactory } from '@/util/component';
 import { toStyleSizeValue } from '@/util/ui';
 
+import { YButton } from '../button/YButton';
 import { YIconCheckbox } from '../icons/YIconCheckbox';
 import { YIconSort } from '../icons/YIconSort';
 import { YDataTableCell } from './YDataTableCell';
 import { useHeader } from './composibles/header';
 import { useSelection } from './composibles/selection';
 import { useSorting } from './composibles/sorting';
-import { InternalDataTableHeader } from './types';
+import { type FixedPropType, InternalDataTableHeader } from './types';
 
 export const pressYDataTableHeadProps = propsFactory(
   {
@@ -49,14 +50,21 @@ export const YDataTableHead = defineComponent({
       y: number,
     ): CSSProperties | undefined => {
       if (!props.sticky && !column.fixed) return undefined;
+      let fixedOffset: any = {};
+      if (column.fixed === true || column.fixed === 'left') {
+        fixedOffset.left = toStyleSizeValue(column.fixedOffset);
+      }
+      if (column.fixed === 'right') {
+        fixedOffset.right = toStyleSizeValue(column.rightOffset);
+      }
 
       return {
         position: 'sticky',
         zIndex: column.fixed ? 4 : props.sticky ? 3 : undefined,
-        left: column.fixed ? toStyleSizeValue(column.fixedOffset) : undefined,
         top: props.sticky
           ? `calc(var(--v-table-header-height) * ${y})`
           : undefined,
+        ...fixedOffset,
       };
     };
 
@@ -91,7 +99,10 @@ export const YDataTableHead = defineComponent({
           type="head"
           align={column.align}
           fixed={
-            column.fixed ? (column.lastFixed ? 'last' : 'lead') : undefined
+            column.fixed
+              ? (((column.fixed === 'right' ? 'trail' : 'lead') +
+                  (column.lastFixed ? '-last' : '')) as FixedPropType)
+              : undefined
           }
           class={[
             'y-data-table-header',
@@ -134,17 +145,20 @@ export const YDataTableHead = defineComponent({
                 return (
                   slots['header.data-table-select']?.(headerSlotProps) ??
                   (showSelectAll && (
-                    <YIconCheckbox
-                      checked={allSelected.value}
-                      indeterminate={!allSelected.value && someSelected.value}
+                    <YButton
+                      variation={'text,small'}
                       disabled={selectables.value.length < 1}
-                      {...{
-                        onClick: (e: MouseEvent) => {
-                          e.stopPropagation();
-                          selectAll(!allSelected.value);
-                        },
+                      onClick={(e: MouseEvent) => {
+                        e.stopPropagation();
+                        selectAll(!allSelected.value);
                       }}
-                    ></YIconCheckbox>
+                    >
+                      <YIconCheckbox
+                        checked={allSelected.value}
+                        indeterminate={!allSelected.value && someSelected.value}
+                        disabled={selectables.value.length < 1}
+                      ></YIconCheckbox>
+                    </YButton>
                   ))
                 );
               }

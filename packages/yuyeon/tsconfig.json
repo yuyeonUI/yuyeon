@@ -20,7 +20,8 @@
     "downlevelIteration": true,
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+    "disableSizeLimit": true
   },
   "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
   "vueCompilerOptions": {

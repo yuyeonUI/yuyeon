@@ -9,17 +9,17 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "vue": "^3.4.29",
+    "vue": "^3.5.13",
     "vue-i18n": "^9.2.2",
     "vue-router": "^4.2.2",
     "yuyeon": "workspace:^"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^5.0.5",
-    "@vitejs/plugin-vue-jsx": "^4.0.0",
-    "typescript": "^5.0.2",
-    "vite": "^5.3.1",
+    "@vitejs/plugin-vue": "^5.2.3",
+    "@vitejs/plugin-vue-jsx": "^4.1.2",
+    "typescript": "~5.6.3",
+    "vite": "^6.2.3",
     "vite-svg-loader": "^4.0.0",
-    "vue-tsc": "^2.0.21"
+    "vue-tsc": "^2.2.8"
   }
 }

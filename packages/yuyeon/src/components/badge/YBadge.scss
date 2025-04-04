@@ -73,4 +73,9 @@
     align-items: center;
     margin: var(--y-badge__inline-margin);
   }
+
+  &--inline &__badge {
+    position: relative;
+    left: initial;
+  }
 }

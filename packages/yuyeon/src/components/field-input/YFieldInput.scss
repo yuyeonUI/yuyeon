@@ -63,4 +63,25 @@
     cursor: pointer;
     color: var(--y-theme-on-surface);
   }
+
+  &.y-field-input--inline-label {
+    .y-input__stack {
+      display: grid;
+      grid-auto-columns: auto 1fr;
+    }
+
+    .y-input__label, .y-input__display {
+      display: inline-flex;
+    }
+
+    .y-input__display, .y-input__helper-text {
+      grid-column: 2;
+    }
+
+    .y-input__label {
+      padding-bottom: 0;
+      align-items: center;
+      padding-right: 8px;
+    }
+  }
 }

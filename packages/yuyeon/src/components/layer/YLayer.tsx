@@ -81,6 +81,9 @@ export const pressYLayerProps = propsFactory(
       type: Boolean as PropType<boolean>,
       default: false,
     },
+    maximized: {
+      type: Boolean as PropType<boolean>,
+    },
     openOnHover: {
       type: Boolean as PropType<boolean>,
       default: false,
@@ -160,7 +163,7 @@ export const YLayer = defineComponent({
     const hovered = ref(false);
     const focused = ref(false);
     const disabled = toRef(props, 'disabled');
-
+    const maximized = toRef(props, 'maximized');
 
     const rendered = computed<boolean>(
       () => !disabled.value && (lazyValue.value || active.value),

@@ -1,20 +1,26 @@
-import { type PropType, type SlotsType, computed, getCurrentInstance, nextTick, ref, toRef, watch } from 'vue';
-
-
+import {
+  type PropType,
+  type SlotsType,
+  computed,
+  getCurrentInstance,
+  nextTick,
+  ref,
+  toRef,
+  watch,
+} from 'vue';
 
 import { useRender } from '@/composables/component';
 import { useFocus } from '@/composables/focus';
 import { chooseProps, defineComponent, propsFactory } from '@/util/component';
 
-
-
 import { YIconClear } from '../icons/YIconClear';
-import { YInput, YInputDefaultSlotProps, pressYInputPropsOptions } from '../input';
-
-
+import {
+  YInput,
+  YInputDefaultSlotProps,
+  pressYInputPropsOptions,
+} from '../input';
 
 import './YFieldInput.scss';
-
 
 const NAME = 'y-field-input';
 
@@ -22,6 +28,7 @@ export const pressYFieldInputPropsOptions = propsFactory(
   {
     enableClear: Boolean as PropType<boolean>,
     inputAlign: String as PropType<string>,
+    inlineLabel: Boolean as PropType<boolean>,
     displayText: [String, Function] as PropType<
       string | ((value: any) => string)
     >,
@@ -60,7 +67,7 @@ export const YFieldInput = defineComponent({
     'blur',
     'mousedown:display',
     'keydown:display',
-    'click:clear'
+    'click:clear',
   ],
   slots: Object as SlotsType<{
     prepend: any;
@@ -84,6 +91,7 @@ export const YFieldInput = defineComponent({
     const classes = computed(() => {
       return {
         [NAME]: true,
+        [`${NAME}--inline-label`]: !!props.inlineLabel,
       };
     });
 

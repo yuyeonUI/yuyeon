@@ -16,7 +16,7 @@
     flex-direction: column;
 
     > .y-card {
-      background: var(--y-theme-surface);
+      background: inherit;
       border-radius: inherit;
       overflow: auto;
       height: 100%;

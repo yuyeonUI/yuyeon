@@ -34,7 +34,7 @@ export const YTable = defineComponent({
   },
   emits: ['scroll'],
   setup(props, { slots, emit }) {
-    const { containerRef, wrapperRef, tableRef, containerRect, wrapperRect } =
+    const { containerRef,  tableRef, containerRect, wrapperRect } =
       useRectMeasure();
 
     provide('YTable', { containerRect });
@@ -72,7 +72,6 @@ export const YTable = defineComponent({
             <div ref={containerRef} class={['y-table__container']}>
               {slots.leading?.()}
               <div
-                ref={wrapperRef}
                 class={['y-table__wrapper']}
                 style={{
                   height: toStyleSizeValue(containerHeight),
