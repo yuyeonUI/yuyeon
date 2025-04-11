@@ -1,8 +1,18 @@
-import { type PropType, type SlotsType, vShow, withDirectives } from 'vue';
+import {
+  type PropType,
+  type SlotsType,
+  computed,
+  vShow,
+  withDirectives,
+} from 'vue';
 
 import { useRender } from '@/composables/component';
 import { useI18n } from '@/composables/i18n';
 import { IconValue } from '@/composables/icon';
+import {
+  styleColorPropsOptions,
+  useStyleColor,
+} from '@/composables/style-color';
 import { PolyTransition } from '@/composables/transition';
 import { defineComponent, propsFactory } from '@/util/component';
 
@@ -21,7 +31,6 @@ export const pressYBadgePropsOptions = propsFactory(
     floating: Boolean,
     inline: Boolean,
     icon: IconValue,
-    color: String,
     hide: Boolean,
     label: {
       type: String,
@@ -33,6 +42,7 @@ export const pressYBadgePropsOptions = propsFactory(
       type: String,
       default: 'fade',
     },
+    ...styleColorPropsOptions,
   },
   'YBadge',
 );
@@ -46,6 +56,8 @@ export const YBadge = defineComponent({
   }>,
   setup(props, { slots }) {
     const { t } = useI18n();
+
+    const { colorVars } = useStyleColor(props, 'badge');
 
     useRender(() => {
       const ElTag = props.tag as keyof HTMLElementTagNameMap;
@@ -67,6 +79,7 @@ export const YBadge = defineComponent({
               'y-badge--inline': props.inline,
             },
           ]}
+          style={colorVars.value}
         >
           <div class="y-badge__base">
             {slots.default?.()}
