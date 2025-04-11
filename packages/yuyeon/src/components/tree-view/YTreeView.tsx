@@ -264,6 +264,7 @@ export const YTreeView = defineComponent({
         if (!deepEqual(oldActive, [...activeSet.value])) {
           emitActive();
         }
+        filterItemsFn.value(neo, props.search, props.filter);
       },
       { deep: true, flush: 'sync' },
     );
@@ -295,6 +296,11 @@ export const YTreeView = defineComponent({
     });
 
     onMounted(() => {
+      if (props.search) {
+        searchLoading.value = true;
+        excludeItem(props.items, props.search, props.filter);
+      }
+
       if (props.defaultExpand != null && props.defaultExpand !== false) {
         expandedCache.value = [...expand(props.defaultExpand)];
       } else {
