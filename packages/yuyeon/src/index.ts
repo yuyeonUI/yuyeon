@@ -53,6 +53,7 @@ export function init(options: any = defaultOptions) {
       },
       date: dateModule,
       defaults: defaultsModule,
+      icon: iconModule,
     });
 
     Object.keys(components).forEach((componentName) => {
