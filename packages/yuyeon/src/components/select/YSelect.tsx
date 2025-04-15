@@ -1,4 +1,5 @@
 import {
+  ExtractPropTypes,
   type PropType,
   type SlotsType,
   computed,
@@ -90,7 +91,9 @@ export const pressYSelectPropsOptions = propsFactory(
   'YSelect',
 );
 
-export const YSelect = defineComponent({
+export const YSelect = defineComponent<
+  ReturnType<typeof pressYSelectPropsOptions>
+>({
   name: 'YSelect',
   inheritAttrs: false,
   props: {
@@ -294,9 +297,7 @@ export const YSelect = defineComponent({
         <YFieldInput
           ref={fieldInputRef}
           {...fieldInputProps}
-          modelValue={model.value
-            .map((v: any) => v.props.value)
-            .join(', ')}
+          modelValue={model.value.map((v: any) => v.props.value).join(', ')}
           validationValue={model.rxValue}
           onMousedown:display={onMousedownDisplay}
           onKeydown:display={onKeydownDisplay}
@@ -320,85 +321,94 @@ export const YSelect = defineComponent({
                 placeholder: props.placeholder,
                 internalItems: selections.value,
               };
-              return <>
-                <div class={['y-select__selection']}>
-                  {slots.selection
-                    ? slots.selection?.(selectionProps)
-                    : selected.value.length > 0
-                      ? displayText.value
-                      : props.placeholder}
-                </div>
-                <YMenu
-                  ref={menuRef}
-                  offset={props.offset}
-                  position={props.position}
-                  align={props.align}
-                  origin={props.origin}
-                  content-classes={['y-select__content']}
-                  maxHeight={props.maxHeight}
-                  open-on-click-base={false}
-                  onAfterLeave={onAfterLeave}
-                  open-delay={props.openDelay}
-                  close-delay={props.closeDelay}
-                  closeCondition={closeCondition}
-                  base="parent"
-                  {...extraMenuProps.value}
-                  v-model={opened.value}
-                >
-                  {{
-                    default: slots.menu
-                      ? () => slots.menu()
-                      : () => (
-                        <YCard ref={cardRef}>
-                          {slots['menu-prepend']?.()}
-                          {items.value.length > 0 ? (
-                            <YList ref={listRef}>
-                              {items.value.map((item) => {
-                                const itemProps = {
-                                  item,
-                                  selected: isSelected(item),
-                                  select: () => {
-                                    select(item);
-                                  },
-                                };
-                                return withDirectives(
-                                  <YListItem
-                                    onClick={(e) => onClickItem(item, e)}
-                                    class={[
-                                      {
-                                        'y-list-item--active': isSelected(item),
+              return (
+                <>
+                  <div class={['y-select__selection']}>
+                    {slots.selection
+                      ? slots.selection?.(selectionProps)
+                      : selected.value.length > 0
+                        ? displayText.value
+                        : props.placeholder}
+                  </div>
+                  <YMenu
+                    ref={menuRef}
+                    offset={props.offset}
+                    position={props.position}
+                    align={props.align}
+                    origin={props.origin}
+                    content-classes={['y-select__content']}
+                    maxHeight={props.maxHeight}
+                    open-on-click-base={false}
+                    onAfterLeave={onAfterLeave}
+                    open-delay={props.openDelay}
+                    close-delay={props.closeDelay}
+                    closeCondition={closeCondition}
+                    base="parent"
+                    {...extraMenuProps.value}
+                    v-model={opened.value}
+                  >
+                    {{
+                      default: slots.menu
+                        ? () => slots.menu?.()
+                        : () => (
+                            <YCard ref={cardRef}>
+                              {slots['menu-prepend']?.()}
+                              {items.value.length > 0 ? (
+                                <YList ref={listRef}>
+                                  {items.value.map((item) => {
+                                    const itemProps = {
+                                      item,
+                                      selected: isSelected(item),
+                                      select: () => {
+                                        select(item);
                                       },
-                                    ]}
-                                    disabled={item.disabled}
-                                  >
-                                    {{
-                                      default: () =>
-                                        slots.item
-                                          ? slots.item?.(itemProps)
-                                          : item.text,
-                                      leading:
-                                        slots['item-leading'] &&
-                                        (() => slots['item-leading']?.(itemProps)),
-                                      trailing:
-                                        slots['item-trailing'] &&
-                                        (() => slots['item-trailing']?.(itemProps)),
-                                    }}
-                                  </YListItem>,
-                                  [[vShow, !item.hide]],
-                                );
-                              })}
-                            </YList>
-                          ) : (
-                            <div class="y-select__no-options">
-                              {t('$yuyeon.noItems')}
-                            </div>
-                          )}
-                          {slots['menu-append']?.()}
-                        </YCard>
-                      ),
-                  }}
-                </YMenu>
-              </>
+                                    };
+                                    return withDirectives(
+                                      <YListItem
+                                        onClick={(e) => onClickItem(item, e)}
+                                        class={[
+                                          {
+                                            'y-list-item--active':
+                                              isSelected(item),
+                                          },
+                                        ]}
+                                        disabled={item.disabled}
+                                      >
+                                        {{
+                                          default: () =>
+                                            slots.item
+                                              ? slots.item?.(itemProps)
+                                              : item.text,
+                                          leading:
+                                            slots['item-leading'] &&
+                                            (() =>
+                                              slots['item-leading']?.(
+                                                itemProps,
+                                              )),
+                                          trailing:
+                                            slots['item-trailing'] &&
+                                            (() =>
+                                              slots['item-trailing']?.(
+                                                itemProps,
+                                              )),
+                                        }}
+                                      </YListItem>,
+                                      [[vShow, !item.hide]],
+                                    );
+                                  })}
+                                </YList>
+                              ) : (
+                                <div class="y-select__no-options">
+                                  {t('$yuyeon.noItems')}
+                                </div>
+                              )}
+                              {slots['menu-append']?.()}
+                            </YCard>
+                          ),
+                    }}
+                  </YMenu>
+                </>
+              );
             },
             leading: slots.leading
               ? (...args: any[]) => slots.leading?.(...args)

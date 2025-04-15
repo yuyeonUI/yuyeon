@@ -1,6 +1,6 @@
 import { ref, watch } from 'vue';
-import { useModelDuplex } from 'yuyeon/composables';
 
+import { useModelDuplex } from '@/composables/communication';
 import { useRender } from '@/composables/component';
 import { useDelay } from '@/composables/timing';
 import { defineComponent, propsFactory } from '@/util/component';
