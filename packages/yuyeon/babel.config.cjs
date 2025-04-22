@@ -48,7 +48,7 @@ module.exports = {
     lib: {
       ignore: ['**/__tests__'],
       plugins: [
-        ['babel-plugin-add-import-extension', { extension: 'mjs' }],
+        ['babel-plugin-add-import-extension', { extension: 'js' }],
         // ['./build/babel-plugin-replace-import-extension', { extMapping: {
         //     '.sass': '.css',
         //     '.scss': '.css',
