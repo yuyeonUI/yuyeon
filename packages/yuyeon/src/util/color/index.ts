@@ -13,9 +13,26 @@
 * */
 
 import { HEX_COLOR_REGEX, RGBA_REGEX } from "./const";
+import { rgbFromHex } from '@/util';
 
 export function isColorValue(value: string): boolean {
   return RGBA_REGEX.test(value) || HEX_COLOR_REGEX.test(value);
+}
+
+export function colorRgb(color: string): string {
+  if (color?.startsWith('#')) {
+    return rgbFromHex(color)?.join(',') || '';
+  }
+  const RGBA_REGEX = /rgb(a?)\((?<v>.*)\)/;
+  if (RGBA_REGEX.test(color)) {
+    const value = RGBA_REGEX.exec(color)?.[2] || '';
+    if (value) {
+      const valueArray = value.trim().split(',');
+      valueArray.splice(3, 1);
+      return valueArray.join(',');
+    }
+  }
+  return '';
 }
 
 export function isTextColorIsLight(r: number, g: number, b: number): boolean {

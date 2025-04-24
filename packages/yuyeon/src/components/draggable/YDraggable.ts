@@ -7,8 +7,9 @@ import {
   ref,
   unref,
 } from 'vue';
-import { useRender } from 'yuyeon/composables';
-import { getHtmlElement } from 'yuyeon/util';
+
+import { useRender } from '@/composables/component';
+import { getHtmlElement } from '@/util/index';
 
 type Coord = { x: number; y: number };
 

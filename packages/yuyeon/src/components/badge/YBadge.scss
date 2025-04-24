@@ -7,8 +7,12 @@
   --y-badge__border-width: 2px;
   --y-badge__border-transform: scale(1.0413);
   --y-badge__inline-margin: 0 4px;
-  --y-badge__color: var(--y-theme-surface-variant);
-  --y-badge__text-color: var(--y-theme-on-surface-variant);
+  --y-badge__background-opacity: 1;
+  --y-badge__background: rgba(
+    var(--y-theme-surface-variant-rgb),
+    var(--y-badge__background-opacity, 1)
+  );
+  --y-badge__color: var(--y-theme-on-surface-variant);
 
   display: inline-block;
 
@@ -29,7 +33,8 @@
     text-indent: 0;
     white-space: nowrap;
     padding: var(--y-badge__padding);
-    background: var(--y-badge__color);
+    color: var(--y-badge__color);
+    background: var(--y-badge__background);
     bottom: calc(100% - var(--y-badge__height) / 2);
     left: calc(100% - var(--y-badge__min-width));
   }

@@ -1,6 +1,6 @@
 {
   "name": "yuyeon",
-  "version": "0.3.0-rc.8",
+  "version": "0.3.1",
   "keywords": [
     "UI Library",
     "Vue"
@@ -21,36 +21,36 @@
   "exports": {
     ".": {
       "types": "./types/index.d.ts",
-      "default": "./lib/index.mjs"
+      "default": "./lib/index.js"
     },
     "./styles/*": "./lib/styles/*",
     "./locales": {
       "types": "./types/locales/index.d.ts",
-      "default": "./lib/locales/index.mjs"
+      "default": "./lib/locales/index.js"
     },
     "./lib": {
       "types": "./types/index.d.ts"
     },
     "./components": {
       "types": "./types/components/index.d.ts",
-      "module": "./lib/components/index.mjs"
+      "module": "./lib/components/index.js"
     },
-    "./components/*": "./lib/components/*/index.mjs",
+    "./components/*": "./lib/components/*/index.js",
     "./composables": {
       "types": "./types/composables/index.d.ts",
-      "module": "./lib/composables/index.mjs",
-      "default": "./lib/composables/index.mjs"
+      "module": "./lib/composables/index.js",
+      "default": "./lib/composables/index.js"
     },
     "./util": {
       "types": "./types/util/index.d.ts",
-      "module": "./lib/util/index.mjs"
+      "module": "./lib/util/index.js"
     },
     "./shims": "./types/shims.d.ts",
     "./types/*": "./types/*",
     "./*": "./*"
   },
-  "main": "lib/index.mjs",
-  "module": "lib/index.mjs",
+  "main": "lib/index.js",
+  "module": "lib/index.js",
   "types": "types/index.d.ts",
   "typesVersions": {
     "*": {
@@ -67,7 +67,7 @@
   },
   "scripts": {
     "build": "vue-tsc && vite build && yarn run build:lib",
-    "build:lib": "cross-env NODE_ENV=lib babel src --out-dir lib --source-maps --extensions \".ts\",\".tsx\" --copy-files --no-copy-ignored --out-file-extension .mjs"
+    "build:lib": "cross-env NODE_ENV=lib babel src --out-dir lib --source-maps --extensions \".ts\",\".tsx\" --copy-files --no-copy-ignored --out-file-extension .js"
   },
   "dependencies": {
     "motion": "^10.15.5"
@@ -93,8 +93,8 @@
     "babel-plugin-add-import-extension": "1.5.1",
     "babel-plugin-module-resolver": "^5.0.0",
     "babel-plugin-transform-define": "^2.1.0",
-    "babel-polyfill": "^6.26.0",
     "concurrently": "^4.1.1",
+    "core-js": "^3.41.0",
     "cross-env": "^7.0.3",
     "rollup": "^4.22.4",
     "rollup-plugin-dts": "^5.3.0",

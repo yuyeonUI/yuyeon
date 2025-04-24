@@ -4,7 +4,12 @@ import { useModelDuplex } from '@/composables/communication';
 import { useRender } from '@/composables/component';
 import { pressPolyTransitionPropsOptions } from '@/composables/transition';
 import { omit } from '@/util/common';
-import { bindClasses, chooseProps, defineComponent } from '@/util/component';
+import {
+  bindClasses,
+  chooseProps,
+  defineComponent,
+  propsFactory,
+} from '@/util/component';
 
 import { YLayer, pressYLayerProps } from '../layer';
 import { useDelay } from '../layer/active-delay';
@@ -24,25 +29,32 @@ const YTooltipPropOptions = {
     type: Boolean as PropType<boolean>,
     default: true,
   },
+  ...pressYLayerProps({
+    coordinateStrategy: 'levitation' as const,
+    scrollStrategy: 'reposition' as const,
+    openOnHover: true,
+    align: 'center',
+    offset: 8,
+  }),
+  ...pressPolyTransitionPropsOptions({
+    transition: 'fade',
+  }),
 };
+
+export const pressYTooltipPropsOptions = propsFactory(
+  YTooltipPropOptions,
+  'YTooltip',
+);
 
 /**
  * #  Component
  */
-export const YTooltip = defineComponent({
+export const YTooltip = defineComponent<
+  ReturnType<typeof pressYTooltipPropsOptions>
+>({
   name: NAME,
   props: {
-    ...YTooltipPropOptions,
-    ...pressYLayerProps({
-      coordinateStrategy: 'levitation' as const,
-      scrollStrategy: 'reposition' as const,
-      openOnHover: true,
-      align: 'center',
-      offset: 8,
-    }),
-    ...pressPolyTransitionPropsOptions({
-      transition: 'fade',
-    }),
+    ...pressYTooltipPropsOptions(),
   },
   emits: ['update:modelValue'],
   setup(props, { slots, emit, expose }) {

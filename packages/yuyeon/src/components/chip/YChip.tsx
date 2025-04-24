@@ -1,19 +1,17 @@
 import { computed } from 'vue';
 
 import { useRender } from '@/composables';
-import { isColorValue, rgbFromHex } from '@/util/color';
+import {
+  styleColorPropsOptions,
+  useStyleColor,
+} from '@/composables/style-color';
 import { defineComponent, hasEventProp, propsFactory } from '@/util/component';
 
 import './YChip.scss';
 
 export const pressYChipPropsOptions = propsFactory(
   {
-    color: String,
-    background: String,
-    backgroundOpacity: {
-      type: Number,
-      default: 0.14,
-    },
+    ...styleColorPropsOptions,
     small: Boolean,
   },
   'YChip',
@@ -28,44 +26,7 @@ export const YChip = defineComponent({
     const clickable = computed(() => {
       return hasEventProp(props, 'click');
     });
-
-    const styles = computed(() => {
-      let { color, background } = props;
-      if (!background) background = color;
-
-      if (color && !isColorValue(color)) {
-        color = `var(--y-theme-${color})`;
-      }
-
-      if (background) {
-        if (isColorValue(background)) {
-          background = `rgba(${colorRgb(background)}, ${props.backgroundOpacity})`;
-        } else if (!background.startsWith('var(')) {
-          background = `rgba(${`var(--y-theme-${background}-rgb)`}, ${props.backgroundOpacity})`
-        }
-      }
-
-      return {
-        '--y-chip__color': color,
-        '--y-chip__background': background,
-      };
-    });
-
-    function colorRgb(color: string): string {
-      if (color?.startsWith('#')) {
-        return rgbFromHex(color)?.join(',') || '';
-      }
-      const RGBA_REGEX = /rgb(a?)\((?<v>.*)\)/;
-      if (RGBA_REGEX.test(color)) {
-        const value = RGBA_REGEX.exec(color)?.[2] || '';
-        if (value) {
-          const valueArray = value.trim().split(',');
-          valueArray.splice(3, 1);
-          return valueArray.join(',');
-        }
-      }
-      return '';
-    }
+    const { colorVars } = useStyleColor(props, 'chip');
 
     useRender(() => (
       <span
@@ -76,7 +37,7 @@ export const YChip = defineComponent({
             'y-chip--clickable': clickable.value,
           },
         ]}
-        style={styles.value}
+        style={colorVars.value}
       >
         <span class="y-chip__content">{slots.default?.()}</span>
       </span>

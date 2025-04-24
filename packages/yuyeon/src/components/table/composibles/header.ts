@@ -133,8 +133,7 @@ export function createHeader(
       }
       return filtered;
     });
-
-    columns.value = fixedRows.at(-1) ?? [];
+    columns.value = (fixedRows[fixedRows.length - 1]) || [];
   });
 
   const data = { headers, columns };
