@@ -40,7 +40,7 @@ export const YTreeView = defineComponent({
     },
     multipleActive: Boolean,
     activeStrategy: {
-      type: String as PropType<'independent' | 'cascade'>, // TODO: 'leaf'
+      type: String as PropType<'independent' | 'cascade' | 'relative'>,
       default: 'independent',
     },
     selected: {
@@ -48,7 +48,7 @@ export const YTreeView = defineComponent({
       default: () => [],
     },
     selectStrategy: {
-      type: String as PropType<'independent' | 'cascade'>, // TODO: 'leaf'
+      type: String as PropType<'independent' | 'cascade'>,
       default: 'leaf',
     },
     returnItem: Boolean,
@@ -196,7 +196,7 @@ export const YTreeView = defineComponent({
 
     function expand(until: boolean | string | number = true) {
       Object.entries(nodes.value).forEach(([key, node]) => {
-        if (until === true || until >= node.level) {
+        if (until === true || Number(until) >= node.level) {
           updateExpanded(key, true);
         }
       });
@@ -358,6 +358,7 @@ export const YTreeView = defineComponent({
       excludedSet,
       searchLoading,
       expandedCache,
+      renderLeaves,
     };
   },
 });

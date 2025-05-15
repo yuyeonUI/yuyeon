@@ -1,15 +1,12 @@
-import {
-  InjectionKey,
-  Ref,
-  inject,
-  provide,
-  ref,
-  shallowRef,
-} from 'vue';
+import { InjectionKey, Ref, inject, provide, ref, shallowRef } from 'vue';
 
+
+
+import { NodeState } from '@/components/tree-view/types';
 import { useModelDuplex } from '@/composables';
 import { CandidateKey } from '@/types';
 import { getObjectValueByPath } from '@/util';
+
 
 export const Y_TREE_VIEW: InjectionKey<{
   register: (key: CandidateKey, vnode: any) => void;
@@ -25,7 +22,7 @@ export const Y_TREE_VIEW: InjectionKey<{
 
 // TODO: props type
 export function provideTreeView(props: any) {
-  const nodes = ref<Record<CandidateKey, any>>({});
+  const nodes = ref<Record<CandidateKey, NodeState>>({});
   const expanded = useModelDuplex(props, 'expanded');
   const active = useModelDuplex(props, 'active');
   const selected = useModelDuplex(props, 'selected');
@@ -120,15 +117,32 @@ export function provideTreeView(props: any) {
       return;
     }
 
-    if (props.multipleActive && props.activeStrategy === 'cascade') {
+    if (
+      props.multipleActive &&
+      (props.activeStrategy === 'cascade' ||
+        props.activeStrategy === 'relative')
+    ) {
       for (const descendant of getDescendants(key)) {
         if (descendant in nodes.value) {
-          to
-            ? activeSet.value.add(descendant)
-            : activeSet.value.delete(descendant);
-          nodes.value[descendant].active = to;
-          issueVnodeState(descendant);
+          setActive(descendant, to);
         }
+      }
+      if (props.activeStrategy === 'relative') {
+        let grand: CandidateKey | null = node.parentKey;
+        do {
+          const parentKey = grand;
+          grand = null;
+          if (!parentKey) continue;
+          const parent = nodes.value[parentKey];
+          if (!parent) continue;
+          const all = isChildrenAll(parentKey, 'active', to);
+          if (all || !to) {
+            setActive(parentKey, to);
+            if (parent.parentKey)  {
+              grand = (parent.parentKey);
+            }
+          }
+        } while(grand != null)
       }
     }
   }
@@ -159,6 +173,23 @@ export function provideTreeView(props: any) {
         }
       }
     }
+  }
+
+  function isChildrenAll(key: CandidateKey, stateKey: string, to: boolean) {
+    const node = nodes.value[key];
+    if (!node) return false;
+    const { childKeys } = node;
+    return childKeys.every((childKey) => {
+      return (nodes.value[childKey] as any)?.[stateKey] === to;
+    });
+  }
+
+  function setActive(key: CandidateKey, to: boolean) {
+    to
+      ? activeSet.value.add(key)
+      : activeSet.value.delete(key);
+    nodes.value[key].active = to;
+    issueVnodeState(key);
   }
 
   // Emit

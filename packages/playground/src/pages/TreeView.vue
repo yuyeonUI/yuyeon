@@ -99,6 +99,9 @@ setTimeout(() => {
     </y-card>
 
     <y-card class="pa-4 ma-1" style="width: 320px">
+      <y-card-header class="ph-2 pt-0 pb-2">
+        3
+      </y-card-header>
       <y-field-input
           v-model="search"
           clearable
@@ -113,7 +116,7 @@ setTimeout(() => {
           enable-active
           multiple-active
           required-active
-          active-strategy="cascade"
+          active-strategy="relative"
           active-single-modifier="Control"
           default-expand="0"
       ></y-tree-view>
