@@ -119,6 +119,8 @@ export function provideTreeView(props: any) {
 
     if (
       props.multipleActive &&
+      (!props.onlyEventActiveStrategy ||
+        (props.onlyEventActiveStrategy && event)) &&
       (props.activeStrategy === 'cascade' ||
         props.activeStrategy === 'relative')
     ) {
@@ -138,11 +140,11 @@ export function provideTreeView(props: any) {
           const all = isChildrenAll(parentKey, 'active', to);
           if (all || !to) {
             setActive(parentKey, to);
-            if (parent.parentKey)  {
-              grand = (parent.parentKey);
+            if (parent.parentKey) {
+              grand = parent.parentKey;
             }
           }
-        } while(grand != null)
+        } while (grand != null);
       }
     }
   }
@@ -185,9 +187,7 @@ export function provideTreeView(props: any) {
   }
 
   function setActive(key: CandidateKey, to: boolean) {
-    to
-      ? activeSet.value.add(key)
-      : activeSet.value.delete(key);
+    to ? activeSet.value.add(key) : activeSet.value.delete(key);
     nodes.value[key].active = to;
     issueVnodeState(key);
   }

@@ -7,6 +7,8 @@ export const ThemeScheme = {
   dark: 'dark',
 } as const;
 
+export const schemes = ['light', 'dark', 'auto'] as const;
+
 export const defaultTonalLuminance = [
   0, 10, 20, 25, 30, 35, 40, 50, 60, 70, 80, 90, 95, 98, 99, 100,
 ];
@@ -103,8 +105,10 @@ export function configureOptions(options?: ThemeOptions): any {
     };
   }
   return {
-    scheme: ThemeScheme.light,
-    theme: ['light', 'dark'],
+    scheme: schemes.includes(options.scheme)
+      ? options.scheme
+      : ThemeScheme.light,
+    theme: options.theme ?? ['light', 'dark'],
     themes: { ...mergeDeep(defaultThemesValues, options.themes) },
     palette: { ...mergeDeep(defaultPalette, options.palette) },
     separation: options?.separation,

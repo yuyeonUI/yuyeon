@@ -40,9 +40,14 @@ export const YTreeView = defineComponent({
     },
     multipleActive: Boolean,
     activeStrategy: {
+      /**
+       * cascade: only descendent leaves
+       * relative: cascade after check parent (ancestor)
+       */
       type: String as PropType<'independent' | 'cascade' | 'relative'>,
       default: 'independent',
     },
+    onlyEventActiveStrategy: Boolean,
     selected: {
       type: [Array] as PropType<CandidateKey[]>,
       default: () => [],
