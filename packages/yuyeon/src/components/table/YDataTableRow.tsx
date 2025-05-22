@@ -1,6 +1,6 @@
 import { type PropType, computed, getCurrentInstance } from 'vue';
 
-import { YButton } from '@/components';
+import { YButton } from '@/components/button/YButton';
 import { useRender } from '@/composables/component';
 import { getPropertyFromItem } from '@/util/common';
 import { defineComponent } from '@/util/component';
