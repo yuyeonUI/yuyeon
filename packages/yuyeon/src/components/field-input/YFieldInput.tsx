@@ -73,7 +73,7 @@ export const YFieldInput = defineComponent({
     prepend: any;
     append: any;
     label: any;
-    default: YInputDefaultSlotProps;
+    default: YInputDefaultSlotProps & { focused: boolean };
     leading: { error: boolean };
     trailing: any;
     'leading-out': any;
@@ -246,7 +246,7 @@ export const YFieldInput = defineComponent({
               ref={'field'}
             >
               {props.floating ? yInput$.value?.createLabel?.() : undefined}
-              {slots.default?.(defaultProps)}
+              {slots.default?.({ ...defaultProps, focused: focused.value })}
               {
                 <input
                   ref={input$}

@@ -61,6 +61,7 @@ export interface YInputDefaultSlotProps {
   value: any;
   loading: boolean;
   attrId: string;
+  focused: boolean;
 }
 
 export const YInput = defineComponent({
@@ -316,6 +317,7 @@ export const YInput = defineComponent({
                   value: props.modelValue,
                   loading: isLoading.value,
                   attrId: `y-input--${UID}`,
+                  focused: isFocused.value,
                 })
               ) : (
                 <div
