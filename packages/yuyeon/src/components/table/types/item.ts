@@ -19,4 +19,5 @@ export interface DataTableItem<T = any> extends SelectableItem {
   index: number;
   columns: Record<string, any>;
   raw: T;
+  rowRef?: any
 }

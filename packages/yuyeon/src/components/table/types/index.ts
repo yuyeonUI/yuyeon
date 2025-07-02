@@ -69,6 +69,8 @@ export type YDataTableSlotProps = {
   items: readonly DataTableItem[];
   columns: InternalDataTableHeader[];
   headers: InternalDataTableHeader[][];
+  //
+  TableBodyRef: Ref<any>;
 };
 
 export type FixedPropType = 'lead' | 'trail' | 'lead-last' | 'trail-last';

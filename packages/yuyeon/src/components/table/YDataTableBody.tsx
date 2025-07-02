@@ -1,4 +1,4 @@
-import { type PropType, mergeProps } from 'vue';
+import { type PropType, mergeProps, ref } from 'vue';
 
 import { useRender } from '@/composables/component';
 import { defineComponent, propsFactory } from '@/util/component';
@@ -38,7 +38,8 @@ export const YDataTableBody = defineComponent({
     ...pressYDataTableBodyProps(),
   },
   emits: ['click:row', 'dblclick:row', 'contextmenu:row', 'mousedown:row'],
-  setup(props, { slots, emit }) {
+  setup(props, { slots, expose }) {
+    const rowRefs = ref<any[]>([]);
     const { columns } = useHeader();
     const { isSelected, toggleSelect } = useSelection();
 
@@ -94,9 +95,9 @@ export const YDataTableBody = defineComponent({
                   props['onMousedown:row']?.(event, { ...stateProps, el });
                 }
 
-              function onKeydown(event: Event, el: null | Element) {
-                props['onKeydown:row']?.(event, { ...stateProps, el });
-              }
+                function onKeydown(event: Event, el: null | Element) {
+                  props['onKeydown:row']?.(event, { ...stateProps, el });
+                }
 
                 const slotProps = {
                   ...stateProps,
@@ -127,6 +128,10 @@ export const YDataTableBody = defineComponent({
                       slots.item(slotProps)
                     ) : (
                       <YDataTableRow
+                        ref={(el) => {
+                          rowRefs.value.push(el);
+                          item.rowRef = el;
+                        }}
                         v-slots={slots}
                         {...slotProps.props}
                         onClick={props['onClick:row'] && onClick}
@@ -145,8 +150,14 @@ export const YDataTableBody = defineComponent({
       );
     });
 
+    expose({
+      rowRefs,
+    });
+
     // end
-    return {};
+    return {
+      rowRefs,
+    };
   },
 });
 

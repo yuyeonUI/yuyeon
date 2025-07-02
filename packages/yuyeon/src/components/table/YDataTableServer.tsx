@@ -1,4 +1,11 @@
-import { type PropType, computed, provide, ref, toRef } from 'vue';
+import {
+  type PropType,
+  computed,
+  provide,
+  ref,
+  toRef,
+  useTemplateRef,
+} from 'vue';
 
 import { useRender } from '@/composables/component';
 import { useResizeObserver } from '@/composables/resize-observer';
@@ -57,6 +64,7 @@ export const YDataTableServer = defineComponent({
     'click:row': (e: Event, value: { row: any }) => true,
   },
   setup(props, { slots, emit }) {
+    const TableBodyRef = ref();
     const { page, pageSize } = createPagination(props);
     const { sortBy, multiSort } = createSorting(props);
     const total = computed(() => parseInt(props.total as string));
@@ -130,6 +138,8 @@ export const YDataTableServer = defineComponent({
         items: items.value,
         columns: columns.value,
         headers: headers.value,
+        //
+        TableBodyRef,
       };
     });
 
@@ -178,6 +188,7 @@ export const YDataTableServer = defineComponent({
                   {slots.thead?.(slotProps.value)}
                   <tbody>
                     <YDataTableBody
+                      ref={TableBodyRef}
                       v-slots={slots}
                       {...yDataTableBodyProps}
                       items={items.value}

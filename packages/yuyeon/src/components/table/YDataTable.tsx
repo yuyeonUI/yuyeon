@@ -1,4 +1,4 @@
-import { type PropType, computed, provide, toRef } from 'vue';
+import { type PropType, computed, provide, ref, toRef } from 'vue';
 
 import { useRender } from '@/composables/component';
 import { useResizeObserver } from '@/composables/resize-observer';
@@ -63,6 +63,7 @@ export const YDataTable = defineComponent({
     scroll: (e: Event) => true,
   },
   setup(props, { slots, emit }) {
+    const TableBodyRef = ref();
     const { page, pageSize } = createPagination(props);
     const { sortBy, multiSort } = createSorting(props);
     const { columns, headers } = createHeader(props, {
@@ -134,6 +135,8 @@ export const YDataTable = defineComponent({
         items: paginatedItems.value,
         columns: columns.value,
         headers: headers.value,
+        //
+        TableBodyRef,
       };
     });
 
@@ -183,6 +186,7 @@ export const YDataTable = defineComponent({
                   {!props.hideDefaultTbody && (
                     <tbody>
                       <YDataTableBody
+                        ref={TableBodyRef}
                         v-slots={slots}
                         {...yDataTableBodyProps}
                         items={slotProps.value.items}
