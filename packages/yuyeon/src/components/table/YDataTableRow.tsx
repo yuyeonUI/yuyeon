@@ -8,8 +8,8 @@ import { propsFactory } from '@/util/component';
 
 import { YIconCheckbox } from '../icons';
 import { YDataTableCell } from './YDataTableCell';
-import { useHeader } from './composibles/header';
-import { useSelection } from './composibles/selection';
+import { useHeader } from '@/components/table/composables/header';
+import { useSelection } from '@/components/table/composables/selection';
 import { CellProps, DataTableItem, type FixedPropType } from './types';
 
 export const pressYDataTableRowProps = propsFactory(

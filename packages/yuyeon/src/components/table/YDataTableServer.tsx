@@ -4,7 +4,6 @@ import {
   provide,
   ref,
   toRef,
-  useTemplateRef,
 } from 'vue';
 
 import { useRender } from '@/composables/component';
@@ -19,17 +18,18 @@ import { YDataTableControl } from './YDataTableControl';
 import { YDataTableHead } from './YDataTableHead';
 import { YDataTableLayer } from './YDataTableLayer';
 import { YTable } from './YTable';
-import { createHeader } from './composibles/header';
-import { useItems } from './composibles/items';
-import { useOptions } from './composibles/options';
+import { createHeader } from './composables/header';
+import { useItems } from './composables/items';
+import { useOptions } from './composables/options';
 import {
   createPagination,
   pressDataTablePaginationProps,
   providePagination,
-} from './composibles/pagination';
-import { provideSelection } from './composibles/selection';
-import { createSorting, provideSorting } from './composibles/sorting';
+} from './composables/pagination';
+import { provideSelection } from './composables/selection';
+import { createSorting, provideSorting } from './composables/sorting';
 import { YDataTableSlotProps } from './types';
+import { YDataTableInjectionKey } from '@/components/table/composables/provides';
 
 export const pressDataTableServerProps = propsFactory(
   {
@@ -96,10 +96,6 @@ export const YDataTableServer = defineComponent({
       },
     );
 
-    function measureHead(entries: ResizeObserverEntry[]) {
-      headRect.value = entries?.[0].contentRect;
-    }
-
     useOptions(
       {
         page,
@@ -109,12 +105,6 @@ export const YDataTableServer = defineComponent({
       },
       emit,
     );
-
-    provide('y-data-table', {
-      toggleSort,
-      sortBy,
-      headRect,
-    });
 
     const slotProps = computed<YDataTableSlotProps>(() => {
       return {
@@ -141,6 +131,16 @@ export const YDataTableServer = defineComponent({
         //
         TableBodyRef,
       };
+    });
+
+    function measureHead(entries: ResizeObserverEntry[]) {
+      headRect.value = entries?.[0].contentRect;
+    }
+
+    provide(YDataTableInjectionKey, {
+      toggleSort,
+      sortBy,
+      headRect,
     });
 
     useRender(() => {

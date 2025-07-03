@@ -1,4 +1,4 @@
-import { SelectableItem, provideSelection } from '../composibles/selection';
+import { SelectableItem, provideSelection } from '@/components/table/composables/selection';
 import { InternalDataTableHeader } from './header';
 
 type ItemSlotBase<T> = {

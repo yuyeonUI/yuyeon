@@ -4,8 +4,8 @@ import { useRender } from '@/composables/component';
 import { defineComponent, propsFactory } from '@/util/component';
 
 import { YDataTableRow } from './YDataTableRow';
-import { useHeader } from './composibles/header';
-import { useSelection } from './composibles/selection';
+import { useHeader } from '@/components/table/composables/header';
+import { useSelection } from '@/components/table/composables/selection';
 import { DataTableItem, RowProps } from './types';
 
 export const pressYDataTableBodyProps = propsFactory(

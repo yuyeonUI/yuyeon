@@ -1,11 +1,11 @@
-import { ref, shallowRef } from 'vue';
+import { ref, shallowRef, watch } from 'vue';
 
 import { useResizeObserver } from '@/composables/resize-observer';
 import { debounce } from '@/util/debounce';
 
 export function useRectMeasure() {
-  const tableRef = ref();
-  const wrapperRef = ref();
+  const tableRef = ref<HTMLTableElement>();
+  const wrapperRef = ref<HTMLElement>();
 
   const containerRect = shallowRef<DOMRectReadOnly>();
   const wrapperRect = shallowRef<DOMRectReadOnly>();
@@ -19,11 +19,25 @@ export function useRectMeasure() {
 
   function measure(entries: any) {
     containerRect.value = entries?.[0]?.contentRect;
-    const el = containerRef.value!;
-    const wrapperEl = el.querySelector('.y-table__wrapper');
-    if (wrapperEl) {
-      wrapperRect.value = wrapperEl.getBoundingClientRect();
+
+    if (wrapperRef.value) {
+      const rect = wrapperRef.value.getBoundingClientRect();
+
+      if (rect) {
+        const obj: any = {};
+        for (const key in rect) {
+          if (typeof rect[key as keyof DOMRect] !== "function") {
+            obj[key] = rect[key as keyof DOMRect];
+          }
+        }
+        wrapperRect.value = {
+          ...obj,
+          clientWidth: wrapperRef.value?.clientWidth ?? 0,
+        };
+      }
+
     }
+
     if (tableRef.value) {
       const rect = tableRef.value?.getBoundingClientRect();
       if (rect) {
@@ -31,6 +45,13 @@ export function useRectMeasure() {
       }
     }
   }
+
+  watch(tableRef, (neo) => {
+    if (neo) {
+      const el = containerRef.value!;
+      wrapperRef.value = el.querySelector('.y-table__wrapper') as HTMLElement || undefined;
+    }
+  })
 
   return {
     containerRef,

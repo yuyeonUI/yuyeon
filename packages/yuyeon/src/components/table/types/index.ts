@@ -1,6 +1,6 @@
 import { ComputedRef, Ref, UnwrapRef } from 'vue';
 
-import { SelectableItem } from '../composibles/selection';
+import { SelectableItem } from '@/components/table/composables/selection';
 import type { DataTableCompareFn } from './common';
 import type { DataTableHeader, InternalDataTableHeader } from './header';
 import type { DataTableItem, ItemKeySlot } from './item';
