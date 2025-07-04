@@ -1,11 +1,7 @@
-import {
-  type PropType,
-  computed,
-  provide,
-  ref,
-  toRef,
-} from 'vue';
+import { type PropType, computed, provide, ref, toRef, Fragment } from 'vue';
 
+import { provideExpand } from '@/components/table/composables/expand';
+import { YDataTableInjectionKey } from '@/components/table/composables/provides';
 import { useRender } from '@/composables/component';
 import { useResizeObserver } from '@/composables/resize-observer';
 import { chooseProps, defineComponent, propsFactory } from '@/util/component';
@@ -29,7 +25,6 @@ import {
 import { provideSelection } from './composables/selection';
 import { createSorting, provideSorting } from './composables/sorting';
 import { YDataTableSlotProps } from './types';
-import { YDataTableInjectionKey } from '@/components/table/composables/provides';
 
 export const pressDataTableServerProps = propsFactory(
   {
@@ -61,6 +56,7 @@ export const YDataTableServer = defineComponent({
     'update:pageSize': (pageSize: number) => true,
     'update:sortBy': (sortBy: any) => true,
     'update:options': (options: any) => true,
+    'update:expanded': (expanded: any[]) => true,
     'click:row': (e: Event, value: { row: any }) => true,
   },
   setup(props, { slots, emit }) {
@@ -87,6 +83,7 @@ export const YDataTableServer = defineComponent({
       someSelected,
       allSelected,
     } = provideSelection(props, { allItems: items, pageItems: items });
+    const { isExpanded, toggleExpand } = provideExpand(props);
 
     const headRect = ref<DOMRectReadOnly>();
     const debounceMeasureHead = debounce(measureHead, 100);
@@ -117,6 +114,9 @@ export const YDataTableServer = defineComponent({
         // sorting
         sortBy: sortBy.value,
         toggleSort,
+        // expand
+        isExpanded,
+        toggleExpand,
         // selection
         someSelected: someSelected.value,
         allSelected: allSelected.value,
@@ -124,7 +124,7 @@ export const YDataTableServer = defineComponent({
         select,
         selectAll,
         toggleSelect,
-        //
+        // matrix
         items: items.value,
         columns: columns.value,
         headers: headers.value,
@@ -167,18 +167,18 @@ export const YDataTableServer = defineComponent({
               slots.leading ? (
                 slots.leading(slotProps.value)
               ) : (
-                <>
+                <Fragment>
                   <YDataTableLayer
                     v-slots={slots}
                     slotProps={slotProps.value}
                   ></YDataTableLayer>
-                </>
+                </Fragment>
               ),
             default: () =>
               slots.default ? (
                 slots.default(slotProps.value)
               ) : (
-                <>
+                <Fragment>
                   <thead ref={headObserveRef}>
                     <YDataTableHead
                       v-slots={slots}
@@ -196,7 +196,7 @@ export const YDataTableServer = defineComponent({
                   </tbody>
                   {slots.tbody?.(slotProps.value)}
                   {slots.tfoot?.(slotProps.value)}
-                </>
+                </Fragment>
               ),
             trailing: () => slots.trailing?.(slotProps.value),
             bottom: () =>
