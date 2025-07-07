@@ -20,4 +20,5 @@ export interface DataTableItem<T = any> extends SelectableItem {
   columns: Record<string, any>;
   raw: T;
   rowRef?: any
+  readonly _bindRowRef: (el: any | null) => void;
 }

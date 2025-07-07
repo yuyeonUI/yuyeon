@@ -1,13 +1,13 @@
-import { type PropType, mergeProps, ref, Fragment } from 'vue';
+import { Fragment, type PropType, mergeProps, ref } from 'vue';
 
+import { useExpand } from '@/components/table/composables/expand';
+import { useHeader } from '@/components/table/composables/header';
+import { useSelection } from '@/components/table/composables/selection';
 import { useRender } from '@/composables/component';
 import { defineComponent, propsFactory } from '@/util/component';
 
 import { YDataTableRow } from './YDataTableRow';
-import { useHeader } from '@/components/table/composables/header';
-import { useSelection } from '@/components/table/composables/selection';
 import { DataTableItem, RowProps } from './types';
-import { useExpand } from '@/components/table/composables/expand';
 
 export const pressYDataTableBodyProps = propsFactory(
   {
@@ -39,8 +39,7 @@ export const YDataTableBody = defineComponent({
     ...pressYDataTableBodyProps(),
   },
   emits: ['click:row', 'dblclick:row', 'contextmenu:row', 'mousedown:row'],
-  setup(props, { slots, expose }) {
-    const rowRefs = ref<any[]>([]);
+  setup(props, { slots }) {
     const { columns } = useHeader();
     const { isSelected, toggleSelect } = useSelection();
     const { isExpanded, toggleExpand } = useExpand();
@@ -133,8 +132,7 @@ export const YDataTableBody = defineComponent({
                     ) : (
                       <YDataTableRow
                         ref={(el) => {
-                          rowRefs.value.push(el);
-                          item.rowRef = el;
+                          item._bindRowRef(el);
                         }}
                         v-slots={slots}
                         {...slotProps.props}
@@ -147,22 +145,13 @@ export const YDataTableBody = defineComponent({
                         onKeydown={props['onKeydown:row'] && onKeydown}
                       ></YDataTableRow>
                     )}
-                    { isExpanded(item) && slots['expanded-row']?.(slotProps) }
+                    {isExpanded(item) && slots['expanded-row']?.(slotProps)}
                   </Fragment>
                 );
               })}
         </>
       );
     });
-
-    expose({
-      rowRefs,
-    });
-
-    // end
-    return {
-      rowRefs,
-    };
   },
 });
 

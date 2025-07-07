@@ -1,4 +1,4 @@
-import { type PropType, type Ref, computed } from 'vue';
+import { type PropType, type Ref, computed, ref } from 'vue';
 
 import { getPropertyFromItem } from '@/util/common';
 import { propsFactory } from '@/util/component';
@@ -37,6 +37,7 @@ export function updateItem(
   index: number,
   columns: InternalDataTableHeader[],
 ): DataTableItem {
+  const rowRef = ref<any | null>(null);
   const key = getPropertyFromItem(item, props.itemKey);
   const value = props.returnItem ? item : key;
   let selectable;
@@ -54,6 +55,10 @@ export function updateItem(
     {} as Record<string, unknown>,
   );
 
+  function _bindRowRef(el: any | null) {
+    rowRef.value = el;
+  }
+
   return {
     index,
     key,
@@ -61,6 +66,8 @@ export function updateItem(
     selectable,
     columns: itemColumns,
     raw: item,
+    rowRef,
+    _bindRowRef,
   };
 }
 
