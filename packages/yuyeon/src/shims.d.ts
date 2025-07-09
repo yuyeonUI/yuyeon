@@ -10,6 +10,8 @@ import {
   YCheckbox,
   YChip,
   YDataTable,
+  YDataTableLayerRow,
+  YDataTableLayerRows,
   YDataTableServer,
   YDateCalendar,
   YDatePicker,
@@ -33,6 +35,7 @@ import {
   YMonthPicker,
   YPagination,
   YProgressBar,
+  YProgressRing,
   YSelect,
   YSnackbar,
   YSpinnerRing,
@@ -46,7 +49,6 @@ import {
   YTooltip,
   YTreeView,
   YTreeViewNode,
-  YProgressRing,
 } from 'yuyeon/components';
 
 declare module '@vue/runtime-core' {
@@ -76,8 +78,10 @@ declare module '@vue/runtime-core' {
     YListItem: typeof YListItem;
     YTreeView: typeof YTreeView;
     YTreeViewNode: typeof YTreeViewNode;
-    YDataTable: typeof YDataTable;
     YTable: typeof YTable;
+    YDataTable: typeof YDataTable;
+    YDataTableLayerRows: typeof YDataTableLayerRows;
+    YDataTableLayerRow: typeof YDataTableLayerRow;
     YDataTableServer: typeof YDataTableServer;
     YMenu: typeof YMenu;
     YPagination: typeof YPagination;

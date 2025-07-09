@@ -7,3 +7,5 @@ export * from './YDataTableRow';
 export * from './YDataTableCell';
 export * from './YDataTableControl';
 export * from './YDataTableLayer';
+export * from './YDataTableLayerRows';
+export * from './YDataTableLayerRow';
