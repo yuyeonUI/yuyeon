@@ -1,11 +1,12 @@
-import { type PropType, mergeProps } from 'vue';
+import { Fragment, type PropType, mergeProps, ref } from 'vue';
 
+import { useExpand } from '@/components/table/composables/expand';
+import { useHeader } from '@/components/table/composables/header';
+import { useSelection } from '@/components/table/composables/selection';
 import { useRender } from '@/composables/component';
 import { defineComponent, propsFactory } from '@/util/component';
 
 import { YDataTableRow } from './YDataTableRow';
-import { useHeader } from './composibles/header';
-import { useSelection } from './composibles/selection';
 import { DataTableItem, RowProps } from './types';
 
 export const pressYDataTableBodyProps = propsFactory(
@@ -38,9 +39,10 @@ export const YDataTableBody = defineComponent({
     ...pressYDataTableBodyProps(),
   },
   emits: ['click:row', 'dblclick:row', 'contextmenu:row', 'mousedown:row'],
-  setup(props, { slots, emit }) {
+  setup(props, { slots }) {
     const { columns } = useHeader();
     const { isSelected, toggleSelect } = useSelection();
+    const { isExpanded, toggleExpand } = useExpand();
 
     useRender(() => {
       if (props.loading) {
@@ -73,6 +75,8 @@ export const YDataTableBody = defineComponent({
                   columns: columns.value,
                   isSelected,
                   toggleSelect,
+                  isExpanded,
+                  toggleExpand,
                 };
 
                 function onClick(event: Event, el: null | Element) {
@@ -94,9 +98,9 @@ export const YDataTableBody = defineComponent({
                   props['onMousedown:row']?.(event, { ...stateProps, el });
                 }
 
-              function onKeydown(event: Event, el: null | Element) {
-                props['onKeydown:row']?.(event, { ...stateProps, el });
-              }
+                function onKeydown(event: Event, el: null | Element) {
+                  props['onKeydown:row']?.(event, { ...stateProps, el });
+                }
 
                 const slotProps = {
                   ...stateProps,
@@ -122,11 +126,14 @@ export const YDataTableBody = defineComponent({
                 };
 
                 return (
-                  <>
+                  <Fragment>
                     {slots.item ? (
                       slots.item(slotProps)
                     ) : (
                       <YDataTableRow
+                        ref={(el) => {
+                          item._bindRowRef(el);
+                        }}
                         v-slots={slots}
                         {...slotProps.props}
                         onClick={props['onClick:row'] && onClick}
@@ -138,15 +145,13 @@ export const YDataTableBody = defineComponent({
                         onKeydown={props['onKeydown:row'] && onKeydown}
                       ></YDataTableRow>
                     )}
-                  </>
+                    {isExpanded(item) && slots['expanded-row']?.(slotProps)}
+                  </Fragment>
                 );
               })}
         </>
       );
     });
-
-    // end
-    return {};
   },
 });
 

@@ -1,6 +1,9 @@
 import { type PropType, computed, getCurrentInstance } from 'vue';
 
-import { YButton } from '@/components';
+import { YButton } from '@/components/button/YButton';
+import { useExpand } from '@/components/table/composables/expand';
+import { useHeader } from '@/components/table/composables/header';
+import { useSelection } from '@/components/table/composables/selection';
 import { useRender } from '@/composables/component';
 import { getPropertyFromItem } from '@/util/common';
 import { defineComponent } from '@/util/component';
@@ -8,8 +11,6 @@ import { propsFactory } from '@/util/component';
 
 import { YIconCheckbox } from '../icons';
 import { YDataTableCell } from './YDataTableCell';
-import { useHeader } from './composibles/header';
-import { useSelection } from './composibles/selection';
 import { CellProps, DataTableItem, type FixedPropType } from './types';
 
 export const pressYDataTableRowProps = propsFactory(
@@ -35,8 +36,9 @@ export const YDataTableRow = defineComponent({
   emits: ['hover', 'mousedown', 'click', 'dblclick', 'contextmenu'],
   setup(props, { emit, slots }) {
     const vm = getCurrentInstance();
-    const { isSelected, toggleSelect } = useSelection();
     const { columns } = useHeader();
+    const { isSelected, toggleSelect } = useSelection();
+    const { isExpanded, toggleExpand } = useExpand();
 
     const selected = computed(() => props.item && isSelected(props.item));
 
@@ -78,7 +80,10 @@ export const YDataTableRow = defineComponent({
         <tr
           class={[
             'y-data-table__row',
-            { 'y-data-table__row--selected': selected.value },
+            {
+              'y-data-table__row--selected': selected.value,
+              'y-data-table__row--expanded': isExpanded(props.item!),
+            },
           ]}
           onClick={props.onClick && onClick}
           onContextmenu={props.onContextmenu && onContextmenu}
@@ -97,6 +102,8 @@ export const YDataTableRow = defineComponent({
                 value: getPropertyFromItem(item.columns, column.key),
                 selected: selected.value,
                 toggleSelect,
+                isExpanded,
+                toggleExpand,
                 el: vm?.proxy?.$el,
               };
 

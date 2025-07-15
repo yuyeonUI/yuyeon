@@ -8,7 +8,7 @@ import { YButton } from '../button';
 import { YFieldInput } from '../field-input';
 import { YIconExpand, YIconPageControl } from '../icons';
 import { YPagination } from '../pagination';
-import { pressDataTablePaginationProps } from './composibles/pagination';
+import { pressDataTablePaginationProps } from '@/components/table/composables/pagination';
 
 import './YDataTableControl.scss';
 

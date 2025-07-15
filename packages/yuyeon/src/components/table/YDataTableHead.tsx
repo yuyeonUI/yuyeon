@@ -9,9 +9,9 @@ import { YButton } from '../button/YButton';
 import { YIconCheckbox } from '../icons/YIconCheckbox';
 import { YIconSort } from '../icons/YIconSort';
 import { YDataTableCell } from './YDataTableCell';
-import { useHeader } from './composibles/header';
-import { useSelection } from './composibles/selection';
-import { useSorting } from './composibles/sorting';
+import { useHeader } from '@/components/table/composables/header';
+import { useSelection } from '@/components/table/composables/selection';
+import { useSorting } from '@/components/table/composables/sorting';
 import { type FixedPropType, InternalDataTableHeader } from './types';
 
 export const pressYDataTableHeadProps = propsFactory(

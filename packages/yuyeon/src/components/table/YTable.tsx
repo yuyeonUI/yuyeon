@@ -1,11 +1,13 @@
 import { type PropType, provide } from 'vue';
 
-import { useRectMeasure } from '@/components/table/composibles/measure';
 import { useRender } from '@/composables/component';
 import { defineComponent, propsFactory } from '@/util/component';
 import { toStyleSizeValue } from '@/util/ui';
 
+import { useRectMeasure } from './composables/measure';
+
 import './YTable.scss';
+import { YTableInjectionKey } from '@/components/table/composables/provides';
 
 export const pressYTableProps = propsFactory(
   {
@@ -34,10 +36,10 @@ export const YTable = defineComponent({
   },
   emits: ['scroll'],
   setup(props, { slots, emit }) {
-    const { containerRef,  tableRef, containerRect, wrapperRect } =
+    const { containerRef, tableRef, containerRect, wrapperRef, wrapperRect } =
       useRectMeasure();
 
-    provide('YTable', { containerRect });
+    provide(YTableInjectionKey, { containerRect, tableRef, wrapperRef, wrapperRect });
 
     function onScroll(e: Event) {
       emit('scroll', e);

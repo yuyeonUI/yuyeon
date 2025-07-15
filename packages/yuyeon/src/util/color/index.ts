@@ -13,7 +13,7 @@
 * */
 
 import { HEX_COLOR_REGEX, RGBA_REGEX } from "./const";
-import { rgbFromHex } from '@/util';
+import { rgbFromHex } from './conversion';
 
 export function isColorValue(value: string): boolean {
   return RGBA_REGEX.test(value) || HEX_COLOR_REGEX.test(value);

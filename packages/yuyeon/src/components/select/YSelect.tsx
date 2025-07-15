@@ -165,7 +165,10 @@ export const YSelect = defineComponent<
     });
 
     const extraMenuProps = computed(() => {
-      return { ...props.menuProps, preventCloseBubble: true };
+      return {
+        ...props.menuProps,
+        preventCloseBubble: true,
+      };
     });
 
     function isSelected(item: ListItem) {

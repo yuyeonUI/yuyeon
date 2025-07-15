@@ -2,10 +2,11 @@ import {
   type PropType,
   computed,
   getCurrentInstance,
-  onBeforeUnmount,
+  onMounted,
+  onScopeDispose,
   ref,
   shallowRef,
-  watch, onScopeDispose,
+  watch,
 } from 'vue';
 
 import { useModelDuplex } from '@/composables/communication';
@@ -235,7 +236,7 @@ export const YDialog = defineComponent({
     );
 
     if (active.value) {
-      installFocusTrap()
+      installFocusTrap();
       preventInteractionBackground(true);
     }
 
@@ -244,10 +245,16 @@ export const YDialog = defineComponent({
       preventInteractionBackground(neo);
     });
 
+    onMounted(() => {
+      if (active.value) {
+        preventInteractionBackground(true);
+      }
+    });
+
     onScopeDispose(() => {
       dismantleFocusTrap();
       preventInteractionBackground(false);
-    })
+    });
 
     useRender(() => {
       return (

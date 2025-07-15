@@ -1,6 +1,6 @@
 {
   "name": "yuyeon",
-  "version": "0.3.1",
+  "version": "0.3.3",
   "keywords": [
     "UI Library",
     "Vue"
@@ -35,7 +35,10 @@
       "types": "./types/components/index.d.ts",
       "module": "./lib/components/index.js"
     },
-    "./components/*": "./lib/components/*/index.js",
+    "./components/*": {
+      "module": "./lib/components/*/*.js",
+      "types": "./types/components/*/*.d.ts"
+    },
     "./composables": {
       "types": "./types/composables/index.d.ts",
       "module": "./lib/composables/index.js",

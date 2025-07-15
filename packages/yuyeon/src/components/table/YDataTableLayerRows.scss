@@ -1,0 +1,14 @@
+.y-data-table-layer-rows {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  clip-path: inset(0 -20px 0 -20px);
+}
+
+.y-data-table-layer-row {
+  pointer-events: none;
+  position: absolute;
+  left: 0;
+}

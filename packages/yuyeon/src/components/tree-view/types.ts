@@ -2,17 +2,21 @@ import { type ComponentPublicInstance } from 'vue';
 
 import type { CandidateKey } from '@/types';
 
-export interface NodeState {
+export interface ItemState {
+  selected: boolean;
+  indeterminate: boolean;
+  active: boolean;
+  expanded: boolean;
+}
+
+export interface NodeState extends ItemState {
   childKeys: CandidateKey[];
   item: any;
   parentKey: null | CandidateKey;
-  vnode: null | ComponentPublicInstance;
+  vnode:
+    | null
+    | (ComponentPublicInstance & ItemState);
   level: number;
-  //
-  selected: false;
-  indeterminate: false;
-  active: false;
-  expanded: false;
 }
 
 export type TreeviewFilterFn = (

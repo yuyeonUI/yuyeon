@@ -1,5 +1,35 @@
-import { type PropType, computed, provide, toRef } from 'vue';
+import { Fragment, type PropType, computed, provide, ref, toRef } from 'vue';
 
+import {
+  pressDataTableExpandProps,
+  provideExpand,
+} from '@/components/table/composables/expand';
+import {
+  createHeader,
+  pressDataTableHeader,
+} from '@/components/table/composables/header';
+import {
+  pressDataTableItemsProps,
+  useItems,
+} from '@/components/table/composables/items';
+import { useOptions } from '@/components/table/composables/options';
+import {
+  createPagination,
+  pressDataTablePaginationProps,
+  providePagination,
+  usePaginatedItems,
+} from '@/components/table/composables/pagination';
+import { YDataTableInjectionKey } from '@/components/table/composables/provides';
+import {
+  pressDataTableSelectionProps,
+  provideSelection,
+} from '@/components/table/composables/selection';
+import { useSortedItems } from '@/components/table/composables/sorted-items';
+import {
+  createSorting,
+  pressDataTableSortProps,
+  provideSorting,
+} from '@/components/table/composables/sorting';
 import { useRender } from '@/composables/component';
 import { useResizeObserver } from '@/composables/resize-observer';
 import { chooseProps, defineComponent, propsFactory } from '@/util/component';
@@ -10,25 +40,6 @@ import { YDataTableControl } from './YDataTableControl';
 import { YDataTableHead, pressYDataTableHeadProps } from './YDataTableHead';
 import { YDataTableLayer } from './YDataTableLayer';
 import { YTable, pressYTableProps } from './YTable';
-import { createHeader, pressDataTableHeader } from './composibles/header';
-import { pressDataTableItemsProps, useItems } from './composibles/items';
-import { useOptions } from './composibles/options';
-import {
-  createPagination,
-  pressDataTablePaginationProps,
-  providePagination,
-  usePaginatedItems,
-} from './composibles/pagination';
-import {
-  pressDataTableSelectionProps,
-  provideSelection,
-} from './composibles/selection';
-import { useSortedItems } from './composibles/sorted-items';
-import {
-  createSorting,
-  pressDataTableSortProps,
-  provideSorting,
-} from './composibles/sorting';
 import { YDataTableSlotProps } from './types';
 
 export const pressDataTableProps = propsFactory(
@@ -41,6 +52,7 @@ export const pressDataTableProps = propsFactory(
     ...pressDataTableItemsProps(),
     ...pressDataTableSortProps(),
     ...pressDataTableSelectionProps(),
+    ...pressDataTableExpandProps(),
     ...pressYDataTableHeadProps(),
     ...pressYTableProps(),
   },
@@ -59,10 +71,12 @@ export const YDataTable = defineComponent({
     'update:pageSize': (pageSize: number) => true,
     'update:sortBy': (sortBy: any) => true,
     'update:options': (options: any) => true,
+    'update:expanded': (expanded: any[]) => true,
     'click:row': (e: Event, value: { row: any }) => true,
     scroll: (e: Event) => true,
   },
   setup(props, { slots, emit }) {
+    const TableBodyRef = ref();
     const { page, pageSize } = createPagination(props);
     const { sortBy, multiSort } = createSorting(props);
     const { columns, headers } = createHeader(props, {
@@ -92,6 +106,7 @@ export const YDataTable = defineComponent({
       someSelected,
       allSelected,
     } = provideSelection(props, { allItems: items, pageItems: items });
+    const { isExpanded, toggleExpand } = provideExpand(props);
 
     const { resizeObservedRef: headObserveRef, contentRect: headRect } =
       useResizeObserver();
@@ -106,12 +121,6 @@ export const YDataTable = defineComponent({
       emit,
     );
 
-    provide('y-data-table', {
-      toggleSort,
-      sortBy,
-      headRect,
-    });
-
     const slotProps = computed<YDataTableSlotProps>(() => {
       return {
         // pagination
@@ -123,6 +132,9 @@ export const YDataTable = defineComponent({
         // sorting
         sortBy: sortBy.value,
         toggleSort,
+        // expand
+        isExpanded,
+        toggleExpand,
         // selection
         someSelected: someSelected.value,
         allSelected: allSelected.value,
@@ -130,11 +142,19 @@ export const YDataTable = defineComponent({
         select,
         selectAll,
         toggleSelect,
-        //
+        // matrix
         items: paginatedItems.value,
         columns: columns.value,
         headers: headers.value,
+        //
+        TableBodyRef,
       };
+    });
+
+    provide(YDataTableInjectionKey, {
+      toggleSort,
+      sortBy,
+      headRect,
     });
 
     useRender(() => {
@@ -172,7 +192,7 @@ export const YDataTable = defineComponent({
               slots.default ? (
                 slots.default(slotProps.value)
               ) : (
-                <>
+                <Fragment>
                   <thead ref={headObserveRef}>
                     <YDataTableHead
                       v-slots={slots}
@@ -183,6 +203,7 @@ export const YDataTable = defineComponent({
                   {!props.hideDefaultTbody && (
                     <tbody>
                       <YDataTableBody
+                        ref={TableBodyRef}
                         v-slots={slots}
                         {...yDataTableBodyProps}
                         items={slotProps.value.items}
@@ -191,7 +212,7 @@ export const YDataTable = defineComponent({
                   )}
                   {slots.tbody?.(slotProps.value)}
                   {slots.tfoot?.(slotProps.value)}
-                </>
+                </Fragment>
               ),
             trailing: () => slots.trailing?.(slotProps.value),
             bottom: () =>
@@ -209,6 +230,7 @@ export const YDataTable = defineComponent({
         </YTable>
       );
     });
+
     return { paginatedItems };
   },
 });
