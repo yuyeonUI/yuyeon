@@ -41,6 +41,7 @@ export const pressYFieldInputPropsOptions = propsFactory(
       type: String as PropType<string>,
       default: 'text',
     },
+    inputStyle: Object as PropType<any>,
     ...pressYInputPropsOptions({
       variation: 'filled',
     }),
@@ -225,6 +226,7 @@ export const YFieldInput = defineComponent({
         onClick={onClick}
         onMousedown:display={($event) => emit('mousedown:display', $event)}
         onKeydown:display={($event) => emit('keydown:display', $event)}
+        style={[attrs.style]}
       >
         {{
           leading: slots.leading
@@ -264,7 +266,7 @@ export const YFieldInput = defineComponent({
                   maxlength={attrs.maxlength as number | string}
                   min={attrs.min as number | string}
                   max={attrs.max as number | string}
-                  style={[attrs?.style, { textAlign: props.inputAlign } as any]}
+                  style={[props.inputStyle, { textAlign: props.inputAlign } as any]}
                   size={(attrs.size ?? 1) as number}
                   onInput={onInput}
                   onFocus={onFocus}
