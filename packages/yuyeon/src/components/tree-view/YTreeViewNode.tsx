@@ -112,6 +112,7 @@ export const YTreeViewNode = defineComponent({
       return {
         level: props.level,
         imLeaf: imLeaf.value,
+        toggleActive,
       };
     });
 
@@ -125,11 +126,15 @@ export const YTreeViewNode = defineComponent({
       });
     });
 
-    function onClick(e: MouseEvent) {
+    function toggleActive(e?: MouseEvent) {
       const to = !active.value;
       active.value = to;
       treeView.updateActive(myKey.value, to, e);
       treeView.emitActive();
+    }
+
+    function onClick(e: MouseEvent) {
+      toggleActive(e);
     }
 
     function onClickExpand(e: MouseEvent) {
