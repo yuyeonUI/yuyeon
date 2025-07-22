@@ -66,11 +66,11 @@ export function useValidation(props: any, name: string, uid = getUid()) {
   const errorResult = ref();
   const errors = ref<any[]>([]);
 
-  const isReadonly = computed(() => props.readonly ?? form?.isReadonly.value);
+  const isReadonly = computed(() => props.readonly || form?.isReadonly.value);
 
-  const isDisabled = computed(() => props.disabled ?? form?.isDisabled.value);
+  const isDisabled = computed(() => props.disabled || form?.isDisabled.value);
 
-  const isLoading = computed(() => props.loading ?? form?.isLoading.value);
+  const isLoading = computed(() => props.loading || form?.isLoading.value);
 
   const isError = computed(() => {
     return props.status === 'error' || errors.value.length > 0;

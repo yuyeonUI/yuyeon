@@ -184,7 +184,6 @@ export const YSelect = defineComponent<
     }
 
     function onKeydownDisplay(event: KeyboardEvent) {
-      console.log(event);
       if (props.disabled) return;
       if (event.key === 'Enter' || event.key === ' ') {
         opened.value = !opened.value;
