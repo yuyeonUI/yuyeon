@@ -1,5 +1,6 @@
 import { type PropType } from 'vue';
 
+import { pressDataTablePaginationProps } from '@/components/table/composables/pagination';
 import { useRender } from '@/composables/component';
 import { propsFactory } from '@/util';
 import { defineComponent } from '@/util/component';
@@ -8,7 +9,6 @@ import { YButton } from '../button';
 import { YFieldInput } from '../field-input';
 import { YIconExpand, YIconPageControl } from '../icons';
 import { YPagination } from '../pagination';
-import { pressDataTablePaginationProps } from '@/components/table/composables/pagination';
 
 import './YDataTableControl.scss';
 
@@ -17,6 +17,9 @@ export const pressYDataTableControlPropsOptions = propsFactory(
     pageLength: Number as PropType<number>,
     setPageSize: Function as PropType<(pageSize: number) => void>,
     setPage: Function as PropType<(page: number) => void>,
+    paginationProps: {
+      type: Object,
+    },
     ...pressDataTablePaginationProps(),
   },
   'YDataTableControl',
@@ -43,10 +46,10 @@ export const YDataTableControl = defineComponent({
               <div class="y-data-table-control__start"></div>
               <div class="y-data-table-control__end">
                 <YPagination
+                  {...props.paginationProps}
                   model-value={props.page}
                   onUpdate:modelValue={props.setPage}
                   length={props.pageLength}
-                  totalVisible={0}
                 ></YPagination>
               </div>
             </>

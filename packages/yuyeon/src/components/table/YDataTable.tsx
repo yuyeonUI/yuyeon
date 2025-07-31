@@ -32,11 +32,15 @@ import {
 } from '@/components/table/composables/sorting';
 import { useRender } from '@/composables/component';
 import { useResizeObserver } from '@/composables/resize-observer';
+import { omit } from '@/util';
 import { chooseProps, defineComponent, propsFactory } from '@/util/component';
 import { toStyleSizeValue } from '@/util/ui';
 
 import { YDataTableBody, pressYDataTableBodyProps } from './YDataTableBody';
-import { YDataTableControl } from './YDataTableControl';
+import {
+  YDataTableControl,
+  pressYDataTableControlPropsOptions,
+} from './YDataTableControl';
 import { YDataTableHead, pressYDataTableHeadProps } from './YDataTableHead';
 import { YDataTableLayer } from './YDataTableLayer';
 import { YTable, pressYTableProps } from './YTable';
@@ -62,7 +66,11 @@ export const pressDataTableProps = propsFactory(
 export const YDataTable = defineComponent({
   name: 'YDataTable',
   props: {
-    ...pressDataTablePaginationProps(),
+    ...omit(pressYDataTableControlPropsOptions(), [
+      'setPage',
+      'setPageSize',
+      'pageLength',
+    ]),
     ...pressDataTableProps(),
   },
   emits: {
@@ -220,6 +228,8 @@ export const YDataTable = defineComponent({
                 slots.bottom(slotProps.value)
               ) : (
                 <YDataTableControl
+                  {...chooseProps(slotProps.value, YDataTableControl.props)}
+                  paginationProps={props.paginationProps}
                   v-slots={{
                     prepend: slots['control.prepend'],
                     append: slots['control.append'],
