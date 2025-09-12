@@ -3,6 +3,7 @@ import {
   computed,
   getCurrentInstance,
   onBeforeMount,
+  onBeforeUnmount,
   ref,
   watch,
 } from 'vue';
@@ -144,6 +145,10 @@ export function useValidation(props: any, name: string, uid = getUid()) {
       resetError();
     }
   }
+
+  onBeforeUnmount(() => {
+    form?.unregister?.(cid.value);
+  });
 
   onBeforeMount(() => {
     form?.register({
