@@ -1,6 +1,7 @@
 import { type VNode, h } from 'vue';
 
 import { defineComponent } from '@/util/component';
+import { escapeRegExp } from '@/util/string';
 
 import './YTextHighlighter.scss';
 
@@ -26,7 +27,10 @@ export const YTextHighlighter = defineComponent({
       if (keyword && text) {
         const split: { text: string; isKeyword: boolean }[] = [];
         let stack = text;
-        const keyExp = new RegExp(keyword, this.sensitive ? '' : 'i');
+        const keyExp = new RegExp(
+          escapeRegExp(keyword),
+          this.sensitive ? '' : 'i',
+        );
         while (stack.length > 0) {
           const index = stack.search(keyExp);
           if (index < 0) {
