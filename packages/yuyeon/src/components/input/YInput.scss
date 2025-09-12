@@ -57,7 +57,7 @@ $input-border-radius: variables.$border-radius-root !default;
   &__helper-text {
     font-size: 14px;
     font-weight: 320;
-    color: #444;
+    color: var(--y-theme-on-surface-variant, #444);
   }
 
   @keyframes label-float {
