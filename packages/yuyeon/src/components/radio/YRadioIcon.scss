@@ -1,0 +1,44 @@
+.y-radio-icon {
+  --y-radio-icon-outline: var(--y-theme-outline, #c8c8c8);
+  width: 24px;
+  height: 24px;
+
+  &__plate {
+    fill: none;
+    stroke: var(--y-radio-icon-outline);
+    stroke-width: 1;
+    color: inherit;
+  }
+
+  &__bead {
+    fill: none;
+    transform: scale(1.2);
+    transform-origin: center;
+    color: inherit;
+  }
+
+  &--active:not(&--disabled) {
+    color: var(--y-theme-primary);
+  }
+
+  &--disabled {
+    color: var(--y-theme-disabled);
+    cursor: default;
+  }
+
+  &--active &,
+  &--disabled & {
+    &__plate {
+      stroke: currentColor;
+    }
+  }
+
+  &--active &__bead {
+    fill: currentColor;
+    stroke: currentColor;
+    transform: scale(1);
+    transition:
+            fill 200ms ease-in,
+            transform 120ms ease;
+  }
+}
