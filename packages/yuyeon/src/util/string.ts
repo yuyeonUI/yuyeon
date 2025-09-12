@@ -75,3 +75,7 @@ export function simpleBraceParse(input: string) {
 
   return results;
 }
+
+export function escapeRegExp(str: string) {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
