@@ -4,6 +4,8 @@ import { useRender } from '@/composables/component';
 import { defineComponent } from '@/util/component/component';
 import { propsFactory } from '@/util/component/props';
 
+import './YSlider.scss';
+
 export const pressYSliderPropsOptions = propsFactory(
   {
     modelValue: Number as PropType<number>,
@@ -20,7 +22,10 @@ export const YSlider = defineComponent({
     'update:modelValue': () => true,
   },
   setup(props, { slots }) {
-    useRender(() => <div class={['y-slider']}></div>);
+    useRender(() =>
+      (<div class={['y-slider']}>
+      </div>)
+    );
 
     return {};
   },
