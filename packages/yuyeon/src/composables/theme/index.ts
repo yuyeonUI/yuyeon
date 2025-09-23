@@ -111,6 +111,13 @@ export function createThemeModule(options: ThemeOptions) {
     return createThemes(themes.value);
   });
 
+  const currentThemeColors = computed(() => {
+    const themeKey = currentThemeKey.value;
+    const theme = computedThemes.value[themeKey];
+    if (!theme?.colors) return {};
+    return theme.colors;
+  });
+
   const styles = computed(() => {
     const separationId = config.separation ? `#${config.separation}` : '';
     const lines = [];
@@ -232,6 +239,7 @@ export function createThemeModule(options: ThemeOptions) {
       scheme,
       theme,
       currentThemeKey,
+      currentThemeColors,
       themeClasses,
       computedThemes,
       computedPalette,
