@@ -7,7 +7,6 @@ export const styleColorPropsOptions = {
   background: String,
   backgroundOpacity: {
     type: Number,
-    default: 1,
   },
 };
 
