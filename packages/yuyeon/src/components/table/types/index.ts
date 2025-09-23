@@ -1,10 +1,10 @@
-import { ComputedRef, Ref, UnwrapRef } from 'vue';
+import { ComputedRef, Ref, UnwrapRef } from "vue";
 
-import { SelectableItem } from '@/components/table/composables/selection';
-import type { DataTableCompareFn } from './common';
-import type { DataTableHeader, InternalDataTableHeader } from './header';
-import type { DataTableItem, ItemKeySlot } from './item';
-import type { CellProps, RowProps } from './row';
+import { SelectableItem } from "@/components/table/composables/selection";
+import type { DataTableCompareFn } from "./common";
+import type { DataTableHeader, InternalDataTableHeader } from "./header";
+import type { DataTableItem, ItemKeySlot } from "./item";
+import type { CellProps, RowProps } from "./row";
 
 export type {
   ItemKeySlot,
@@ -16,7 +16,7 @@ export type {
   DataTableCompareFn,
 };
 
-export type SortOption = { key: string; order?: boolean | 'asc' | 'desc' };
+export type SortOption = { key: string; order?: boolean | "asc" | "desc" };
 
 export type DataTableProvideSortingData = {
   sortBy: Ref<readonly SortOption[]>;
@@ -54,17 +54,17 @@ export type YDataTableSlotProps = {
   page: number;
   pageSize: number;
   pageLength: number;
-  setPageSize: DataTableProvidePaginationData['setPageSize'];
+  setPageSize: DataTableProvidePaginationData["setPageSize"];
   // sorting
-  sortBy: UnwrapRef<DataTableProvideSortingData['sortBy']>;
-  toggleSort: DataTableProvideSortingData['toggleSort'];
+  sortBy: UnwrapRef<DataTableProvideSortingData["sortBy"]>;
+  toggleSort: DataTableProvideSortingData["toggleSort"];
   // selection
   someSelected: boolean;
   allSelected: boolean;
-  isSelected: DataTableProvideSelectionData['isSelected'];
-  select: DataTableProvideSelectionData['select'];
-  selectAll: DataTableProvideSelectionData['selectAll'];
-  toggleSelect: DataTableProvideSelectionData['toggleSelect'];
+  isSelected: DataTableProvideSelectionData["isSelected"];
+  select: DataTableProvideSelectionData["select"];
+  selectAll: DataTableProvideSelectionData["selectAll"];
+  toggleSelect: DataTableProvideSelectionData["toggleSelect"];
   //
   items: readonly DataTableItem[];
   columns: InternalDataTableHeader[];
@@ -73,4 +73,4 @@ export type YDataTableSlotProps = {
   TableBodyRef: Ref<any>;
 };
 
-export type FixedPropType = 'lead' | 'trail' | 'lead-last' | 'trail-last';
+export type FixedPropType = "lead" | "trail" | "lead-last" | "trail-last";

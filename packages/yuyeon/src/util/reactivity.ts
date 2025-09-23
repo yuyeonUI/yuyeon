@@ -1,10 +1,4 @@
-import {
-  type ComputedGetter,
-  computed,
-  reactive,
-  toRefs,
-  watchEffect,
-} from 'vue';
+import { computed, type ComputedGetter, reactive, toRefs, watchEffect } from "vue";
 
 /**
  * For Destructuring assignment
@@ -19,7 +13,7 @@ export function $computed<T extends object>(getter: ComputedGetter<T>) {
         refs[key] = base.value[key];
       }
     },
-    { flush: 'sync' },
+    { flush: "sync" },
   );
   return toRefs(refs);
 }

@@ -1,7 +1,7 @@
-import { ref, shallowRef, watch } from 'vue';
+import { ref, shallowRef, watch } from "vue";
 
-import { useResizeObserver } from '@/composables/resize-observer';
-import { debounce } from '@/util/debounce';
+import { useResizeObserver } from "@/composables/resize-observer";
+import { debounce } from "@/util/debounce";
 
 export function useRectMeasure() {
   const tableRef = ref<HTMLTableElement>();
@@ -35,7 +35,6 @@ export function useRectMeasure() {
           clientWidth: wrapperRef.value?.clientWidth ?? 0,
         };
       }
-
     }
 
     if (tableRef.value) {
@@ -49,9 +48,10 @@ export function useRectMeasure() {
   watch(tableRef, (neo) => {
     if (neo) {
       const el = containerRef.value!;
-      wrapperRef.value = el.querySelector('.y-table__wrapper') as HTMLElement || undefined;
+      wrapperRef.value =
+        (el.querySelector(".y-table__wrapper") as HTMLElement) || undefined;
     }
-  })
+  });
 
   return {
     containerRef,

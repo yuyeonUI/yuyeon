@@ -30,9 +30,9 @@
  * calculate. A difference of 40 in HCT tone guarantees a contrast ratio >= 3.0,
  * and a difference of 50 guarantees a contrast ratio >= 4.5.
  */
-import { Cam16 } from './cam16';
-import { HctSolver } from './hct-solver';
-import { ViewingConditions } from './viewing-conditions';
+import { Cam16 } from "./cam16";
+import { HctSolver } from "./hct-solver";
+import { ViewingConditions } from "./viewing-conditions";
 import { lstarFromArgb, lstarFromY } from "../conversion";
 
 /**

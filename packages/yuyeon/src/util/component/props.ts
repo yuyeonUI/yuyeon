@@ -1,14 +1,14 @@
-import { capitalize } from 'vue';
-import type { IfAny } from '@vue/shared';
 import type {
   ComponentObjectPropsOptions,
   ExtractPropTypes,
   Prop,
   PropType,
   VNode,
-} from 'vue';
+} from "vue";
+import { capitalize } from "vue";
+import type { IfAny } from "@vue/shared";
 
-import { toKebabCase } from '../string';
+import { toKebabCase } from "../string";
 
 export function propsFactory<PropsOptions extends ComponentObjectPropsOptions>(
   props: PropsOptions,
@@ -20,7 +20,7 @@ export function propsFactory<PropsOptions extends ComponentObjectPropsOptions>(
     return Object.keys(props).reduce<any>((options, prop) => {
       const option = props[prop];
       const isObjectOption =
-        typeof option === 'object' && option != null && !Array.isArray(option);
+        typeof option === "object" && option != null && !Array.isArray(option);
       const objectOption = isObjectOption ? option : { type: option };
       if (defaults && prop in defaults) {
         options[prop] = {
@@ -64,8 +64,8 @@ export function hasEventProp(props: Record<string, any>, type: string) {
 
 export function propIsDefined(vnode: VNode, prop: string) {
   return (
-    typeof vnode.props?.[prop] !== 'undefined' ||
-    typeof vnode.props?.[toKebabCase(prop)] !== 'undefined'
+    typeof vnode.props?.[prop] !== "undefined" ||
+    typeof vnode.props?.[toKebabCase(prop)] !== "undefined"
   );
 }
 
@@ -76,7 +76,7 @@ type OverwrittenPropOptions<
   [P in keyof T]-?: unknown extends D[P]
     ? T[P]
     : T[P] extends Record<string, unknown>
-      ? Omit<T[P], 'type' | 'default'> & {
+      ? Omit<T[P], "type" | "default"> & {
           type: PropType<MergeDefault<T[P], D[P]>>;
           default: MergeDefault<T[P], D[P]>;
         }

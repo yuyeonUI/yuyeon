@@ -1,4 +1,4 @@
-import type { DateAdapter, DateFormatOptions } from './types';
+import type { DateAdapter, DateFormatOptions } from "./types";
 
 const FIRST_DAY_INDEX: Record<string, number> = {
   AD: 1,
@@ -164,7 +164,7 @@ export class DateUtil {
       return value;
     }
     let parsed;
-    if (typeof value === 'string') {
+    if (typeof value === "string") {
       if (YYYY_MM_DD_REGEX.test(value)) {
         return DateUtil.parseLocalDate(value);
       } else {
@@ -187,61 +187,61 @@ export class DateUtil {
     const neo = DateUtil.date(value) ?? new Date();
     const formatFunction = formats?.[formatString];
 
-    if (typeof formatFunction === 'function') {
+    if (typeof formatFunction === "function") {
       return formatFunction(neo, formatString, locale);
     }
 
     let options: Intl.DateTimeFormatOptions = {};
     switch (formatString) {
-      case 'fullDateWithWeekday':
+      case "fullDateWithWeekday":
         options = {
-          weekday: 'long',
-          day: 'numeric',
-          month: 'long',
-          year: 'numeric',
+          weekday: "long",
+          day: "numeric",
+          month: "long",
+          year: "numeric",
         };
         break;
-      case 'normalDateWithWeekday':
-        options = { weekday: 'short', day: 'numeric', month: 'short' };
+      case "normalDateWithWeekday":
+        options = { weekday: "short", day: "numeric", month: "short" };
         break;
-      case 'keyboardDate':
-        options = { day: '2-digit', month: '2-digit', year: 'numeric' };
+      case "keyboardDate":
+        options = { day: "2-digit", month: "2-digit", year: "numeric" };
         break;
-      case 'monthAndDate':
-        options = { month: 'long', day: 'numeric' };
+      case "monthAndDate":
+        options = { month: "long", day: "numeric" };
         break;
-      case 'monthAndYear':
-        options = { month: 'long', year: 'numeric' };
+      case "monthAndYear":
+        options = { month: "long", year: "numeric" };
         break;
-      case 'year':
-        options = { year: 'numeric' };
+      case "year":
+        options = { year: "numeric" };
         break;
-      case 'month':
-        options = { month: 'long' };
+      case "month":
+        options = { month: "long" };
         break;
-      case 'monthShort':
-        options = { month: 'short' };
+      case "monthShort":
+        options = { month: "short" };
         break;
-      case 'dayOfMonth':
-        options = { day: 'numeric' };
+      case "dayOfMonth":
+        options = { day: "numeric" };
         break;
-      case 'shortDate':
-        options = { year: '2-digit', month: 'numeric', day: 'numeric' };
+      case "shortDate":
+        options = { year: "2-digit", month: "numeric", day: "numeric" };
         break;
       default:
-        options = formatFunction ?? { timeZone: 'UTC', timeZoneName: 'short' };
+        options = formatFunction ?? { timeZone: "UTC", timeZoneName: "short" };
     }
 
     return new Intl.DateTimeFormat(locale, options).format(neo);
   }
 
   static parseLocalDate(value: string) {
-    const parts = value.split('-').map(Number);
+    const parts = value.split("-").map(Number);
     return new Date(parts[0], parts[1] - 1, parts[2]);
   }
 
   static parseISO(value: string): Date {
-    const [year, month, day] = value.split('-').map(Number);
+    const [year, month, day] = value.split("-").map(Number);
     return new Date(year, month - 1, day);
   }
 
@@ -354,7 +354,7 @@ export class DateUtil {
     return [...Array(7).keys()].map((i) => {
       const weekday = new Date(FIRST_SUNDAY);
       weekday.setDate(FIRST_SUNDAY.getDate() + sundayIndex + i);
-      return new Intl.DateTimeFormat(locale, { weekday: 'narrow' }).format(
+      return new Intl.DateTimeFormat(locale, { weekday: "narrow" }).format(
         weekday,
       );
     });
@@ -364,18 +364,18 @@ export class DateUtil {
     const amDate = new Date(FIRST_SUNDAY).setHours(11);
     const pmDate = new Date(FIRST_SUNDAY).setHours(13);
     const formatter = Intl.DateTimeFormat(locale, {
-      minute: 'numeric',
-      hour: 'numeric',
+      minute: "numeric",
+      hour: "numeric",
       hour12: true,
     });
     return [
       formatter
         .format(amDate)
-        .replace(/\d+:\d+/, '')
+        .replace(/\d+:\d+/, "")
         .trim(),
       formatter
         .format(pmDate)
-        .replace(/\d+:\d+/, '')
+        .replace(/\d+:\d+/, "")
         .trim(),
     ];
   }
@@ -434,12 +434,12 @@ export class DateUtil {
   static getDiff(
     date: Date,
     comparing: string | Date,
-    unit?: 'month' | string,
+    unit?: "month" | string,
   ): number {
     const b = new Date(date);
     const c = new Date(comparing);
 
-    if (unit === 'month') {
+    if (unit === "month") {
       return (
         b.getMonth() - c.getMonth() + (b.getFullYear() - c.getFullYear()) * 12
       );

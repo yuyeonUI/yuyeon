@@ -1,4 +1,4 @@
-import type { ComponentPublicInstance, FunctionalComponent } from 'vue';
+import type { ComponentPublicInstance, FunctionalComponent } from "vue";
 
 export type CandidateKey = string | number;
 

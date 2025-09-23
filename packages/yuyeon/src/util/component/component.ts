@@ -1,17 +1,8 @@
-import {
-  ComponentObjectPropsOptions,
-  ComponentOptionsWithoutProps,
-  ExtractDefaultPropTypes,
-  ExtractPropTypes,
-  FunctionalComponent,
-  defineComponent,
-} from 'vue';
 import type {
   Component,
   ComponentInjectOptions,
   ComponentOptions,
   ComponentOptionsMixin,
-  ComponentPropsOptions,
   ComponentProvideOptions,
   ComputedOptions,
   DefineComponent,
@@ -19,14 +10,21 @@ import type {
   EmitsOptions,
   MethodOptions,
   SlotsType,
-} from 'vue';
+} from "vue";
+import {
+  ComponentObjectPropsOptions,
+  ComponentOptionsWithObjectProps,
+  ComponentOptionsWithoutProps,
+  ExtractDefaultPropTypes,
+  ExtractPropTypes,
+  FunctionalComponent,
+} from "vue";
 
 import {
   useDefaultsModule,
   useSuperDefaults,
-} from '../../composables/defaults';
-import { EmitsToProps } from './types';
-import { ComponentOptionsWithObjectProps } from '@vue/runtime-core';
+} from "../../composables/defaults";
+import { EmitsToProps } from "./types";
 
 type ToResolvedProps<Props, Emits extends EmitsOptions> = Readonly<Props> &
   Readonly<EmitsToProps<Emits>>;

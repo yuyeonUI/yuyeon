@@ -1,123 +1,132 @@
 {
-  "name": "yuyeon",
-  "version": "0.3.4",
-  "keywords": [
-    "UI Library",
-    "Vue"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/yuyeonUI/yuyeon",
-    "directory": "packages/yuyeon"
-  },
-  "author": "yeonyew",
-  "license": "Apache-2.0",
-  "files": [
-    "dist/",
-    "lib/",
-    "types/"
-  ],
-  "type": "module",
-  "exports": {
-    ".": {
-      "types": "./types/index.d.ts",
-      "default": "./lib/index.js"
-    },
-    "./styles/*": "./lib/styles/*",
-    "./locales": {
-      "types": "./types/locales/index.d.ts",
-      "default": "./lib/locales/index.js"
-    },
-    "./lib": {
-      "types": "./types/index.d.ts"
-    },
-    "./components": {
-      "types": "./types/components/index.d.ts",
-      "module": "./lib/components/index.js"
-    },
-    "./components/*": {
-      "module": "./lib/components/*/*.js",
-      "types": "./types/components/*/*.d.ts"
-    },
-    "./composables": {
-      "types": "./types/composables/index.d.ts",
-      "module": "./lib/composables/index.js",
-      "default": "./lib/composables/index.js"
-    },
-    "./util": {
-      "types": "./types/util/index.d.ts",
-      "module": "./lib/util/index.js"
-    },
-    "./shims": "./types/shims.d.ts",
-    "./types/*": "./types/*",
-    "./*": "./*"
-  },
-  "main": "lib/index.js",
-  "module": "lib/index.js",
-  "types": "types/index.d.ts",
-  "typesVersions": {
-    "*": {
-      "lib/index.mjs": [
-        "types/index.d.ts"
-      ],
-      "*": [
-        "*",
-        "types/*",
-        "types/*.d.ts",
-        "types/*/index.d.ts"
-      ]
-    }
-  },
-  "scripts": {
-    "build": "vue-tsc && vite build && yarn run build:lib",
-    "build:lib": "cross-env NODE_ENV=lib babel src --out-dir lib --source-maps --extensions \".ts\",\".tsx\" --copy-files --no-copy-ignored --out-file-extension .js"
-  },
-  "dependencies": {
-    "motion": "^10.15.5"
-  },
-  "devDependencies": {
-    "@babel/cli": "^7.21.0",
-    "@babel/core": "^7.21.3",
-    "@babel/preset-env": "^7.20.2",
-    "@babel/preset-typescript": "^7.21.0",
-    "@rollup/plugin-alias": "^4.0.3",
-    "@rollup/plugin-babel": "^6.0.3",
-    "@rollup/plugin-node-resolve": "^15.2.3",
-    "@rollup/plugin-typescript": "^11.0.0",
-    "@trivago/prettier-plugin-sort-imports": "^4.3.0",
-    "@types/jest": "^28.1.8",
-    "@types/node": "^18.19.1",
-    "@types/resize-observer-browser": "^0.1.7",
-    "@vitejs/plugin-vue": "^5.0.5",
-    "@vitejs/plugin-vue-jsx": "^4.0.0",
-    "@vue/babel-plugin-jsx": "^1.2.2",
-    "@vue/test-utils": "2.4.6",
-    "autoprefixer": "^10.4.14",
-    "babel-plugin-add-import-extension": "1.5.1",
-    "babel-plugin-module-resolver": "^5.0.0",
-    "babel-plugin-transform-define": "^2.1.0",
-    "concurrently": "^4.1.1",
-    "core-js": "^3.41.0",
-    "cross-env": "^7.0.3",
-    "rollup": "^4.22.4",
-    "rollup-plugin-dts": "^5.3.0",
-    "rollup-plugin-sass": "^1.2.19",
-    "rollup-plugin-sourcemaps": "^0.6.3",
-    "rollup-plugin-terser": "^7.0.2",
-    "sass": "^1.63.3",
-    "vite": "^5.4.6",
-    "vite-plugin-dts": "^3.9.1",
-    "vue-router": "^4.3.3",
-    "vue-tsc": "^2.0.21"
-  },
-  "peerDependencies": {
-    "motion": "^10.15.5",
-    "vue": "^3.3.0",
-    "vue-i18n": "^9.0.0 || ^10.0.0"
-  },
-  "peerDependenciesMeta": {
-    "vue-i18n": {
-      "optional": true
-    }
-  }
+	"name": "yuyeon",
+	"version": "0.3.4-beta.9",
+	"keywords": [
+		"UI Library",
+		"Vue"
+	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/yuyeonUI/yuyeon",
+		"directory": "packages/yuyeon"
+	},
+	"author": "yeonyew",
+	"license": "Apache-2.0",
+	"files": [
+		"dist/",
+		"lib/",
+		"types/"
+	],
+	"type": "module",
+	"exports": {
+		".": {
+			"types": "./types/index.d.ts",
+			"default": "./lib/index.js"
+		},
+		"./styles/*": "./lib/styles/*",
+		"./locales": {
+			"types": "./types/locales/index.d.ts",
+			"default": "./lib/locales/index.js"
+		},
+		"./lib": {
+			"types": "./types/index.d.ts"
+		},
+		"./components": {
+			"types": "./types/components/index.d.ts",
+			"module": "./lib/components/index.js"
+		},
+		"./components/*": {
+			"module": "./lib/components/*/*.js",
+			"types": "./types/components/*/*.d.ts"
+		},
+		"./directives": {
+			"types": "./types/directives/index.d.ts",
+			"module": "./lib/directives/index.js"
+		},
+		"./directives/*": {
+			"module": "./lib/directives/*/*.js",
+			"types": "./types/directives/*/*.d.ts"
+		},
+		"./composables": {
+			"types": "./types/composables/index.d.ts",
+			"module": "./lib/composables/index.js",
+			"default": "./lib/composables/index.js"
+		},
+		"./util": {
+			"types": "./types/util/index.d.ts",
+			"module": "./lib/util/index.js"
+		},
+		"./shims": "./types/shims.d.ts",
+		"./types/*": "./types/*",
+		"./*": "./*"
+	},
+	"main": "lib/index.js",
+	"module": "lib/index.js",
+	"types": "types/index.d.ts",
+	"typesVersions": {
+		"*": {
+			"lib/index.mjs": [
+				"types/index.d.ts"
+			],
+			"*": [
+				"*",
+				"types/*",
+				"types/*.d.ts",
+				"types/*/index.d.ts"
+			]
+		}
+	},
+	"scripts": {
+		"build": "vue-tsc && vite build && yarn run build:lib",
+		"build:lib": "cross-env NODE_ENV=lib babel src --out-dir lib --source-maps --extensions \".ts\",\".tsx\" --copy-files --no-copy-ignored --out-file-extension .js"
+	},
+	"dependencies": {
+		"motion": "^10.15.5"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "2.2.4",
+		"@babel/cli": "^7.21.0",
+		"@babel/core": "^7.21.3",
+		"@babel/preset-env": "^7.20.2",
+		"@babel/preset-typescript": "^7.21.0",
+		"@rollup/plugin-alias": "^4.0.3",
+		"@rollup/plugin-babel": "^6.0.3",
+		"@rollup/plugin-node-resolve": "^15.2.3",
+		"@rollup/plugin-typescript": "^11.0.0",
+		"@trivago/prettier-plugin-sort-imports": "^4.3.0",
+		"@types/jest": "^28.1.8",
+		"@types/node": "^18.19.1",
+		"@types/resize-observer-browser": "^0.1.7",
+		"@vitejs/plugin-vue": "^5.0.5",
+		"@vitejs/plugin-vue-jsx": "^4.0.0",
+		"@vue/babel-plugin-jsx": "^1.2.2",
+		"@vue/test-utils": "2.4.6",
+		"autoprefixer": "^10.4.14",
+		"babel-plugin-add-import-extension": "1.5.1",
+		"babel-plugin-module-resolver": "^5.0.0",
+		"babel-plugin-transform-define": "^2.1.0",
+		"concurrently": "^4.1.1",
+		"core-js": "^3.41.0",
+		"cross-env": "^7.0.3",
+		"rollup": "^4.22.4",
+		"rollup-plugin-dts": "^5.3.0",
+		"rollup-plugin-sass": "^1.2.19",
+		"rollup-plugin-sourcemaps": "^0.6.3",
+		"rollup-plugin-terser": "^7.0.2",
+		"sass": "^1.63.3",
+		"vite": "^5.4.6",
+		"vite-plugin-dts": "^3.9.1",
+		"vue-router": "^4.3.3",
+		"vue-tsc": "^2.0.21"
+	},
+	"peerDependencies": {
+		"motion": "^10.15.5",
+		"vue": "^3.3.0",
+		"vue-i18n": "^9.0.0 || ^10.0.0"
+	},
+	"peerDependenciesMeta": {
+		"vue-i18n": {
+			"optional": true
+		}
+	}
 }

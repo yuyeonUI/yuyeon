@@ -31,12 +31,12 @@ export function hasScrollbar(el?: Element | null, horizontal?: boolean) {
   const style = window.getComputedStyle(el);
   if (horizontal) {
     return (
-      style.overflowX === 'scroll' ||
-      (style.overflowX === 'auto' && el.clientWidth < el.scrollWidth)
+      style.overflowX === "scroll" ||
+      (style.overflowX === "auto" && el.clientWidth < el.scrollWidth)
     );
   }
   return (
-    style.overflowY === 'scroll' ||
-    (style.overflowY === 'auto' && el.clientHeight < el.scrollHeight)
+    style.overflowY === "scroll" ||
+    (style.overflowY === "auto" && el.clientHeight < el.scrollHeight)
   );
 }

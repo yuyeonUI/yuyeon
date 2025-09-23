@@ -5,13 +5,13 @@ export function getBoundingPureRect(el: HTMLElement) {
 
   if (tx) {
     let sx, sy, dx, dy;
-    if (tx.startsWith('matrix3d(')) {
+    if (tx.startsWith("matrix3d(")) {
       const ta = tx.slice(9, -1).split(/, /);
       sx = +ta[0];
       sy = +ta[5];
       dx = +ta[12];
       dy = +ta[13];
-    } else if (tx.startsWith('matrix(')) {
+    } else if (tx.startsWith("matrix(")) {
       const ta = tx.slice(7, -1).split(/, /);
       sx = +ta[0];
       sy = +ta[3];
@@ -24,7 +24,7 @@ export function getBoundingPureRect(el: HTMLElement) {
     const to = style.transformOrigin;
     const x = rect.x - dx - (1 - sx) * parseFloat(to);
     const y =
-      rect.y - dy - (1 - sy) * parseFloat(to.slice(to.indexOf(' ') + 1));
+      rect.y - dy - (1 - sy) * parseFloat(to.slice(to.indexOf(" ") + 1));
     const w = sx ? rect.width / sx : el.offsetWidth;
     const h = sy ? rect.height / sy : el.offsetHeight;
     return {
@@ -42,23 +42,23 @@ export function getBoundingPureRect(el: HTMLElement) {
   }
 }
 
-export function pixelRound (val: number) {
-  return Math.round(val * devicePixelRatio) / devicePixelRatio
+export function pixelRound(val: number) {
+  return Math.round(val * devicePixelRatio) / devicePixelRatio;
 }
 
-export function pixelCeil (val: number) {
-  return Math.ceil(val * devicePixelRatio) / devicePixelRatio
+export function pixelCeil(val: number) {
+  return Math.ceil(val * devicePixelRatio) / devicePixelRatio;
 }
 
 export function toStyleSizeValue(
   size: number | string | null | undefined,
-  unit = 'px',
+  unit = "px",
 ): string | undefined {
-  if (size == null || size === '') {
+  if (size == null || size === "") {
     return undefined;
   }
   let value = Number(size);
-  if (typeof(size) === 'string' && isNaN(value)) {
+  if (typeof size === "string" && isNaN(value)) {
     return size;
   } else if (!isFinite(value)) {
     return undefined;

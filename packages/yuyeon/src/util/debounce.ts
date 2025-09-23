@@ -40,15 +40,15 @@ export function debounce<T extends (...args: any[]) => any>(
   let maxing = false;
   let trailing = true;
 
-  if (typeof func != 'function') {
-    throw new TypeError('NOT Function');
+  if (typeof func != "function") {
+    throw new TypeError("NOT Function");
   }
   wait = +wait || 0;
   if (isObject(options)) {
     leading = !!options.leading;
-    maxing = 'maxWait' in options;
+    maxing = "maxWait" in options;
     maxWait = maxing ? Math.max(+(options?.maxWait || 0), wait) : maxWait;
-    trailing = 'trailing' in options ? !!options.trailing : trailing;
+    trailing = "trailing" in options ? !!options.trailing : trailing;
   }
 
   function invokeFunc(time?: number) {
@@ -128,7 +128,7 @@ export function debounce<T extends (...args: any[]) => any>(
     return timerId === undefined ? result : trailingEdge(Date.now());
   }
 
-  function debounced(this: DebouncedFn<T>): (ReturnType<T> | undefined) {
+  function debounced(this: DebouncedFn<T>): ReturnType<T> | undefined {
     const time = Date.now();
     const isInvoking = shouldInvoke(time);
 

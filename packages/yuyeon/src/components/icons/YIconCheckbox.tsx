@@ -1,9 +1,9 @@
-import { defineComponent } from '@/util/component';
+import { defineComponent } from "@/util/component";
 
-import './YIconCheckbox.scss';
+import "./YIconCheckbox.scss";
 
 export const YIconCheckbox = defineComponent({
-  name: 'YIconCheckbox',
+  name: "YIconCheckbox",
   props: {
     checked: Boolean,
     indeterminate: Boolean,
@@ -13,11 +13,11 @@ export const YIconCheckbox = defineComponent({
     return (
       <svg
         class={[
-          'y-icon-checkbox',
+          "y-icon-checkbox",
           {
-            'y-icon-checkbox--checked': this.checked,
-            'y-icon-checkbox--indeterminate': this.indeterminate,
-            'y-icon-checkbox--disabled': this.disabled,
+            "y-icon-checkbox--checked": this.checked,
+            "y-icon-checkbox--indeterminate": this.indeterminate,
+            "y-icon-checkbox--disabled": this.disabled,
           },
         ]}
         xmlns="http://www.w3.org/2000/svg"
@@ -34,8 +34,8 @@ export const YIconCheckbox = defineComponent({
           fill="none"
           d={
             this.indeterminate
-              ? 'M5.73,11.91 11.1,11.91 17.79,11.91'
-              : 'M5.73,11.91 11.1,16.28 17.79,7.59'
+              ? "M5.73,11.91 11.1,11.91 17.79,11.91"
+              : "M5.73,11.91 11.1,16.28 17.79,7.59"
           }
         ></path>
       </svg>

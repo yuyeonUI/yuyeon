@@ -1,19 +1,19 @@
-import { type PropType, provide } from 'vue';
+import { type PropType, provide } from "vue";
 
-import { useRender } from '@/composables/component';
-import { defineComponent, propsFactory } from '@/util/component';
-import { toStyleSizeValue } from '@/util/ui';
+import { useRender } from "@/composables/component";
+import { defineComponent, propsFactory } from "@/util/component";
+import { toStyleSizeValue } from "@/util/ui";
 
-import { useRectMeasure } from './composables/measure';
+import { useRectMeasure } from "./composables/measure";
 
-import './YTable.scss';
-import { YTableInjectionKey } from '@/components/table/composables/provides';
+import "./YTable.scss";
+import { YTableInjectionKey } from "@/components/table/composables/provides";
 
 export const pressYTableProps = propsFactory(
   {
     tag: {
       type: String as PropType<string>,
-      default: 'div',
+      default: "div",
     },
     fixedHead: {
       type: Boolean as PropType<boolean>,
@@ -26,55 +26,60 @@ export const pressYTableProps = propsFactory(
     },
     onScroll: Function as PropType<(e: Event) => void>,
   },
-  'YTable',
+  "YTable",
 );
 
 export const YTable = defineComponent({
-  name: 'YTable',
+  name: "YTable",
   props: {
     ...pressYTableProps(),
   },
-  emits: ['scroll'],
+  emits: ["scroll"],
   setup(props, { slots, emit }) {
     const { containerRef, tableRef, containerRect, wrapperRef, wrapperRect } =
       useRectMeasure();
 
-    provide(YTableInjectionKey, { containerRect, tableRef, wrapperRef, wrapperRect });
+    provide(YTableInjectionKey, {
+      containerRect,
+      tableRef,
+      wrapperRef,
+      wrapperRect,
+    });
 
     function onScroll(e: Event) {
-      emit('scroll', e);
+      emit("scroll", e);
     }
 
     useRender(() => {
-      const ElTag = (props.tag as keyof HTMLElementTagNameMap) ?? 'div';
+      const ElTag = (props.tag as keyof HTMLElementTagNameMap) ?? "div";
       const containerHeight = props.flexHeight
-        ? containerRect.value?.height ?? props.height
+        ? (containerRect.value?.height ?? props.height)
         : props.height;
       return (
         <ElTag
           class={[
-            'y-table',
+            "y-table",
             {
-              'y-table--fixed-head': props.fixedHead,
-              'y-table--fixed-height': props.flexHeight || props.height,
-              'y-table--flex-height': props.flexHeight,
+              "y-table--fixed-head": props.fixedHead,
+              "y-table--fixed-height": props.flexHeight || props.height,
+              "y-table--flex-height": props.flexHeight,
             },
           ]}
           style={{
-            '--y-table-container-width': toStyleSizeValue(
+            "--y-table-container-width": toStyleSizeValue(
               containerRect.value?.width,
             ),
-            '--y-table-wrapper-width': toStyleSizeValue(
+            "--y-table-wrapper-width": toStyleSizeValue(
               wrapperRect.value?.width,
             ),
           }}
         >
           {slots.top?.()}
           {slots.default ? (
-            <div ref={containerRef} class={['y-table__container']}>
+            <div ref={containerRef} class={["y-table__container"]}>
               {slots.leading?.()}
               <div
-                class={['y-table__wrapper']}
+                class={["y-table__wrapper"]}
                 style={{
                   height: toStyleSizeValue(containerHeight),
                 }}

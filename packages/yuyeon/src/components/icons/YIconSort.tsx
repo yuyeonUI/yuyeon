@@ -1,14 +1,14 @@
-import { type PropType } from 'vue';
+import { type PropType } from "vue";
 
-import { defineComponent } from '@/util/component';
+import { defineComponent } from "@/util/component";
 
-import './YIconSort.scss';
+import "./YIconSort.scss";
 
 export const YIconSort = defineComponent({
-  name: 'YIconSort',
+  name: "YIconSort",
   props: {
     direction: {
-      type: String as PropType<'asc' | 'desc'>,
+      type: String as PropType<"asc" | "desc">,
     },
     disabled: {
       type: Boolean,
@@ -23,11 +23,11 @@ export const YIconSort = defineComponent({
         viewBox="0 0 32 32"
         xmlns="http://www.w3.org/2000/svg"
         class={[
-          'y-icon-sort',
+          "y-icon-sort",
           {
-            'y-icon-sort--disabled': this.disabled,
-            'y-icon-sort--asc': this.direction === 'asc',
-            'y-icon-sort--desc': this.direction === 'desc',
+            "y-icon-sort--disabled": this.disabled,
+            "y-icon-sort--asc": this.direction === "asc",
+            "y-icon-sort--desc": this.direction === "desc",
           },
         ]}
       >

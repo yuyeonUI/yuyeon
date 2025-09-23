@@ -1,24 +1,24 @@
-import { ref, withKeys } from 'vue';
+import { ref, withKeys } from "vue";
 
-import { useRender } from '@/composables/component';
+import { useRender } from "@/composables/component";
 import {
-  SubmitEventPromise,
   createForm,
   pressFormPropsOptions,
-} from '@/composables/form';
-import { defineComponent } from '@/util/component';
+  SubmitEventPromise,
+} from "@/composables/form";
+import { defineComponent } from "@/util/component";
 
-const NAME = 'y-form';
+const NAME = "y-form";
 
 export const YForm = defineComponent({
-  name: 'YForm',
+  name: "YForm",
   props: {
     ...pressFormPropsOptions(),
   },
   emits: {
-    'update:modelValue': (val: boolean | null) => true,
+    "update:modelValue": (val: boolean | null) => true,
     submit: (e: SubmitEventPromise) => true,
-    'keydown.enter': (e: Event) => true,
+    "keydown.enter": (e: Event) => true,
   },
   setup(props, { emit, slots, expose }) {
     const form = createForm(props);
@@ -34,7 +34,7 @@ export const YForm = defineComponent({
       e.catch = validation.catch.bind(validation);
       e.finally = validation.finally.bind(validation);
 
-      emit('submit', e);
+      emit("submit", e);
 
       if (!e.defaultPrevented) {
         validation.then(({ valid }) => {
@@ -49,7 +49,7 @@ export const YForm = defineComponent({
     function onKeydown(e: Event) {
       e.preventDefault();
       e.stopImmediatePropagation();
-      emit('keydown.enter', e);
+      emit("keydown.enter", e);
     }
 
     expose({
@@ -63,7 +63,7 @@ export const YForm = defineComponent({
           class={[NAME]}
           novalidate
           onSubmit={onSubmit}
-          onKeydown={withKeys(onKeydown, ['enter'])}
+          onKeydown={withKeys(onKeydown, ["enter"])}
         >
           {slots.default?.()}
         </form>

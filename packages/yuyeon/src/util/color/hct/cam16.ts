@@ -14,10 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { ViewingConditions } from './viewing-conditions';
+import { ViewingConditions } from "./viewing-conditions";
 
-import { argbFromXyz, linearized } from '../conversion';
-import * as math from '../utils/math-utils';
+import { argbFromXyz, linearized } from "../conversion";
+import * as math from "../utils/math-utils";
 
 /**
  * CAM16, a color appearance model. Colors are not just defined by their hex
@@ -138,8 +138,8 @@ export class Cam16 {
       atanDegrees < 0
         ? atanDegrees + 360.0
         : atanDegrees >= 360
-        ? atanDegrees - 360.0
-        : atanDegrees;
+          ? atanDegrees - 360.0
+          : atanDegrees;
     const hueRadians = (hue * Math.PI) / 180.0;
 
     const ac = p2 * viewingConditions.nbb;
@@ -375,8 +375,8 @@ export class Cam16 {
       atanDegrees < 0
         ? atanDegrees + 360.0
         : atanDegrees >= 360
-        ? atanDegrees - 360
-        : atanDegrees;
+          ? atanDegrees - 360
+          : atanDegrees;
     const hueRadians = (hue * Math.PI) / 180.0;
 
     // achromatic response to color

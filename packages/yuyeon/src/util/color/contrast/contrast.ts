@@ -14,8 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { lstarFromY, yFromLstar } from '../conversion';
-import { clampDouble } from '../utils/math-utils';
+import { lstarFromY, yFromLstar } from "../conversion";
+import { clampDouble } from "../utils/math-utils";
 
 /**
  * Utility methods for calculating contrast given two colors, or calculating a

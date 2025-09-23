@@ -15,7 +15,7 @@ export function hasElementMouseEvent(
   }
   const root = documentRoot(element);
   if (
-    typeof ShadowRoot !== 'undefined' &&
+    typeof ShadowRoot !== "undefined" &&
     root instanceof ShadowRoot &&
     root.host === mouseEvent.target
   ) {

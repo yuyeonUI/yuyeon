@@ -1,9 +1,9 @@
-import { ItemKeySlot } from './item';
+import { ItemKeySlot } from "./item";
 
 export type RowProps<T> =
   | Record<string, any>
   | ((
-      data: Pick<ItemKeySlot<T>, 'index' | 'item' | 'internalItem'>,
+      data: Pick<ItemKeySlot<T>, "index" | "item" | "internalItem">,
     ) => Record<string, any>);
 
 export type CellProps<T = any> =
@@ -11,6 +11,6 @@ export type CellProps<T = any> =
   | ((
       data: Pick<
         ItemKeySlot<T>,
-        'index' | 'item' | 'internalItem' | 'value' | 'column' | 'selected'
+        "index" | "item" | "internalItem" | "value" | "column" | "selected"
       >,
     ) => Record<string, any>);

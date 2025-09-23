@@ -1,1 +1,1 @@
-export * from './YDividePanel';
+export * from "./YDividePanel";

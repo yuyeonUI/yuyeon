@@ -14,8 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { whitePointD65, yFromLstar } from '../conversion';
-import * as math from '../utils/math-utils';
+import { whitePointD65, yFromLstar } from "../conversion";
+import * as math from "../utils/math-utils";
 
 /**
  * In traditional color spaces, a color can be identified solely by the

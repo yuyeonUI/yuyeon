@@ -1,11 +1,11 @@
-import type { PropType, SlotsType } from 'vue';
+import type { PropType, SlotsType } from "vue";
 
-import { useRender } from '@/composables/component';
-import { defineComponent, getUid, propsFactory } from '@/util/component';
+import { useRender } from "@/composables/component";
+import { defineComponent, getUid, propsFactory } from "@/util/component";
 
-import { YRadioIcon } from './YRadioIcon';
+import { YRadioIcon } from "./YRadioIcon";
 
-import './YRadio.scss';
+import "./YRadio.scss";
 
 export const pressYRadioPropsOptions = propsFactory(
   {
@@ -14,11 +14,11 @@ export const pressYRadioPropsOptions = propsFactory(
     value: String as PropType<string>,
     label: String as PropType<string>,
   },
-  'YRadio',
+  "YRadio",
 );
 
 const YRadio = defineComponent({
-  name: 'YRadio',
+  name: "YRadio",
   props: {
     ...pressYRadioPropsOptions(),
   },
@@ -28,18 +28,18 @@ const YRadio = defineComponent({
     label: any;
     trailing: any;
   }>,
-  emits: ['update:modelValue', 'input'],
+  emits: ["update:modelValue", "input"],
   setup(props, { slots, attrs, emit }) {
     const uid = getUid();
 
     function onInput(e: Event) {
-      emit('input', e);
+      emit("input", e);
     }
 
     useRender(() => {
       const inputId = `input-${uid}`;
       return (
-        <div class={['y-radio', { 'z-radio--disabled': props.disabled }]}>
+        <div class={["y-radio", { "z-radio--disabled": props.disabled }]}>
           {slots.leading && slots.leading()}
           <div class="y-radio__input">
             {slots.icon ? (

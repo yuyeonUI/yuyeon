@@ -1,13 +1,16 @@
-import { SelectableItem, provideSelection } from '@/components/table/composables/selection';
-import { InternalDataTableHeader } from './header';
+import {
+  provideSelection,
+  SelectableItem,
+} from "@/components/table/composables/selection";
+import { InternalDataTableHeader } from "./header";
 
 type ItemSlotBase<T> = {
   index: number;
   item: T;
   internalItem: DataTableItem<T>;
   selected: boolean;
-  isSelected: ReturnType<typeof provideSelection>['isSelected'];
-  toggleSelect: ReturnType<typeof provideSelection>['toggleSelect'];
+  isSelected: ReturnType<typeof provideSelection>["isSelected"];
+  toggleSelect: ReturnType<typeof provideSelection>["toggleSelect"];
 };
 
 export type ItemKeySlot<T> = ItemSlotBase<T> & {
@@ -19,6 +22,6 @@ export interface DataTableItem<T = any> extends SelectableItem {
   index: number;
   columns: Record<string, any>;
   raw: T;
-  rowRef?: any
+  rowRef?: any;
   readonly _bindRowRef: (el: any | null) => void;
 }

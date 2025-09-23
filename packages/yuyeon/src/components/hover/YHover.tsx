@@ -1,9 +1,9 @@
-import { ref, watch } from 'vue';
+import { ref, watch } from "vue";
 
-import { useModelDuplex } from '@/composables/communication';
-import { useRender } from '@/composables/component';
-import { useDelay } from '@/composables/timing';
-import { defineComponent, propsFactory } from '@/util/component';
+import { useModelDuplex } from "@/composables/communication";
+import { useRender } from "@/composables/component";
+import { useDelay } from "@/composables/timing";
+import { defineComponent, propsFactory } from "@/util/component";
 
 export const pressYHoverPropsOptions = propsFactory(
   {
@@ -21,15 +21,15 @@ export const pressYHoverPropsOptions = propsFactory(
       default: 100,
     },
   },
-  'YHover',
+  "YHover",
 );
 
 export const YHover = defineComponent({
-  name: 'YHover',
+  name: "YHover",
   props: pressYHoverPropsOptions(),
-  emits: ['update:modelValue', 'hover'],
+  emits: ["update:modelValue", "hover"],
   setup(props, { slots, emit }) {
-    const isHovering = useModelDuplex(props, 'modelValue');
+    const isHovering = useModelDuplex(props, "modelValue");
     const { startOpenDelay, startCloseDelay } = useDelay(
       props,
       (value: any) => {
@@ -40,7 +40,7 @@ export const YHover = defineComponent({
     const defaultSlot = ref<any>();
 
     watch(isHovering, (neo) => {
-      emit('hover', neo, defaultSlot);
+      emit("hover", neo, defaultSlot);
     });
 
     useRender(() => {

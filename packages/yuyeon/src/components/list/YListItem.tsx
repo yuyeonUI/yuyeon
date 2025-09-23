@@ -1,26 +1,26 @@
-import { SlotsType, computed } from 'vue';
+import { computed, SlotsType } from "vue";
 
-import { useRender } from '@/composables/component';
-import { pressThemePropsOptions, useLocalTheme } from '@/composables/theme';
-import { defineComponent, propsFactory } from '@/util/component';
+import { useRender } from "@/composables/component";
+import { pressThemePropsOptions, useLocalTheme } from "@/composables/theme";
+import { defineComponent, propsFactory } from "@/util/component";
 
-import './YListItem.scss';
+import "./YListItem.scss";
 
 export const pressYListItemProps = propsFactory(
   {
     tag: {
       type: String,
-      default: 'div',
+      default: "div",
     },
     onClick: Function,
     disabled: Boolean,
     ...pressThemePropsOptions(),
   },
-  'YListItem',
+  "YListItem",
 );
 
 export const YListItem = defineComponent({
-  name: 'YListItem',
+  name: "YListItem",
   props: {
     ...pressYListItemProps(),
   },
@@ -36,7 +36,7 @@ export const YListItem = defineComponent({
     const { themeClasses } = useLocalTheme(props);
 
     function onClick(e: MouseEvent) {
-      emit('click', e);
+      emit("click", e);
     }
 
     const clickable = computed(() => {
@@ -48,21 +48,21 @@ export const YListItem = defineComponent({
       return (
         <ElTag
           class={[
-            'y-list-item',
+            "y-list-item",
             {
-              'y-list-item--pointer': clickable.value,
-              'y-list-item--disabled': props.disabled,
+              "y-list-item--pointer": clickable.value,
+              "y-list-item--disabled": props.disabled,
             },
             themeClasses.value,
           ]}
           onClick={onClick}
         >
           {slots.leading && (
-            <div class={'y-list-item__leading'}>{slots.leading()}</div>
+            <div class={"y-list-item__leading"}>{slots.leading()}</div>
           )}
-          <div class={'y-list-item__content'}>{slots.default?.()}</div>
+          <div class={"y-list-item__content"}>{slots.default?.()}</div>
           {slots.trailing && (
-            <div class={'y-list-item__trailing'}>{slots.trailing()}</div>
+            <div class={"y-list-item__trailing"}>{slots.trailing()}</div>
           )}
         </ElTag>
       );

@@ -194,7 +194,7 @@ export interface DateAdapter<T = unknown> {
 
   getMinute(date: T): number;
 
-  setMinute(date:T, minute: number): T;
+  setMinute(date: T, minute: number): T;
 }
 
 export type DateFormatOptions =

@@ -1,6 +1,6 @@
-import { type PropType, type Ref, computed } from 'vue';
+import { computed, type PropType, type Ref } from "vue";
 
-import { propsFactory } from '@/util/component';
+import { propsFactory } from "@/util/component";
 
 export const pressContentPropsOptions = propsFactory(
   {
@@ -8,7 +8,7 @@ export const pressContentPropsOptions = propsFactory(
       type: Boolean as PropType<boolean>,
     },
   },
-  'YLayer.content',
+  "YLayer.content",
 );
 
 interface ContentProps {

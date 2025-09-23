@@ -1,26 +1,26 @@
 import {
-  type PropType,
-  type SlotsType,
-  type VNode,
   computed,
+  type PropType,
   ref,
   shallowRef,
+  type SlotsType,
+  type VNode,
   watch,
-} from 'vue';
+} from "vue";
 
-import { useRender } from '@/composables/component';
-import { pressFocusPropsOptions, useFocus } from '@/composables/focus';
-import { pressThemePropsOptions, useLocalTheme } from '@/composables/theme';
+import { useRender } from "@/composables/component";
+import { pressFocusPropsOptions, useFocus } from "@/composables/focus";
+import { pressThemePropsOptions, useLocalTheme } from "@/composables/theme";
 import {
   pressValidationPropsOptions,
   useValidation,
-} from '@/composables/validation';
-import { defineComponent, getUid, propsFactory } from '@/util/component';
-import { toStyleSizeValue } from '@/util/ui';
+} from "@/composables/validation";
+import { defineComponent, getUid, propsFactory } from "@/util/component";
+import { toStyleSizeValue } from "@/util/ui";
 
-import './YInput.scss';
+import "./YInput.scss";
 
-const NAME = 'y-input';
+const NAME = "y-input";
 
 export const pressYInputPropsOptions = propsFactory(
   {
@@ -31,7 +31,7 @@ export const pressYInputPropsOptions = propsFactory(
     height: [Number, String],
     displayTag: {
       type: String as PropType<string>,
-      default: 'div',
+      default: "div",
     },
     label: String as PropType<string>,
     modelValue: { type: [String, Number, Array, Object] as PropType<any> },
@@ -54,7 +54,7 @@ export const pressYInputPropsOptions = propsFactory(
     ...pressFocusPropsOptions(),
     extended: Object as PropType<any>,
   },
-  'YInput',
+  "YInput",
 );
 
 export interface YInputDefaultSlotProps {
@@ -65,24 +65,24 @@ export interface YInputDefaultSlotProps {
 }
 
 export const YInput = defineComponent({
-  name: 'YInput',
+  name: "YInput",
   props: {
     ...pressThemePropsOptions(),
     ...pressYInputPropsOptions(),
   },
   emits: [
-    'error',
-    'click',
-    'mousedown',
-    'mouseup',
-    'focus',
-    'blur',
-    'mousedown:display',
-    'mouseup:display',
-    'keydown:display',
-    'click:leading',
-    'update:modelValue',
-    'update:focused',
+    "error",
+    "click",
+    "mousedown",
+    "mouseup",
+    "focus",
+    "blur",
+    "mousedown:display",
+    "mouseup:display",
+    "keydown:display",
+    "click:leading",
+    "update:modelValue",
+    "update:focused",
   ],
   slots: Object as SlotsType<{
     prepend: any;
@@ -91,9 +91,9 @@ export const YInput = defineComponent({
     default: YInputDefaultSlotProps;
     leading: { error: boolean };
     trailing: any;
-    'leading-out': any;
-    'trailing-out': any;
-    'helper-text': {
+    "leading-out": any;
+    "trailing-out": any;
+    "helper-text": {
       error: boolean;
       errorResult: string | undefined;
       errors: any[];
@@ -107,7 +107,7 @@ export const YInput = defineComponent({
       focusedClasses,
       whenFocus,
       whenBlur,
-    } = useFocus(props, 'y-input');
+    } = useFocus(props, "y-input");
 
     const {
       isDisabled,
@@ -130,7 +130,7 @@ export const YInput = defineComponent({
 
     const variations = computed(() => {
       if (props.variation) {
-        return props.variation.split(',').map((value) => {
+        return props.variation.split(",").map((value) => {
           return value.trim();
         });
       }
@@ -150,20 +150,20 @@ export const YInput = defineComponent({
       return {
         // Style
         [themeClasses.value as string]: true,
-        'y-input--ceramic': !!props.ceramic,
-        'y-input--outlined':
+        "y-input--ceramic": !!props.ceramic,
+        "y-input--outlined":
           !props.ceramic &&
-          (variations.value.includes('outlined') || !!props.outlined),
-        'y-input--filled':
-          variations.value.includes('filled') || !!props.filled,
+          (variations.value.includes("outlined") || !!props.outlined),
+        "y-input--filled":
+          variations.value.includes("filled") || !!props.filled,
         // Value
-        'y-input--loading': isLoading.value,
-        'y-input--has-value': !!inValue.value,
-        'y-input--focused': isFocused.value,
-        'y-input--readonly': isReadonly.value,
-        'y-input--disabled': isDisabled.value,
-        'y-input--error': isError.value,
-        'y-input--success': isSuccess.value,
+        "y-input--loading": isLoading.value,
+        "y-input--has-value": !!inValue.value,
+        "y-input--focused": isFocused.value,
+        "y-input--readonly": isReadonly.value,
+        "y-input--disabled": isDisabled.value,
+        "y-input--error": isError.value,
+        "y-input--success": isSuccess.value,
       };
     });
 
@@ -192,12 +192,12 @@ export const YInput = defineComponent({
 
     watch(inValue, (neo) => {
       if (!isReadonly.value && !isLoading.value) {
-        emit('update:modelValue', neo);
+        emit("update:modelValue", neo);
       }
     });
 
     watch(isError, (neo) => {
-      emit('error', neo, errors.value);
+      emit("error", neo, errors.value);
     });
 
     watch(
@@ -210,36 +210,36 @@ export const YInput = defineComponent({
     );
 
     function onClick(event: MouseEvent) {
-      emit('click', event);
+      emit("click", event);
     }
 
     function onMousedown(e: Event) {
       hasMouseDown.value = true;
-      emit('mousedown:display', e);
+      emit("mousedown:display", e);
     }
 
     function onMouseup(e: Event) {
       hasMouseDown.value = false;
-      emit('mouseup:display', e);
+      emit("mouseup:display", e);
     }
 
     function onKeydown(e: Event) {
-      emit('keydown:display', e);
+      emit("keydown:display", e);
     }
 
     function onFocus(event: FocusEvent) {
       whenFocus();
-      emit('focus', event);
+      emit("focus", event);
     }
 
     function onBlur(event: FocusEvent) {
       whenBlur();
       invokeValidators();
-      emit('blur', event);
+      emit("blur", event);
     }
 
     function onClickLeading(event: MouseEvent) {
-      emit('click:leading', event);
+      emit("click:leading", event);
     }
 
     function onChange(event?: Event) {
@@ -256,8 +256,8 @@ export const YInput = defineComponent({
           class={[
             {
               [`${NAME}__label`]: true,
-              'y-input__floating-label': props.floating,
-              'y-input__floating-label--floated':
+              "y-input__floating-label": props.floating,
+              "y-input__floating-label--floated":
                 props.floating && isFloatedLabel.value,
             },
           ]}
@@ -269,7 +269,7 @@ export const YInput = defineComponent({
             <>
               {props.label}
               {props.required && (
-                <span class={'y-input__required-mark'}>*</span>
+                <span class={"y-input__required-mark"}>*</span>
               )}
             </>
           ) : (
@@ -295,7 +295,7 @@ export const YInput = defineComponent({
           )}
           <div ref={stack$} class={[`${NAME}__stack`]}>
             {!props.floating && createLabel()}
-            {slots['leading-out'] && slots['leading-out']()}
+            {slots["leading-out"] && slots["leading-out"]()}
             <div
               ref={display$}
               class={`${NAME}__display`}
@@ -308,7 +308,7 @@ export const YInput = defineComponent({
             >
               <div class={`${NAME}__plate`}></div>
               {slots.leading && (
-                <div class={'y-input__leading'} onClick={onClickLeading}>
+                <div class={"y-input__leading"} onClick={onClickLeading}>
                   {slots.leading({ error: isError.value })}
                 </div>
               )}
@@ -333,18 +333,18 @@ export const YInput = defineComponent({
               )}
               {slots.trailing?.()}
             </div>
-            {slots['trailing-out'] && slots['trailing-out']()}
+            {slots["trailing-out"] && slots["trailing-out"]()}
             <div class={`${NAME}__helper-text`}>
-              {slots['helper-text'] ? (
+              {slots["helper-text"] ? (
                 <span>
-                  {slots['helper-text']({
+                  {slots["helper-text"]({
                     error: isError.value,
                     errors: errors.value,
                     errorResult: errorResult.value,
                   })}
                 </span>
               ) : (
-                props.helperText ?? errorResult.value
+                (props.helperText ?? errorResult.value)
               )}
             </div>
           </div>

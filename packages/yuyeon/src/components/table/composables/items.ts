@@ -1,9 +1,9 @@
-import { type PropType, type Ref, computed, ref } from 'vue';
+import { computed, type PropType, type Ref, ref } from "vue";
 
-import { getPropertyFromItem } from '@/util/common';
-import { propsFactory } from '@/util/component';
+import { getPropertyFromItem } from "@/util/common";
+import { propsFactory } from "@/util/component";
 
-import { DataTableItem, InternalDataTableHeader } from '../types';
+import { DataTableItem, InternalDataTableHeader } from "../types";
 
 export type DataTableItemsProps = {
   items: any[];
@@ -15,12 +15,12 @@ export type DataTableItemsProps = {
 export const pressDataTableItemsProps = propsFactory(
   {
     items: {
-      type: Array as PropType<DataTableItemsProps['items']>,
+      type: Array as PropType<DataTableItemsProps["items"]>,
       default: () => [],
     },
     itemKey: {
       type: [String, Array, Function] as PropType<any>,
-      default: 'id',
+      default: "id",
     },
     itemSelectable: {
       type: [String, Array, Function] as PropType<any>,
@@ -28,11 +28,11 @@ export const pressDataTableItemsProps = propsFactory(
     },
     returnItem: Boolean,
   },
-  'YDataTable--items',
+  "YDataTable--items",
 );
 
 export function updateItem(
-  props: Omit<DataTableItemsProps, 'items'>,
+  props: Omit<DataTableItemsProps, "items">,
   item: any,
   index: number,
   columns: InternalDataTableHeader[],
@@ -41,7 +41,7 @@ export function updateItem(
   const key = getPropertyFromItem(item, props.itemKey);
   const value = props.returnItem ? item : key;
   let selectable;
-  if (typeof props.itemSelectable === 'function') {
+  if (typeof props.itemSelectable === "function") {
     selectable = !!props.itemSelectable(item);
   } else {
     selectable = getPropertyFromItem(item, props.itemSelectable, true);
@@ -72,8 +72,8 @@ export function updateItem(
 }
 
 export function updateItems(
-  props: Omit<DataTableItemsProps, 'items'>,
-  items: DataTableItemsProps['items'],
+  props: Omit<DataTableItemsProps, "items">,
+  items: DataTableItemsProps["items"],
   columns: InternalDataTableHeader[],
 ): DataTableItem[] {
   return items.map((item, index) => updateItem(props, item, index, columns));

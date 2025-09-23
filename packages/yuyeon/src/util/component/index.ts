@@ -4,20 +4,20 @@ import type {
   InjectionKey,
   VNode,
   VNodeChild,
-} from 'vue';
-import { getCurrentInstance } from 'vue';
+} from "vue";
+import { getCurrentInstance } from "vue";
 
-import { defineComponent } from './component';
+import { defineComponent } from "./component";
 
-export type { EventProp } from './types';
-export * from './props';
+export type { EventProp } from "./types";
+export * from "./props";
 
 export { defineComponent };
 
 export function getSlot(
   vm: ComponentPublicInstance | any,
   // eslint-disable-next-line default-param-last
-  name = 'default',
+  name = "default",
   data?: any | (() => any),
   optional = false,
 ): VNode[] | undefined {
@@ -39,14 +39,14 @@ export function bindClasses(
   classes: string | string[] | Record<string, any> | undefined,
 ) {
   const boundClasses = {} as Record<string, boolean>;
-  if (typeof classes === 'string') {
+  if (typeof classes === "string") {
     boundClasses[classes] = true;
   } else if (Array.isArray(classes)) {
     (classes as string[]).reduce((acc, clas) => {
       acc[clas] = true;
       return acc;
     }, boundClasses);
-  } else if (typeof classes === 'object') {
+  } else if (typeof classes === "object") {
     Object.keys(classes).reduce((acc, clas) => {
       acc[clas] = !!classes[clas];
       return acc;
@@ -58,7 +58,7 @@ export function bindClasses(
 export function getHtmlElement<N extends object | undefined>(
   node: N,
 ): Exclude<N, ComponentPublicInstance> | HTMLElement {
-  if (node && '$el' in node) {
+  if (node && "$el" in node) {
     const el = (node as ComponentPublicInstance).$el as HTMLElement;
     if (el.nodeType === Node.TEXT_NODE) {
       return el.nextElementSibling as HTMLElement;
@@ -72,7 +72,7 @@ export function findChildrenWithProvide(
   key: InjectionKey<any> | symbol,
   vnode?: VNodeChild,
 ): ComponentInternalInstance[] {
-  if (!vnode || typeof vnode !== 'object') {
+  if (!vnode || typeof vnode !== "object") {
     return [];
   }
 

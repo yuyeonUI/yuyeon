@@ -46,7 +46,7 @@ export function mergeDeep(
       }
     }
 
-    if (typeof sourceValue === 'object' && typeof overwriteValue === 'object') {
+    if (typeof sourceValue === "object" && typeof overwriteValue === "object") {
       ret[key] = mergeDeep(sourceValue, overwriteValue, arrayFn);
       continue;
     }
@@ -63,13 +63,13 @@ export function getObjectValueByPath(
 ): any {
   // credit: http://stackoverflow.com/questions/6491463/accessing-nested-javascript-objects-with-string-key#comment55278413_6491621
   let traversPath = path;
-  if (obj == null || !traversPath || typeof traversPath !== 'string') {
+  if (obj == null || !traversPath || typeof traversPath !== "string") {
     return fallback;
   }
   if (obj[traversPath] !== undefined) return obj[traversPath];
-  traversPath = traversPath.replace(/\[(\w+)\]/g, '.$1'); // convert indexes to properties
-  traversPath = traversPath.replace(/^\./, ''); // strip a leading dot
-  return getNestedValue(obj, traversPath.split('.'), fallback);
+  traversPath = traversPath.replace(/\[(\w+)\]/g, ".$1"); // convert indexes to properties
+  traversPath = traversPath.replace(/^\./, ""); // strip a leading dot
+  return getNestedValue(obj, traversPath.split("."), fallback);
 }
 
 export type SelectItemKey =
@@ -86,23 +86,23 @@ export function getPropertyFromItem(
   if (property == null) return item === undefined ? fallback : item;
 
   if (item !== Object(item)) {
-    if (typeof property !== 'function') return fallback;
+    if (typeof property !== "function") return fallback;
 
     const value = property(item, fallback);
 
-    return typeof value === 'undefined' ? fallback : value;
+    return typeof value === "undefined" ? fallback : value;
   }
 
-  if (typeof property === 'string')
+  if (typeof property === "string")
     return getObjectValueByPath(item, property, fallback);
 
   if (Array.isArray(property)) return getNestedValue(item, property, fallback);
 
-  if (typeof property !== 'function') return fallback;
+  if (typeof property !== "function") return fallback;
 
   const value = property(item, fallback);
 
-  return typeof value === 'undefined' ? fallback : value;
+  return typeof value === "undefined" ? fallback : value;
 }
 
 export function clamp(value: number, min = 0, max = 1) {
@@ -132,11 +132,11 @@ export function deepEqual(a: any, b: any): boolean {
 
 export function isObject(obj: unknown) {
   const type = typeof obj;
-  return obj !== null && (type === 'object' || type === 'function');
+  return obj !== null && (type === "object" || type === "function");
 }
 
 export function isEmpty(target: any) {
-  return target == null || target?.trim() === '';
+  return target == null || target?.trim() === "";
 }
 
 export function omit<T extends object, U extends Extract<keyof T, string>>(

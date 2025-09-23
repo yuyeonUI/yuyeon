@@ -1,22 +1,22 @@
 @use 'sass:map';
 
 $border-radius: (
-  'top': (
-    'top-left',
-    'top-right',
-  ),
-  'bottom': (
-    'bottom-left',
-    'bottom-right',
-  ),
-  'left': (
-    'top-left',
-    'bottom-left',
-  ),
-  'right': (
-    'top-right',
-    'bottom-right',
-  ),
+        'top': (
+                'top-left',
+                'top-right',
+        ),
+        'bottom': (
+                'bottom-left',
+                'bottom-right',
+        ),
+        'left': (
+                'top-left',
+                'bottom-left',
+        ),
+        'right': (
+                'top-right',
+                'bottom-right',
+        ),
 );
 
 @mixin borderRadius($round, $side) {

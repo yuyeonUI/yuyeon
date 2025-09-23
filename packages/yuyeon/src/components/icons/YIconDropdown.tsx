@@ -1,7 +1,7 @@
-import { defineComponent } from '@/util/component';
+import { defineComponent } from "@/util/component";
 
 export const YIconDropdown = defineComponent({
-  name: 'YIconDropdown',
+  name: "YIconDropdown",
   setup() {
     return () => (
       <svg version="1.1" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">

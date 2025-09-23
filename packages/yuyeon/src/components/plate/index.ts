@@ -1,1 +1,1 @@
-export * from './YPlate';
+export * from "./YPlate";

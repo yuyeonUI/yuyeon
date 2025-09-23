@@ -36,6 +36,7 @@ $side-padding: 16px !default;
 
   &--resizing &__divider {
     background: rgba(var(--y-theme-primary), 0.12);
+
     &-line {
       background: var(--y-theme-primary);
     }

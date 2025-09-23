@@ -1,8 +1,8 @@
 import {
   type ComponentInternalInstance,
-  type InjectionKey,
   getCurrentInstance,
-} from 'vue';
+  type InjectionKey,
+} from "vue";
 
 export function injectSelf<T>(
   key: InjectionKey<T> | string,

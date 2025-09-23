@@ -1,4 +1,4 @@
-import type { InjectionKey, Ref } from 'vue';
+import type { InjectionKey, Ref } from "vue";
 import {
   getCurrentInstance,
   inject,
@@ -6,9 +6,9 @@ import {
   shallowRef,
   watch,
   watchPostEffect,
-} from 'vue';
+} from "vue";
 
-import { YLayer } from './YLayer';
+import { YLayer } from "./YLayer";
 
 export interface ActiveStackProvide {
   push: (instance: any) => void;
@@ -18,7 +18,7 @@ export interface ActiveStackProvide {
 }
 
 export const YUYEON_ACTIVE_STACK_KEY: InjectionKey<ActiveStackProvide> =
-  Symbol.for('yuyeon.active-stack');
+  Symbol.for("yuyeon.active-stack");
 
 export function useActiveStack(
   $el: Ref<typeof YLayer | undefined>,

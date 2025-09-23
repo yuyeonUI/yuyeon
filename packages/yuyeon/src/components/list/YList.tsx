@@ -1,21 +1,21 @@
-import { ref, shallowRef } from 'vue';
+import { ref, shallowRef } from "vue";
 
-import { useRender } from '@/composables/component';
-import { pressThemePropsOptions, useLocalTheme } from '@/composables/theme';
-import { defineComponent, propsFactory } from '@/util/component';
+import { useRender } from "@/composables/component";
+import { pressThemePropsOptions, useLocalTheme } from "@/composables/theme";
+import { defineComponent, propsFactory } from "@/util/component";
 
-import './YList.scss';
+import "./YList.scss";
 
 export const pressYListPropsOptions = propsFactory(
   {
     disabled: Boolean,
     ...pressThemePropsOptions(),
   },
-  'YList',
+  "YList",
 );
 
 export const YList = defineComponent({
-  name: 'YList',
+  name: "YList",
   props: {
     ...pressYListPropsOptions(),
   },
@@ -57,7 +57,7 @@ export const YList = defineComponent({
     useRender(() => (
       <div
         ref={el$}
-        class={['y-list', themeClasses.value]}
+        class={["y-list", themeClasses.value]}
         role="listbox"
         tabindex={
           (attrs.tabindex as number | string) ??

@@ -1,15 +1,15 @@
 import {
+  inject,
   type InjectionKey,
   type PropType,
-  type Ref,
-  inject,
   provide,
-} from 'vue';
+  type Ref,
+} from "vue";
 
-import { useModelDuplex } from '@/composables/communication';
-import { propsFactory } from '@/util/component/props';
+import { useModelDuplex } from "@/composables/communication";
+import { propsFactory } from "@/util/component/props";
 
-import type { DataTableItem } from '../types/item';
+import type { DataTableItem } from "../types/item";
 
 export const pressDataTableExpandProps = propsFactory(
   {
@@ -19,13 +19,13 @@ export const pressDataTableExpandProps = propsFactory(
       default: () => [],
     },
   },
-  'YDataTable--expand',
+  "YDataTable--expand",
 );
 
 type DataTableExpandProps = {
   enableExpand: boolean;
   expanded: readonly string[];
-  'onUpdate:expanded': ((value: any[]) => void) | undefined;
+  "onUpdate:expanded": ((value: any[]) => void) | undefined;
 };
 
 const Y_DATA_TABLE_EXPAND_KEY: InjectionKey<{
@@ -33,12 +33,12 @@ const Y_DATA_TABLE_EXPAND_KEY: InjectionKey<{
   isExpanded: (item: DataTableItem) => boolean;
   expand: (item: DataTableItem, value: boolean) => void;
   toggleExpand: (item: DataTableItem) => void;
-}> = Symbol.for('yuyeon.data-table.expand');
+}> = Symbol.for("yuyeon.data-table.expand");
 
 export function provideExpand(props: DataTableExpandProps) {
   const expands = useModelDuplex(
     props,
-    'expanded',
+    "expanded",
     props.expanded ?? [],
     (v) => new Set(v),
     (v) => [...v],

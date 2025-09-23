@@ -1,32 +1,32 @@
-import type { App, Component, ComponentInternalInstance } from 'vue';
-import { getCurrentInstance, nextTick, reactive } from 'vue';
+import type { App, Component, ComponentInternalInstance } from "vue";
+import { getCurrentInstance, nextTick, reactive } from "vue";
 
-import * as allComponents from '@/components/';
+import * as allComponents from "@/components/";
 import {
+  createDateModule,
   YUYEON_DATE_KEY,
   YUYEON_DATE_OPTIONS_KEY,
-  createDateModule,
-} from '@/composables/date';
-import { createDefaultsModule } from '@/composables/defaults';
-import { YUYEON_DEFAULTS_KEY } from '@/composables/defaults/share';
-import { createI18nModule } from '@/composables/i18n';
-import { YUYEON_I18N_KEY } from '@/composables/i18n/share';
-import { YUYEON_ICON_KEY, createIconModule } from '@/composables/icon';
+} from "@/composables/date";
+import { createDefaultsModule } from "@/composables/defaults";
+import { YUYEON_DEFAULTS_KEY } from "@/composables/defaults/share";
+import { createI18nModule } from "@/composables/i18n";
+import { YUYEON_I18N_KEY } from "@/composables/i18n/share";
+import { createIconModule, YUYEON_ICON_KEY } from "@/composables/icon";
 import {
-  YUYEON_THEME_KEY,
   createThemeModule,
   useTheme,
-} from '@/composables/theme';
-import PlateWave from '@/directives/plate-wave';
-import { YUYEON_LOGO } from '@/etc';
+  YUYEON_THEME_KEY,
+} from "@/composables/theme";
+import PlateWave from "@/directives/plate-wave";
+import { YUYEON_LOGO } from "@/etc";
 
-import './styles/base.scss';
+import "./styles/base.scss";
 
 const defaultOptions = {
   credit: true,
 };
 
-declare module 'vue' {
+declare module "vue" {
   interface ComponentCustomProperties {
     $yuyeon: any;
   }
@@ -58,11 +58,11 @@ export function init(options: any = defaultOptions) {
 
     Object.keys(components).forEach((componentName) => {
       const comp = components[componentName as keyof typeof components];
-      if (typeof comp === 'object' && 'name' in comp)
+      if (typeof comp === "object" && "name" in comp)
         app.component(componentName, comp as Component);
     });
 
-    app.directive('plate-wave', PlateWave);
+    app.directive("plate-wave", PlateWave);
 
     app.provide(YUYEON_DEFAULTS_KEY, defaultsModule);
     app.provide(YUYEON_THEME_KEY, themeModule.instance);
@@ -80,8 +80,8 @@ export function init(options: any = defaultOptions) {
       yuyeon.root = app._container;
       yuyeon.app = app._instance as any;
       if (yuyeon.root) {
-        yuyeon.root.classList.add('y-root');
-        yuyeon.root.setAttribute('data-y-root', '');
+        yuyeon.root.classList.add("y-root");
+        yuyeon.root.setAttribute("data-y-root", "");
         themeModule.init(yuyeon);
       }
     });
@@ -99,8 +99,8 @@ export function init(options: any = defaultOptions) {
         nextTick(() => {
           yuyeon.root = app._container;
           if (yuyeon.root) {
-            yuyeon.root.classList.add('y-root');
-            yuyeon.root.setAttribute('data-y-root', '');
+            yuyeon.root.classList.add("y-root");
+            yuyeon.root.setAttribute("data-y-root", "");
             themeModule.init(yuyeon);
           }
         });
@@ -122,7 +122,7 @@ export function init(options: any = defaultOptions) {
 
 export function useYuyeon() {
   const vm = getCurrentInstance();
-  if (!vm) throw new Error('[yuyeon] Called outside of setup context');
+  if (!vm) throw new Error("[yuyeon] Called outside of setup context");
 
   return vm.appContext.config.globalProperties.$yuyeon;
 }
