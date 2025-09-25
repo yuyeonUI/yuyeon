@@ -1,12 +1,9 @@
 import { InjectionKey, Ref, inject, provide, ref, shallowRef } from 'vue';
 
-
-
 import { NodeState } from '@/components/tree-view/types';
 import { useModelDuplex } from '@/composables';
 import { CandidateKey } from '@/types';
 import { getObjectValueByPath } from '@/util';
-
 
 export const Y_TREE_VIEW: InjectionKey<{
   register: (key: CandidateKey, vnode: any) => void;

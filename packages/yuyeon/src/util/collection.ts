@@ -1,6 +1,6 @@
 export function getFlatChildren(
   children: any[],
-  childrenKey = "children",
+  childrenKey = 'children',
 ): any[] {
   return children.map((child) => {
     if (child[childrenKey]) {

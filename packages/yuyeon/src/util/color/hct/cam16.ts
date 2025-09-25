@@ -14,10 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { ViewingConditions } from "./viewing-conditions";
+import { ViewingConditions } from './viewing-conditions';
 
-import { argbFromXyz, linearized } from "../conversion";
-import * as math from "../utils/math-utils";
+import { argbFromXyz, linearized } from '../conversion';
+import * as math from '../utils/math-utils';
 
 /**
  * CAM16, a color appearance model. Colors are not just defined by their hex

@@ -1,13 +1,13 @@
-import type { Ref } from "vue";
-import { ref, shallowRef } from "vue";
+import type { Ref } from 'vue';
+import { ref, shallowRef } from 'vue';
 
-import { useProvided } from "@/composables/communication";
-import en from "@/locales/en";
-import { getObjectValueByPath } from "@/util/common";
+import { useProvided } from '@/composables/communication';
+import en from '@/locales/en';
+import { getObjectValueByPath } from '@/util/common';
 
-import type { LocaleMessages, LocaleModule, LocaleOptions } from "./types";
+import type { LocaleMessages, LocaleModule, LocaleOptions } from './types';
 
-const LOCALE_PREFIX = "$yuyeon";
+const LOCALE_PREFIX = '$yuyeon';
 
 function replaceParams(str: string, params: unknown[]) {
   return str.replace(/\{(\d+)\}/g, (item, index) => {
@@ -24,7 +24,7 @@ function generateContext(
     if (!key.startsWith(LOCALE_PREFIX)) {
       return replaceParams(key, params);
     }
-    const path = key.replace(LOCALE_PREFIX, "");
+    const path = key.replace(LOCALE_PREFIX, '');
     const localeMessages = locale.value && messages.value[locale.value];
     const fallbackMessages =
       fallbackLocale.value && messages.value[fallbackLocale.value];
@@ -36,7 +36,7 @@ function generateContext(
     if (!msg) {
       msg = key;
     }
-    if (typeof msg !== "string") {
+    if (typeof msg !== 'string') {
       msg = key;
     }
     return replaceParams(msg, params);
@@ -51,20 +51,20 @@ function generateContext(
   }
 
   function getContext(props: LocaleOptions) {
-    const localLocale = useProvided(props, "locale", locale);
+    const localLocale = useProvided(props, 'locale', locale);
     const localFallbackLocale = useProvided(
       props,
-      "fallbackLocale",
+      'fallbackLocale',
       fallbackLocale,
     );
-    const localMessages = useProvided(props, "messages", messages);
+    const localMessages = useProvided(props, 'messages', messages);
     const ctx = generateContext(
       localLocale,
       localFallbackLocale,
       localMessages,
     );
     return {
-      name: "yuyeon",
+      name: 'yuyeon',
       locale,
       fallbackLocale,
       messages,
@@ -84,8 +84,8 @@ function generateContext(
 export function constructYuyeonI18nAdapter(
   options?: LocaleOptions,
 ): LocaleModule {
-  const locale = shallowRef(options?.locale ?? "en");
-  const fallbackLocale = shallowRef(options?.fallbackLocale ?? "en");
+  const locale = shallowRef(options?.locale ?? 'en');
+  const fallbackLocale = shallowRef(options?.fallbackLocale ?? 'en');
   const messages = ref({
     en,
     ...options?.messages,
@@ -94,7 +94,7 @@ export function constructYuyeonI18nAdapter(
   const ctx = generateContext(locale, fallbackLocale, messages);
 
   return {
-    name: "yuyeon",
+    name: 'yuyeon',
     locale,
     fallbackLocale,
     messages,

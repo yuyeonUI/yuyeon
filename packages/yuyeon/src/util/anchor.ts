@@ -3,34 +3,34 @@ const includes = <T, A extends T>(
   item: T,
 ): item is A => array.includes(item as A);
 
-const block = ["top", "bottom"] as const;
-const inline = ["start", "end", "left", "right"] as const;
+const block = ['top', 'bottom'] as const;
+const inline = ['start', 'end', 'left', 'right'] as const;
 type Tblock = (typeof block)[number];
 type Tinline = (typeof inline)[number];
 export type Anchor =
   | Tblock
   | Tinline
-  | "center"
-  | "center center"
-  | `${Tblock} ${Tinline | "center"}`
-  | `${Tinline} ${Tblock | "center"}`;
+  | 'center'
+  | 'center center'
+  | `${Tblock} ${Tinline | 'center'}`
+  | `${Tinline} ${Tblock | 'center'}`;
 export type ParsedAnchor =
-  | { side: "center"; align: "center" }
-  | { side: Tblock; align: "left" | "right" | "center" }
-  | { side: "left" | "right"; align: Tblock | "center" };
+  | { side: 'center'; align: 'center' }
+  | { side: Tblock; align: 'left' | 'right' | 'center' }
+  | { side: 'left' | 'right'; align: Tblock | 'center' };
 
 /** Parse a raw anchor string into an object */
 export function parseAnchor(anchor: Anchor, isRtl: boolean) {
-  let [side, align] = anchor.split(" ") as [
-    Tblock | Tinline | "center",
-    Tblock | Tinline | "center" | undefined,
+  let [side, align] = anchor.split(' ') as [
+    Tblock | Tinline | 'center',
+    Tblock | Tinline | 'center' | undefined,
   ];
   if (!align) {
     align = includes(block, side)
-      ? "start"
+      ? 'start'
       : includes(inline, side)
-        ? "top"
-        : "center";
+        ? 'top'
+        : 'center';
   }
 
   return {
@@ -39,20 +39,20 @@ export function parseAnchor(anchor: Anchor, isRtl: boolean) {
   } as ParsedAnchor;
 }
 
-export function toPhysical(str: "center" | Tblock | Tinline, isRtl: boolean) {
-  if (str === "start") return isRtl ? "right" : "left";
-  if (str === "end") return isRtl ? "left" : "right";
+export function toPhysical(str: 'center' | Tblock | Tinline, isRtl: boolean) {
+  if (str === 'start') return isRtl ? 'right' : 'left';
+  if (str === 'end') return isRtl ? 'left' : 'right';
   return str;
 }
 
 export function flipSide(anchor: ParsedAnchor) {
   return {
     side: {
-      center: "center",
-      top: "bottom",
-      bottom: "top",
-      left: "right",
-      right: "left",
+      center: 'center',
+      top: 'bottom',
+      bottom: 'top',
+      left: 'right',
+      right: 'left',
     }[anchor.side],
     align: anchor.align,
   } as ParsedAnchor;
@@ -62,11 +62,11 @@ export function flipAlign(anchor: ParsedAnchor) {
   return {
     side: anchor.side,
     align: {
-      center: "center",
-      top: "bottom",
-      bottom: "top",
-      left: "right",
-      right: "left",
+      center: 'center',
+      top: 'bottom',
+      bottom: 'top',
+      left: 'right',
+      right: 'left',
     }[anchor.align],
   } as ParsedAnchor;
 }
@@ -79,5 +79,5 @@ export function flipCorner(anchor: ParsedAnchor) {
 }
 
 export function getAxis(anchor: ParsedAnchor) {
-  return includes(block, anchor.side) ? "y" : "x";
+  return includes(block, anchor.side) ? 'y' : 'x';
 }

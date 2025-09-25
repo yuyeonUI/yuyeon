@@ -1,9 +1,4 @@
-import type {
-  ComponentInternalInstance,
-  CSSProperties,
-  PropType,
-  SlotsType,
-} from "vue";
+import type { ComponentInternalInstance, PropType, SlotsType } from 'vue';
 import {
   computed,
   getCurrentInstance,
@@ -14,37 +9,39 @@ import {
   Teleport,
   toRef,
   Transition,
-} from "vue";
+} from 'vue';
 
-import { useModelDuplex } from "@/composables/communication";
-import { useRender } from "@/composables/component";
-import { pressCoordinateProps, useCoordinate } from "@/composables/coordinate";
+import { useModelDuplex } from '@/composables/communication';
+import { useRender } from '@/composables/component';
+import { pressCoordinateProps, useCoordinate } from '@/composables/coordinate';
 import {
   pressDimensionPropsOptions,
   useDimension,
-} from "@/composables/dimension";
-import { useLayerGroup } from "@/composables/layer-group";
-import { pressThemePropsOptions, useLocalTheme } from "@/composables/theme";
-import { useLazy } from "@/composables/timing";
+} from '@/composables/dimension';
+import { useLayerGroup } from '@/composables/layer-group';
+import { pressThemePropsOptions, useLocalTheme } from '@/composables/theme';
+import { useLazy } from '@/composables/timing';
 import {
   PolyTransition,
   pressPolyTransitionPropsOptions,
   usePolyTransition,
-} from "@/composables/transition";
+} from '@/composables/transition';
 import {
   ComplementClick,
   ComplementClickBindingOptions,
-} from "@/directives/complement-click";
-import { bindClasses, defineComponent, propsFactory } from "@/util/component";
+} from '@/directives/complement-click';
+import { bindClasses, defineComponent, propsFactory } from '@/util/component';
 
-import { pressBasePropsOptions, useBase } from "./base";
-import { pressContentPropsOptions, useContent } from "./content";
+import { pressBasePropsOptions, useBase } from './base';
+import { pressContentPropsOptions, useContent } from './content';
 import {
   pressScrollStrategyProps,
   useScrollStrategies,
-} from "./scroll-strategies";
+} from './scroll-strategies';
 
-import "./YLayer.scss";
+import './YLayer.scss';
+import { CssProperties } from '@/types';
+import { noop } from '@/util';
 
 export const pressYLayerProps = propsFactory(
   {
@@ -74,7 +71,7 @@ export const pressYLayerProps = propsFactory(
       type: Boolean as PropType<boolean>,
     },
     contentStyles: {
-      type: Object as PropType<CSSProperties>,
+      type: Object as PropType<CssProperties>,
       default: () => {},
     },
     disabled: {
@@ -110,11 +107,11 @@ export const pressYLayerProps = propsFactory(
     ...pressScrollStrategyProps(),
     ...pressDimensionPropsOptions(),
   },
-  "YLayer",
+  'YLayer',
 );
 
 export const YLayer = defineComponent({
-  name: "YLayer",
+  name: 'YLayer',
   inheritAttrs: false,
   components: {
     PolyTransition,
@@ -127,8 +124,8 @@ export const YLayer = defineComponent({
     ...pressYLayerProps(),
   },
   emits: {
-    "update:modelValue": (value: boolean) => true,
-    "click:complement": (mouseEvent: MouseEvent) => true,
+    'update:modelValue': (value: boolean) => true,
+    'click:complement': (mouseEvent: MouseEvent) => true,
     afterLeave: () => true,
   },
   slots: Object as SlotsType<{
@@ -158,13 +155,13 @@ export const YLayer = defineComponent({
     const { polyTransitionBindProps } = usePolyTransition(props);
     const { dimensionStyles } = useDimension(props);
 
-    const { lazyValue, onAfterUpdate } = useLazy(toRef(props, "eager"), active);
+    const { lazyValue, onAfterUpdate } = useLazy(toRef(props, 'eager'), active);
     // States
     const finish = shallowRef(false);
     const hovered = ref(false);
     const focused = ref(false);
-    const disabled = toRef(props, "disabled");
-    const maximized = toRef(props, "maximized");
+    const disabled = toRef(props, 'disabled');
+    const maximized = toRef(props, 'maximized');
 
     const rendered = computed<boolean>(
       () => !disabled.value && (lazyValue.value || active.value),
@@ -184,7 +181,7 @@ export const YLayer = defineComponent({
     });
 
     function onClickComplementLayer(mouseEvent: MouseEvent) {
-      emit("click:complement", mouseEvent);
+      emit('click:complement', mouseEvent);
       if (!props.modal) {
         if (
           scrim$.value !== null &&
@@ -219,7 +216,7 @@ export const YLayer = defineComponent({
     function onAfterLeave() {
       onAfterUpdate();
       finish.value = false;
-      emit("afterLeave");
+      emit('afterLeave');
     }
 
     function onClickScrim() {
@@ -238,7 +235,7 @@ export const YLayer = defineComponent({
 
     const computedStyle = computed(() => {
       return {
-        zIndex: (props.zIndex ?? "2000").toString(),
+        zIndex: (props.zIndex ?? '2000').toString(),
       };
     });
 
@@ -247,7 +244,7 @@ export const YLayer = defineComponent({
       const boundClasses = bindClasses(classes);
       return {
         ...boundClasses,
-        "y-layer--active": !!active.value,
+        'y-layer--active': !!active.value,
       };
     });
 
@@ -281,8 +278,8 @@ export const YLayer = defineComponent({
         props: mergeProps({
           ref: base$,
           class: {
-            "y-layer-base": true,
-            "y-layer-base--active": active.value,
+            'y-layer-base': true,
+            'y-layer-base--active': active.value,
           },
           ...(props.baseProps ?? {}),
         }),
@@ -296,9 +293,9 @@ export const YLayer = defineComponent({
               <div
                 class={[
                   {
-                    "y-layer": true,
-                    "y-layer--finish": finish.value,
-                    "y-layer--contained": props.contained,
+                    'y-layer': true,
+                    'y-layer--finish': finish.value,
+                    'y-layer--contained': props.contained,
                     ...computedClass.value,
                   },
                   themeClasses.value,
@@ -313,8 +310,10 @@ export const YLayer = defineComponent({
                   {active.value && props.scrim && (
                     <div
                       class="y-layer__scrim"
-                      style={{ "--y-layer-scrim-opacity": props.scrimOpacity }}
+                      style={{ '--y-layer-scrim-opacity': props.scrimOpacity }}
                       onClick={onClickScrim}
+                      onKeydown={noop()}
+                      onKeyup={noop()}
                       ref="scrim$"
                     ></div>
                   )}
@@ -329,7 +328,7 @@ export const YLayer = defineComponent({
                     v-show={active.value}
                     v-complement-click={{ ...complementClickOption }}
                     class={{
-                      "y-layer__content": true,
+                      'y-layer__content': true,
                       ...computedContentClasses.value,
                     }}
                     style={[

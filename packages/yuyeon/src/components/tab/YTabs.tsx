@@ -1,15 +1,15 @@
-import { computed, type PropType } from "vue";
+import { computed, type PropType } from 'vue';
 
-import { pressChoicePropsOptions, useChoice } from "@/composables/choice";
-import { useRender } from "@/composables/component";
-import { useResizeObserver } from "@/composables/resize-observer";
-import { defineComponent, propsFactory } from "@/util/component";
+import { pressChoicePropsOptions, useChoice } from '@/composables/choice';
+import { useRender } from '@/composables/component';
+import { useResizeObserver } from '@/composables/resize-observer';
+import { defineComponent, propsFactory } from '@/util/component';
 
-import { YTab } from "./YTab";
-import { Y_TABS_KEY } from "./shared";
-import { YTabPropItem } from "./types";
+import { YTab } from './YTab';
+import { Y_TABS_KEY } from './shared';
+import { YTabPropItem } from './types';
 
-import "./YTabs.scss";
+import './YTabs.scss';
 
 export const pressYTabsPropOptions = propsFactory(
   {
@@ -17,24 +17,24 @@ export const pressYTabsPropOptions = propsFactory(
       type: Array as PropType<YTabPropItem[]>,
     },
     ...pressChoicePropsOptions({
-      selectedClass: "y-tab--active",
-      mandatory: "force" as const,
+      selectedClass: 'y-tab--active',
+      mandatory: 'force' as const,
     }),
   },
-  "YTabs",
+  'YTabs',
 );
 
 export const YTabs = defineComponent({
-  name: "YTabs",
+  name: 'YTabs',
   props: {
     tag: {
-      type: String as PropType<"div" | "nav" | "ol" | "ul">,
-      default: "div",
+      type: String as PropType<'div' | 'nav' | 'ol' | 'ul'>,
+      default: 'div',
     },
     ...pressYTabsPropOptions(),
   },
   emits: {
-    "update:modelValue": (value: any) => true,
+    'update:modelValue': (value: any) => true,
   },
   setup(props, { slots }) {
     const { resizeObservedRef: container$, contentRect: containerRect } =
@@ -55,7 +55,7 @@ export const YTabs = defineComponent({
     const tabItems = computed(() => {
       return (
         props.items?.map((item) => {
-          if (typeof item !== "object") {
+          if (typeof item !== 'object') {
             return {
               text: item,
               value: item,
@@ -68,9 +68,9 @@ export const YTabs = defineComponent({
 
     useRender(() => {
       return (
-        <props.tag class={["y-tabs"]} role="tablist">
-          <div key="container" ref={container$} class={["y-tabs__container"]}>
-            <div key="content" ref={content$} class={["y-tabs__content"]}>
+        <props.tag class={['y-tabs']} role="tablist">
+          <div key="container" ref={container$} class={['y-tabs__container']}>
+            <div key="content" ref={content$} class={['y-tabs__content']}>
               {slots.default
                 ? slots.default(slotProps.value)
                 : tabItems.value.map((tabItem) => (

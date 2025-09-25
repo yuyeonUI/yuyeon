@@ -4,11 +4,11 @@ import type {
   Prop,
   PropType,
   VNode,
-} from "vue";
-import { capitalize } from "vue";
-import type { IfAny } from "@vue/shared";
+} from 'vue';
+import { capitalize } from 'vue';
+import type { IfAny } from '@vue/shared';
 
-import { toKebabCase } from "../string";
+import { toKebabCase } from '../string';
 
 export function propsFactory<PropsOptions extends ComponentObjectPropsOptions>(
   props: PropsOptions,
@@ -20,7 +20,7 @@ export function propsFactory<PropsOptions extends ComponentObjectPropsOptions>(
     return Object.keys(props).reduce<any>((options, prop) => {
       const option = props[prop];
       const isObjectOption =
-        typeof option === "object" && option != null && !Array.isArray(option);
+        typeof option === 'object' && option != null && !Array.isArray(option);
       const objectOption = isObjectOption ? option : { type: option };
       if (defaults && prop in defaults) {
         options[prop] = {
@@ -43,12 +43,15 @@ export function chooseProps<PropsOptions extends ComponentObjectPropsOptions>(
   props: any,
   target: PropsOptions,
 ): ExtractPropTypes<PropsOptions> {
-  return Object.keys(target).reduce((acc, prop) => {
-    if (props && prop in props) {
-      acc[prop as keyof ExtractPropTypes<PropsOptions>] = props[prop];
-    }
-    return acc;
-  }, {} as ExtractPropTypes<PropsOptions>);
+  return Object.keys(target).reduce(
+    (acc, prop) => {
+      if (props && prop in props) {
+        acc[prop as keyof ExtractPropTypes<PropsOptions>] = props[prop];
+      }
+      return acc;
+    },
+    {} as ExtractPropTypes<PropsOptions>,
+  );
 }
 
 export function hasEventProp(props: Record<string, any>, type: string) {
@@ -64,8 +67,8 @@ export function hasEventProp(props: Record<string, any>, type: string) {
 
 export function propIsDefined(vnode: VNode, prop: string) {
   return (
-    typeof vnode.props?.[prop] !== "undefined" ||
-    typeof vnode.props?.[toKebabCase(prop)] !== "undefined"
+    typeof vnode.props?.[prop] !== 'undefined' ||
+    typeof vnode.props?.[toKebabCase(prop)] !== 'undefined'
   );
 }
 
@@ -76,7 +79,7 @@ type OverwrittenPropOptions<
   [P in keyof T]-?: unknown extends D[P]
     ? T[P]
     : T[P] extends Record<string, unknown>
-      ? Omit<T[P], "type" | "default"> & {
+      ? Omit<T[P], 'type' | 'default'> & {
           type: PropType<MergeDefault<T[P], D[P]>>;
           default: MergeDefault<T[P], D[P]>;
         }

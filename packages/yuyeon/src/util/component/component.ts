@@ -10,7 +10,7 @@ import type {
   EmitsOptions,
   MethodOptions,
   SlotsType,
-} from "vue";
+} from 'vue';
 import {
   ComponentObjectPropsOptions,
   ComponentOptionsWithObjectProps,
@@ -18,13 +18,13 @@ import {
   ExtractDefaultPropTypes,
   ExtractPropTypes,
   FunctionalComponent,
-} from "vue";
+} from 'vue';
 
 import {
   useDefaultsModule,
   useSuperDefaults,
-} from "../../composables/defaults";
-import { EmitsToProps } from "./types";
+} from '../../composables/defaults';
+import { EmitsToProps } from './types';
 
 type ToResolvedProps<Props, Emits extends EmitsOptions> = Readonly<Props> &
   Readonly<EmitsToProps<Emits>>;

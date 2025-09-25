@@ -1,13 +1,13 @@
-import { h, type PropType } from "vue";
+import { h, type PropType } from 'vue';
 
-import { useRender } from "@/composables/component";
-import { pressThemePropsOptions, useLocalTheme } from "@/composables/theme";
-import { defineComponent } from "@/util/component";
+import { useRender } from '@/composables/component';
+import { pressThemePropsOptions, useLocalTheme } from '@/composables/theme';
+import { defineComponent } from '@/util/component';
 
-import "./YCard.scss";
+import './YCard.scss';
 
 export const YCard = defineComponent({
-  name: "YCard",
+  name: 'YCard',
   props: {
     outline: {
       type: Boolean as PropType<boolean>,
@@ -19,11 +19,11 @@ export const YCard = defineComponent({
 
     useRender(() =>
       h(
-        "div",
+        'div',
         {
           class: [
-            "y-card",
-            { "y-card--outlined": props.outline },
+            'y-card',
+            { 'y-card--outlined': props.outline },
             themeClasses.value,
           ],
         },

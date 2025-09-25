@@ -1,12 +1,12 @@
-import { computed, type PropType, ref, shallowRef, type SlotsType } from "vue";
+import { computed, type PropType, ref, shallowRef, type SlotsType } from 'vue';
 
-import { useRender } from "@/composables/component";
-import { chooseProps, defineComponent, propsFactory } from "@/util/component";
+import { useRender } from '@/composables/component';
+import { chooseProps, defineComponent, propsFactory } from '@/util/component';
 
-import { pressYButtonProps, YButton } from "../button";
-import { Y_TABS_KEY } from "./shared";
+import { pressYButtonProps, YButton } from '../button';
+import { Y_TABS_KEY } from './shared';
 
-import "./YTab.scss";
+import './YTab.scss';
 
 export const pressYTabPropsOptions = propsFactory(
   {
@@ -14,15 +14,15 @@ export const pressYTabPropsOptions = propsFactory(
     hideIndicator: Boolean as PropType<boolean>,
     indicatorColor: String as PropType<string>,
     ...pressYButtonProps({
-      selectedClass: "y-tab--selected",
+      selectedClass: 'y-tab--selected',
       noWave: true,
     }),
   },
-  "YTab",
+  'YTab',
 );
 
 export const YTab = defineComponent({
-  name: "YTab",
+  name: 'YTab',
   props: pressYTabPropsOptions(),
   slots: Object as SlotsType<{
     default?: any;
@@ -36,8 +36,8 @@ export const YTab = defineComponent({
     });
     const attrsProps = computed(() => {
       return {
-        role: "tab",
-        "aria-selected": `${String(selected.value)}`,
+        role: 'tab',
+        'aria-selected': `${String(selected.value)}`,
         tabindex: selected.value ? 0 : -1,
       };
     });
@@ -50,7 +50,7 @@ export const YTab = defineComponent({
       const yButtonProps = chooseProps(props, YButton.props);
       return (
         <YButton
-          class={["y-tab"]}
+          class={['y-tab']}
           active={false}
           {...attrsProps.value}
           {...attrs}
@@ -64,7 +64,7 @@ export const YTab = defineComponent({
               !props.hideIndicator && (
                 <div
                   ref={indicator$}
-                  class={["y-tab__indicator"]}
+                  class={['y-tab__indicator']}
                   style={indicatorStyles.value}
                 ></div>
               ),

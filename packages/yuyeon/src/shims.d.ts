@@ -43,9 +43,9 @@ import type {
   YTab,
   YTable,
   YTabs,
+  YTextarea,
   YTextEllipsis,
   YTextHighlighter,
-  YTextarea,
   YTi,
   YTooltip,
   YTreeView,
@@ -109,7 +109,7 @@ declare module 'vue' {
   }
 
   export interface GlobalDirectives {
-    vPlateWave: (typeof import('yuyeon/directives'))['PlateWave'];
-    vComplementClick: (typeof import('yuyeon/directives'))['ComplementClick'];
+    vPlateWave: typeof import('yuyeon/directives')['PlateWave'];
+    vComplementClick: typeof import('yuyeon/directives')['ComplementClick'];
   }
 }

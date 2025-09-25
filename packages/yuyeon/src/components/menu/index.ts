@@ -1,1 +1,1 @@
-export * from "./YMenu";
+export * from './YMenu';

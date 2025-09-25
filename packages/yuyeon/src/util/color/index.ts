@@ -12,27 +12,27 @@
  *   https://github.com/vuetifyjs/vuetify
  * */
 
-import { HEX_COLOR_REGEX, RGBA_REGEX } from "./const";
-import { rgbFromHex } from "./conversion";
+import { HEX_COLOR_REGEX, RGBA_REGEX } from './const';
+import { rgbFromHex } from './conversion';
 
 export function isColorValue(value: string): boolean {
   return RGBA_REGEX.test(value) || HEX_COLOR_REGEX.test(value);
 }
 
 export function colorRgb(color: string): string {
-  if (color?.startsWith("#")) {
-    return rgbFromHex(color)?.join(",") || "";
+  if (color?.startsWith('#')) {
+    return rgbFromHex(color)?.join(',') || '';
   }
   const RGBA_REGEX = /rgb(a?)\((?<v>.*)\)/;
   if (RGBA_REGEX.test(color)) {
-    const value = RGBA_REGEX.exec(color)?.[2] || "";
+    const value = RGBA_REGEX.exec(color)?.[2] || '';
     if (value) {
-      const valueArray = value.trim().split(",");
+      const valueArray = value.trim().split(',');
       valueArray.splice(3, 1);
-      return valueArray.join(",");
+      return valueArray.join(',');
     }
   }
-  return "";
+  return '';
 }
 
 export function isTextColorIsLight(r: number, g: number, b: number): boolean {
@@ -40,5 +40,5 @@ export function isTextColorIsLight(r: number, g: number, b: number): boolean {
   return luminance < 0.5;
 }
 
-export * from "./const";
-export * from "./conversion";
+export * from './const';
+export * from './conversion';

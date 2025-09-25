@@ -14,8 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Hct } from "../hct/hct";
-import { TonalPalette } from "./tonal-palette";
+import { Hct } from '../hct/hct';
+import { TonalPalette } from './tonal-palette';
 
 /**
  * Set of colors to generate a [CorePalette] from

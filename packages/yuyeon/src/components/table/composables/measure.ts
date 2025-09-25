@@ -1,7 +1,7 @@
-import { ref, shallowRef, watch } from "vue";
+import { ref, shallowRef, watch } from 'vue';
 
-import { useResizeObserver } from "@/composables/resize-observer";
-import { debounce } from "@/util/debounce";
+import { useResizeObserver } from '@/composables/resize-observer';
+import { debounce } from '@/util/debounce';
 
 export function useRectMeasure() {
   const tableRef = ref<HTMLTableElement>();
@@ -26,7 +26,7 @@ export function useRectMeasure() {
       if (rect) {
         const obj: any = {};
         for (const key in rect) {
-          if (typeof rect[key as keyof DOMRect] !== "function") {
+          if (typeof rect[key as keyof DOMRect] !== 'function') {
             obj[key] = rect[key as keyof DOMRect];
           }
         }
@@ -49,7 +49,7 @@ export function useRectMeasure() {
     if (neo) {
       const el = containerRef.value!;
       wrapperRef.value =
-        (el.querySelector(".y-table__wrapper") as HTMLElement) || undefined;
+        (el.querySelector('.y-table__wrapper') as HTMLElement) || undefined;
     }
   });
 

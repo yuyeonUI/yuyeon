@@ -1,10 +1,10 @@
-import { useRender } from "@/composables/component";
-import { defineComponent } from "@/util/component/component";
+import { useRender } from '@/composables/component';
+import { defineComponent } from '@/util/component/component';
 
-import "./YRadioIcon.scss";
+import './YRadioIcon.scss';
 
 export const YRadioIcon = defineComponent({
-  name: "YRadioIcon",
+  name: 'YRadioIcon',
   props: {
     active: Boolean,
     disabled: Boolean,
@@ -13,10 +13,10 @@ export const YRadioIcon = defineComponent({
     useRender(() => (
       <svg
         class={[
-          "y-radio-icon",
+          'y-radio-icon',
           {
-            "y-radio-icon--active": props.active,
-            "y-radio-icon--disabled": props.disabled,
+            'y-radio-icon--active': props.active,
+            'y-radio-icon--disabled': props.disabled,
           },
         ]}
         viewBox="0 0 24 24"

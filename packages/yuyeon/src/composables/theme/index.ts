@@ -97,8 +97,8 @@ export function createThemeModule(options: ThemeOptions) {
     }
     if (Array.isArray(theme.value)) {
       return currentColorScheme.value === 'dark'
-        ? theme.value?.[1] ?? 'dark'
-        : theme.value?.[0] ?? 'light';
+        ? (theme.value?.[1] ?? 'dark')
+        : (theme.value?.[0] ?? 'light');
     }
     return currentColorScheme.value;
   });

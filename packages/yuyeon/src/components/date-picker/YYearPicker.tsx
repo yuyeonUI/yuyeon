@@ -1,103 +1,102 @@
-import { PropType, computed, ref } from 'vue';
+import { computed, type PropType, ref } from "vue";
 
-import { useModelDuplex } from '@/composables/communication';
-import { useRender } from '@/composables/component';
-import { useDate } from '@/composables/date';
-import { getRangeArr } from '@/util/common';
-import { defineComponent } from '@/util/component';
-import { propsFactory } from '@/util/component';
+import { useModelDuplex } from "@/composables/communication";
+import { useRender } from "@/composables/component";
+import { useDate } from "@/composables/date";
+import { getRangeArr } from "@/util/common";
+import { defineComponent, propsFactory } from "@/util/component";
 
-import { YButton } from '../button';
+import { YButton } from "../button";
 
-import './YYearPicker.scss';
+import "./YYearPicker.scss";
 
 export const pressYYearPickerPropsOptions = propsFactory(
-  {
-    modelValue: Number,
-    color: String,
-    height: [String, Number],
-    min: null as any as PropType<unknown>,
-    max: null as any as PropType<unknown>,
-  },
-  'YYearPicker',
+	{
+		modelValue: Number,
+		color: String,
+		height: [String, Number],
+		min: null as any as PropType<unknown>,
+		max: null as any as PropType<unknown>,
+	},
+	"YYearPicker",
 );
 
 const interval = 20;
 
 export const YYearPicker = defineComponent({
-  name: 'YYearPicker',
-  props: pressYYearPickerPropsOptions(),
-  emits: ['mode'],
-  setup(props, { emit, expose }) {
-    const dateUtil = useDate();
-    const model = useModelDuplex(props, 'modelValue');
-    const tempYear = model.value;
-    const startYear = ref(
-      tempYear - (tempYear % interval) - (tempYear < 0 ? interval : 0),
-    );
-    const years = computed(() => {
-      let date = dateUtil.startOfYear(dateUtil.date());
+	name: "YYearPicker",
+	props: pressYYearPickerPropsOptions(),
+	emits: ["mode"],
+	setup(props, { emit, expose }) {
+		const dateUtil = useDate();
+		const model = useModelDuplex(props, "modelValue");
+		const tempYear = model.value;
+		const startYear = ref(
+			tempYear - (tempYear % interval) - (tempYear < 0 ? interval : 0),
+		);
+		const years = computed(() => {
+			let date = dateUtil.startOfYear(dateUtil.date());
 
-      return getRangeArr(interval + 1, startYear.value).map((value) => {
-        date = dateUtil.setYear(date, value);
-        return {
-          text: dateUtil.format(date, 'year'),
-          value,
-          active: model.value === value,
-        };
-      });
-    });
+			return getRangeArr(interval + 1, startYear.value).map((value) => {
+				date = dateUtil.setYear(date, value);
+				return {
+					text: dateUtil.format(date, "year"),
+					value,
+					active: model.value === value,
+				};
+			});
+		});
 
-    function onClick(value: number) {
-      if (model.value === value) {
-        emit('mode');
-      }
-      model.value = value;
-    }
+		function onClick(value: number) {
+			if (model.value === value) {
+				emit("mode");
+			}
+			model.value = value;
+		}
 
-    function changePage(dir = 1) {
-      let change = startYear.value + interval * dir;
-      if (change < 0) {
-        change = 0;
-      }
-      startYear.value = change;
-    }
+		function changePage(dir = 1) {
+			let change = startYear.value + interval * dir;
+			if (change < 0) {
+				change = 0;
+			}
+			startYear.value = change;
+		}
 
-    expose({
-      changePage,
-    });
+		expose({
+			changePage,
+		});
 
-    useRender(() => {
-      return (
-        <div class={['y-year-picker']}>
-          {years.value.map((year) => {
-            const scopedProps = {
-              item: year,
-              props: {
-                onClick: () => {
-                  onClick(year.value);
-                },
-              },
-            };
-            return (
-              <div class={['y-year-picker__cell']}>
-                <YButton
-                  variation={['rounded', 'text'].join(',')}
-                  active={year.active}
-                  color={props.color}
-                  onClick={() => onClick(year.value)}
-                >
-                  {year.text}
-                </YButton>
-              </div>
-            );
-          })}
-        </div>
-      );
-    });
+		useRender(() => {
+			return (
+				<div class={["y-year-picker"]}>
+					{years.value.map((year) => {
+						const scopedProps = {
+							item: year,
+							props: {
+								onClick: () => {
+									onClick(year.value);
+								},
+							},
+						};
+						return (
+							<div class={["y-year-picker__cell"]}>
+								<YButton
+									variation={["rounded", "text"].join(",")}
+									active={year.active}
+									color={props.color}
+									onClick={() => onClick(year.value)}
+								>
+									{year.text}
+								</YButton>
+							</div>
+						);
+					})}
+				</div>
+			);
+		});
 
-    return {};
-  },
+		return {};
+	},
 });
 
 export type YYearPicker = InstanceType<typeof YYearPicker>;

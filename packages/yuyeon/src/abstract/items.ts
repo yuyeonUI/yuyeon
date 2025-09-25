@@ -1,6 +1,6 @@
-import { PropType } from "vue";
+import type { PropType } from 'vue';
 
-import { propsFactory } from "../util/component";
+import { propsFactory } from '../util/component';
 
 export const pressItemsPropsOptions = propsFactory(
   {
@@ -10,16 +10,16 @@ export const pressItemsPropsOptions = propsFactory(
     },
     itemKey: {
       type: String as PropType<string>,
-      default: "key",
+      default: 'key',
     },
     itemText: {
       type: String as PropType<string>,
-      default: "text",
+      default: 'text',
     },
     itemChildren: {
       type: [Boolean, String] as PropType<boolean | string>,
-      default: "children",
+      default: 'children',
     },
   },
-  "abstract.items",
+  'abstract.items',
 );

@@ -1,10 +1,10 @@
-import type { EffectScope, PropType, Ref } from "vue";
-import { effectScope, nextTick, onScopeDispose, watchEffect } from "vue";
+import type { EffectScope, PropType, Ref } from 'vue';
+import { effectScope, nextTick, onScopeDispose, watchEffect } from 'vue';
 
-import { propsFactory } from "@/util/component";
-import { FrameScheduler } from "@/util/frame-scheduler";
-import { getScrollParents, hasScrollbar } from "@/util/scroll";
-import { toStyleSizeValue } from "@/util/ui";
+import { propsFactory } from '@/util/component';
+import { FrameScheduler } from '@/util/frame-scheduler';
+import { getScrollParents, hasScrollbar } from '@/util/scroll';
+import { toStyleSizeValue } from '@/util/ui';
 
 const frameScheduler = new FrameScheduler();
 
@@ -37,13 +37,13 @@ export interface StrategyProps {
 export const pressScrollStrategyProps = propsFactory(
   {
     scrollStrategy: {
-      type: [String, Function] as PropType<StrategyProps["scrollStrategy"]>,
-      default: "block",
+      type: [String, Function] as PropType<StrategyProps['scrollStrategy']>,
+      default: 'block',
       validator: (val: any) =>
-        typeof val === "function" || val in scrollStrategies,
+        typeof val === 'function' || val in scrollStrategies,
     },
   },
-  "YLayer__scroll-strategies",
+  'YLayer__scroll-strategies',
 );
 
 export function useScrollStrategies(
@@ -60,7 +60,7 @@ export function useScrollStrategies(
     await nextTick();
     scope.active &&
       scope.run(() => {
-        if (typeof props.scrollStrategy === "function") {
+        if (typeof props.scrollStrategy === 'function') {
           props.scrollStrategy(data, props, scope!);
         } else {
           scrollStrategies[props.scrollStrategy]?.(data, props, scope!);
@@ -81,11 +81,11 @@ function closeScrollStrategy(data: ScrollStrategyData) {
   bindScroll(data.baseEl.value ?? data.contentEl.value, onScroll);
 }
 
-const BLOCKER_LAYER_CLASS = "y-layer--scroll-blocked";
-const BLOCKER_CLASS = "y-layer-scroll-blocked";
-const BLOCKER_SCROLL_X_VAR = "--y-body-scroll-x";
-const BLOCKER_SCROLL_Y_VAR = "--y-body-scroll-y";
-const BLOCKER_SCROLL_OFFSET_VAR = "--y-scrollbar-offset";
+const BLOCKER_LAYER_CLASS = 'y-layer--scroll-blocked';
+const BLOCKER_CLASS = 'y-layer-scroll-blocked';
+const BLOCKER_SCROLL_X_VAR = '--y-body-scroll-x';
+const BLOCKER_SCROLL_Y_VAR = '--y-body-scroll-y';
+const BLOCKER_SCROLL_OFFSET_VAR = '--y-scrollbar-offset';
 
 function blockScrollStrategy(data: ScrollStrategyData, props: StrategyProps) {
   const offsetParent = data.root.value?.offsetParent;
@@ -165,7 +165,7 @@ function repositionScrollStrategy(
   }
 
   ric = (
-    typeof requestIdleCallback === "undefined"
+    typeof requestIdleCallback === 'undefined'
       ? (cb: Function) => cb()
       : requestIdleCallback
   )(() => {
@@ -190,7 +190,7 @@ function repositionScrollStrategy(
   });
 
   onScopeDispose(() => {
-    typeof cancelIdleCallback !== "undefined" && cancelIdleCallback(ric);
+    typeof cancelIdleCallback !== 'undefined' && cancelIdleCallback(ric);
     cancelAnimationFrame(raf);
   });
 }
@@ -199,12 +199,12 @@ function repositionScrollStrategy(
 function bindScroll(el: HTMLElement | undefined, onScroll: (e: Event) => void) {
   const scrollElements = [document, ...getScrollParents(el)];
   scrollElements.forEach((el) => {
-    el.addEventListener("scroll", onScroll, { passive: true });
+    el.addEventListener('scroll', onScroll, { passive: true });
   });
 
   onScopeDispose(() => {
     scrollElements.forEach((el) => {
-      el.removeEventListener("scroll", onScroll);
+      el.removeEventListener('scroll', onScroll);
     });
   });
 }

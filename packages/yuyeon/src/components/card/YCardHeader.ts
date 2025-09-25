@@ -1,11 +1,11 @@
-import { h } from "vue";
+import { h } from 'vue';
 
-import { defineComponent } from "@/util/component";
+import { defineComponent } from '@/util/component';
 
 export const YCardHeader = defineComponent({
-  name: "YCardHeader",
+  name: 'YCardHeader',
   render() {
-    return h("div", { class: "y-card__header" }, this.$slots.default?.());
+    return h('div', { class: 'y-card__header' }, this.$slots.default?.());
   },
 });
 

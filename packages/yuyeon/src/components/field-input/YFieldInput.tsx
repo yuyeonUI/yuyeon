@@ -7,22 +7,22 @@ import {
 	type SlotsType,
 	toRef,
 	watch,
-} from 'vue';
+} from "vue";
 
-import { useRender } from '@/composables/component';
-import { useFocus } from '@/composables/focus';
-import { chooseProps, defineComponent, propsFactory } from '@/util/component';
+import { useRender } from "@/composables/component";
+import { useFocus } from "@/composables/focus";
+import { chooseProps, defineComponent, propsFactory } from "@/util/component";
 
-import { YIconClear } from '../icons/YIconClear';
+import { YIconClear } from "../icons/YIconClear";
 import {
 	pressYInputPropsOptions,
 	YInput,
 	type YInputDefaultSlotProps,
-} from '../input';
+} from "../input";
 
-import './YFieldInput.scss';
+import "./YFieldInput.scss";
 
-const NAME = 'y-field-input';
+const NAME = "y-field-input";
 
 export const pressYFieldInputPropsOptions = propsFactory(
 	{
@@ -35,40 +35,40 @@ export const pressYFieldInputPropsOptions = propsFactory(
 		whenInputValid: [Boolean, Number] as PropType<boolean | number>,
 		tabindex: {
 			type: String as PropType<string>,
-			default: '0',
+			default: "0",
 		},
 		type: {
 			type: String as PropType<string>,
-			default: 'text',
+			default: "text",
 		},
 		inputStyle: Object as PropType<any>,
 		...pressYInputPropsOptions({
-			variation: 'filled',
+			variation: "filled",
 		}),
 	},
-	'YFieldInput',
+	"YFieldInput",
 );
 
 export const YFieldInput = defineComponent({
-	name: 'YFieldInput',
+	name: "YFieldInput",
 	props: {
 		...pressYFieldInputPropsOptions(),
 	},
 	emits: [
-		'update:modelValue',
-		'update:focused',
-		'input',
-		'change',
-		'click',
-		'mousedown',
-		'mouseup',
-		'keydown',
-		'keyup',
-		'focus',
-		'blur',
-		'mousedown:display',
-		'keydown:display',
-		'click:clear',
+		"update:modelValue",
+		"update:focused",
+		"input",
+		"change",
+		"click",
+		"mousedown",
+		"mouseup",
+		"keydown",
+		"keyup",
+		"focus",
+		"blur",
+		"mousedown:display",
+		"keydown:display",
+		"click:clear",
 	],
 	slots: Object as SlotsType<{
 		prepend: any;
@@ -77,17 +77,17 @@ export const YFieldInput = defineComponent({
 		default: YInputDefaultSlotProps & { focused: boolean };
 		leading: { error: boolean };
 		trailing: any;
-		'leading-out': any;
-		'trailing-out': any;
-		'helper-text': { error: boolean; errorResult: string | undefined };
+		"leading-out": any;
+		"trailing-out": any;
+		"helper-text": { error: boolean; errorResult: string | undefined };
 	}>,
 	setup(props, { attrs, expose, emit, slots }) {
 		const yInput$ = ref<YInput>();
 		const input$ = ref<HTMLInputElement>();
-		const { focused, whenFocus, whenBlur } = useFocus(props, 'y-field-input');
-		const inValue = ref<any>('');
-		const displayValue = ref('');
-		const inputType = toRef(props, 'type');
+		const { focused, whenFocus, whenBlur } = useFocus(props, "y-field-input");
+		const inValue = ref<any>("");
+		const displayValue = ref("");
+		const inputType = toRef(props, "type");
 
 		const classes = computed(() => {
 			return {
@@ -97,47 +97,47 @@ export const YFieldInput = defineComponent({
 		});
 
 		function onClick(event: MouseEvent) {
-			emit('click', event);
+			emit("click", event);
 		}
 
 		function onFocus(event: FocusEvent) {
 			whenFocus();
 			displayValue.value = inValue.value as string;
-			emit('focus', event);
+			emit("focus", event);
 		}
 
 		function onBlur(event: FocusEvent) {
 			whenBlur();
-			emit('blur', event);
+			emit("blur", event);
 			changeDisplay();
 		}
 
 		function onInput(event: Event) {
-			emit('input', event);
+			emit("input", event);
 			const target = event.target as HTMLInputElement | null;
 			inValue.value = target?.value;
 			displayValue.value = target?.value as string;
 		}
 
 		function onChange(event: Event) {
-			emit('change', inValue.value);
+			emit("change", inValue.value);
 		}
 
 		function onKeydown(event: KeyboardEvent) {
-			emit('keydown', event);
+			emit("keydown", event);
 		}
 
 		function onKeyup(event: KeyboardEvent) {
-			emit('keyup', event);
+			emit("keyup", event);
 		}
 
 		function onClickClear(event: MouseEvent) {
-			emit('click:clear', event);
+			emit("click:clear", event);
 			clear();
 		}
 
 		function onKeydownClear(event: KeyboardEvent) {
-			if (event.code === 'Space' || event.code === 'Enter') {
+			if (event.code === "Space" || event.code === "Enter") {
 				clear();
 			}
 		}
@@ -151,10 +151,10 @@ export const YFieldInput = defineComponent({
 		}
 
 		function clear() {
-			inValue.value = '';
-			displayValue.value = '';
-			emit('update:modelValue', inValue.value);
-			emit('change', inValue.value);
+			inValue.value = "";
+			displayValue.value = "";
+			emit("update:modelValue", inValue.value);
+			emit("change", inValue.value);
 		}
 
 		function changeDisplay() {
@@ -162,10 +162,10 @@ export const YFieldInput = defineComponent({
 			const { displayText } = props;
 			if (displayText !== undefined) {
 				let text = inValue.value;
-				if (typeof displayText === 'string') {
+				if (typeof displayText === "string") {
 					text = displayText;
 				}
-				if (displayText && typeof displayText === 'function') {
+				if (displayText && typeof displayText === "function") {
 					text = (displayText as any).call(vm, text);
 				}
 				nextTick(() => {
@@ -211,7 +211,7 @@ export const YFieldInput = defineComponent({
 		});
 
 		function onUpdateModel(value: any) {
-			emit('update:modelValue', value);
+			emit("update:modelValue", value);
 		}
 
 		useRender(() => (
@@ -224,8 +224,8 @@ export const YFieldInput = defineComponent({
 				extended={extended}
 				onUpdate:modelValue={onUpdateModel}
 				onClick={onClick}
-				onMousedown:display={($event) => emit('mousedown:display', $event)}
-				onKeydown:display={($event) => emit('keydown:display', $event)}
+				onMousedown:display={($event) => emit("mousedown:display", $event)}
+				onKeydown:display={($event) => emit("keydown:display", $event)}
 				style={[attrs.style]}
 			>
 				{{
@@ -245,7 +245,7 @@ export const YFieldInput = defineComponent({
 						<div
 							class={[`${NAME}__field`]}
 							data-id={defaultProps.attrId}
-							ref={'field'}
+							ref={"field"}
 						>
 							{props.floating ? yInput$.value?.createLabel?.() : undefined}
 							{slots.default?.({ ...defaultProps, focused: focused.value })}
@@ -261,7 +261,7 @@ export const YFieldInput = defineComponent({
 									}
 									placeholder={props.placeholder}
 									disabled={props.disabled}
-									tabindex={props.tabindex || '0'}
+									tabindex={props.tabindex || "0"}
 									autocomplete={attrs.autocomplete as string}
 									maxlength={attrs.maxlength as number | string}
 									min={attrs.min as number | string}
@@ -288,11 +288,12 @@ export const YFieldInput = defineComponent({
 										{props.enableClear && inValue.value && (
 											<div
 												class={[
-													'y-input__trailing',
-													'y-input__trailing--clear',
+													"y-input__trailing",
+													"y-input__trailing--clear",
 												]}
 											>
 												<button
+                          type="button"
 													class={[`${NAME}__clear`]}
 													disabled={props.disabled}
 													onClick={onClickClear}
@@ -304,7 +305,7 @@ export const YFieldInput = defineComponent({
 											</div>
 										)}
 										{slots.trailing && (
-											<div class={['y-input__trailing']}>
+											<div class={["y-input__trailing"]}>
 												{slots.trailing()}
 											</div>
 										)}
@@ -314,14 +315,14 @@ export const YFieldInput = defineComponent({
 					label: slots.label ? () => slots.label?.() : undefined,
 					prepend: slots.prepend ? () => slots.prepend?.() : undefined,
 					append: slots.append ? () => slots.append?.() : undefined,
-					'leading-out': slots['leading-out']
-						? () => slots['leading-out']?.()
+					"leading-out": slots["leading-out"]
+						? () => slots["leading-out"]?.()
 						: undefined,
-					'trailing-out': slots['trailing-out']
-						? () => slots['trailing-out']?.()
+					"trailing-out": slots["trailing-out"]
+						? () => slots["trailing-out"]?.()
 						: undefined,
-					'helper-text': slots['helper-text']
-						? (slotProps: any) => slots['helper-text']?.(slotProps)
+					"helper-text": slots["helper-text"]
+						? (slotProps: any) => slots["helper-text"]?.(slotProps)
 						: undefined,
 				}}
 			</YInput>

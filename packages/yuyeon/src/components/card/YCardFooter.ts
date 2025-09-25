@@ -1,11 +1,11 @@
-import { h } from "vue";
+import { h } from 'vue';
 
-import { defineComponent } from "@/util/component";
+import { defineComponent } from '@/util/component';
 
 export const YCardFooter = defineComponent({
-  name: "YCardFooter",
+  name: 'YCardFooter',
   render() {
-    return h("div", { class: "y-card__footer" }, this.$slots.default?.());
+    return h('div', { class: 'y-card__footer' }, this.$slots.default?.());
   },
 });
 

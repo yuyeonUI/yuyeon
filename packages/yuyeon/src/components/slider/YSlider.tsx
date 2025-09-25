@@ -22,10 +22,7 @@ export const YSlider = defineComponent({
     'update:modelValue': () => true,
   },
   setup(props, { slots }) {
-    useRender(() =>
-      (<div class={['y-slider']}>
-      </div>)
-    );
+    useRender(() => <div class={['y-slider']}></div>);
 
     return {};
   },

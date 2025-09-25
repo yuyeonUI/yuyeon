@@ -6,9 +6,9 @@ import {
   type PropType,
   ref,
   watchEffect,
-} from "vue";
+} from 'vue';
 
-import { propsFactory } from "@/util/component";
+import { propsFactory } from '@/util/component';
 
 export type BaseType =
   | string
@@ -22,7 +22,7 @@ export const pressBasePropsOptions = propsFactory(
     base: [String, Object, Array] as PropType<BaseType>,
     baseProps: Object as PropType<Record<string, any>>,
   },
-  "YLayer.base",
+  'YLayer.base',
 );
 
 interface BaseProps {
@@ -76,7 +76,7 @@ export function useBase(props: BaseProps) {
       }
       baseEl.value = toEl;
     },
-    { flush: "post" },
+    { flush: 'post' },
   );
 
   return {
@@ -93,11 +93,11 @@ function getBase(selector: BaseType, vm: ComponentInternalInstance) {
 
   let ret;
 
-  if (selector === "parent") {
+  if (selector === 'parent') {
     let el = vm?.proxy?.$el?.parentNode;
     let parentEl = el;
     while (el) {
-      if (el?.hasAttribute("data-base-parent")) {
+      if (el?.hasAttribute('data-base-parent')) {
         parentEl = el;
         break;
       }
@@ -106,11 +106,11 @@ function getBase(selector: BaseType, vm: ComponentInternalInstance) {
     ret = parentEl;
   }
   // Selector
-  else if (typeof selector === "string") {
+  else if (typeof selector === 'string') {
     ret = document.querySelector(selector);
   }
   // Component
-  else if ("$el" in selector) {
+  else if ('$el' in selector) {
     ret = selector.$el;
   }
   // HTMLElement | Element | [x, y]

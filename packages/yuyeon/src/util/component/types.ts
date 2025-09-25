@@ -1,4 +1,4 @@
-import type { EmitsOptions, ObjectEmitsOptions, PropType } from "vue";
+import type { EmitsOptions, ObjectEmitsOptions, PropType } from 'vue';
 
 export type EventProp<T extends any[] = any[], F = (...args: T) => any> =
   | F

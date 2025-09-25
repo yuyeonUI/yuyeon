@@ -1,18 +1,18 @@
-import { type PropType, ref } from "vue";
+import { type PropType, ref } from 'vue';
 
-import { useRender } from "@/composables/component";
-import { defineComponent } from "@/util/component";
+import { useRender } from '@/composables/component';
+import { defineComponent } from '@/util/component';
 
-const NAME = "YBench";
+const NAME = 'YBench';
 
 const YBenchPropOptions = {
   tag: {
     type: String as PropType<string>,
-    default: "div",
+    default: 'div',
   },
   position: {
-    type: String as PropType<"top" | "left" | "right" | "bottom">,
-    default: "top",
+    type: String as PropType<'top' | 'left' | 'right' | 'bottom'>,
+    default: 'top',
   },
   floating: {
     type: Boolean as PropType<boolean>,

@@ -7,12 +7,12 @@ import {
   type Ref,
   ref,
   watchEffect,
-} from "vue";
+} from 'vue';
 
-import { getRangeArr } from "@/util/common";
-import { propsFactory } from "@/util/component";
+import { getRangeArr } from '@/util/common';
+import { propsFactory } from '@/util/component';
 
-import { type DataTableHeader, type InternalDataTableHeader } from "../types";
+import { type DataTableHeader, type InternalDataTableHeader } from '../types';
 
 export const pressDataTableHeader = propsFactory(
   {
@@ -21,13 +21,13 @@ export const pressDataTableHeader = propsFactory(
       default: () => [],
     },
   },
-  "YDataTable--header",
+  'YDataTable--header',
 );
 
 export const Y_DATA_TABLE_HEADER_KEY: InjectionKey<{
   headers: Ref<InternalDataTableHeader[][]>;
   columns: Ref<InternalDataTableHeader[]>;
-}> = Symbol.for("yuyeon.data-table.header");
+}> = Symbol.for('yuyeon.data-table.header');
 
 type HeaderProps = {
   headers: DeepReadonly<DataTableHeader[]> | undefined;
@@ -50,21 +50,21 @@ export function createHeader(
       row.map((column) => ({ column, rowIndex: index })),
     );
     const rowCount = rows.length;
-    const defaultHeader = { text: "", sortable: false };
+    const defaultHeader = { text: '', sortable: false };
     const defaultActionHeader = { ...defaultHeader, width: 48 };
 
     if (options?.enableSelect?.value) {
       const foundIndex = flat.findIndex(
-        ({ column }) => column.key === "data-table-select",
+        ({ column }) => column.key === 'data-table-select',
       );
       if (foundIndex < 0) {
         const fixed = flat.some(
-          ({ column }) => column?.fixed === true || column?.fixed === "left",
+          ({ column }) => column?.fixed === true || column?.fixed === 'left',
         );
         flat.unshift({
           column: {
             ...defaultActionHeader,
-            key: "data-table-select",
+            key: 'data-table-select',
             rowspan: rowCount,
             fixed,
           },
@@ -105,13 +105,13 @@ export function createHeader(
 
     fixedRows.forEach((row) => {
       for (let i = row.length - 1; i >= 0; i--) {
-        if (row[i].fixed === true || row[i].fixed === "left") {
+        if (row[i].fixed === true || row[i].fixed === 'left') {
           row[i].lastFixed = true;
           break;
         }
       }
       // fixed right
-      const rightFixed = row.filter((col) => col.fixed === "right");
+      const rightFixed = row.filter((col) => col.fixed === 'right');
       let rightOffsets = 0;
       for (let i = rightFixed.length - 1; i >= 0; i--) {
         rightFixed[i].rightOffset = rightOffsets;

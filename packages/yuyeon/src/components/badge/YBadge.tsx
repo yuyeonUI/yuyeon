@@ -1,24 +1,24 @@
-import { type PropType, type SlotsType, vShow, withDirectives } from "vue";
+import { type PropType, type SlotsType, vShow, withDirectives } from 'vue';
 
-import { useRender } from "@/composables/component";
-import { useI18n } from "@/composables/i18n";
-import { IconValue } from "@/composables/icon";
+import { useRender } from '@/composables/component';
+import { useI18n } from '@/composables/i18n';
+import { IconValue } from '@/composables/icon';
 import {
   styleColorPropsOptions,
   useStyleColor,
-} from "@/composables/style-color";
-import { PolyTransition } from "@/composables/transition";
-import { defineComponent, propsFactory } from "@/util/component";
+} from '@/composables/style-color';
+import { PolyTransition } from '@/composables/transition';
+import { defineComponent, propsFactory } from '@/util/component';
 
-import { YIcon } from "../icon/YIcon";
+import { YIcon } from '../icon/YIcon';
 
-import "./YBadge.scss";
+import './YBadge.scss';
 
 export const pressYBadgePropsOptions = propsFactory(
   {
     tag: {
       type: String as PropType<string>,
-      default: "div",
+      default: 'div',
     },
     dot: Boolean,
     bordered: Boolean,
@@ -28,21 +28,21 @@ export const pressYBadgePropsOptions = propsFactory(
     hide: Boolean,
     label: {
       type: String,
-      default: "$yuyeon.badge",
+      default: '$yuyeon.badge',
     },
     content: [Number, String],
     max: Number,
     transition: {
       type: String,
-      default: "fade",
+      default: 'fade',
     },
     ...styleColorPropsOptions,
   },
-  "YBadge",
+  'YBadge',
 );
 
 export const YBadge = defineComponent({
-  name: "YBadge",
+  name: 'YBadge',
   props: pressYBadgePropsOptions(),
   slots: Object as SlotsType<{
     default: any;
@@ -51,7 +51,7 @@ export const YBadge = defineComponent({
   setup(props, { slots }) {
     const { t } = useI18n();
 
-    const { colorVars } = useStyleColor(props, "badge");
+    const { colorVars } = useStyleColor(props, 'badge');
 
     useRender(() => {
       const ElTag = props.tag as keyof HTMLElementTagNameMap;
@@ -65,12 +65,12 @@ export const YBadge = defineComponent({
       return (
         <ElTag
           class={[
-            "y-badge",
+            'y-badge',
             {
-              "y-badge--bordered": props.bordered,
-              "y-badge--dot": props.dot,
-              "y-badge--floating": props.floating,
-              "y-badge--inline": props.inline,
+              'y-badge--bordered': props.bordered,
+              'y-badge--dot': props.dot,
+              'y-badge--floating': props.floating,
+              'y-badge--inline': props.inline,
             },
           ]}
           style={colorVars.value}
@@ -82,8 +82,9 @@ export const YBadge = defineComponent({
               transitionProps={{ name: props.transition }}
             >
               {withDirectives(
+                // biome-ignore lint/a11y/useSemanticElements: aria-live
                 <span
-                  class={["y-badge__badge"]}
+                  class={['y-badge__badge']}
                   aria-atomic="true"
                   aria-label={t(props.label, value)}
                   aria-live="polite"

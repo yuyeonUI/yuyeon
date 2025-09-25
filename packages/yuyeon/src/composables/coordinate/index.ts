@@ -1,12 +1,13 @@
-import type { CSSProperties, PropType, Ref } from 'vue';
+import type { PropType, Ref } from 'vue';
 import { onScopeDispose, ref, watch } from 'vue';
 
-import { Rect } from '../../util/rect';
+import { CssProperties } from '@/types';
+
 import { propsFactory } from '../../util/component';
+import { Rect } from '../../util/rect';
 import { useToggleScope } from '../scope';
 import { applyArrangement } from './arrangement';
 import { applyLevitation } from './levitation';
-
 import { CoordinateState } from './types';
 
 const coordinateStrategies = {
@@ -18,13 +19,15 @@ export type CoordinateStrategyFn = (
   props: any,
   state: CoordinateState,
   coordinate: Ref<Rect | undefined>,
-  coordinateStyles: Ref<CSSProperties>,
+  coordinateStyles: Ref<CssProperties>,
 ) => undefined | { updateCoordinate: (e: Event) => void };
 
 export const pressCoordinateProps = propsFactory(
   {
     coordinateStrategy: {
-      type: [String, Function] as PropType<keyof typeof coordinateStrategies | CoordinateStrategyFn>,
+      type: [String, Function] as PropType<
+        keyof typeof coordinateStrategies | CoordinateStrategyFn
+      >,
       default: 'arrangement',
     },
     position: {
@@ -39,7 +42,7 @@ export const pressCoordinateProps = propsFactory(
     },
     origin: {
       type: String,
-      default: 'auto'
+      default: 'auto',
     },
     offset: {
       type: [Number, String, Array] as PropType<number | string | number[]>,
@@ -47,7 +50,7 @@ export const pressCoordinateProps = propsFactory(
     viewportMargin: {
       type: [Number, String, Array],
       default: 16,
-    }
+    },
   },
   'Coordinate',
 );
@@ -55,7 +58,7 @@ export const pressCoordinateProps = propsFactory(
 export function useCoordinate(props: any, state: CoordinateState) {
   const updateCoordinate = ref<(e: Event) => void>();
   const coordinate = ref<Rect | undefined>();
-  const coordinateStyles = ref<CSSProperties>({});
+  const coordinateStyles = ref<CssProperties>({});
 
   useToggleScope(
     () => !!(state.active.value && props.coordinateStrategy),

@@ -1,12 +1,12 @@
-import { computed, type PropType, ref } from "vue";
+import { computed, type PropType, ref } from 'vue';
 
-import { useRender } from "@/composables/component";
-import { IconValue, useIcon } from "@/composables/icon";
-import { pressThemePropsOptions, useLocalTheme } from "@/composables/theme";
-import { defineComponent, propsFactory } from "@/util/component";
-import { toStyleSizeValue } from "@/util/ui";
+import { useRender } from '@/composables/component';
+import { IconValue, useIcon } from '@/composables/icon';
+import { pressThemePropsOptions, useLocalTheme } from '@/composables/theme';
+import { defineComponent, propsFactory } from '@/util/component';
+import { toStyleSizeValue } from '@/util/ui';
 
-import "./YIcon.scss";
+import './YIcon.scss';
 
 export const pressYIconPropsOptions = propsFactory(
   {
@@ -15,19 +15,19 @@ export const pressYIconPropsOptions = propsFactory(
     icon: IconValue,
     tag: {
       type: String,
-      default: "i",
+      default: 'i',
     },
     size: {
       type: [String, Number],
     },
-    class: [String, Array] as PropType<any>,
+    class: [String, Array] as PropType<string | string[] | Record<string, any>[]>,
     ...pressThemePropsOptions(),
   },
-  "YIcon",
+  'YIcon',
 );
 
 export const YIcon = defineComponent({
-  name: "YIcon",
+  name: 'YIcon',
   props: pressYIconPropsOptions(),
   setup(props, { attrs, slots }) {
     const iconCode = ref<string>();
@@ -42,7 +42,7 @@ export const YIcon = defineComponent({
           (node) =>
             node.type === Text &&
             node.children &&
-            typeof node.children === "string",
+            typeof node.children === 'string',
         )[0]?.children as string;
       }
 
@@ -51,11 +51,11 @@ export const YIcon = defineComponent({
           tag={props.tag}
           icon={iconData.value.icon}
           class={[
-            "y-icon",
-            "notranslate",
+            'y-icon',
+            'notranslate',
             themeClasses.value,
             {
-              "y-icon--clickable": !!attrs.onClick,
+              'y-icon--clickable': !!attrs.onClick,
             },
             props.class,
           ]}
@@ -64,7 +64,7 @@ export const YIcon = defineComponent({
             width: toStyleSizeValue(props.size),
             height: toStyleSizeValue(props.size),
           }}
-          role={attrs.onClick ? "button" : undefined}
+          role={attrs.onClick ? 'button' : undefined}
           aria-hidden={!attrs.onClick}
         >
           {defaultSlot}
@@ -74,6 +74,6 @@ export const YIcon = defineComponent({
   },
 });
 
-export type YIconIconProp = IconValue & Omit<PropType<YIcon["$props"]>, "icon">;
+export type YIconIconProp = IconValue & Omit<PropType<YIcon['$props']>, 'icon'>;
 
 export type YIcon = InstanceType<typeof YIcon>;

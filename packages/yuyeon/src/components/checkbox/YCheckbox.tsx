@@ -1,16 +1,16 @@
-import { computed, type PropType, ref, watch, withModifiers } from "vue";
+import { computed, type PropType, ref, watch, withModifiers } from 'vue';
 
-import { useRender } from "@/composables/component";
-import { defineComponent, getUid } from "@/util/component";
+import { useRender } from '@/composables/component';
+import { defineComponent, getUid } from '@/util/component';
 
-import YInputCheckbox from "./YInputCheckbox";
+import YInputCheckbox from './YInputCheckbox';
 
-import "./YCheckbox.scss";
+import './YCheckbox.scss';
 
 export const YCheckbox = defineComponent({
-  name: "YCheckbox",
+  name: 'YCheckbox',
   components: { YInputCheckbox },
-  emits: ["focus", "blur", "click", "update:modelValue", "change"],
+  emits: ['focus', 'blur', 'click', 'update:modelValue', 'change'],
   props: {
     modelValue: [Boolean, Array] as PropType<boolean | any[]>,
     value: [String, Number, Object] as PropType<any>,
@@ -23,7 +23,7 @@ export const YCheckbox = defineComponent({
     },
     color: {
       type: String as PropType<string>,
-      default: () => "primary",
+      default: () => 'primary',
     },
     disabled: Boolean as PropType<boolean>,
     readonly: Boolean as PropType<boolean>,
@@ -31,25 +31,25 @@ export const YCheckbox = defineComponent({
   setup(props, { emit, slots }) {
     const focused = ref(false);
     const checked = ref(false);
-    const counterId = (getUid() ?? "").toString();
+    const counterId = (getUid() ?? '').toString();
     const inputId = `input-${counterId}`;
 
     function onFocus(e: FocusEvent) {
       focused.value = true;
-      emit("focus", e);
+      emit('focus', e);
     }
 
     function onBlur(e: FocusEvent) {
       focused.value = false;
-      emit("blur", e);
+      emit('blur', e);
     }
 
     function onClick(e: Event, ...args: any[]) {
-      emit("click", e);
+      emit('click', e);
       if (props.disabled || props.readonly) return;
       const check = !checked.value;
       checked.value = check;
-      emit("change", check);
+      emit('change', check);
     }
 
     function inputByProp() {
@@ -60,7 +60,7 @@ export const YCheckbox = defineComponent({
         } else {
           checked.value = false;
         }
-      } else if (typeof props.modelValue === "boolean") {
+      } else if (typeof props.modelValue === 'boolean') {
         checked.value = props.modelValue;
       }
     }
@@ -68,16 +68,16 @@ export const YCheckbox = defineComponent({
     const classes = computed<Record<string, boolean>>(() => {
       const { reverse, disabled, readonly } = props;
       return {
-        "y-checkbox": true,
-        "y-checkbox--reverse": !!reverse,
-        "y-checkbox--focused": focused.value,
-        "y-checkbox--disabled": !!disabled,
-        "y-checkbox--readonly": !!readonly,
+        'y-checkbox': true,
+        'y-checkbox--reverse': !!reverse,
+        'y-checkbox--focused': focused.value,
+        'y-checkbox--disabled': !!disabled,
+        'y-checkbox--readonly': !!readonly,
       };
     });
 
     const computedIcon = computed<string | undefined>(() => {
-      if (typeof props.icon === "string") {
+      if (typeof props.icon === 'string') {
         return props.icon;
       }
       return undefined;
@@ -105,9 +105,9 @@ export const YCheckbox = defineComponent({
         } else if (!neo && index !== -1) {
           value.splice(index, 1);
         }
-        emit("update:modelValue", value);
+        emit('update:modelValue', value);
       } else {
-        emit("update:modelValue", neo);
+        emit('update:modelValue', neo);
       }
     });
 
@@ -148,7 +148,7 @@ export const YCheckbox = defineComponent({
             </YInputCheckbox>
             {/** biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
             <label
-              onClick={withModifiers(() => {}, ["stop"])}
+              onClick={withModifiers(() => {}, ['stop'])}
               class="y-checkbox__label"
               for={inputId}
             >

@@ -267,7 +267,7 @@ export function useChoice(
     } else {
       const isSelected = selected.value.includes(id);
       if (props.mandatory && isSelected) return;
-      selected.value = value ?? !isSelected ? [id] : [];
+      selected.value = (value ?? !isSelected) ? [id] : [];
     }
   }
 

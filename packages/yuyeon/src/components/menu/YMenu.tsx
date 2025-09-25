@@ -6,22 +6,22 @@ import {
   SlotsType,
   toRef,
   watch,
-} from "vue";
+} from 'vue';
 
-import { useModelDuplex } from "@/composables/communication";
-import { useRender } from "@/composables/component";
-import { pressPolyTransitionPropsOptions } from "@/composables/transition";
-import { bindClasses, chooseProps, defineComponent } from "@/util/component";
-import { hasElementMouseEvent } from "@/util/dom";
-import { toKebabCase } from "@/util/string";
+import { useModelDuplex } from '@/composables/communication';
+import { useRender } from '@/composables/component';
+import { pressPolyTransitionPropsOptions } from '@/composables/transition';
+import { bindClasses, chooseProps, defineComponent } from '@/util/component';
+import { hasElementMouseEvent } from '@/util/dom';
+import { toKebabCase } from '@/util/string';
 
-import { pressYLayerProps, YLayer } from "../layer";
-import { useDelay } from "../layer/active-delay";
-import { useActiveStack } from "../layer/active-stack";
+import { pressYLayerProps, YLayer } from '../layer';
+import { useDelay } from '../layer/active-delay';
+import { useActiveStack } from '../layer/active-stack';
 
-import "./YMenu.scss";
+import './YMenu.scss';
 
-const NAME = "YMenu";
+const NAME = 'YMenu';
 const CLASS_NAME = toKebabCase(NAME);
 
 export const YMenuPropOptions = {
@@ -43,8 +43,8 @@ export const YMenuPropOptions = {
     default: true,
   },
   ...pressYLayerProps({
-    coordinateStrategy: "levitation" as const,
-    scrollStrategy: "reposition" as const,
+    coordinateStrategy: 'levitation' as const,
+    scrollStrategy: 'reposition' as const,
   }),
   preventCloseBubble: Boolean as PropType<boolean>,
 };
@@ -57,15 +57,15 @@ export const YMenu = defineComponent({
   props: {
     ...YMenuPropOptions,
     ...pressPolyTransitionPropsOptions({
-      transition: "fade",
+      transition: 'fade',
     }),
   },
-  emits: ["update:modelValue", "afterLeave", "hoverContent"],
+  emits: ['update:modelValue', 'afterLeave', 'hoverContent'],
   slots: Object as SlotsType<{
     default: any;
     base: any;
   }>,
-  expose: ["layer$", "baseEl"],
+  expose: ['layer$', 'baseEl'],
   setup(props, { slots, emit, expose }) {
     const vm = getCurrentInstance();
     const layer$ = ref<typeof YLayer>();
@@ -74,7 +74,7 @@ export const YMenu = defineComponent({
       const boundClasses = bindClasses(props.menuClasses);
       return {
         ...boundClasses,
-        "y-menu": true,
+        'y-menu': true,
       };
     });
 
@@ -84,7 +84,7 @@ export const YMenu = defineComponent({
     const { children, parent } = useActiveStack(
       layer$,
       active,
-      toRef(props, "preventCloseBubble"),
+      toRef(props, 'preventCloseBubble'),
     );
     const { startOpenDelay, startCloseDelay } = useDelay(
       props,
@@ -115,7 +115,7 @@ export const YMenu = defineComponent({
     }
 
     watch(hovered, (value) => {
-      emit("hoverContent", value);
+      emit('hoverContent', value);
       if (!value) {
         startCloseDelay();
       }
@@ -139,7 +139,7 @@ export const YMenu = defineComponent({
       if (props.closeCondition === false) {
         return;
       }
-      if (typeof props.closeCondition === "function") {
+      if (typeof props.closeCondition === 'function') {
         if (props.closeCondition(e) === false) {
           active.value = false;
           return;
@@ -162,13 +162,13 @@ export const YMenu = defineComponent({
     }
 
     function bindHover(el: HTMLElement) {
-      el.addEventListener("mouseenter", onMouseenter);
-      el.addEventListener("mouseleave", onMouseleave);
+      el.addEventListener('mouseenter', onMouseenter);
+      el.addEventListener('mouseleave', onMouseleave);
     }
 
     function unbindHover(el: HTMLElement) {
-      el.removeEventListener("mouseenter", onMouseenter);
-      el.removeEventListener("mouseleave", onMouseleave);
+      el.removeEventListener('mouseenter', onMouseenter);
+      el.removeEventListener('mouseleave', onMouseleave);
     }
 
     watch(
@@ -176,10 +176,10 @@ export const YMenu = defineComponent({
       (neo, old) => {
         if (neo) {
           bindHover(neo);
-          neo.addEventListener("click", onClick);
+          neo.addEventListener('click', onClick);
         } else if (old) {
           unbindHover(old);
-          old.removeEventListener("click", onClick);
+          old.removeEventListener('click', onClick);
         }
       },
       {
@@ -210,13 +210,13 @@ export const YMenu = defineComponent({
             ref={layer$}
             transition={props.transition}
             onClick:complement={onComplementClick}
-            onAfterLeave={() => emit("afterLeave")}
+            onAfterLeave={() => emit('afterLeave')}
             {...{
               ...chooseProps(props, YLayer.props),
               classes: classes.value,
               scrim: false,
               contentClasses: {
-                "y-menu__content": true,
+                'y-menu__content': true,
                 ...computedContentClasses.value,
               },
             }}
@@ -224,7 +224,7 @@ export const YMenu = defineComponent({
           >
             {{
               default: (...args: any) => {
-                return <>{slots.default?.(...args) ?? ""}</>;
+                return <>{slots.default?.(...args) ?? ''}</>;
               },
               base: (...args: any[]) => slots.base?.(...args),
             }}

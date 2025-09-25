@@ -1,6 +1,9 @@
+/** biome-ignore-all lint/suspicious/useIterableCallbackReturn: <explanation> */
+
+// biome-ignore lint/suspicious/noShadowRestrictedNames: <explanation>
 export function hasOwnProperty(object: any, property: string) {
   if (object) {
-    return Object.prototype.hasOwnProperty.call(object, property);
+    return Object.hasOwn(object, property);
   }
   return false;
 }
@@ -8,7 +11,7 @@ export function hasOwnProperty(object: any, property: string) {
 export function getNestedValue(
   obj: any,
   path: (string | number)[],
-  fallback?: any,
+  fallback?: any
 ): any {
   const last = path.length - 1;
   let traversObj = obj;
@@ -32,7 +35,7 @@ export function getNestedValue(
 export function mergeDeep(
   source: Record<string, any> = {},
   overwrite: Record<string, any> = {},
-  arrayFn?: (source: unknown[], overwrite: unknown[]) => unknown[],
+  arrayFn?: (source: unknown[], overwrite: unknown[]) => unknown[]
 ) {
   const ret = { ...source };
   for (const key in overwrite) {
@@ -59,7 +62,7 @@ export function mergeDeep(
 export function getObjectValueByPath(
   obj: any,
   path: string,
-  fallback?: any,
+  fallback?: any
 ): any {
   // credit: http://stackoverflow.com/questions/6491463/accessing-nested-javascript-objects-with-string-key#comment55278413_6491621
   let traversPath = path;
@@ -81,7 +84,7 @@ export type SelectItemKey =
 export function getPropertyFromItem(
   item: any,
   property: SelectItemKey,
-  fallback?: any,
+  fallback?: any
 ): any {
   if (property == null) return item === undefined ? fallback : item;
 
@@ -141,9 +144,28 @@ export function isEmpty(target: any) {
 
 export function omit<T extends object, U extends Extract<keyof T, string>>(
   obj: T,
-  excludes: U[],
+  excludes: U[]
 ): Omit<T, U> {
   const ret = { ...obj };
   excludes.forEach((prop) => delete ret[prop]);
   return ret;
+}
+
+export const noop = () => void 0;
+
+export function makeEventPromiseLike<T extends Event, P = any>(
+  event: T,
+  promise: Promise<P>
+): T & Promise<P> {
+  const promiseMethods = ["then", "catch", "finally"] as const;
+
+  promiseMethods.forEach((method) => {
+    Object.defineProperty(event, method, {
+      value: promise[method].bind(promise),
+      writable: false,
+      enumerable: false,
+    });
+  });
+
+  return event as T & Promise<P>;
 }

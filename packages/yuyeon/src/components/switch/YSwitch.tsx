@@ -93,9 +93,13 @@ export const YSwitch = defineComponent({
       };
     });
 
-    watch(model, () => {
-      inputByProp();
-    }, { immediate: true });
+    watch(
+      model,
+      () => {
+        inputByProp();
+      },
+      { immediate: true },
+    );
 
     function inputByProp() {
       const modelValue = model.value;

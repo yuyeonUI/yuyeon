@@ -1,11 +1,11 @@
-import { computed, type CSSProperties, defineComponent, ref, watch } from "vue";
+import { computed, type CSSProperties, defineComponent, ref, watch } from 'vue';
 
-import { useRender } from "@/composables/component";
+import { useRender } from '@/composables/component';
 
-import "./YDividePanel.scss";
+import './YDividePanel.scss';
 
 export const YDividePanel = defineComponent({
-  name: "YDividePanel",
+  name: 'YDividePanel',
   setup(props, { slots }) {
     const contentRate = ref(50);
     const isResizing = ref(false);
@@ -18,20 +18,20 @@ export const YDividePanel = defineComponent({
     });
 
     const topStyles = computed<CSSProperties>(() => {
-      let inset = "0 0";
+      let inset = '0 0';
       if (activeSecondary.value) {
         inset = `0 0 ${100 - contentRate.value}% 0`;
       }
       return {
-        position: "absolute",
+        position: 'absolute',
         inset,
       };
     });
 
     const classes = computed(() => {
       return {
-        "y-divide-panel": true,
-        "y-divide-panel--resizing": isResizing.value,
+        'y-divide-panel': true,
+        'y-divide-panel--resizing': isResizing.value,
       };
     });
 
@@ -52,9 +52,9 @@ export const YDividePanel = defineComponent({
 
     function cancelEvent() {
       isResizing.value = false;
-      rootRef.value.removeEventListener("mousemove", moveListener);
-      rootRef.value.removeEventListener("mouseup", upListener);
-      rootRef.value.removeEventListener("mouseleave", leaveListener);
+      rootRef.value.removeEventListener('mousemove', moveListener);
+      rootRef.value.removeEventListener('mouseup', upListener);
+      rootRef.value.removeEventListener('mouseleave', leaveListener);
     }
 
     function upListener(event: Event) {
@@ -68,9 +68,9 @@ export const YDividePanel = defineComponent({
     function onMousedown(event: MouseEvent) {
       event.preventDefault();
       isResizing.value = true;
-      rootRef.value.addEventListener("mousemove", moveListener);
-      rootRef.value.addEventListener("mouseup", upListener);
-      rootRef.value.addEventListener("mouseleave", leaveListener);
+      rootRef.value.addEventListener('mousemove', moveListener);
+      rootRef.value.addEventListener('mouseup', upListener);
+      rootRef.value.addEventListener('mouseleave', leaveListener);
     }
 
     useRender(() => {
@@ -78,7 +78,7 @@ export const YDividePanel = defineComponent({
         <>
           <div class={classes.value} ref={rootRef}>
             <div
-              class={"y-divide-panel__top-container"}
+              class={'y-divide-panel__top-container'}
               style={topStyles.value}
             >
               {slots.default?.()}
@@ -89,7 +89,7 @@ export const YDividePanel = defineComponent({
                   <div
                     class="y-divide-panel__divider"
                     style={{
-                      position: "absolute",
+                      position: 'absolute',
                       inset: `${contentRate.value}% 0 0 0`,
                     }}
                     onMousedown={onMousedown}
@@ -97,9 +97,9 @@ export const YDividePanel = defineComponent({
                     <div class="y-divide-panel__divider-line"></div>
                   </div>
                   <div
-                    class={"y-divide-panel__secondary-container"}
+                    class={'y-divide-panel__secondary-container'}
                     style={{
-                      position: "absolute",
+                      position: 'absolute',
                       inset: `${contentRate.value}% 0 0 0`,
                     }}
                   >
