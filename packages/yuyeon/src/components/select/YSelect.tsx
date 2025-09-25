@@ -10,34 +10,34 @@ import {
 	vShow,
 	watch,
 	withDirectives,
-} from 'vue';
+} from "vue";
 
-import { useModelDuplex } from '@/composables/communication';
-import { useRender } from '@/composables/component';
-import { pressCoordinateProps } from '@/composables/coordinate';
-import { useI18n } from '@/composables/i18n';
+import { useModelDuplex } from "@/composables/communication";
+import { useRender } from "@/composables/component";
+import { pressCoordinateProps } from "@/composables/coordinate";
+import { useI18n } from "@/composables/i18n";
 import {
 	type ListItem,
 	pressListItemsPropsOptions,
 	useItems,
-} from '@/composables/list-items';
-import { wrapInArray } from '@/util/array';
-import { deepEqual, omit } from '@/util/common';
+} from "@/composables/list-items";
+import { wrapInArray } from "@/util/array";
+import { deepEqual, omit } from "@/util/common";
 import {
 	chooseProps,
 	defineComponent,
 	getHtmlElement,
 	propsFactory,
-} from '@/util/component';
-import { getScrollParent } from '@/util/scroll';
+} from "@/util/component";
+import { getScrollParent } from "@/util/scroll";
 
-import { YCard } from '../card';
-import { pressYFieldInputPropsOptions, YFieldInput } from '../field-input';
-import { YIcon, type YIconIconProp } from '../icon';
-import { YList, YListItem } from '../list';
-import { YMenu } from '../menu';
+import { YCard } from "../card";
+import { pressYFieldInputPropsOptions, YFieldInput } from "../field-input";
+import { YIcon, type YIconIconProp } from "../icon";
+import { YList, YListItem } from "../list";
+import { YMenu } from "../menu";
 
-import './YSelect.scss';
+import "./YSelect.scss";
 
 export type ItemComparator = (
 	optionsItem: any,
@@ -56,11 +56,11 @@ export const pressSelectPropsOptions = propsFactory(
 		},
 		defaultSelect: Boolean,
 		menuProps: {
-			type: Object as PropType<YMenu['$props']>,
+			type: Object as PropType<YMenu["$props"]>,
 		},
 		...pressListItemsPropsOptions(),
 	},
-	'Select',
+	"Select",
 );
 
 export const pressYSelectPropsOptions = propsFactory(
@@ -71,7 +71,7 @@ export const pressYSelectPropsOptions = propsFactory(
 		},
 		dropdownIcon: {
 			type: [String, Array, Object] as PropType<YIconIconProp>,
-			default: '$dropdown',
+			default: "$dropdown",
 		},
 		openDelay: {
 			type: Number as PropType<number>,
@@ -83,25 +83,25 @@ export const pressYSelectPropsOptions = propsFactory(
 		},
 		...pressSelectPropsOptions(),
 		...pressYFieldInputPropsOptions(),
-		...omit(pressCoordinateProps({ position: 'bottom' as 'bottom' }), [
-			'coordinateStrategy',
+		...omit(pressCoordinateProps({ position: "bottom" as "bottom" }), [
+			"coordinateStrategy",
 		]),
 	},
-	'YSelect',
+	"YSelect",
 );
 
 export const YSelect = defineComponent<
 	ReturnType<typeof pressYSelectPropsOptions>
 >({
-	name: 'YSelect',
+	name: "YSelect",
 	inheritAttrs: false,
 	props: {
 		...pressYSelectPropsOptions(),
 	},
 	emits: {
-		'update:modelValue': (value: any) => true,
-		'update:opened': (opened: boolean) => true,
-		'click:item': (item: any, e: MouseEvent) => true,
+		"update:modelValue": () => true,
+		"update:opened": (opened: boolean) => true,
+		"click:item": (item: any, e: MouseEvent) => true,
 		change: (value: any) => true,
 	},
 	slots: Object as SlotsType<{
@@ -114,22 +114,22 @@ export const YSelect = defineComponent<
 		};
 		leading: any;
 		label: any;
-		'helper-text': any;
+		"helper-text": any;
 		menu: any;
-		'menu-prepend': any;
-		'menu-append': any;
-		'dropdown-icon': any;
+		"menu-prepend": any;
+		"menu-append": any;
+		"dropdown-icon": any;
 		item: { item: any; selected: boolean; select: () => void };
-		'item-leading': { item: any; selected: boolean; select: () => void };
-		'item-trailing': { item: any; selected: boolean; select: () => void };
+		"item-leading": { item: any; selected: boolean; select: () => void };
+		"item-trailing": { item: any; selected: boolean; select: () => void };
 	}>,
 	setup(props, { slots, attrs, expose, emit }) {
-		const fieldInputRef = ref();
+		const fieldInputRef = ref<InstanceType<typeof YFieldInput>>();
 		const menuRef = ref<InstanceType<typeof YMenu>>();
 		const listRef = ref<InstanceType<typeof YList>>();
-		const cardRef = ref<any>();
+		const cardRef = ref();
 
-		const opened = useModelDuplex(props, 'opened');
+		const opened = useModelDuplex(props, "opened");
 		const focused = shallowRef(false);
 
 		const { items, toRefineItems, toEmitItems } = useItems(props);
@@ -140,7 +140,7 @@ export const YSelect = defineComponent<
 		};
 		const model = useModelDuplex(
 			props,
-			'modelValue',
+			"modelValue",
 			[],
 			(v) => toRefineItems(v === null ? [null] : wrapInArray(v)),
 			setOut,
@@ -177,19 +177,19 @@ export const YSelect = defineComponent<
 		}
 
 		// Field
-		function onMousedownDisplay(event: MouseEvent) {
+		function onMousedownDisplay(_event: MouseEvent) {
 			if (props.disabled) return;
 			opened.value = !opened.value;
 		}
 
 		function onKeydownDisplay(event: KeyboardEvent) {
 			if (props.disabled) return;
-			if (event.key === 'Enter' || event.key === ' ') {
+			if (event.key === "Enter" || event.key === " ") {
 				opened.value = !opened.value;
 			}
 		}
 
-		function onBlur(event: FocusEvent) {
+		function onBlur(_event: FocusEvent) {
 			requestAnimationFrame(() => {
 				const contentEl = (menuRef.value as any)?.layer$?.content$;
 				if (contentEl?.contains(document.activeElement)) {
@@ -204,7 +204,7 @@ export const YSelect = defineComponent<
 		// Menu Contents
 		function onClickItem(item: ListItem, e: MouseEvent) {
 			if (item.disabled) return;
-			select(item);
+			select(item, e);
 			if (!props.multiple) {
 				setTimeout(() => {
 					opened.value = false;
@@ -226,7 +226,7 @@ export const YSelect = defineComponent<
 			}
 		}
 
-		function select(item: ListItem) {
+		function select(item: ListItem, e?: Event) {
 			let value: any[];
 			if (props.multiple) {
 				const index = selections.value.findIndex((selectedItem) => {
@@ -243,14 +243,14 @@ export const YSelect = defineComponent<
 				value = [item];
 			}
 			model.value = value;
-			emit('change', setOut(value));
+			emit("change", setOut(value), e, fieldInputRef.value);
 		}
 
 		const displayText = computed(() => {
 			if (props.multiple) {
-				return selections.value.map((item) => item.text).join(', ');
+				return selections.value.map((item) => item.text).join(", ");
 			}
-			return selections.value?.[0]?.text ?? '';
+			return selections.value?.[0]?.text ?? "";
 		});
 
 		const baseEl = computed(() => {
@@ -271,7 +271,7 @@ export const YSelect = defineComponent<
 			}
 			const listEl = getHtmlElement(listRef.value);
 			if (listEl) {
-				const activeEl = listEl?.querySelector('.y-list-item--active') as
+				const activeEl = listEl?.querySelector(".y-list-item--active") as
 					| HTMLElement
 					| undefined;
 				const contentEl = (menuRef.value as any)?.layer$
@@ -282,7 +282,7 @@ export const YSelect = defineComponent<
 						scrollEl &&
 						(contentEl.contains(scrollEl) || contentEl.isSameNode(scrollEl))
 					) {
-						scrollEl.scrollTo({ top: activeEl.offsetTop, behavior: 'smooth' });
+						scrollEl.scrollTo({ top: activeEl.offsetTop, behavior: "smooth" });
 					}
 				}
 			}
@@ -291,24 +291,24 @@ export const YSelect = defineComponent<
 		useRender(() => {
 			const fieldInputProps = chooseProps(props, YFieldInput.props);
 			const dropdownIconProps = chooseProps(
-				typeof props.dropdownIcon === 'object' ? props.dropdownIcon : {},
+				typeof props.dropdownIcon === "object" ? props.dropdownIcon : {},
 				YIcon.props,
 			);
 			return (
 				<YFieldInput
 					ref={fieldInputRef}
 					{...fieldInputProps}
-					modelValue={model.value.map((v: any) => v.props.value).join(', ')}
+					modelValue={model.value.map((v: any) => v.props.value).join(", ")}
 					validationValue={model.rxValue}
 					onMousedown:display={onMousedownDisplay}
 					onKeydown:display={onKeydownDisplay}
 					onBlur={onBlur}
 					readonly
 					class={[
-						'y-select',
+						"y-select",
 						{
-							'y-select--opened': opened.value,
-							'y-select--selected': selected.value.length > 0,
+							"y-select--opened": opened.value,
+							"y-select--selected": selected.value.length > 0,
 						},
 					]}
 					{...attrs}
@@ -324,7 +324,7 @@ export const YSelect = defineComponent<
 							};
 							return (
 								<>
-									<div class={['y-select__selection']}>
+									<div class={["y-select__selection"]}>
 										{slots.selection
 											? slots.selection?.(selectionProps)
 											: selected.value.length > 0
@@ -337,14 +337,14 @@ export const YSelect = defineComponent<
 										position={props.position}
 										align={props.align}
 										origin={props.origin}
-										content-classes={['y-select__content']}
+										content-classes={["y-select__content"]}
 										maxHeight={props.maxHeight}
 										open-on-click-base={false}
 										onAfterLeave={onAfterLeave}
 										open-delay={props.openDelay}
 										close-delay={props.closeDelay}
 										closeCondition={closeCondition}
-										base='parent'
+										base="parent"
 										{...extraMenuProps.value}
 										v-model={opened.value}
 									>
@@ -353,15 +353,15 @@ export const YSelect = defineComponent<
 												? () => slots.menu?.()
 												: () => (
 														<YCard ref={cardRef}>
-															{slots['menu-prepend']?.()}
+															{slots["menu-prepend"]?.()}
 															{(items.value?.length ?? 0) > 0 ? (
 																<YList ref={listRef}>
 																	{items.value.map((item) => {
 																		const itemProps = {
 																			item,
 																			selected: isSelected(item),
-																			select: () => {
-																				select(item);
+																			select: (e?: Event) => {
+																				select(item, e);
 																			},
 																		};
 																		return withDirectives(
@@ -369,7 +369,7 @@ export const YSelect = defineComponent<
 																				onClick={(e) => onClickItem(item, e)}
 																				class={[
 																					{
-																						'y-list-item--active':
+																						"y-list-item--active":
 																							isSelected(item),
 																					},
 																				]}
@@ -381,15 +381,15 @@ export const YSelect = defineComponent<
 																							? slots.item?.(itemProps)
 																							: item.text,
 																					leading:
-																						slots['item-leading'] &&
+																						slots["item-leading"] &&
 																						(() =>
-																							slots['item-leading']?.(
+																							slots["item-leading"]?.(
 																								itemProps,
 																							)),
 																					trailing:
-																						slots['item-trailing'] &&
+																						slots["item-trailing"] &&
 																						(() =>
-																							slots['item-trailing']?.(
+																							slots["item-trailing"]?.(
 																								itemProps,
 																							)),
 																				}}
@@ -399,11 +399,11 @@ export const YSelect = defineComponent<
 																	})}
 																</YList>
 															) : (
-																<div class='y-select__no-options'>
-																	{t('$yuyeon.noItems')}
+																<div class="y-select__no-options">
+																	{t("$yuyeon.noItems")}
 																</div>
 															)}
-															{slots['menu-append']?.()}
+															{slots["menu-append"]?.()}
 														</YCard>
 													),
 										}}
@@ -415,21 +415,21 @@ export const YSelect = defineComponent<
 							? (...args: any[]) => slots.leading?.(...args)
 							: undefined,
 						trailing: (...args: any[]) => {
-							return slots['dropdown-icon'] ? (
-								slots['dropdown-icon']()
+							return slots["dropdown-icon"] ? (
+								slots["dropdown-icon"]()
 							) : (
 								<YIcon
 									{...mergeProps(dropdownIconProps)}
 									icon={props.dropdownIcon}
-									class={['y-select__icon']}
+									class={["y-select__icon"]}
 								></YIcon>
 							);
 						},
 						label: slots.label
 							? (...args: any[]) => slots.label?.(...args)
 							: undefined,
-						'helper-text': slots['helper-text']
-							? (...args: any[]) => slots['helper-text']?.(...args)
+						"helper-text": slots["helper-text"]
+							? (...args: any[]) => slots["helper-text"]?.(...args)
 							: undefined,
 					}}
 				</YFieldInput>
