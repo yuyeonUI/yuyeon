@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import AlertCircleOutlineSvg from "@/assets/alert-circle-outline.svg?component";
-import VueSvg from "@/assets/vue.svg?component";
 import { mergeProps, ref, shallowRef } from "vue";
 import { useTheme } from "yuyeon";
+import AlertCircleOutlineSvg from "@/assets/alert-circle-outline.svg?component";
+import VueSvg from "@/assets/vue.svg?component";
 
 const outlinedFieldInput = ref("");
 const displayInput = ref(0);
@@ -10,52 +10,52 @@ const showDialog = ref(false);
 const loadingButton = ref(false);
 
 function onClickLoadingButton() {
-  loadingButton.value = true;
-  setTimeout(() => {
-    loadingButton.value = false;
-  }, 5000);
+	loadingButton.value = true;
+	setTimeout(() => {
+		loadingButton.value = false;
+	}, 5000);
 }
 
 const progress0 = ref(40);
 const progress0Reverse = shallowRef(false);
 const chipsSectionIndeterminate = shallowRef(false);
 const dropdownItems = [
-  {
-    key: "cut",
-    text: "잘라내기",
-  },
-  {
-    key: "copy",
-    text: "복사하기",
-  },
+	{
+		key: "cut",
+		text: "잘라내기",
+	},
+	{
+		key: "copy",
+		text: "복사하기",
+	},
 ];
 const theme = useTheme();
 
 function toggleThemeMode() {
-  console.log(theme);
-  if (theme) {
-    let to = "light" as "dark" | "light" | "auto";
-    switch (theme.scheme.value) {
-      case "dark":
-        to = "auto";
-        break;
-      case "light":
-        to = "dark";
-        break;
-      case "auto":
-      default:
-        to = "light";
-    }
+	console.log(theme);
+	if (theme) {
+		let to = "light" as "dark" | "light" | "auto";
+		switch (theme.scheme.value) {
+			case "dark":
+				to = "auto";
+				break;
+			case "light":
+				to = "dark";
+				break;
+			case "auto":
+			default:
+				to = "light";
+		}
 
-    theme.scheme.value = to;
-  }
+		theme.scheme.value = to;
+	}
 }
 
 const innerMenu = shallowRef(false);
 const defaultSelectV = ref([]);
 
 function onCloseMenuIn() {
-  return innerMenu.value;
+	return innerMenu.value;
 }
 
 const tab = ref();
@@ -68,51 +68,55 @@ const validSelectValue = ref();
 const progress1 = shallowRef(50);
 
 function onClickFieldWrap() {
-  console.log("activate my trap");
+	console.log("activate my trap");
 }
 
 const selectItems = [
-  {
-    key: '1',
-    text: '1'
-  },
-  {
-    key: '2',
-    text: '2'
-  },
-  {
-    key: '3',
-    text: '3'
-  },
-  {
-    key: '4',
-    text: '4'
-  },{
-    key: '5',
-    text: '5'
-  },
-  {
-    key: '6',
-    text: '6'
-  },
-  {
-    key: '7',
-    text: '7'
-  },{
-    key: '8',
-    text: '8'
-  },
-  {
-    key: '9',
-    text: '9'
-  },{
-    key: '10',
-    text: '10'
-  },{
-    key: '11',
-    text: '11'
-  },
-]
+	{
+		key: "1",
+		text: "1",
+	},
+	{
+		key: "2",
+		text: "2",
+	},
+	{
+		key: "3",
+		text: "3",
+	},
+	{
+		key: "4",
+		text: "4",
+	},
+	{
+		key: "5",
+		text: "5",
+	},
+	{
+		key: "6",
+		text: "6",
+	},
+	{
+		key: "7",
+		text: "7",
+	},
+	{
+		key: "8",
+		text: "8",
+	},
+	{
+		key: "9",
+		text: "9",
+	},
+	{
+		key: "10",
+		text: "10",
+	},
+	{
+		key: "11",
+		text: "11",
+	},
+];
 </script>
 
 <template>
@@ -291,6 +295,7 @@ const selectItems = [
         </y-card-body>
       </y-card>
     </section>
+    <y-button variation="filled" style="width: 20dvw; height: 100px;">styled</y-button>
     <!--  Inputs  -->
     <section class="pv-2">
       <y-card class="pa-2">
