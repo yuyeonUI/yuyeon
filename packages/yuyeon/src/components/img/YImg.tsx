@@ -118,13 +118,13 @@ export const YImg = defineComponent({
       },
     );
 
-    const _Placeholder = () => {
+    const _Placeholder = (placeholderProps: { status: string }) => {
       if (!slots.placeholder) return null;
       return (
         <PolyTransition {...polyTransitionBindProps.value} appear>
-          {(status.value === "idle" || status.value === "error") && (
+          {(placeholderProps.status === "idle" || placeholderProps.status === "error") && (
             <div class="y-img__placeholder">
-              {slots.placeholder?.({ status: status.value })}
+              {slots.placeholder?.(placeholderProps)}
             </div>
           )}
         </PolyTransition>
@@ -228,7 +228,7 @@ export const YImg = defineComponent({
     useRender(() => {
       return (
         <div class={["y-img"]}>
-          <_Placeholder />
+          <_Placeholder status={status.value} />
           <_Image status={status.value} />
         </div>
       );
