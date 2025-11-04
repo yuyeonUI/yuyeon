@@ -167,7 +167,7 @@ export const YLayer = defineComponent({
 			() => !disabled.value && (lazyValue.value || active.value),
 		);
 
-		const { coordinateStyles, updateCoordinate } = useCoordinate(props, {
+		const { coordination, coordinateStyles, updateCoordinate } = useCoordinate(props, {
 			contentEl: content$,
 			base,
 			active,
@@ -250,8 +250,11 @@ export const YLayer = defineComponent({
 
 		const computedContentClasses = computed<Record<string, boolean>>(() => {
 			const boundClasses = bindClasses(props.contentClasses);
+			const { side, align } = coordination.value;
 			return {
 				...boundClasses,
+        [`y-layer--side-${side}`]: !!side,
+        [`y-layer--align-${align}`]: !!align,
 			};
 		});
 
@@ -270,6 +273,7 @@ export const YLayer = defineComponent({
 			isMe: (vnode: ComponentInternalInstance) => {
 				return vnode === vm;
 			},
+			coordination,
 		});
 
 		useRender(() => {
@@ -363,6 +367,7 @@ export const YLayer = defineComponent({
 			onAfterUpdate: onAfterUpdate as () => void,
 			scrim$,
 			content$,
+			base,
 			base$,
 			baseEl,
 			baseFromSlotEl,
@@ -370,6 +375,7 @@ export const YLayer = defineComponent({
 			coordinateStyles,
 			layerGroupState,
 			getActiveLayers,
+			coordination,
 		};
 	},
 });
