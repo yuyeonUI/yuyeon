@@ -114,7 +114,7 @@ export const PlateWave = {
   },
 };
 
-export type PlateWaveDirective = Directive<HTMLElement, PlateWaveBinding>;
+export type PlateWaveDirective = Directive<HTMLElement, boolean>;
 
 declare module 'vue' {
   export interface ComponentCustomProperties {
