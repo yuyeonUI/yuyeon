@@ -40,8 +40,9 @@ export const YDateCalendar = defineComponent({
 		"update:modelValue": (date: any) => true,
 		"update:year": (date: any) => true,
 		"update:month": (date: any) => true,
+		"click:day": (item: any) => true,
 	},
-	setup(props, { slots }) {
+	setup(props, { slots, emit }) {
 		const dateUtil = useDate();
 		const i18n = useI18n();
 		const container$ = ref();
@@ -251,6 +252,7 @@ export const YDateCalendar = defineComponent({
 			} else {
 				model.value = [value];
 			}
+      emit("click:day", item);
 		}
 
 		useRender(() => (
