@@ -39,7 +39,7 @@ const YRadio = defineComponent({
     useRender(() => {
       const inputId = `input-${uid}`;
       return (
-        <div class={['y-radio', { 'z-radio--disabled': props.disabled }]}>
+        <div class={['y-radio', { 'y-radio--disabled': props.disabled }]}>
           {slots.leading && slots.leading()}
           <div class="y-radio__input">
             {slots.icon ? (
