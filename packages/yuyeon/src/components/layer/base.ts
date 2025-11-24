@@ -1,9 +1,10 @@
 import {
   type ComponentInternalInstance,
   type ComponentPublicInstance,
-  type PropType,
   computed,
   getCurrentInstance,
+  nextTick,
+  type PropType,
   ref,
   watchEffect,
 } from 'vue';
@@ -28,6 +29,7 @@ export const pressBasePropsOptions = propsFactory(
 interface BaseProps {
   base: BaseType;
   baseProps: Record<string, any> | undefined;
+  modelValue?: boolean;
 }
 
 export function useBase(props: BaseProps) {
@@ -56,7 +58,7 @@ export function useBase(props: BaseProps) {
     () => {
       if (!base$.value) {
         if (!baseFromSlotEl.value && props.base && !Array.isArray(props.base)) {
-          baseEl.value = base.value;
+          baseEl.value = base.value as HTMLElement;
           return;
         }
         baseEl.value = baseFromSlotEl.value;
@@ -79,7 +81,17 @@ export function useBase(props: BaseProps) {
     { flush: 'post' },
   );
 
+  // If the node is created before rendering or before its parent layer component, baseEl is looked up once more.
+  nextTick(() => {
+    if (vm?.proxy?.$el && !base.value) {
+      baseEl.value = getBase(props.base, vm);
+    }
+  });
+
   return {
+    /**
+     * for templateRef from base slot
+     */
     base$,
     baseEl,
     baseSlot,
@@ -91,7 +103,7 @@ export function useBase(props: BaseProps) {
 function getBase(selector: BaseType, vm: ComponentInternalInstance) {
   if (!selector) return;
 
-  let ret;
+  let ret: any;
 
   if (selector === 'parent') {
     let el = vm?.proxy?.$el?.parentNode;

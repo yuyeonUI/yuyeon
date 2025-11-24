@@ -1,4 +1,4 @@
-import { type PropType, h } from 'vue';
+import { h, type PropType } from 'vue';
 
 import { useRender } from '@/composables/component';
 import { pressThemePropsOptions, useLocalTheme } from '@/composables/theme';

@@ -1,21 +1,20 @@
-import "vue/jsx";
-import type { VNode } from "vue";
+import 'vue/jsx';
+import type { VNode } from 'vue';
 
 declare global {
   namespace JSX {
     interface Element extends VNode {}
 
     interface IntrinsicAttributes {
-      [name: string]: any
+      [name: string]: any;
     }
   }
 }
 
-declare module '@vue/runtime-core' {
-  export interface ComponentCustomProperties {
-  }
+declare module 'vue' {
+  export interface ComponentCustomProperties {}
 
   export interface ComponentInternalInstance {
-    provides: Record<string, unknown>
+    provides: Record<string, unknown>;
   }
 }

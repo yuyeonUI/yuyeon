@@ -138,8 +138,8 @@ export class Cam16 {
       atanDegrees < 0
         ? atanDegrees + 360.0
         : atanDegrees >= 360
-        ? atanDegrees - 360.0
-        : atanDegrees;
+          ? atanDegrees - 360.0
+          : atanDegrees;
     const hueRadians = (hue * Math.PI) / 180.0;
 
     const ac = p2 * viewingConditions.nbb;
@@ -375,8 +375,8 @@ export class Cam16 {
       atanDegrees < 0
         ? atanDegrees + 360.0
         : atanDegrees >= 360
-        ? atanDegrees - 360
-        : atanDegrees;
+          ? atanDegrees - 360
+          : atanDegrees;
     const hueRadians = (hue * Math.PI) / 180.0;
 
     // achromatic response to color

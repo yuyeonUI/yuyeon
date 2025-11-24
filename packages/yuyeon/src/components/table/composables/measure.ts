@@ -26,7 +26,7 @@ export function useRectMeasure() {
       if (rect) {
         const obj: any = {};
         for (const key in rect) {
-          if (typeof rect[key as keyof DOMRect] !== "function") {
+          if (typeof rect[key as keyof DOMRect] !== 'function') {
             obj[key] = rect[key as keyof DOMRect];
           }
         }
@@ -35,7 +35,6 @@ export function useRectMeasure() {
           clientWidth: wrapperRef.value?.clientWidth ?? 0,
         };
       }
-
     }
 
     if (tableRef.value) {
@@ -49,9 +48,10 @@ export function useRectMeasure() {
   watch(tableRef, (neo) => {
     if (neo) {
       const el = containerRef.value!;
-      wrapperRef.value = el.querySelector('.y-table__wrapper') as HTMLElement || undefined;
+      wrapperRef.value =
+        (el.querySelector('.y-table__wrapper') as HTMLElement) || undefined;
     }
-  })
+  });
 
   return {
     containerRef,

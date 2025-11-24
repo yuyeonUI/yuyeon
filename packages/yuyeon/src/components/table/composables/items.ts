@@ -1,4 +1,4 @@
-import { type PropType, type Ref, computed, ref } from 'vue';
+import { computed, type PropType, type Ref, ref } from 'vue';
 
 import { getPropertyFromItem } from '@/util/common';
 import { propsFactory } from '@/util/component';

@@ -1,4 +1,4 @@
-import {
+import type {
   YAlert,
   YApp,
   YBadge,
@@ -10,23 +10,19 @@ import {
   YCheckbox,
   YChip,
   YDataTable,
-  YDataTableLayerRow,
-  YDataTableLayerRows,
   YDataTableServer,
   YDateCalendar,
   YDatePicker,
-  YDialog,
   YDividePanel,
   YDivider,
-  YDropdown,
   YExpandHTransition,
   YExpandVTransition,
   YFieldInput,
   YForm,
   YHover,
   YIcon,
+  YImg,
   YInput,
-  YInputCheckbox,
   YIpv4Field,
   YLayer,
   YList,
@@ -43,15 +39,15 @@ import {
   YTab,
   YTable,
   YTabs,
-  YTextHighlighter,
   YTextarea,
+  YTextEllipsis,
+  YTextHighlighter,
   YTi,
   YTooltip,
-  YTreeView,
-  YTreeViewNode,
-} from 'yuyeon/components';
+  YTreeView
+} from "yuyeon/components";
 
-declare module '@vue/runtime-core' {
+declare module "vue" {
   export interface GlobalComponents {
     // @define-components
     YApp: typeof YApp;
@@ -104,5 +100,12 @@ declare module '@vue/runtime-core' {
     YTi: typeof YTi;
     YTextHighlighter: typeof YTextHighlighter;
     YProgressRing: typeof YProgressRing;
+    YTextEllipsis: typeof YTextEllipsis;
+    YImg: typeof YImg;
+  }
+
+  export interface GlobalDirectives {
+    vPlateWave: (import("yuyeon/directives"))["PlateWave"];
+    vComplementClick: (import("yuyeon/directives"))["ComplementClick"];
   }
 }

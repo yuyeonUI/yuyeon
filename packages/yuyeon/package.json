@@ -1,6 +1,6 @@
 {
   "name": "yuyeon",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "keywords": [
     "UI Library",
     "Vue"
@@ -38,6 +38,14 @@
     "./components/*": {
       "module": "./lib/components/*/*.js",
       "types": "./types/components/*/*.d.ts"
+    },
+    "./directives": {
+      "types": "./types/directives/index.d.ts",
+      "module": "./lib/directives/index.js"
+    },
+    "./directives/*": {
+      "module": "./lib/directives/*/*.js",
+      "types": "./types/directives/*/*.d.ts"
     },
     "./composables": {
       "types": "./types/composables/index.d.ts",
@@ -107,6 +115,7 @@
     "sass": "^1.63.3",
     "vite": "^5.4.6",
     "vite-plugin-dts": "^3.9.1",
+    "vitest": "^3.2.4",
     "vue-router": "^4.3.3",
     "vue-tsc": "^2.0.21"
   },

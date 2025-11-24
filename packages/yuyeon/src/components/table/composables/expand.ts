@@ -1,9 +1,9 @@
 import {
+  inject,
   type InjectionKey,
   type PropType,
-  type Ref,
-  inject,
   provide,
+  type Ref,
 } from 'vue';
 
 import { useModelDuplex } from '@/composables/communication';

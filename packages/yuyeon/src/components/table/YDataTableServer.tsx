@@ -1,27 +1,27 @@
-import { type PropType, computed, provide, ref, toRef, Fragment } from 'vue';
+import { Fragment, type PropType, computed, provide, ref, toRef } from 'vue';
 
 import { provideExpand } from '@/components/table/composables/expand';
 import { YDataTableInjectionKey } from '@/components/table/composables/provides';
 import { useRender } from '@/composables/component';
 import { useResizeObserver } from '@/composables/resize-observer';
+import { omit } from '@/util/common';
 import { chooseProps, defineComponent, propsFactory } from '@/util/component';
 import { debounce } from '@/util/debounce';
 import { toStyleSizeValue } from '@/util/ui';
 
 import { pressDataTableProps } from './YDataTable';
 import { YDataTableBody } from './YDataTableBody';
-import { YDataTableControl } from './YDataTableControl';
+import {
+  YDataTableControl,
+  pressYDataTableControlPropsOptions,
+} from './YDataTableControl';
 import { YDataTableHead } from './YDataTableHead';
 import { YDataTableLayer } from './YDataTableLayer';
 import { YTable } from './YTable';
 import { createHeader } from './composables/header';
 import { useItems } from './composables/items';
 import { useOptions } from './composables/options';
-import {
-  createPagination,
-  pressDataTablePaginationProps,
-  providePagination,
-} from './composables/pagination';
+import { createPagination, providePagination } from './composables/pagination';
 import { provideSelection } from './composables/selection';
 import { createSorting, provideSorting } from './composables/sorting';
 import { YDataTableSlotProps } from './types';
@@ -32,7 +32,11 @@ export const pressDataTableServerProps = propsFactory(
       type: [Number, String] as PropType<number | string>,
       required: true,
     },
-    ...pressDataTablePaginationProps(),
+    ...omit(pressYDataTableControlPropsOptions(), [
+      'setPage',
+      'setPageSize',
+      'pageLength',
+    ]),
     ...pressDataTableProps(),
   },
   'YDataTableServer',
@@ -204,6 +208,8 @@ export const YDataTableServer = defineComponent({
                 slots.bottom(slotProps.value)
               ) : (
                 <YDataTableControl
+                  {...chooseProps(slotProps.value, YDataTableControl.props)}
+                  paginationProps={props.paginationProps}
                   v-slots={{
                     prepend: slots['control.prepend'],
                   }}

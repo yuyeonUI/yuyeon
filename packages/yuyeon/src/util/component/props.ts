@@ -1,5 +1,3 @@
-import { capitalize } from 'vue';
-import type { IfAny } from '@vue/shared';
 import type {
   ComponentObjectPropsOptions,
   ExtractPropTypes,
@@ -7,6 +5,8 @@ import type {
   PropType,
   VNode,
 } from 'vue';
+import { capitalize } from 'vue';
+import type { IfAny } from '@vue/shared';
 
 import { toKebabCase } from '../string';
 
@@ -43,12 +43,15 @@ export function chooseProps<PropsOptions extends ComponentObjectPropsOptions>(
   props: any,
   target: PropsOptions,
 ): ExtractPropTypes<PropsOptions> {
-  return Object.keys(target).reduce((acc, prop) => {
-    if (props && prop in props) {
-      acc[prop as keyof ExtractPropTypes<PropsOptions>] = props[prop];
-    }
-    return acc;
-  }, {} as ExtractPropTypes<PropsOptions>);
+  return Object.keys(target).reduce(
+    (acc, prop) => {
+      if (props && prop in props) {
+        acc[prop as keyof ExtractPropTypes<PropsOptions>] = props[prop];
+      }
+      return acc;
+    },
+    {} as ExtractPropTypes<PropsOptions>,
+  );
 }
 
 export function hasEventProp(props: Record<string, any>, type: string) {

@@ -44,10 +44,10 @@ export function randomCharOne(str: string) {
 export function simpleBraceParse(input: string) {
   const pattern = /\{([^{}]+)\}/g;
   const results = [];
-  let match;
+  let match: RegExpExecArray | null;
   let pointer = 0;
-
-  while ((match = pattern.exec(input)) !== null) {
+  match = pattern.exec(input);
+  while (match !== null) {
     const variable = match[1];
     const start = match.index;
     const end = pattern.lastIndex;
@@ -66,6 +66,7 @@ export function simpleBraceParse(input: string) {
     }
 
     pointer = end;
+    match = pattern.exec(input);
   }
 
   results.push({
@@ -74,4 +75,8 @@ export function simpleBraceParse(input: string) {
   });
 
   return results;
+}
+
+export function escapeRegExp(str: string) {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }

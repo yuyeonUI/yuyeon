@@ -1,11 +1,11 @@
 {
-  "root": true,
   "compilerOptions": {
+    "rootDir": "./src",
     "target": "ESNext",
     "declaration": true,
     "useDefineForClassFields": true,
     "module": "ESNext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "strict": true,
     "jsx": "preserve",
     "jsxImportSource": "vue",
@@ -21,10 +21,10 @@
     "downlevelIteration": true,
     "paths": {
       "@/*": ["./src/*"]
-    },
-
+    }
   },
   "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
+  "exclude": ["src/**/*.test.ts", "src/**/*.test.tsx"],
   "vueCompilerOptions": {
     "jsxSlots": true
   },

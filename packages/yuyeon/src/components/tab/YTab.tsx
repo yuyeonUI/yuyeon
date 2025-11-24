@@ -1,9 +1,9 @@
-import { type PropType, type SlotsType, computed, ref, shallowRef } from 'vue';
+import { computed, type PropType, ref, shallowRef, type SlotsType } from 'vue';
 
 import { useRender } from '@/composables/component';
 import { chooseProps, defineComponent, propsFactory } from '@/util/component';
 
-import { YButton, pressYButtonProps } from '../button';
+import { pressYButtonProps, YButton } from '../button';
 import { Y_TABS_KEY } from './shared';
 
 import './YTab.scss';

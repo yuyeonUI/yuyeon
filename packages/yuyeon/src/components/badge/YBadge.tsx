@@ -1,16 +1,10 @@
-import {
-  type PropType,
-  type SlotsType,
-  computed,
-  vShow,
-  withDirectives,
-} from 'vue';
+import { type PropType, type SlotsType, vShow, withDirectives } from 'vue';
 
 import { useRender } from '@/composables/component';
 import { useI18n } from '@/composables/i18n';
 import { IconValue } from '@/composables/icon';
 import {
-  styleColorPropsOptions,
+  pressColorPropsOptions,
   useStyleColor,
 } from '@/composables/style-color';
 import { PolyTransition } from '@/composables/transition';
@@ -42,7 +36,9 @@ export const pressYBadgePropsOptions = propsFactory(
       type: String,
       default: 'fade',
     },
-    ...styleColorPropsOptions,
+    ...pressColorPropsOptions({
+      backgroundOpacity: 1
+    }),
   },
   'YBadge',
 );
@@ -88,6 +84,7 @@ export const YBadge = defineComponent({
               transitionProps={{ name: props.transition }}
             >
               {withDirectives(
+                // biome-ignore lint/a11y/useSemanticElements: aria-live
                 <span
                   class={['y-badge__badge']}
                   aria-atomic="true"

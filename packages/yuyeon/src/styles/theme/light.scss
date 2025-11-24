@@ -5,7 +5,7 @@
 // yui theme
 $theme--light: () !default;
 $theme--light: map.deep-merge(
-  (
-  ),
-  $theme--light
+                        (
+                        ),
+                $theme--light
 );

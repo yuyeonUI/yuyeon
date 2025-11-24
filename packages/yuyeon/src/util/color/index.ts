@@ -1,18 +1,18 @@
 /*
-* yuyeon
-* Apache-2.0 license (Copyright 2023 yeonyew)
-*
-* Used Libs
-* - material-color-utilities
-*   Apache-2.0 license (Copyright 2021 Google LLC)
-*   https://github.com/material-foundation/material-color-utilities
-*
-* - Vuetify
-*   MIT license (Copyright (c) 2016-2023 John Jeremy Leider)
-*   https://github.com/vuetifyjs/vuetify
-* */
+ * yuyeon
+ * Apache-2.0 license (Copyright 2023 yeonyew)
+ *
+ * Used Libs
+ * - material-color-utilities
+ *   Apache-2.0 license (Copyright 2021 Google LLC)
+ *   https://github.com/material-foundation/material-color-utilities
+ *
+ * - Vuetify
+ *   MIT license (Copyright (c) 2016-2023 John Jeremy Leider)
+ *   https://github.com/vuetifyjs/vuetify
+ * */
 
-import { HEX_COLOR_REGEX, RGBA_REGEX } from "./const";
+import { HEX_COLOR_REGEX, RGBA_REGEX } from './const';
 import { rgbFromHex } from './conversion';
 
 export function isColorValue(value: string): boolean {
@@ -41,4 +41,4 @@ export function isTextColorIsLight(r: number, g: number, b: number): boolean {
 }
 
 export * from './const';
-export * from "./conversion";
+export * from './conversion';

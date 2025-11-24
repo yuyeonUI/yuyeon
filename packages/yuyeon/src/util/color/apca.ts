@@ -196,6 +196,7 @@ export function APCAcontrast(txtY: number, bgY: number, places = -1) {
   if (places < 0) {
     // Default (-1) number out, all others are strings
     return outputContrast * 100.0;
+    // biome-ignore lint/suspicious/noDoubleEquals: <explanation>
   } else if (places == 0) {
     return (
       Math.round(Math.abs(outputContrast) * 100.0) + '<sub>' + polCat + '</sub>'

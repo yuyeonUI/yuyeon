@@ -33,7 +33,7 @@
 import { Cam16 } from './cam16';
 import { HctSolver } from './hct-solver';
 import { ViewingConditions } from './viewing-conditions';
-import { lstarFromArgb, lstarFromY } from "../conversion";
+import { lstarFromArgb, lstarFromY } from '../conversion';
 
 /**
  * HCT, hue, chroma, and tone. A color system that provides a perceptually

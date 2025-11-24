@@ -1,4 +1,4 @@
-import { type PropType, computed } from 'vue';
+import { computed, type PropType } from 'vue';
 
 import { useRender } from '@/composables/component';
 import { getObjectValueByPath } from '@/util/common';
@@ -42,6 +42,7 @@ export const YTi = defineComponent({
                       })
                     : getValue(frag.content);
                 }
+                return frag.content;
               })}
         </ElTag>
       );

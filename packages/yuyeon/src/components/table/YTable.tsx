@@ -39,7 +39,12 @@ export const YTable = defineComponent({
     const { containerRef, tableRef, containerRect, wrapperRef, wrapperRect } =
       useRectMeasure();
 
-    provide(YTableInjectionKey, { containerRect, tableRef, wrapperRef, wrapperRect });
+    provide(YTableInjectionKey, {
+      containerRect,
+      tableRef,
+      wrapperRef,
+      wrapperRect,
+    });
 
     function onScroll(e: Event) {
       emit('scroll', e);
@@ -48,7 +53,7 @@ export const YTable = defineComponent({
     useRender(() => {
       const ElTag = (props.tag as keyof HTMLElementTagNameMap) ?? 'div';
       const containerHeight = props.flexHeight
-        ? containerRect.value?.height ?? props.height
+        ? (containerRect.value?.height ?? props.height)
         : props.height;
       return (
         <ElTag

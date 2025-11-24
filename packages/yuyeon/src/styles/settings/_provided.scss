@@ -1,31 +1,31 @@
 $box-side-direction: ('top', 'right', 'bottom', 'left');
 $box-side-combinations: (
-  'a': (),
-  'v': (
-    'top',
-    'bottom',
-  ),
-  'h': (
-    'right',
-    'left',
-  ),
-  't': (
-    'top',
-  ),
-  'r': (
-    'right',
-  ),
-  'b': (
-    'bottom',
-  ),
-  'l': (
-    'left',
-  ),
+        'a': (),
+        'v': (
+                'top',
+                'bottom',
+        ),
+        'h': (
+                'right',
+                'left',
+        ),
+        't': (
+                'top',
+        ),
+        'r': (
+                'right',
+        ),
+        'b': (
+                'bottom',
+        ),
+        'l': (
+                'left',
+        ),
 );
 
 $space-types: (
-  'm': 'margin',
-  'p': 'padding',
+        'm': 'margin',
+        'p': 'padding',
 );
 
 $text-aligns: ('center', 'left', 'right');

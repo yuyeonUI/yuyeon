@@ -3,19 +3,19 @@ import { getCurrentInstance, nextTick, reactive } from 'vue';
 
 import * as allComponents from '@/components/';
 import {
+  createDateModule,
   YUYEON_DATE_KEY,
   YUYEON_DATE_OPTIONS_KEY,
-  createDateModule,
 } from '@/composables/date';
 import { createDefaultsModule } from '@/composables/defaults';
 import { YUYEON_DEFAULTS_KEY } from '@/composables/defaults/share';
 import { createI18nModule } from '@/composables/i18n';
 import { YUYEON_I18N_KEY } from '@/composables/i18n/share';
-import { YUYEON_ICON_KEY, createIconModule } from '@/composables/icon';
+import { createIconModule, YUYEON_ICON_KEY } from '@/composables/icon';
 import {
-  YUYEON_THEME_KEY,
   createThemeModule,
   useTheme,
+  YUYEON_THEME_KEY,
 } from '@/composables/theme';
 import PlateWave from '@/directives/plate-wave';
 import { YUYEON_LOGO } from '@/etc';

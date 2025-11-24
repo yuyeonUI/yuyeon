@@ -1,4 +1,4 @@
-import { isObject } from "./common";
+import { isObject } from './common';
 
 interface DebouncedFn<T extends (...args: any[]) => any> {
   (...args: Parameters<T>): ReturnType<T> | undefined;
@@ -40,7 +40,7 @@ export function debounce<T extends (...args: any[]) => any>(
   let maxing = false;
   let trailing = true;
 
-  if (typeof func != 'function') {
+  if (typeof func !== 'function') {
     throw new TypeError('NOT Function');
   }
   wait = +wait || 0;
@@ -128,7 +128,7 @@ export function debounce<T extends (...args: any[]) => any>(
     return timerId === undefined ? result : trailingEdge(Date.now());
   }
 
-  function debounced(this: DebouncedFn<T>): (ReturnType<T> | undefined) {
+  function debounced(this: DebouncedFn<T>): ReturnType<T> | undefined {
     const time = Date.now();
     const isInvoking = shouldInvoke(time);
 

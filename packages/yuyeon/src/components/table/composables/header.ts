@@ -1,10 +1,10 @@
 import {
   type DeepReadonly,
+  inject,
   type InjectionKey,
   type PropType,
-  type Ref,
-  inject,
   provide,
+  type Ref,
   ref,
   watchEffect,
 } from 'vue';
@@ -133,7 +133,7 @@ export function createHeader(
       }
       return filtered;
     });
-    columns.value = (fixedRows[fixedRows.length - 1]) || [];
+    columns.value = fixedRows[fixedRows.length - 1] || [];
   });
 
   const data = { headers, columns };

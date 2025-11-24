@@ -15,7 +15,7 @@ export const YTextEllipsis = defineComponent({
     },
     position: {
       type: String,
-    }
+    },
   },
   setup(props) {
     const { resizeObservedRef, contentRect } = useResizeObserver();

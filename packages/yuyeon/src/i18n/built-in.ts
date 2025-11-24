@@ -1,5 +1,5 @@
-import { ref, shallowRef } from 'vue';
 import type { Ref } from 'vue';
+import { ref, shallowRef } from 'vue';
 
 import { useProvided } from '@/composables/communication';
 import en from '@/locales/en';

@@ -97,8 +97,8 @@ export function createThemeModule(options: ThemeOptions) {
     }
     if (Array.isArray(theme.value)) {
       return currentColorScheme.value === 'dark'
-        ? theme.value?.[1] ?? 'dark'
-        : theme.value?.[0] ?? 'light';
+        ? (theme.value?.[1] ?? 'dark')
+        : (theme.value?.[0] ?? 'light');
     }
     return currentColorScheme.value;
   });
@@ -109,6 +109,13 @@ export function createThemeModule(options: ThemeOptions) {
 
   const computedThemes = computed(() => {
     return createThemes(themes.value);
+  });
+
+  const currentThemeColors = computed(() => {
+    const themeKey = currentThemeKey.value;
+    const theme = computedThemes.value[themeKey];
+    if (!theme?.colors) return {};
+    return theme.colors;
   });
 
   const styles = computed(() => {
@@ -232,6 +239,7 @@ export function createThemeModule(options: ThemeOptions) {
       scheme,
       theme,
       currentThemeKey,
+      currentThemeColors,
       themeClasses,
       computedThemes,
       computedPalette,

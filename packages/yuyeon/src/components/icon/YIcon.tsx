@@ -1,10 +1,9 @@
-import { type PropType, computed, ref } from 'vue';
+import { computed, type PropType, ref } from 'vue';
 
 import { useRender } from '@/composables/component';
 import { IconValue, useIcon } from '@/composables/icon';
 import { pressThemePropsOptions, useLocalTheme } from '@/composables/theme';
-import { defineComponent } from '@/util/component';
-import { propsFactory } from '@/util/component';
+import { defineComponent, propsFactory } from '@/util/component';
 import { toStyleSizeValue } from '@/util/ui';
 
 import './YIcon.scss';
@@ -21,7 +20,7 @@ export const pressYIconPropsOptions = propsFactory(
     size: {
       type: [String, Number],
     },
-    class: [String, Array] as PropType<any>,
+    class: [String, Array] as PropType<string | string[] | Record<string, any>[]>,
     ...pressThemePropsOptions(),
   },
   'YIcon',

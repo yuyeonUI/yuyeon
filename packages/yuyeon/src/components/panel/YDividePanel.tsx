@@ -1,4 +1,4 @@
-import { type CSSProperties, computed, defineComponent, ref, watch } from 'vue';
+import { computed, type CSSProperties, defineComponent, ref, watch } from 'vue';
 
 import { useRender } from '@/composables/component';
 

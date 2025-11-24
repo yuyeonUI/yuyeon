@@ -15,3 +15,4 @@ node_modules
 .idea
 .vscode/launch.json
 *storybook.log
+.zed

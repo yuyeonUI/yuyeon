@@ -45,12 +45,20 @@ export function useTimer(
   function tick() {
     const now = Date.now();
     const realTick = now - tickStart.value;
-    drift.value = drift.value - realTick;
-    if (drift.value < 1) {
+    let nextInterval = tickInterval;
+    const left = drift.value - realTick;
+    drift.value = left;
+    if (left < 1) {
       cb();
-    } else {
-      const tickDrift = now - tickStart.value + tickInterval;
-      const nextInterval = tickDrift >= 1 ? tickDrift : tickInterval;
+      return;
+    }
+    const tickDelta = realTick - tickInterval;
+    if (tickDelta > 0) {
+      nextInterval -= tickDelta;
+    } else if (tickDelta < 0) {
+      nextInterval += tickDelta;
+    }
+    if (left >= 1) {
       tickStart.value = now;
       timer = window.setTimeout(tick, nextInterval);
     }

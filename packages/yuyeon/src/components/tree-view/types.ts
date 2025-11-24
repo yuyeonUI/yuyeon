@@ -13,9 +13,7 @@ export interface NodeState extends ItemState {
   childKeys: CandidateKey[];
   item: any;
   parentKey: null | CandidateKey;
-  vnode:
-    | null
-    | (ComponentPublicInstance & ItemState);
+  vnode: null | (ComponentPublicInstance & ItemState);
   level: number;
 }
 

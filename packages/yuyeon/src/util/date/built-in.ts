@@ -157,13 +157,14 @@ export const YYYY_MM_DD_REGEX =
   /^([12]\d{3}-([1-9]|0[1-9]|1[0-2])-([1-9]|0[1-9]|[12]\d|3[01]))$/;
 export const FIRST_SUNDAY = new Date(1970, 0, 4);
 
+// biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
 export class DateUtil {
   static date(value?: any): Date | null {
     if (value == null) return new Date();
     if (value instanceof Date) {
       return value;
     }
-    let parsed;
+    let parsed: number;
     if (typeof value === 'string') {
       if (YYYY_MM_DD_REGEX.test(value)) {
         return DateUtil.parseLocalDate(value);

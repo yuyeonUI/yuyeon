@@ -70,7 +70,7 @@ export const YDataTableLayerRows = defineComponent({
               width={rowWidth.value}
               classes={props.classes}
               styles={props.styles}
-              v-slot={slots}
+              v-slots={slots}
             ></YDataTableLayerRow>
           );
         })}

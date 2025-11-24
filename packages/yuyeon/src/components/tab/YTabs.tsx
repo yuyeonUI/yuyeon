@@ -1,4 +1,4 @@
-import { type PropType, computed } from 'vue';
+import { computed, type PropType } from 'vue';
 
 import { pressChoicePropsOptions, useChoice } from '@/composables/choice';
 import { useRender } from '@/composables/component';

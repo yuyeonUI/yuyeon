@@ -1,4 +1,4 @@
-import type { DirectiveBinding } from 'vue';
+import type { Directive, DirectiveBinding } from 'vue';
 
 import './plate-wave.scss';
 
@@ -113,5 +113,13 @@ export const PlateWave = {
     destroyListeners(el);
   },
 };
+
+export type PlateWaveDirective = Directive<HTMLElement, boolean>;
+
+declare module 'vue' {
+  export interface ComponentCustomProperties {
+    vPlateWave: PlateWaveDirective;
+  }
+}
 
 export default PlateWave;

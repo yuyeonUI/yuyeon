@@ -1,4 +1,7 @@
-import { SelectableItem, provideSelection } from '@/components/table/composables/selection';
+import {
+  provideSelection,
+  SelectableItem,
+} from '@/components/table/composables/selection';
 import { InternalDataTableHeader } from './header';
 
 type ItemSlotBase<T> = {
@@ -19,6 +22,6 @@ export interface DataTableItem<T = any> extends SelectableItem {
   index: number;
   columns: Record<string, any>;
   raw: T;
-  rowRef?: any
+  rowRef?: any;
   readonly _bindRowRef: (el: any | null) => void;
 }

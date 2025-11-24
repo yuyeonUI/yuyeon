@@ -1,4 +1,4 @@
-import { type PropType, computed, ref, watch, withModifiers } from 'vue';
+import { computed, type PropType, ref, watch, withModifiers } from 'vue';
 
 import { useRender } from '@/composables/component';
 import { defineComponent, getUid } from '@/util/component';
@@ -146,6 +146,7 @@ export const YCheckbox = defineComponent({
                 icon: (...args: any[]) => slots.icon?.(...args),
               }}
             </YInputCheckbox>
+            {/** biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
             <label
               onClick={withModifiers(() => {}, ['stop'])}
               class="y-checkbox__label"

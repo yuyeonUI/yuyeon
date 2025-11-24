@@ -5,3 +5,5 @@ export type CandidateKey = string | number;
 export type JSXComponent<Props = any> =
   | FunctionalComponent<Props>
   | { new (): ComponentPublicInstance<Props> };
+
+export type CssProperties = { [p: `--${string}`]: string | number | undefined };

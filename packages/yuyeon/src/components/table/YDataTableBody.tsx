@@ -45,7 +45,7 @@ export const YDataTableBody = defineComponent({
     const { isExpanded, toggleExpand } = useExpand();
 
     useRender(() => {
-      if (props.loading) {
+      if (props.loading && !props.items.length) {
         return (
           <tr>
             <td colspan={columns.value.length} class={'y-data-table__loading'}>

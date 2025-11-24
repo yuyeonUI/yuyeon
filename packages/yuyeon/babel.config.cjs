@@ -4,7 +4,7 @@ module.exports = {
   assumptions: {
     noDocumentAll: true,
   },
-  ignore: [/\.d\.ts$/],
+  ignore: [/\.(d|test)\.ts$/],
   presets: [
     [
       '@babel/preset-env',
@@ -46,7 +46,12 @@ module.exports = {
       ],
     },
     lib: {
-      ignore: ['**/__tests__'],
+      ignore: [
+        '**/__tests__',
+        '**/*.test.ts',
+        '**/*.spec.ts',
+        '**/*.stories.ts',
+      ],
       plugins: [
         ['babel-plugin-add-import-extension', { extension: 'js' }],
         // ['./build/babel-plugin-replace-import-extension', { extMapping: {

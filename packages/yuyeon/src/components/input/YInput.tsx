@@ -1,10 +1,10 @@
 import {
-  type PropType,
-  type SlotsType,
-  type VNode,
   computed,
+  type PropType,
   ref,
   shallowRef,
+  type SlotsType,
+  type VNode,
   watch,
 } from 'vue';
 
@@ -344,7 +344,7 @@ export const YInput = defineComponent({
                   })}
                 </span>
               ) : (
-                props.helperText ?? errorResult.value
+                (props.helperText ?? errorResult.value)
               )}
             </div>
           </div>

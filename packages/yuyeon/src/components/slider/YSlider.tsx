@@ -4,6 +4,8 @@ import { useRender } from '@/composables/component';
 import { defineComponent } from '@/util/component/component';
 import { propsFactory } from '@/util/component/props';
 
+import './YSlider.scss';
+
 export const pressYSliderPropsOptions = propsFactory(
   {
     modelValue: Number as PropType<number>,

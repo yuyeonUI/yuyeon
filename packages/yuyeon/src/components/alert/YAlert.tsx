@@ -1,4 +1,4 @@
-import { type PropType, type SlotsType, computed, ref } from 'vue';
+import { computed, type PropType, ref, type SlotsType } from 'vue';
 
 import { useRender } from '@/composables/component';
 import { defineComponent } from '@/util/component';
