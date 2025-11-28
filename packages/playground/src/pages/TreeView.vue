@@ -4,35 +4,59 @@ import { ref } from "vue";
 const groups = ref([
   {
     id: "1",
-    text: "안녕하세요.",
+    text: "1",
     children: [
       {
         id: "1-1",
-        text: "OLLEHY",
+        text: "1-1",
         children: [
           {
             id: "1-1-1",
-            text: "HEY AYAYA",
+            text: "1-1-1",
+            children: [
+              {
+                id: "1-1-1-a",
+                text: "1-1-1-a",
+              },
+              {
+                id: "1-1-1-b",
+                text: "1-1-1-b",
+              }
+            ]
+          },
+          {
+            id: "1-1-2",
+            text: "1-1-2",
           },
         ],
       },
       {
         id: "1-2",
-        text: "google",
+        text: "1-2",
+        children: [
+          {
+            id: "1-2-1",
+            text: "1-2-1",
+          },
+          {
+            id: "1-2-2",
+            text: "1-2-2",
+          },
+        ],
       },
       {
         id: "1-3",
-        text: "yyyyyyyyyy",
+        text: "1-3",
       },
     ],
   },
   {
     id: "2",
-    text: "HIKIKI",
+    text: "2",
     children: [
       {
         id: "2-1",
-        text: "ollehy",
+        text: "2-1",
       },
     ],
   },
@@ -50,6 +74,9 @@ const selected = ref(["2", "1-1"]);
 const opened2 = ref([]);
 const active2 = ref([]);
 const search2 = ref('');
+const selected2 = ref(["2", "1-1"])
+const selected3 = ref(["2", "1-1"])
+const selected4 = ref(["1-1-1"])
 
 setTimeout(() => {
   active0.value = ["2"]
@@ -76,6 +103,7 @@ setTimeout(() => {
     </y-card>
 
     <y-card class="pa-4 ma-1" style="width: 320px">
+        active cascade
       <y-field-input
         v-model="search"
         clearable
@@ -100,7 +128,7 @@ setTimeout(() => {
 
     <y-card class="pa-4 ma-1" style="width: 320px">
       <y-card-header class="ph-2 pt-0 pb-2">
-        3
+        active: relative / select: cascade
       </y-card-header>
       <y-field-input
           v-model="search"
@@ -110,6 +138,7 @@ setTimeout(() => {
       ></y-field-input>
       <y-tree-view
           v-model:expanded="opened2"
+          v-model:selected="selected2"
           v-model:active="active2"
           :items="groups"
           :search="search2"
@@ -118,11 +147,73 @@ setTimeout(() => {
           required-active
           active-strategy="relative"
           active-single-modifier="Control"
+          enable-select
+          select-strategy="cascade"
           default-expand="0"
       ></y-tree-view>
     </y-card>
-
+    <y-card class="pa-4 ma-1" style="width: 320px">
+      <y-card-header class="ph-2 pt-0 pb-2">
+        active: relative / select: relative
+      </y-card-header>
+      <y-field-input
+          v-model="search"
+          clearable
+          ceramic
+          class="mb-2"
+      ></y-field-input>
+      <y-tree-view
+          v-model:expanded="opened2"
+          v-model:selected="selected3"
+          v-model:active="active2"
+          :items="groups"
+          :search="search2"
+          enable-active
+          multiple-active
+          required-active
+          active-strategy="relative"
+          active-single-modifier="Control"
+          enable-select
+          select-strategy="relative"
+          default-expand="0"
+      ></y-tree-view>
+    </y-card>
+    <y-card class="pa-4 ma-1" style="width: 320px">
+      <y-card-header class="ph-2 pt-0 pb-2">
+        active: relative / select: leaf
+      </y-card-header>
+      <y-field-input
+        v-model="search"
+        clearable
+        ceramic
+        class="mb-2"
+      ></y-field-input>
+      <y-tree-view
+        v-model:expanded="opened2"
+        v-model:selected="selected4"
+        v-model:active="active2"
+        :items="groups"
+        :search="search2"
+        enable-active
+        multiple-active
+        required-active
+        active-strategy="relative"
+        active-single-modifier="Control"
+        enable-select
+        select-strategy="leaf"
+        default-expand="0"
+      ></y-tree-view>
+      <y-card-footer class="flex-column">
+        <div v-for="s of selected4" :key="s">
+          {{ s }}
+        </div>
+      </y-card-footer>
+    </y-card>
   </section>
 </template>
 
-<style scoped></style>
+<style scoped>
+.flex-column {
+  flex-direction: column;
+}
+</style>
