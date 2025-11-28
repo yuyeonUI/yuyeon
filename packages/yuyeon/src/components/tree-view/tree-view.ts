@@ -27,7 +27,10 @@ export const Y_TREE_VIEW: InjectionKey<{
   isChildrenAll: (key: CandidateKey, stateKey: string, to: boolean) => boolean;
   isChildrenSome: (key: CandidateKey, stateKey: string) => boolean;
   selectedState: ComputedRef<
-    (key: CandidateKey, children: CandidateKey[]) => { all: boolean; some: boolean }
+    (
+      key: CandidateKey,
+      children: CandidateKey[],
+    ) => { all: boolean; some: boolean }
   >;
 }> = Symbol.for('YTreeView');
 
@@ -200,13 +203,20 @@ export function provideTreeView(props: any) {
     ) {
       for (const descendant of getDescendants(key)) {
         if (descendant in nodes.value) {
-          if (props.selectStrategy === 'leaf' && !!nodes.value[descendant]?.childKeys?.length) {
+          if (
+            props.selectStrategy === 'leaf' &&
+            !!nodes.value[descendant]?.childKeys?.length &&
+            to
+          ) {
             continue;
           }
           setSelected(descendant, to);
         }
       }
-      if (props.selectStrategy === 'relative') {
+      if (
+        props.selectStrategy === 'relative' ||
+        (props.selectStrategy === 'leaf' && !to)
+      ) {
         let grand: CandidateKey | null = node.parentKey;
         do {
           const parentKey = grand;
