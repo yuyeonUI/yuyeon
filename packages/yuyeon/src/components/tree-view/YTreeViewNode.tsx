@@ -16,7 +16,7 @@ import {
 import { pressItemsPropsOptions } from '@/abstract/items';
 import { useTreeView } from '@/components/tree-view/tree-view';
 import { useRender } from '@/composables/component';
-import { getObjectValueByPath } from '@/util/common';
+import { getObjectValueByPath, getPropertyFromItem } from '@/util/common';
 import { defineComponent, propsFactory } from '@/util/component';
 
 import { YButton } from '../button';
@@ -58,6 +58,9 @@ export const pressYTreeViewNodeProps = propsFactory(
     onMouseenterContainer: Function,
     onMouseleaveContainer: Function,
     onMousemoveContainer: Function,
+    itemSelectable: {
+      type: [String, Array, Function] as PropType<any>,
+    },
     ...pressItemsPropsOptions({
       itemKey: 'id',
     }),
@@ -173,6 +176,26 @@ export const YTreeViewNode = defineComponent({
       return getObjectValueByPath(props.item, props.itemText) ?? '';
     });
 
+    const disabledSelect = computed(() => {
+      if (props.itemSelectable != null) {
+        let selectable = true;
+        if (typeof props.itemSelectable === 'function') {
+          selectable = !!props.itemSelectable(props.item);
+        } else if (Array.isArray(props.itemSelectable)) {
+          selectable = props.itemSelectable.includes(myKey.value);
+        } else {
+          selectable = getPropertyFromItem(
+            props.item,
+            props.itemSelectable,
+            true,
+          );
+        }
+
+        return !selectable;
+      }
+      return false;
+    });
+
     const slotProps = computed(() => {
       return {
         level: props.level,
@@ -206,6 +229,7 @@ export const YTreeViewNode = defineComponent({
 
     function onClickSelect(e: MouseEvent) {
       e.stopPropagation();
+      if (disabledSelect.value) return;
       const to = !isChecked.value;
       selected.value = to;
       treeView.updateSelected(myKey.value, to);
@@ -277,7 +301,12 @@ export const YTreeViewNode = defineComponent({
             {props.enableSelect && (
               // biome-ignore lint/a11y/useSemanticElements: passive
               <div
-                class={'y-tree-view-node__select'}
+                class={[
+                  'y-tree-view-node__select',
+                  {
+                    'y-tree-view-node__select--disabled': disabledSelect.value,
+                  },
+                ]}
                 role="checkbox"
                 aria-checked={isChecked.value}
                 onClick={onClickSelect}
@@ -285,6 +314,7 @@ export const YTreeViewNode = defineComponent({
                 <YIconCheckbox
                   checked={isChecked.value}
                   indeterminate={!selected.value && childrenSomeChecked.value}
+                  disabled={disabledSelect.value}
                 ></YIconCheckbox>
               </div>
             )}

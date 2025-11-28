@@ -1,34 +1,25 @@
-import {
-  computed,
-  defineComponent,
-  onMounted,
-  type PropType,
-  type Ref,
-  ref,
-  shallowRef,
-  watch,
-} from "vue";
+import { computed, defineComponent, onMounted, type PropType, type Ref, ref, shallowRef, watch } from 'vue';
 
-import { provideTreeView } from "@/components/tree-view/tree-view";
-import { useRender } from "@/composables/component";
-import type { CandidateKey } from "@/types";
-import { differenceBetween } from "@/util/array";
-import { isColorValue } from "@/util/color";
-import { deepEqual, getObjectValueByPath } from "@/util/common";
-import { chooseProps } from "@/util/component";
-import { debounce } from "@/util/debounce";
+import { provideTreeView } from '@/components/tree-view/tree-view';
+import { useRender } from '@/composables/component';
+import type { CandidateKey } from '@/types';
+import { differenceBetween } from '@/util/array';
+import { isColorValue } from '@/util/color';
+import { deepEqual, getObjectValueByPath } from '@/util/common';
+import { chooseProps } from '@/util/component';
+import { debounce } from '@/util/debounce';
 
-import { YProgressBar } from "../progress-bar";
-import type { NodeState, TreeviewFilterFn } from "./types";
-import { filterTreeItem, filterTreeItems, getKeys } from "./util";
-import { pressYTreeViewNodeProps, YTreeViewNode } from "./YTreeViewNode";
+import { YProgressBar } from '../progress-bar';
+import type { NodeState, TreeviewFilterFn } from './types';
+import { filterTreeItem, filterTreeItems, getKeys } from './util';
+import { pressYTreeViewNodeProps, YTreeViewNode } from './YTreeViewNode';
 
-import "./YTreeView.scss";
+import './YTreeView.scss';
 
 const treeViewNodeProps = pressYTreeViewNodeProps();
 
 export const YTreeView = defineComponent({
-  name: "YTreeView",
+  name: 'YTreeView',
   props: {
     expanded: {
       type: [Array] as PropType<CandidateKey[]>,
@@ -53,7 +44,7 @@ export const YTreeView = defineComponent({
     },
     ...treeViewNodeProps,
   },
-  emits: ["update:expanded", "update:active", "update:selected"],
+  emits: ['update:expanded', 'update:active', 'update:selected'],
   setup(props, { slots, expose }) {
     const filterItemsFn = shallowRef(
       debounce(excludeItem, props.searchDebounceWait),
@@ -80,7 +71,7 @@ export const YTreeView = defineComponent({
       isExcluded,
     } = provideTreeView(props);
 
-    function excludeItem(items: any[], search = "", filter = filterTreeItem) {
+    function excludeItem(items: any[], search = '', filter = filterTreeItem) {
       const excluded = new Set<CandidateKey>();
       if (!search) {
         searchLoading.value = false;
@@ -100,7 +91,7 @@ export const YTreeView = defineComponent({
         filterTreeItems(
           filter,
           item,
-          search ?? "",
+          search ?? '',
           props.itemKey,
           props.itemText,
           props.itemChildren as string,
@@ -211,10 +202,10 @@ export const YTreeView = defineComponent({
         return;
       }
       old.forEach((key) => {
-        updater(key, false)
+        updater(key, false);
       });
       valuesOfKey.forEach((key) => {
-        updater(key, true)
+        updater(key, true);
       });
       emitter();
     }
@@ -247,7 +238,7 @@ export const YTreeView = defineComponent({
           return;
         }
         diff.forEach((k) => {
-          delete nodes.value[k]
+          delete nodes.value[k];
         });
 
         // init
@@ -265,7 +256,7 @@ export const YTreeView = defineComponent({
         }
         filterItemsFn.value(neo, props.search, props.filter);
       },
-      { deep: true, flush: "sync" },
+      { deep: true, flush: 'sync' },
     );
 
     // Provide & Issue
@@ -280,7 +271,7 @@ export const YTreeView = defineComponent({
 
     const classes = computed(() => {
       return {
-        "y-tree-view": true,
+        'y-tree-view': true,
       };
     });
 
@@ -304,7 +295,7 @@ export const YTreeView = defineComponent({
         expandedCache.value = [...expand(props.defaultExpand)];
       } else {
         expanded.value.forEach((v: any) => {
-          updateExpanded(getNodeKey(v), true)
+          updateExpanded(getNodeKey(v), true);
         });
         emitExpanded();
       }
@@ -343,7 +334,7 @@ export const YTreeView = defineComponent({
               })
             ) : (
               <div class="y-tree-view__no-data">
-                {slots["no-data"] ? slots["no-data"]() : <span>No Data</span>}
+                {slots['no-data'] ? slots['no-data']() : <span>No Data</span>}
               </div>
             )}
           </div>
