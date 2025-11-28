@@ -58,6 +58,7 @@ export const pressYTreeViewNodeProps = propsFactory(
     onMouseenterContainer: Function,
     onMouseleaveContainer: Function,
     onMousemoveContainer: Function,
+    onDblclickContainer: Function,
     itemSelectable: {
       type: [String, Array, Function] as PropType<any>,
     },
@@ -254,6 +255,10 @@ export const YTreeViewNode = defineComponent({
       props.onMousemoveContainer?.(e, { ...slotProps.value, item: props.item });
     }
 
+    function onDblclickContainer(e: MouseEvent) {
+      props.onDblclickContainer?.(e, { ...slotProps.value, item: props.item, toggleExpand: () => onClickExpand(e) });
+    }
+
     useRender(() => {
       const indentSpacer: VNodeArrayChildren = [];
       for (let i = 0; i < props.level; i += 1) {
@@ -278,6 +283,7 @@ export const YTreeViewNode = defineComponent({
             onMouseenter={props.onMouseenterContainer && onMouseenterContainer}
             onMouseleave={props.onMouseleaveContainer && onMouseleaveContainer}
             onMousemove={props.onMousemoveContainer && onMousemoveContainer}
+            onDblclick={onDblclickContainer}
           >
             <YPlate />
             <div class={'y-tree-view-node__indents'}>{indentSpacer}</div>
