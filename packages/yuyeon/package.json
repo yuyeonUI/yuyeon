@@ -7,7 +7,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/yuyeonUI/yuyeon",
+    "url": "git+https://github.com/yuyeonUI/yuyeon.git",
     "directory": "packages/yuyeon"
   },
   "author": "yeonyew",
