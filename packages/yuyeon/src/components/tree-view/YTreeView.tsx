@@ -44,7 +44,15 @@ export const YTreeView = defineComponent({
     },
     ...treeViewNodeProps,
   },
-  emits: ['update:expanded', 'update:active', 'update:selected'],
+  emits: [
+    'update:expanded',
+    'update:active',
+    'update:selected',
+    'mouseenterContainer',
+    'mouseleaveContainer',
+    'mousemoveContainer',
+    'dblclickContainer',
+  ],
   setup(props, { slots, expose }) {
     const filterItemsFn = shallowRef(
       debounce(excludeItem, props.searchDebounceWait),

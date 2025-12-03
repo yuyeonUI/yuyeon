@@ -256,7 +256,11 @@ export const YTreeViewNode = defineComponent({
     }
 
     function onDblclickContainer(e: MouseEvent) {
-      props.onDblclickContainer?.(e, { ...slotProps.value, item: props.item, toggleExpand: () => onClickExpand(e) });
+      props.onDblclickContainer?.(e, {
+        ...slotProps.value,
+        item: props.item,
+        toggleExpand: () => onClickExpand(e),
+      });
     }
 
     useRender(() => {
