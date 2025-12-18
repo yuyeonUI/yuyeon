@@ -127,6 +127,7 @@ export const YLayer = defineComponent({
 		"update:modelValue": (value: boolean) => true,
 		"click:complement": (mouseEvent: MouseEvent) => true,
 		afterLeave: () => true,
+    afterEnter: () => true,
 	},
 	slots: Object as SlotsType<{
 		base: any;
@@ -211,6 +212,7 @@ export const YLayer = defineComponent({
 
 		function onAfterEnter() {
 			finish.value = true;
+      emit('afterEnter');
 		}
 
 		function onAfterLeave() {

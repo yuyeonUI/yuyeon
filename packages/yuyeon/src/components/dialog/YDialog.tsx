@@ -64,7 +64,7 @@ export const YDialog = defineComponent({
 		YCard,
 	},
 	props: pressYDialogPropsOptions(),
-	emits: ["update:modelValue"],
+	emits: ["update:modelValue", "afterEnter", "afterLeave"],
 	setup(props, { emit, slots }) {
 		const vm = getCurrentInstance();
 		const $yuyeon = vm?.appContext.config.globalProperties.$yuyeon;
@@ -225,6 +225,14 @@ export const YDialog = defineComponent({
 			}
 		}
 
+    function onAfterEnter() {
+      emit('afterEnter')
+    }
+
+    function onAfterLeave() {
+      emit('afterLeave')
+    }
+
 		watch(
 			() => layer$.value?.baseEl,
 			(neo, old) => {
@@ -267,6 +275,8 @@ export const YDialog = defineComponent({
 						modal
 						ref={layer$}
 						{...omit(chooseProps(props, YLayer.props), ["contentStyles"])}
+            onAfterEnter={onAfterEnter}
+            onAfterLeave={onAfterLeave}
 					>
 						{{
 							default: (...args: any[]) => slots.default?.(...args),
