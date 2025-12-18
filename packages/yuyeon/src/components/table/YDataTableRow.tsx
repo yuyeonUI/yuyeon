@@ -34,7 +34,7 @@ export const YDataTableRow = defineComponent({
     ...pressYDataTableRowProps(),
   },
   emits: ['hover', 'mousedown', 'click', 'dblclick', 'contextmenu'],
-  setup(props, { emit, slots }) {
+  setup(props, { slots }) {
     const vm = getCurrentInstance();
     const { columns } = useHeader();
     const { isSelected, toggleSelect } = useSelection();

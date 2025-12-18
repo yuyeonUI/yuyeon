@@ -1,5 +1,8 @@
-import { type CSSProperties } from 'vue';
+import type { CSSProperties } from 'vue';
 
+import { useHeader } from '@/components/table/composables/header';
+import { useSelection } from '@/components/table/composables/selection';
+import { useSorting } from '@/components/table/composables/sorting';
 import { useRender } from '@/composables/component';
 import { wrapInArray } from '@/util';
 import { defineComponent, propsFactory } from '@/util/component';
@@ -8,11 +11,8 @@ import { toStyleSizeValue } from '@/util/ui';
 import { YButton } from '../button/YButton';
 import { YIconCheckbox } from '../icons/YIconCheckbox';
 import { YIconSort } from '../icons/YIconSort';
+import type { FixedPropType, InternalDataTableHeader } from './types';
 import { YDataTableCell } from './YDataTableCell';
-import { useHeader } from '@/components/table/composables/header';
-import { useSelection } from '@/components/table/composables/selection';
-import { useSorting } from '@/components/table/composables/sorting';
-import { type FixedPropType, InternalDataTableHeader } from './types';
 
 export const pressYDataTableHeadProps = propsFactory(
   {
@@ -50,7 +50,7 @@ export const YDataTableHead = defineComponent({
       y: number,
     ): CSSProperties | undefined => {
       if (!props.sticky && !column.fixed) return undefined;
-      let fixedOffset: any = {};
+      const fixedOffset: any = {};
       if (column.fixed === true || column.fixed === 'left') {
         fixedOffset.left = toStyleSizeValue(column.fixedOffset);
       }
