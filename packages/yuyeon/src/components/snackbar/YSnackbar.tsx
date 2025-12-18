@@ -1,9 +1,9 @@
-import { animate } from 'motion';
-import { type PropType, computed, ref, toRef, watch, withModifiers } from 'vue';
+import { computed, type PropType, ref, toRef, watch, withModifiers } from 'vue';
 
 import { useModelDuplex } from '@/composables/communication';
 import { useRender } from '@/composables/component';
 import { useTimer } from '@/composables/timing';
+import { animate } from '@/util/animation';
 import { omit } from '@/util/common';
 import {
   bindClasses,
@@ -12,7 +12,7 @@ import {
   propsFactory,
 } from '@/util/component';
 
-import { YLayer, pressYLayerProps } from '../layer';
+import { pressYLayerProps, YLayer } from '../layer';
 import { YPlate } from '../plate';
 
 import './YSnackbar.scss';
@@ -23,6 +23,7 @@ const defaultSnackbarTransition = {
     if (!el.getAttribute('data-transform')) {
       const cache = el.style.getPropertyValue('transform');
       el.setAttribute('data-transform', cache);
+      el.setAttribute('data-direction', direction);
       el.style.setProperty(
         'transform',
         `${cache} translateY(${direction === 'top' ? '-' : ''}40px)`,
@@ -31,20 +32,24 @@ const defaultSnackbarTransition = {
   },
   onEnter(el: HTMLElement, done: () => void) {
     const cache = el.getAttribute('data-transform');
-    const motion = el.getAttribute('data-motion');
-    if (motion || !cache) {
+    const direction = el.getAttribute('data-direction');
+    if (!direction || !cache) {
       return;
     }
-    el.setAttribute('data-motion', 'true');
     animate(
       el,
-      {
-        transform: `${cache.replace(/translateY(.+)/, 'translateY(0)')}`,
-      },
-      { duration: 0.1 },
-    ).finished.then(() => {
+      [
+        {
+          transform: `${cache} translateY(${direction === 'top' ? '-' : ''}40px)`,
+        },
+        {
+          transform: `${cache.replace(/translateY(.+)/, 'translateY(0)')}`,
+        },
+      ],
+      { duration: 300 , easing: 'cubic-bezier(0.25, 0.8, 0.5, 1)' },
+    ).then(() => {
       el.removeAttribute('data-transform');
-      el.removeAttribute('data-motion');
+      el.removeAttribute('data-direction');
       done();
     });
   },
@@ -113,7 +118,7 @@ export const YSnackbar = defineComponent({
     });
 
     const computedInset = computed(() => {
-      const [first, second] = props.position?.split(' ');
+      const [first, second] = props.position?.split(' ') ?? [];
       let y = 'top';
       let x = 'left';
       if (second) {
@@ -156,7 +161,7 @@ export const YSnackbar = defineComponent({
     watch(
       () => props.duration,
       (neo) => {
-        if (!isNaN(neo) && active.value) {
+        if (!Number.isNaN(neo) && active.value) {
           reset();
           if (!hover.value) {
             setTimer();
@@ -206,7 +211,9 @@ export const YSnackbar = defineComponent({
             'classes',
           ])}
           modelValue={active.value}
-          onUpdate:modelValue={(v) => (active.value = v)}
+          onUpdate:modelValue={(v) => {
+            (active.value = v);
+          }}
           classes={classes.value}
           content-classes={computedContentClasses.value}
           scrim={false}
@@ -220,8 +227,12 @@ export const YSnackbar = defineComponent({
                 <div
                   class="y-snackbar__content"
                   onClick={withModifiers(onClickContent, ['exact'])}
-                  onMouseenter={() => (hover.value = true)}
-                  onMouseleave={() => (hover.value = false)}
+                  onMouseenter={() => {
+                    (hover.value = true);
+                  }}
+                  onMouseleave={() => {
+                    (hover.value = false);
+                  }}
                 >
                   {slots.default?.()}
                 </div>
