@@ -102,7 +102,7 @@ export const YPagination = defineComponent({
         Math.floor(+((listWidth - fixedWidth) / (itemWidth + gap)).toFixed(2)),
       );
       const maxVisible = Number(props.maxVisible);
-      if (!isNaN(maxVisible)) {
+      if (!Number.isNaN(maxVisible)) {
         return Math.min(maxVisible, count);
       }
       return count;
@@ -112,7 +112,7 @@ export const YPagination = defineComponent({
       const maxVisible = Number(props.maxVisible);
       if (props.totalVisible) {
         const total = parseInt(props.totalVisible as string, 10);
-        if (!isNaN(maxVisible)) {
+        if (!Number.isNaN(maxVisible)) {
           return Math.min(total, maxVisible);
         }
         return total;
@@ -170,7 +170,7 @@ export const YPagination = defineComponent({
     const range = computed(() => {
       if (
         length.value <= 0 ||
-        isNaN(length.value) ||
+        Number.isNaN(length.value) ||
         length.value > Number.MAX_SAFE_INTEGER
       ) {
         return [];
@@ -252,7 +252,9 @@ export const YPagination = defineComponent({
               ellipsis: false,
               disabled: !!props.disabled || +props.length < 2,
               color: active ? props.activeColor : props.color,
-              variation: active ? props.activeButtonVariation : props.buttonVariation,
+              variation: active
+                ? props.activeButtonVariation
+                : props.buttonVariation,
               onClick: (e: MouseEvent) => changePage(e, item),
             },
           };
