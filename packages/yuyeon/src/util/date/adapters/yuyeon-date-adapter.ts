@@ -70,8 +70,8 @@ export class YuyeonDateAdapter implements DateAdapter<Date> {
     return DateUtil.getNextMonth(date);
   }
 
-  public getWeekdays(): string[] {
-    return DateUtil.getWeekdays(this.locale);
+  public getWeekdays(firstDayIndex?: number): string[] {
+    return DateUtil.getWeekdays(this.locale, firstDayIndex);
   }
 
   public isAfter(date: Date, comparing: Date): boolean {

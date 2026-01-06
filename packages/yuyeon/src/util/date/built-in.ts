@@ -350,11 +350,14 @@ export class DateUtil {
     return new Date(date.getFullYear(), date.getMonth() + 1, 1);
   }
 
-  static getWeekdays(locale: string) {
-    const sundayIndex = FIRST_DAY_INDEX[locale.slice(-2).toUpperCase()] ?? 0;
+  static getWeekdays(locale: string, firstDayIndex?: number) {
+    let indexOffset = FIRST_DAY_INDEX[locale.slice(-2).toUpperCase()] ?? 0;
+    if (typeof firstDayIndex !== 'undefined' && firstDayIndex >= 0 && firstDayIndex < 7) {
+      indexOffset = firstDayIndex;
+    }
     return [...Array(7).keys()].map((i) => {
       const weekday = new Date(FIRST_SUNDAY);
-      weekday.setDate(FIRST_SUNDAY.getDate() + sundayIndex + i);
+      weekday.setDate(FIRST_SUNDAY.getDate() + indexOffset + i);
       return new Intl.DateTimeFormat(locale, { weekday: 'narrow' }).format(
         weekday,
       );

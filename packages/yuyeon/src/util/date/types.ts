@@ -159,7 +159,7 @@ export interface DateAdapter<T = unknown> {
   /**
    *
    */
-  getWeekdays(): string[];
+  getWeekdays(firstDayIndex?: number): string[];
 
   /**
    *  0 ~ 11
