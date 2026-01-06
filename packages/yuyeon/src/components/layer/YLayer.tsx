@@ -349,7 +349,7 @@ export const YLayer = defineComponent({
 										{...contentEvents.value}
 										ref={content$}
 									>
-										{slots.default?.({ active: active.value })}
+										{slots.default?.({ active: active.value, close: () => { active.value = false; } })}
 									</div>
 								</PolyTransition>
 							</div>
