@@ -157,7 +157,7 @@ export const YYYY_MM_DD_REGEX =
   /^([12]\d{3}-([1-9]|0[1-9]|1[0-2])-([1-9]|0[1-9]|[12]\d|3[01]))$/;
 export const FIRST_SUNDAY = new Date(1970, 0, 4);
 
-// biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
+// biome-ignore lint/complexity/noStaticOnlyClass: For adapter
 export class DateUtil {
   static date(value?: any): Date | null {
     if (value == null) return new Date();
@@ -482,5 +482,34 @@ export class DateUtil {
     const d = new Date(date);
     d.setMinutes(minute);
     return d;
+  }
+
+  static parseTime(input: string) {
+    const timeStr = String(input).replace(/\D/g, '');
+    if (!timeStr) {
+      return null;
+    }
+
+    const length = timeStr.length;
+    let hours: number;
+    let minutes: number;
+
+    if (length === 1 || length === 2) {
+      hours = parseInt(timeStr, 10);
+      minutes = 0;
+    } else if (length === 3) {
+      hours = parseInt(timeStr[0], 10);
+      minutes = parseInt(timeStr.slice(1), 10);
+    } else {
+      const first4 = timeStr.slice(0, 4);
+      hours = parseInt(first4.slice(0, 2), 10);
+      minutes = parseInt(first4.slice(2), 10);
+    }
+
+    if (hours < 0 || hours > 23 || minutes < 0 || minutes > 59) {
+      return null;
+    }
+
+    return { hours, minutes };
   }
 }

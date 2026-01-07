@@ -145,4 +145,8 @@ export class YuyeonDateAdapter implements DateAdapter<Date> {
   setMinute(date: Date, minute: number): Date {
     return DateUtil.setMinute(date, minute);
   }
+
+  public parseTime(time:string): {hours: number, minutes: number} | null {
+    return DateUtil.parseTime(time);
+  }
 }
