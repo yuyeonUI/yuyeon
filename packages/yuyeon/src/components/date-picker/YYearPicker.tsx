@@ -26,7 +26,7 @@ const interval = 20;
 export const YYearPicker = defineComponent({
 	name: "YYearPicker",
 	props: pressYYearPickerPropsOptions(),
-	emits: ["mode"],
+	emits: ["mode", "click", "update:modelValue"],
 	setup(props, { emit, expose }) {
 		const dateUtil = useDate();
 		const model = useModelDuplex(props, "modelValue");
@@ -48,6 +48,7 @@ export const YYearPicker = defineComponent({
 		});
 
 		function onClick(value: number) {
+      emit('click', value);
 			if (model.value === value) {
 				emit("mode");
 			}
