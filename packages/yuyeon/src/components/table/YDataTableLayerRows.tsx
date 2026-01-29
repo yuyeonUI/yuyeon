@@ -1,4 +1,10 @@
-import { type PropType, SlotsType, computed, shallowRef, watch } from 'vue';
+import {
+  computed,
+  type PropType,
+  type SlotsType,
+  shallowRef,
+  watch,
+} from 'vue';
 
 import { useRender } from '@/composables';
 import { defineComponent } from '@/util/component';
@@ -65,7 +71,7 @@ export const YDataTableLayerRows = defineComponent({
           return (
             <YDataTableLayerRow
               item={item}
-              head-rect={headRect}
+              head-rect={headRect.value}
               scroll-top={scrollTop.value}
               width={rowWidth.value}
               classes={props.classes}
@@ -76,5 +82,9 @@ export const YDataTableLayerRows = defineComponent({
         })}
       </div>
     ));
+
+    return {
+      headRect,
+    }
   },
 });
