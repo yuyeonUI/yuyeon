@@ -1,7 +1,7 @@
 import {
   type DeepReadonly,
-  inject,
   type InjectionKey,
+  inject,
   type PropType,
   provide,
   type Ref,
@@ -12,7 +12,7 @@ import {
 import { getRangeArr } from '@/util/common';
 import { propsFactory } from '@/util/component';
 
-import { type DataTableHeader, type InternalDataTableHeader } from '../types';
+import type { DataTableHeader, InternalDataTableHeader } from '../types';
 
 export const pressDataTableHeader = propsFactory(
   {
