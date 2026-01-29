@@ -147,6 +147,6 @@ export class YuyeonDateAdapter implements DateAdapter<Date> {
   }
 
   public parseTime(time:string): {hours: number, minutes: number} | null {
-    return DateUtil.parseTime(time);
+    return DateUtil.parseTime(this.locale, time);
   }
 }

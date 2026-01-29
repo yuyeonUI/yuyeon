@@ -484,13 +484,20 @@ export class DateUtil {
     return d;
   }
 
-  static parseTime(input: string) {
+  /**
+   * Parse time string to { hours (24 hours), minutes }.
+   *
+   * @param locale
+   * @param input
+   */
+  static parseTime(locale: string, input: string) {
     const timeStr = String(input).replace(/\D/g, '');
     if (!timeStr) {
       return null;
     }
 
     const length = timeStr.length;
+    const pm = DateUtil.includesPm(locale, input);
     let hours: number;
     let minutes: number;
 
@@ -506,10 +513,27 @@ export class DateUtil {
       minutes = parseInt(first4.slice(2), 10);
     }
 
+    if (hours < 12 && pm) {
+      hours += 12;
+    }
+
     if (hours < 0 || hours > 23 || minutes < 0 || minutes > 59) {
       return null;
     }
 
     return { hours, minutes };
+  }
+
+  /**
+   * Check if the input is an afternoon time.
+   * Before, check if the locale supports Meridian.
+   *
+   * @param locale
+   * @param input
+   */
+  static includesPm(locale: string, input: string) {
+    if (input.trim().toLowerCase().includes('pm')) return true;
+    const meridians = DateUtil.getMeridians(locale);
+    return !!meridians[1] && input.trim().includes(meridians[1]);
   }
 }
