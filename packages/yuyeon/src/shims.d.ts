@@ -44,7 +44,8 @@ import type {
   YTextHighlighter,
   YTi,
   YTooltip,
-  YTreeView
+  YTreeView,
+  YYearPicker,
 } from "yuyeon/components";
 
 declare module "vue" {
@@ -102,6 +103,7 @@ declare module "vue" {
     YProgressRing: typeof YProgressRing;
     YTextEllipsis: typeof YTextEllipsis;
     YImg: typeof YImg;
+    YYearPicker: typeof YYearPicker;
   }
 
   export interface GlobalDirectives {
