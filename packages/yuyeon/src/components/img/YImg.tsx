@@ -60,7 +60,7 @@ export const YImg = defineComponent({
   slots: Object as SlotsType<{
     placeholder: any;
   }>,
-  emits: ["load", "loaded", "error"],
+  emits: ["load", "loaded", "error", 'status'],
   setup(props, { slots, attrs, emit }) {
     const vm = getCurrentInstance()!;
     const image$ = ref<HTMLImageElement>();
@@ -117,6 +117,10 @@ export const YImg = defineComponent({
         initIntersect();
       },
     );
+
+    watch(status, (value) => {
+      emit('status', value)
+    }, { immediate: true });
 
     const _Placeholder = (placeholderProps: { status: string }) => {
       if (!slots.placeholder) return null;
