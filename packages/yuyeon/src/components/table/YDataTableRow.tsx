@@ -104,6 +104,7 @@ export const YDataTableRow = defineComponent({
                 toggleSelect,
                 isExpanded,
                 toggleExpand,
+                column,
                 el: vm?.proxy?.$el,
               };
 
