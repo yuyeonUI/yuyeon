@@ -423,11 +423,11 @@ function parseCoordProp(prop: string | number | (string | number)[]) {
   let margins: number[];
   if (typeof prop === 'string') {
     margins = prop.split(' ').map(parseFloat);
-    if (margins.length === 1) margins.push(margins[0]);
+    if (margins.length === 1) margins.push(0);
   } else if (Array.isArray(prop)) {
     margins = (prop as string[]).map(parseFloat);
   } else {
-    margins = [prop, prop];
+    margins = [prop, 0];
   }
 
   return margins.slice(0, 2).map((v) => (Number.isNaN(v) ? 0 : v));
