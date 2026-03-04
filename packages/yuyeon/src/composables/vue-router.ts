@@ -27,6 +27,8 @@ export const pressVueRouterPropsOptions = propsFactory(
     replace: Boolean,
     to: [String, Object] as PropType<RouteLocationRaw>,
     exact: Boolean,
+    activeClass: String,
+    exactActiveClass: String,
   },
   'VueRouter',
 );

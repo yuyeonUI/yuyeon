@@ -157,7 +157,7 @@ export const YYYY_MM_DD_REGEX =
   /^([12]\d{3}-([1-9]|0[1-9]|1[0-2])-([1-9]|0[1-9]|[12]\d|3[01]))$/;
 export const FIRST_SUNDAY = new Date(1970, 0, 4);
 
-// biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
+// biome-ignore lint/complexity/noStaticOnlyClass: For adapter
 export class DateUtil {
   static date(value?: any): Date | null {
     if (value == null) return new Date();
@@ -350,11 +350,14 @@ export class DateUtil {
     return new Date(date.getFullYear(), date.getMonth() + 1, 1);
   }
 
-  static getWeekdays(locale: string) {
-    const sundayIndex = FIRST_DAY_INDEX[locale.slice(-2).toUpperCase()] ?? 0;
+  static getWeekdays(locale: string, firstDayIndex?: number) {
+    let indexOffset = FIRST_DAY_INDEX[locale.slice(-2).toUpperCase()] ?? 0;
+    if (typeof firstDayIndex !== 'undefined' && firstDayIndex >= 0 && firstDayIndex < 7) {
+      indexOffset = firstDayIndex;
+    }
     return [...Array(7).keys()].map((i) => {
       const weekday = new Date(FIRST_SUNDAY);
-      weekday.setDate(FIRST_SUNDAY.getDate() + sundayIndex + i);
+      weekday.setDate(FIRST_SUNDAY.getDate() + indexOffset + i);
       return new Intl.DateTimeFormat(locale, { weekday: 'narrow' }).format(
         weekday,
       );
@@ -479,5 +482,58 @@ export class DateUtil {
     const d = new Date(date);
     d.setMinutes(minute);
     return d;
+  }
+
+  /**
+   * Parse time string to { hours (24 hours), minutes }.
+   *
+   * @param locale
+   * @param input
+   */
+  static parseTime(locale: string, input: string) {
+    const timeStr = String(input).replace(/\D/g, '');
+    if (!timeStr) {
+      return null;
+    }
+
+    const length = timeStr.length;
+    const pm = DateUtil.includesPm(locale, input);
+    let hours: number;
+    let minutes: number;
+
+    if (length === 1 || length === 2) {
+      hours = parseInt(timeStr, 10);
+      minutes = 0;
+    } else if (length === 3) {
+      hours = parseInt(timeStr[0], 10);
+      minutes = parseInt(timeStr.slice(1), 10);
+    } else {
+      const first4 = timeStr.slice(0, 4);
+      hours = parseInt(first4.slice(0, 2), 10);
+      minutes = parseInt(first4.slice(2), 10);
+    }
+
+    if (hours < 12 && pm) {
+      hours += 12;
+    }
+
+    if (hours < 0 || hours > 23 || minutes < 0 || minutes > 59) {
+      return null;
+    }
+
+    return { hours, minutes };
+  }
+
+  /**
+   * Check if the input is an afternoon time.
+   * Before, check if the locale supports Meridian.
+   *
+   * @param locale
+   * @param input
+   */
+  static includesPm(locale: string, input: string) {
+    if (input.trim().toLowerCase().includes('pm')) return true;
+    const meridians = DateUtil.getMeridians(locale);
+    return !!meridians[1] && input.trim().includes(meridians[1]);
   }
 }

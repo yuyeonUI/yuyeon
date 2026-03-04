@@ -1,10 +1,10 @@
 import {
-  type InjectionKey,
-  type PropType,
-  type Ref,
   computed,
+  type InjectionKey,
   inject,
+  type PropType,
   provide,
+  type Ref,
 } from 'vue';
 
 import { useModelDuplex } from '@/composables/communication';
@@ -12,8 +12,8 @@ import { wrapInArray } from '@/util/array';
 import { deepEqual, getPropertyFromItem } from '@/util/common';
 import { propsFactory } from '@/util/component';
 
-import { DataTableProvideSelectionData } from '../types';
-import { DataTableItemsProps } from './items';
+import type { DataTableProvideSelectionData } from '../types';
+import type { DataTableItemsProps } from './items';
 
 export interface SelectableItem {
   key: string;

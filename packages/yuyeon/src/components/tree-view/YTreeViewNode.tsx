@@ -1,21 +1,23 @@
+/** biome-ignore-all lint/a11y/noStaticElementInteractions: <explanation> */
+/** biome-ignore-all lint/a11y/useFocusableInteractive: <explanation> */
+/** biome-ignore-all lint/a11y/useKeyWithClickEvents: <explanation> */
 import {
-  type PropType,
-  type SlotsType,
-  type VNodeArrayChildren,
   computed,
-  getCurrentInstance,
   mergeProps,
   onBeforeMount,
+  type PropType,
   ref,
   resolveComponent,
+  type SlotsType,
+  type VNodeArrayChildren,
+  watch,
 } from 'vue';
 
 import { pressItemsPropsOptions } from '@/abstract/items';
 import { useTreeView } from '@/components/tree-view/tree-view';
 import { useRender } from '@/composables/component';
-import { getObjectValueByPath } from '@/util/common';
-import { defineComponent } from '@/util/component';
-import { propsFactory } from '@/util/component';
+import { getObjectValueByPath, getPropertyFromItem } from '@/util/common';
+import { defineComponent, propsFactory } from '@/util/component';
 
 import { YButton } from '../button';
 import { YIconCheckbox, YIconExpand } from '../icons';
@@ -28,6 +30,14 @@ export const pressYTreeViewNodeProps = propsFactory(
     search: String,
     disableTransition: Boolean,
     enableActive: Boolean,
+    activeStrategy: {
+      /**
+       * cascade: only action descendent leaves
+       * relative: cascade after check parent (ancestor)
+       */
+      type: String as PropType<'independent' | 'cascade' | 'relative'>,
+      default: 'independent',
+    },
     activeClass: [String, Array],
     activeSingleModifier: String,
     requiredActive: Boolean,
@@ -36,9 +46,22 @@ export const pressYTreeViewNodeProps = propsFactory(
       default: 'primary',
     },
     enableSelect: Boolean,
+    selectStrategy: {
+      /**
+       * cascade: only action descendent leaves
+       * relative: cascade after check parent (ancestor)
+       * leaves: relative after return values only leaf
+       */
+      type: String as PropType<'independent' | 'cascade' | 'relative' | 'leaf'>,
+      default: 'relative',
+    },
     onMouseenterContainer: Function,
     onMouseleaveContainer: Function,
     onMousemoveContainer: Function,
+    onDblclickContainer: Function,
+    itemSelectable: {
+      type: [String, Array, Function] as PropType<any>,
+    },
     ...pressItemsPropsOptions({
       itemKey: 'id',
     }),
@@ -46,6 +69,9 @@ export const pressYTreeViewNodeProps = propsFactory(
   'YTreeViewNode',
 );
 
+/**
+ * TODO: correct selected values what selectStrategy leaf or others
+ */
 export const YTreeViewNode = defineComponent({
   name: 'YTreeNode',
   components: {
@@ -72,14 +98,17 @@ export const YTreeViewNode = defineComponent({
   }>,
   setup(props, { slots, expose }) {
     const YTreeNode = resolveComponent('YTreeViewNode', true) as any;
-    const vm = getCurrentInstance();
     const treeView = useTreeView();
     const container$ = ref<HTMLElement>();
 
     const expanded = ref(false);
     const active = ref(false);
     const selected = ref(false);
-    const immediate = ref(false);
+    const indeterminate = ref(false);
+
+    const myKey = computed(() =>
+      getObjectValueByPath(props.item, props.itemKey),
+    );
 
     const children = computed(() => {
       return (
@@ -88,6 +117,46 @@ export const YTreeViewNode = defineComponent({
     });
 
     const imLeaf = computed(() => children.value.length < 1);
+
+    const searchLoading = computed(() => {
+      return treeView.searchLoading.value;
+    });
+
+    const leaves = computed(() => {
+      return children.value.filter((leaf: any) => {
+        return !treeView.isExcluded(getObjectValueByPath(leaf, props.itemKey));
+      });
+    });
+
+    const childrenSelection = computed(() =>
+      treeView.selectedState.value(
+        myKey.value,
+        children.value.map((child: any) =>
+          getObjectValueByPath(child, props.itemKey),
+        ),
+      ),
+    );
+
+    const childrenAllChecked = computed(() => {
+      return !!children.value?.length && childrenSelection.value.all;
+    });
+
+    const childrenSomeChecked = computed(() => {
+      return (
+        (props.selectStrategy === 'relative' ||
+          props.selectStrategy === 'leaf') &&
+        (children.value?.length ?? 0) > 0 &&
+        !childrenAllChecked.value &&
+        childrenSelection.value.some
+      );
+    });
+
+    const isChecked = computed(() => {
+      return (
+        selected.value ||
+        (props.selectStrategy === 'leaf' && childrenAllChecked.value)
+      );
+    });
 
     const classes = computed(() => {
       return {
@@ -108,6 +177,26 @@ export const YTreeViewNode = defineComponent({
       return getObjectValueByPath(props.item, props.itemText) ?? '';
     });
 
+    const disabledSelect = computed(() => {
+      if (props.itemSelectable != null) {
+        let selectable = true;
+        if (typeof props.itemSelectable === 'function') {
+          selectable = !!props.itemSelectable(props.item);
+        } else if (Array.isArray(props.itemSelectable)) {
+          selectable = props.itemSelectable.includes(myKey.value);
+        } else {
+          selectable = getPropertyFromItem(
+            props.item,
+            props.itemSelectable,
+            true,
+          );
+        }
+
+        return !selectable;
+      }
+      return false;
+    });
+
     const slotProps = computed(() => {
       return {
         level: props.level,
@@ -116,14 +205,8 @@ export const YTreeViewNode = defineComponent({
       };
     });
 
-    const searchLoading = computed(() => {
-      return treeView.searchLoading.value;
-    });
-
-    const leaves = computed(() => {
-      return children.value.filter((leaf: any) => {
-        return !treeView.isExcluded(getObjectValueByPath(leaf, props.itemKey));
-      });
+    watch(childrenSomeChecked, (value) => {
+      indeterminate.value = value;
     });
 
     function toggleActive(e?: MouseEvent) {
@@ -147,7 +230,8 @@ export const YTreeViewNode = defineComponent({
 
     function onClickSelect(e: MouseEvent) {
       e.stopPropagation();
-      const to = !selected.value;
+      if (disabledSelect.value) return;
+      const to = !isChecked.value;
       selected.value = to;
       treeView.updateSelected(myKey.value, to);
       treeView.emitSelected();
@@ -169,6 +253,14 @@ export const YTreeViewNode = defineComponent({
 
     function onMousemoveContainer(e: MouseEvent) {
       props.onMousemoveContainer?.(e, { ...slotProps.value, item: props.item });
+    }
+
+    function onDblclickContainer(e: MouseEvent) {
+      props.onDblclickContainer?.(e, {
+        ...slotProps.value,
+        item: props.item,
+        toggleExpand: () => onClickExpand(e),
+      });
     }
 
     useRender(() => {
@@ -195,6 +287,7 @@ export const YTreeViewNode = defineComponent({
             onMouseenter={props.onMouseenterContainer && onMouseenterContainer}
             onMouseleave={props.onMouseleaveContainer && onMouseleaveContainer}
             onMousemove={props.onMousemoveContainer && onMousemoveContainer}
+            onDblclick={onDblclickContainer}
           >
             <YPlate />
             <div class={'y-tree-view-node__indents'}>{indentSpacer}</div>
@@ -216,8 +309,23 @@ export const YTreeViewNode = defineComponent({
             )}
             {/* SELECT */}
             {props.enableSelect && (
-              <div class={'y-tree-view-node__select'} onClick={onClickSelect}>
-                <YIconCheckbox checked={selected.value}></YIconCheckbox>
+              // biome-ignore lint/a11y/useSemanticElements: passive
+              <div
+                class={[
+                  'y-tree-view-node__select',
+                  {
+                    'y-tree-view-node__select--disabled': disabledSelect.value,
+                  },
+                ]}
+                role="checkbox"
+                aria-checked={isChecked.value}
+                onClick={onClickSelect}
+              >
+                <YIconCheckbox
+                  checked={isChecked.value}
+                  indeterminate={!selected.value && childrenSomeChecked.value}
+                  disabled={disabledSelect.value}
+                ></YIconCheckbox>
               </div>
             )}
             {/* CONTENT */}
@@ -289,16 +397,12 @@ export const YTreeViewNode = defineComponent({
       );
     });
 
-    const myKey = computed(() => {
-      return getObjectValueByPath(props.item, props.itemKey);
-    });
-
     const nodeState = {
       myKey,
       expanded,
       active,
       selected,
-      immediate,
+      indeterminate,
     };
 
     expose(nodeState);
@@ -313,7 +417,8 @@ export const YTreeViewNode = defineComponent({
       expanded,
       active,
       selected,
-      immediate,
+      indeterminate,
+      childrenSelection,
     };
   },
 });

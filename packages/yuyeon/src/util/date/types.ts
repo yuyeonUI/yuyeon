@@ -159,7 +159,7 @@ export interface DateAdapter<T = unknown> {
   /**
    *
    */
-  getWeekdays(): string[];
+  getWeekdays(firstDayIndex?: number): string[];
 
   /**
    *  0 ~ 11
@@ -195,6 +195,8 @@ export interface DateAdapter<T = unknown> {
   getMinute(date: T): number;
 
   setMinute(date: T, minute: number): T;
+
+  parseTime(time: string): {hours: number, minutes: number} | null;
 }
 
 export type DateFormatOptions =

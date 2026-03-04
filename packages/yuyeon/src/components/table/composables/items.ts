@@ -40,7 +40,7 @@ export function updateItem(
   const rowRef = ref<any | null>(null);
   const key = getPropertyFromItem(item, props.itemKey);
   const value = props.returnItem ? item : key;
-  let selectable;
+  let selectable: boolean;
   if (typeof props.itemSelectable === 'function') {
     selectable = !!props.itemSelectable(item);
   } else {

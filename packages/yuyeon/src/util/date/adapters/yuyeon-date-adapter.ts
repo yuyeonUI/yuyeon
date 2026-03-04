@@ -70,8 +70,8 @@ export class YuyeonDateAdapter implements DateAdapter<Date> {
     return DateUtil.getNextMonth(date);
   }
 
-  public getWeekdays(): string[] {
-    return DateUtil.getWeekdays(this.locale);
+  public getWeekdays(firstDayIndex?: number): string[] {
+    return DateUtil.getWeekdays(this.locale, firstDayIndex);
   }
 
   public isAfter(date: Date, comparing: Date): boolean {
@@ -144,5 +144,9 @@ export class YuyeonDateAdapter implements DateAdapter<Date> {
 
   setMinute(date: Date, minute: number): Date {
     return DateUtil.setMinute(date, minute);
+  }
+
+  public parseTime(time:string): {hours: number, minutes: number} | null {
+    return DateUtil.parseTime(this.locale, time);
   }
 }

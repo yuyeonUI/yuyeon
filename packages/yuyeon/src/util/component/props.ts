@@ -112,6 +112,7 @@ type InferPropType<T> = [T] extends [null]
         ? boolean
         : [T] extends [DateConstructor | { type: DateConstructor }]
           ? Date
+          // biome-ignore lint/suspicious/noRedeclare: <explanation>
           : [T] extends [(infer U)[] | { type: (infer U)[] }]
             ? U extends DateConstructor
               ? Date | InferPropType<U>

@@ -1,6 +1,6 @@
-import { type CSSProperties, type Ref } from 'vue';
+import type { CSSProperties, Ref } from 'vue';
 
-import { type Rect } from '@/util/rect';
+import type { Rect } from '@/util/rect';
 
 import type { CoordinateState } from './types';
 

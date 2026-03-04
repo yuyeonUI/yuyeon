@@ -1,10 +1,10 @@
 import {
-  type PropType,
-  type Ref,
-  Transition,
   defineComponent,
   h,
+  type PropType,
+  type Ref,
   ref,
+  Transition,
 } from 'vue';
 
 import { kebabToCamel } from '@/util/string';

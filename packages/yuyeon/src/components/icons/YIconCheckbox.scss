@@ -1,11 +1,12 @@
 .y-icon-checkbox {
   --y-icon-checkbox__color: var(--y-theme-primary-rgb);
-  --y-icon-checkbox__border-color: 180, 180, 180;
+  --y-icon-checkbox__on-color: var(--y-theme-on-primary-rgb, (255,255,255));
+  --y-icon-checkbox__border-color: 180,180,180;
   position: relative;
 
   &__checkmark-path {
     fill: none;
-    stroke: #ffffff;
+    stroke: rgb(var(--y-icon-checkbox__on-color));
     stroke-width: 2px;
     stroke-dashoffset: 29.7833385;
     stroke-dasharray: 29.7833385;
@@ -35,16 +36,14 @@
 
   &--indeterminate & {
     &__checkmark-path {
+      stroke: rgb(var(--y-icon-checkbox__border-color));
       d: path('M5.73,11.91 11.1,11.91 17.79,11.91');
-      stroke: #ffffff;
       stroke-width: 2;
       stroke-dashoffset: 0;
       transition: 0.2s cubic-bezier(0.56, 0.14, 0.49, 0.88);
     }
 
     &__border-path {
-      fill: rgb(var(--y-icon-checkbox__color));
-      stroke: rgba(var(--y-icon-checkbox__color), 0.8);
       transition: fill 200ms ease-in;
     }
   }

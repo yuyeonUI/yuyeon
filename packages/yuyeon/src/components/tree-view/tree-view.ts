@@ -1,8 +1,17 @@
-import { InjectionKey, Ref, inject, provide, ref, shallowRef } from 'vue';
+import {
+  type ComputedRef,
+  computed,
+  type InjectionKey,
+  inject,
+  provide,
+  type Ref,
+  ref,
+  shallowRef,
+} from 'vue';
 
-import { NodeState } from '@/components/tree-view/types';
+import type { NodeState } from '@/components/tree-view/types';
 import { useModelDuplex } from '@/composables';
-import { CandidateKey } from '@/types';
+import type { CandidateKey } from '@/types';
 import { getObjectValueByPath } from '@/util';
 
 export const Y_TREE_VIEW: InjectionKey<{
@@ -15,6 +24,14 @@ export const Y_TREE_VIEW: InjectionKey<{
   emitExpanded: () => void;
   emitActive: () => void;
   emitSelected: () => void;
+  isChildrenAll: (key: CandidateKey, stateKey: string, to: boolean) => boolean;
+  isChildrenSome: (key: CandidateKey, stateKey: string) => boolean;
+  selectedState: ComputedRef<
+    (
+      key: CandidateKey,
+      children: CandidateKey[],
+    ) => { all: boolean; some: boolean }
+  >;
 }> = Symbol.for('YTreeView');
 
 // TODO: props type
@@ -29,6 +46,20 @@ export function provideTreeView(props: any) {
   const activeSet = ref(new Set<CandidateKey>());
   const searchLoading = shallowRef(false);
   const excludedSet = ref(new Set<CandidateKey>());
+
+  const selectedState = computed(() => {
+    let all = false;
+    let some = false;
+
+    return (key: CandidateKey, children: CandidateKey[]) => {
+      all = children.every((child) => selectedSet.value.has(child));
+      some = getDescendants(key).some((child) => selectedSet.value.has(child));
+      return {
+        all: all,
+        some: some,
+      };
+    };
+  });
 
   // Utils
   function getDescendants(key: CandidateKey) {
@@ -151,7 +182,11 @@ export function provideTreeView(props: any) {
     const node = nodes.value[key];
 
     if (to) {
-      selectedSet.value.add(key);
+      if (props.selectStrategy !== 'leaf') {
+        selectedSet.value.add(key);
+      } else if (!node.childKeys.length) {
+        selectedSet.value.add(key);
+      }
       node.selected = true;
     }
 
@@ -161,15 +196,42 @@ export function provideTreeView(props: any) {
       issueVnodeState(key);
     }
 
-    if (props.selectStrategy === 'cascade') {
+    if (
+      props.selectStrategy === 'cascade' ||
+      props.selectStrategy === 'relative' ||
+      props.selectStrategy === 'leaf'
+    ) {
       for (const descendant of getDescendants(key)) {
         if (descendant in nodes.value) {
-          to
-            ? selectedSet.value.add(descendant)
-            : selectedSet.value.delete(descendant);
-          nodes.value[descendant].selected = to;
-          issueVnodeState(descendant);
+          if (
+            props.selectStrategy === 'leaf' &&
+            !!nodes.value[descendant]?.childKeys?.length &&
+            to
+          ) {
+            continue;
+          }
+          setSelected(descendant, to);
         }
+      }
+      if (
+        props.selectStrategy === 'relative' ||
+        (props.selectStrategy === 'leaf' && !to)
+      ) {
+        let grand: CandidateKey | null = node.parentKey;
+        do {
+          const parentKey = grand;
+          grand = null;
+          if (!parentKey) continue;
+          const parent = nodes.value[parentKey];
+          if (!parent) continue;
+          const all = isChildrenAll(parentKey, 'selected', to);
+          if (all || !to) {
+            setSelected(parentKey, to);
+            if (parent.parentKey) {
+              grand = parent.parentKey;
+            }
+          }
+        } while (grand != null);
       }
     }
   }
@@ -183,9 +245,24 @@ export function provideTreeView(props: any) {
     });
   }
 
+  function isChildrenSome(key: CandidateKey, stateKey: string) {
+    const node = nodes.value[key];
+    if (!node) return false;
+    const { childKeys } = node;
+    return childKeys.some((childKey) => {
+      return (nodes.value[childKey] as any)?.[stateKey] === true;
+    });
+  }
+
   function setActive(key: CandidateKey, to: boolean) {
     to ? activeSet.value.add(key) : activeSet.value.delete(key);
     nodes.value[key].active = to;
+    issueVnodeState(key);
+  }
+
+  function setSelected(key: CandidateKey, to: boolean) {
+    to ? selectedSet.value.add(key) : selectedSet.value.delete(key);
+    nodes.value[key].selected = to;
     issueVnodeState(key);
   }
 
@@ -230,6 +307,9 @@ export function provideTreeView(props: any) {
     emitExpanded,
     emitActive,
     emitSelected,
+    isChildrenAll,
+    isChildrenSome,
+    selectedState,
   });
 
   return {
@@ -250,6 +330,7 @@ export function provideTreeView(props: any) {
     searchLoading,
     excludedSet,
     isExcluded,
+    selectedState,
   };
 }
 

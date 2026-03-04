@@ -1,9 +1,9 @@
 import {
-  type PropType,
-  SlotsType,
   computed,
   onBeforeUnmount,
+  type PropType,
   ref,
+  type SlotsType,
   shallowRef,
   useTemplateRef,
   watch,
@@ -113,8 +113,7 @@ export const YDataTableLayerRow = defineComponent({
         class={['y-data-table-layer-row', ...computedClasses.value]}
         style={computedStyles.value}
       >
-        {slots.default &&
-          slots.default({
+        {slots.default?.({
             item: props.item,
             width: props.width,
             height: rect.value?.[0]?.height,

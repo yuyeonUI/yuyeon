@@ -18,7 +18,7 @@ export function createDateModule(options: DateOptions, locale: LocaleModule) {
   };
 }
 
-export function useDate(): DateInstance {
+export function useDate<T>(): DateInstance<T> {
   const options = inject<any>(YUYEON_DATE_OPTIONS_KEY);
   if (!options)
     throw new Error('【yuyeon】 Not found provided "DateModule" for options');

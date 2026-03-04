@@ -1,7 +1,7 @@
 import {
   type ComponentPublicInstance,
-  type PropType,
   computed,
+  type PropType,
   shallowRef,
 } from 'vue';
 
@@ -44,6 +44,7 @@ export const pressYPaginationProps = propsFactory(
     color: String,
     activeColor: String,
     buttonVariation: [String],
+    activeButtonVariation: [String],
     align: {
       type: String as PropType<'start' | 'center' | 'end'>,
       default: 'center',
@@ -101,7 +102,7 @@ export const YPagination = defineComponent({
         Math.floor(+((listWidth - fixedWidth) / (itemWidth + gap)).toFixed(2)),
       );
       const maxVisible = Number(props.maxVisible);
-      if (!isNaN(maxVisible)) {
+      if (!Number.isNaN(maxVisible)) {
         return Math.min(maxVisible, count);
       }
       return count;
@@ -111,7 +112,7 @@ export const YPagination = defineComponent({
       const maxVisible = Number(props.maxVisible);
       if (props.totalVisible) {
         const total = parseInt(props.totalVisible as string, 10);
-        if (!isNaN(maxVisible)) {
+        if (!Number.isNaN(maxVisible)) {
           return Math.min(total, maxVisible);
         }
         return total;
@@ -169,7 +170,7 @@ export const YPagination = defineComponent({
     const range = computed(() => {
       if (
         length.value <= 0 ||
-        isNaN(length.value) ||
+        Number.isNaN(length.value) ||
         length.value > Number.MAX_SAFE_INTEGER
       ) {
         return [];
@@ -251,7 +252,9 @@ export const YPagination = defineComponent({
               ellipsis: false,
               disabled: !!props.disabled || +props.length < 2,
               color: active ? props.activeColor : props.color,
-              variation: props.buttonVariation,
+              variation: active
+                ? props.activeButtonVariation
+                : props.buttonVariation,
               onClick: (e: MouseEvent) => changePage(e, item),
             },
           };
@@ -260,10 +263,10 @@ export const YPagination = defineComponent({
     });
 
     const styles = computed(() => {
-      let gap = undefined;
+      let gap: string | undefined;
       if (props.gap) {
         const value = +props.gap;
-        if (!isNaN(value)) {
+        if (!Number.isNaN(value)) {
           gap = toStyleSizeValue(value);
         } else if (typeof props.gap === 'string') {
           gap = props.gap;
@@ -276,14 +279,13 @@ export const YPagination = defineComponent({
 
     useRender(() => {
       return (
-        <div
+        <nav
+          ref={resizeObservedRef}
           class={[
             'y-pagination',
             { [`y-pagination--align-${props.align}`]: props.align !== 'start' },
           ]}
-          role={'navigation'}
           style={styles.value}
-          ref={resizeObservedRef}
         >
           <ul class={['y-pagination__list']}>
             {props.showEndButton && (
@@ -362,7 +364,7 @@ export const YPagination = defineComponent({
               </li>
             )}
           </ul>
-        </div>
+        </nav>
       );
     });
 
