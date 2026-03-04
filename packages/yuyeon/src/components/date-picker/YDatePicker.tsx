@@ -3,7 +3,7 @@ import { computed, ref, Transition, watch } from "vue";
 import { useModelDuplex } from "@/composables/communication";
 import { useRender } from "@/composables/component";
 import { useDate } from "@/composables/date";
-import { omit } from "@/util";
+import { omit } from '@/util';
 import { chooseProps, defineComponent, propsFactory } from "@/util/component";
 
 import { pressYDateCalendarPropsOptions, YDateCalendar } from "./YDateCalendar";
@@ -24,7 +24,7 @@ export const pressYDatePickerPropsOptions = propsFactory(
 export const YDatePicker = defineComponent({
 	name: "YDatePicker",
 	props: pressYDatePickerPropsOptions(),
-	emits: ["update:month", "update:year", "update:modelValue", "update:mode"],
+	emits: ["update:month", "update:year", "update:modelValue", "update:mode", "click:day"],
 	setup(props, { emit }) {
 		const yearPicker$ = ref<typeof YYearPicker>();
 		const dateUtil = useDate();
@@ -98,6 +98,10 @@ export const YDatePicker = defineComponent({
 			onClickPage(1);
 		}
 
+    function onClickDay(item: any) {
+      emit('click:day', item.date);
+    }
+
 		watch(month, () => {
 			if (mode.value === "month") toggleMonthMode();
 			emit("update:month", month.value);
@@ -139,11 +143,12 @@ export const YDatePicker = defineComponent({
 						/>
 					) : (
 						<YDateCalendar
-							{...chooseProps(props, YDateCalendar.props)}
+							{...omit(chooseProps(props, YDateCalendar.props), ['onClick:day'])}
 							hideHeader={true}
 							v-model={model.value}
 							v-model:month={month.value}
 							v-model:year={year.value}
+              onClick:day={onClickDay}
 						/>
 					)}
 				</Transition>

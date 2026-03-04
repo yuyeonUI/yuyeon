@@ -17,7 +17,7 @@ export const pressYDateCalendarPropsOptions = propsFactory(
 		month: [Number, String],
 		modelValue: Array as PropType<unknown[]>,
 		multiple: Boolean,
-		range: Boolean,
+		range: [Boolean, String],
 		allowedDates: [Array, Function],
 		max: null as any as PropType<unknown>,
 		min: null as any as PropType<unknown>,
@@ -29,6 +29,7 @@ export const pressYDateCalendarPropsOptions = propsFactory(
 			default: true,
 		},
 		hideHeader: Boolean,
+    'onClick:day': Function as PropType<(item: any) => void>,
 	},
 	"YDateCalendar",
 );
@@ -221,6 +222,10 @@ export const YDateCalendar = defineComponent({
 		function onClickDay(item: any) {
 			const value = item.date;
 			if (props.multiple) {
+        if (props.range === 'manual') {
+          emit("click:day", item);
+          return;
+        }
 				const index = model.value.findIndex((selection: unknown) =>
 					dateUtil.isSameDay(selection, value),
 				);
