@@ -47,7 +47,7 @@ export const YDatePicker = defineComponent({
           : dateUtil.getMonth(dateUtil.date());
       },
       set: (value: number) => {
-        controlMonth.value = value;
+        month.value = value;
       },
     });
 
@@ -58,7 +58,7 @@ export const YDatePicker = defineComponent({
           : dateUtil.getYear(dateUtil.date());
       },
       set: (value: number) => {
-        controlYear.value = value;
+        year.value = value;
       },
     });
 
