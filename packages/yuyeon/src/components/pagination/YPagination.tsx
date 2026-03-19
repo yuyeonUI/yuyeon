@@ -9,7 +9,7 @@ import { useModelDuplex } from '@/composables/communication';
 import { useRender } from '@/composables/component';
 import { useRefs } from '@/composables/ref';
 import { useResizeObserver } from '@/composables/resize-observer';
-import { getRangeArr } from '@/util/common';
+import { clamp, getRangeArr } from '@/util/common';
 import { defineComponent, propsFactory } from '@/util/component';
 import { toStyleSizeValue } from '@/util/ui';
 
@@ -36,7 +36,9 @@ export const pressYPaginationProps = propsFactory(
     },
     totalVisible: [Number, String],
     maxVisible: [Number, String],
-    showEndButton: Boolean,
+    endButton: {
+      type: [Boolean, Number] as PropType<boolean | number>,
+    },
     gap: {
       type: [String, Number],
       default: 4,
@@ -94,7 +96,7 @@ export const YPagination = defineComponent({
     });
 
     function calcItemCount(listWidth: number, itemWidth: number) {
-      const fixedCount = props.showEndButton ? 5 : 3;
+      const fixedCount = props.endButton ? 5 : 3;
       const gap = +(props.gap ?? 4);
       const fixedWidth = (itemWidth + gap) * fixedCount - gap;
       const count = Math.max(
@@ -130,8 +132,17 @@ export const YPagination = defineComponent({
           variation: props.buttonVariation,
           onClick: (e: MouseEvent) => {
             e.preventDefault();
-            page.value = 1;
-            emit('change', 1, 'first');
+            let to = page.value;
+            if (props.endButton === true) {
+              to = 1;
+            } else {
+              const del = Number(props.endButton);
+              if (!Number.isNaN(del)) {
+                to = clamp(to - del, 1, +length.value);
+              }
+            }
+            page.value = to;
+            emit('change', to, 'first');
           },
         },
         prev: {
@@ -159,8 +170,13 @@ export const YPagination = defineComponent({
           variation: props.buttonVariation,
           onClick: (e: MouseEvent) => {
             e.preventDefault();
-            const to = +length.value;
-            page.value = +length.value;
+            let to = page.value;
+            if (props.endButton === true) {
+              to = +length.value;
+            } else if (typeof props.endButton === 'number') {
+              to = clamp(to + props.endButton, 1, +length.value);
+            }
+            page.value = to;
             emit('change', to, 'last');
           },
         },
@@ -288,7 +304,7 @@ export const YPagination = defineComponent({
           style={styles.value}
         >
           <ul class={['y-pagination__list']}>
-            {props.showEndButton && (
+            {props.endButton && (
               <li key="first" class="y-pagination__first">
                 {slots.first ? (
                   slots.first(controls.value.first)
@@ -348,7 +364,7 @@ export const YPagination = defineComponent({
                 </YButton>
               )}
             </li>
-            {props.showEndButton && (
+            {props.endButton && (
               <li key="last" class="y-pagination__last">
                 {slots.last ? (
                   slots.last(controls.value.last)
