@@ -26,7 +26,7 @@ const defaultSnackbarTransition = {
       el.setAttribute('data-direction', direction);
       el.style.setProperty(
         'transform',
-        `${cache} translateY(${direction === 'top' ? '-' : ''}40px)`,
+        `${cache.replace(/translateY(.+)/, '')} translateY(${direction === 'top' ? '-' : ''}40px)`,
       );
     }
   },
@@ -40,16 +40,21 @@ const defaultSnackbarTransition = {
       el,
       [
         {
-          transform: `${cache} translateY(${direction === 'top' ? '-' : ''}40px)`,
+          transform: `${cache.replace(/translateY(.+)/, `translateY(${direction === 'top' ? '-' : ''}40px)`)}`,
         },
         {
           transform: `${cache.replace(/translateY(.+)/, 'translateY(0)')}`,
         },
       ],
-      { duration: 300 , easing: 'cubic-bezier(0.25, 0.8, 0.5, 1)' },
+      {
+        duration: 300,
+        easing: 'cubic-bezier(0.25, 0.8, 0.5, 1)',
+        fill: 'forwards',
+      },
     ).then(() => {
       el.removeAttribute('data-transform');
       el.removeAttribute('data-direction');
+      el.style.setProperty('transform', '');
       done();
     });
   },
@@ -103,6 +108,8 @@ export const YSnackbar = defineComponent({
     const hover = ref(false);
     const duration = toRef(props, 'duration');
 
+    const { start, stop, reset } = useTimer(dismiss, duration);
+
     const classes = computed(() => {
       return {
         'y-snackbar': true,
@@ -139,16 +146,16 @@ export const YSnackbar = defineComponent({
       return ret;
     });
 
-    function dismiss() {
-      active.value = false;
-    }
-
-    const { start, stop, reset } = useTimer(dismiss, duration);
-    function setTimer() {
-      if (props.duration > 0) {
-        start();
+    const proxyTransition = computed(() => {
+      const { transition, position } = props;
+      if (transition?.name === 'y-snackbar') {
+        transition.onBeforeEnter = defaultSnackbarTransition.onBeforeEnter(
+          position.includes('top') ? 'top' : 'bottom',
+        );
+        return { ...transition };
       }
-    }
+      return props.transition;
+    });
 
     watch(hover, (neo: boolean) => {
       if (neo) {
@@ -163,8 +170,9 @@ export const YSnackbar = defineComponent({
       (neo) => {
         if (!Number.isNaN(neo) && active.value) {
           reset();
-          if (!hover.value) {
-            setTimer();
+          setTimer();
+          if (hover.value) {
+            stop();
           }
         }
       },
@@ -182,23 +190,22 @@ export const YSnackbar = defineComponent({
       { immediate: true },
     );
 
+    function dismiss() {
+      active.value = false;
+    }
+
+    function setTimer() {
+      if (props.duration > 0) {
+        start();
+      }
+    }
+
     function onClickContent(event: Event) {
       emit('click', event);
       if (props.closeClickContent) {
         active.value = false;
       }
     }
-
-    const proxyTransition = computed(() => {
-      const { transition, position } = props;
-      if (transition?.name === 'y-snackbar') {
-        transition.onBeforeEnter = defaultSnackbarTransition.onBeforeEnter(
-          position.includes('top') ? 'top' : 'bottom',
-        );
-        return { ...transition };
-      }
-      return props.transition;
-    });
 
     useRender(() => {
       return (
@@ -212,7 +219,7 @@ export const YSnackbar = defineComponent({
           ])}
           modelValue={active.value}
           onUpdate:modelValue={(v) => {
-            (active.value = v);
+            active.value = v;
           }}
           classes={classes.value}
           content-classes={computedContentClasses.value}
@@ -226,12 +233,18 @@ export const YSnackbar = defineComponent({
                 <YPlate></YPlate>
                 <div
                   class="y-snackbar__content"
+                  tabindex={0}
+                  onKeydown={(e) => {
+                    if (e.key === 'Enter') {
+                      onClickContent(e);
+                    }
+                  }}
                   onClick={withModifiers(onClickContent, ['exact'])}
                   onMouseenter={() => {
-                    (hover.value = true);
+                    hover.value = true;
                   }}
                   onMouseleave={() => {
-                    (hover.value = false);
+                    hover.value = false;
                   }}
                 >
                   {slots.default?.()}
