@@ -1,6 +1,5 @@
 import { type Ref, computed, getCurrentInstance, ref, toRaw, watch } from 'vue';
 
-import { hasOwnProperty } from '@/util/common';
 import { kebabToCamel, toKebabCase } from '@/util/string';
 
 import { useToggleScope } from './scope';
@@ -27,10 +26,11 @@ export function useModelDuplex(
     getProp();
     const registeredProps = vm.vnode.props;
     return (
-      (hasOwnProperty(registeredProps, kebabProp) ||
-        hasOwnProperty(registeredProps, property)) &&
-      (hasOwnProperty(registeredProps, `onUpdate:${kebabProp}`) ||
-        hasOwnProperty(registeredProps, `onUpdate:${property}`))
+      !!registeredProps &&
+      (registeredProps.hasOwnProperty(kebabProp) ||
+        registeredProps.hasOwnProperty(property)) &&
+      (registeredProps.hasOwnProperty(`onUpdate:${kebabProp}`) ||
+        registeredProps.hasOwnProperty(`onUpdate:${property}`))
     );
   });
 
@@ -48,7 +48,7 @@ export function useModelDuplex(
 
   const model = computed({
     get(): any {
-      return getIn(isDefinedProp.value ? getProp() : txValue.value);
+      return getIn(isDefinedProp.value ? props[property] : txValue.value);
     },
     set(value) {
       const neo = setOut(value);
