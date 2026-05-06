@@ -222,8 +222,8 @@ export const YMenu = defineComponent({
           v-model={active.value}
         >
           {{
-            default: (...args: any) => {
-              return <>{slots.default?.(...args) ?? ''}</>;
+            default: (slotProps: any) => {
+              return <>{slots.default?.(slotProps) ?? ''}</>;
             },
             base: (...args: any[]) => slots.base?.(...args),
           }}
