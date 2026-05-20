@@ -9,7 +9,7 @@ import './YListItem.scss';
 export const pressYListItemProps = propsFactory(
   {
     tag: {
-      type: String,
+      type: [String, Object],
       default: 'div',
     },
     onClick: Function,

@@ -1,6 +1,5 @@
 import { type Ref, computed, getCurrentInstance, ref, toRaw, watch } from 'vue';
 
-import { hasOwnProperty } from '@/util/common';
 import { kebabToCamel, toKebabCase } from '@/util/string';
 
 import { useToggleScope } from './scope';
@@ -19,18 +18,15 @@ export function useModelDuplex(
     props[property] !== undefined ? props[property] : defaultValue,
   );
 
-  function getProp() {
-    return props[property];
-  }
-
   const isDefinedProp = computed(() => {
-    getProp();
+    props[property];
     const registeredProps = vm.vnode.props;
     return (
-      (hasOwnProperty(registeredProps, kebabProp) ||
-        hasOwnProperty(registeredProps, property)) &&
-      (hasOwnProperty(registeredProps, `onUpdate:${kebabProp}`) ||
-        hasOwnProperty(registeredProps, `onUpdate:${property}`))
+      !!registeredProps &&
+      (registeredProps.hasOwnProperty(kebabProp) ||
+        registeredProps.hasOwnProperty(property)) &&
+      (registeredProps.hasOwnProperty(`onUpdate:${kebabProp}`) ||
+        registeredProps.hasOwnProperty(`onUpdate:${property}`))
     );
   });
 
@@ -38,7 +34,7 @@ export function useModelDuplex(
     () => !isDefinedProp.value,
     () => {
       watch(
-        () => getProp(),
+        () => props[property],
         (value) => {
           txValue.value = value;
         },
@@ -48,11 +44,13 @@ export function useModelDuplex(
 
   const model = computed({
     get(): any {
-      return getIn(isDefinedProp.value ? getProp() : txValue.value);
+      return getIn(isDefinedProp.value ? props[property] : txValue.value);
     },
     set(value) {
       const neo = setOut(value);
-      const current = toRaw(isDefinedProp.value ? getProp() : txValue.value);
+      const current = toRaw(
+        isDefinedProp.value ? props[property] : txValue.value,
+      );
       if (current === neo || getIn(current) === value) {
         return;
       }
@@ -62,7 +60,7 @@ export function useModelDuplex(
   }) as any as Ref<any> & { readonly rxValue: any };
 
   Object.defineProperty(model, 'rxValue', {
-    get: () => (isDefinedProp.value ? getProp() : txValue.value),
+    get: () => (isDefinedProp.value ? props[property] : txValue.value),
   });
 
   return model;

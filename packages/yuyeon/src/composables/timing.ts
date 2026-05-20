@@ -1,13 +1,24 @@
-import { type MaybeRef, type Ref, computed, ref, unref, watch } from 'vue';
+import {
+  type MaybeRef,
+  type Ref,
+  computed,
+  ref,
+  unref,
+  watch,
+  onMounted,
+  onUnmounted,
+} from 'vue';
 
 export function useLazy(eager: Ref<boolean | undefined>, updated: Ref<any>) {
   const tick = ref(false);
   const tack = ref();
   tack.value = updated.value;
+
   const lazyValue = computed(() => {
     if (eager.value) return updated.value;
     return tack.value;
   });
+
   watch(updated, () => {
     if (!tick.value) {
       tack.value = updated.value;
@@ -16,12 +27,29 @@ export function useLazy(eager: Ref<boolean | undefined>, updated: Ref<any>) {
       tick.value = true;
     }
   });
+
   function onAfterUpdate() {
     tack.value = updated.value;
     if (!eager.value) {
       tick.value = false;
     }
   }
+
+  function onVisibilityChange() {
+    if (document.visibilityState === 'visible') {
+      tack.value = updated.value;
+      tick.value = false;
+    }
+  }
+
+  onMounted(() => {
+    document.addEventListener('visibilitychange', onVisibilityChange);
+  });
+
+  onUnmounted(() => {
+    document.removeEventListener('visibilitychange', onVisibilityChange);
+  });
+
   return {
     entered: tick,
     lazyValue,

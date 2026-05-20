@@ -43,14 +43,19 @@ export const pressValidationPropsOptions = propsFactory(
 );
 
 export function useValidation(props: any, name: string, uid = getUid()) {
-  const cid = computed(() => props.name ?? uid);
   const model = useModelDuplex(props, 'modelValue');
-  const validationModel = computed(() =>
-    props.validationValue === undefined ? model.value : props.validationValue,
-  );
   const vm = getCurrentInstance()!;
   const form = useForm();
   const validating = ref(false);
+  const errorResult = ref();
+  const errors = ref<any[]>([]);
+
+  const cid = computed(() => props.name ?? uid);
+
+  const validationModel = computed(() =>
+    props.validationValue === undefined ? model.value : props.validationValue,
+  );
+
   const validateOn = computed(() => {
     let value = props.validateOn || 'input';
     if (value === 'lazy') value = 'input,lazy';
@@ -63,9 +68,6 @@ export function useValidation(props: any, name: string, uid = getUid()) {
       submit: onSet.has('submit'),
     };
   });
-
-  const errorResult = ref();
-  const errors = ref<any[]>([]);
 
   const isReadonly = computed(() => props.readonly || form?.isReadonly.value);
 
@@ -80,6 +82,21 @@ export function useValidation(props: any, name: string, uid = getUid()) {
   const isSuccess = computed(() => {
     return !isError.value && props.status === 'success';
   });
+
+  watch(
+    [isError, errors],
+    ([is, list]) => {
+      form?.update(cid.value, is, list);
+    },
+    { immediate: true },
+  );
+
+  watch(
+    () => props.validators,
+    () => {
+      resetValidation();
+    },
+  );
 
   useToggleScope(
     () => validateOn.value.input,
@@ -100,6 +117,19 @@ export function useValidation(props: any, name: string, uid = getUid()) {
       });
     },
   );
+
+  onBeforeUnmount(() => {
+    form?.unregister?.(cid.value);
+  });
+
+  onBeforeMount(() => {
+    form?.register({
+      id: cid.value,
+      vnode: vm.vnode,
+      resetValidation,
+      validate: invokeValidators,
+    });
+  });
 
   async function invokeValidators() {
     const results: any[] = [];
@@ -145,19 +175,6 @@ export function useValidation(props: any, name: string, uid = getUid()) {
       resetError();
     }
   }
-
-  onBeforeUnmount(() => {
-    form?.unregister?.(cid.value);
-  });
-
-  onBeforeMount(() => {
-    form?.register({
-      id: cid.value,
-      vnode: vm.vnode,
-      resetValidation,
-      validate: invokeValidators,
-    });
-  });
 
   return {
     invokeValidators,

@@ -1,188 +1,228 @@
-import { computed, nextTick, type PropType, ref, watch } from "vue";
+import { computed, nextTick, type PropType, ref, toRef, watch } from 'vue';
 
-import { useModelDuplex } from "@/composables/communication";
-import { useRender } from "@/composables/component";
-import { pressPolyTransitionPropsOptions } from "@/composables/transition";
-import { omit } from "@/util/common";
+import { useModelDuplex } from '@/composables/communication';
+import { useRender } from '@/composables/component';
+import { pressPolyTransitionPropsOptions } from '@/composables/transition';
+import { omit } from '@/util/common';
 import {
-	bindClasses,
-	chooseProps,
-	defineComponent,
-	propsFactory,
-} from "@/util/component";
+  bindClasses,
+  chooseProps,
+  defineComponent,
+  propsFactory,
+} from '@/util/component';
 
-import { pressYLayerProps, YLayer } from "../layer";
-import { useDelay } from "../layer/active-delay";
-import { YPlate } from "../plate";
+import { pressYLayerProps, YLayer } from '../layer';
+import { useDelay } from '../layer/active-delay';
+import { YPlate } from '../plate';
 
-import "./YTooltip.scss";
+import './YTooltip.scss';
+import { hasElementMouseEvent } from '@/util';
+import { useActiveStack } from '@/components/layer/active-stack';
 
-const NAME = "YTooltip";
+const NAME = 'YTooltip';
 
 const YTooltipPropOptions = {
-	tooltipClasses: {
-		type: [Array, String, Object] as PropType<
-			string[] | string | Record<string, any>
-		>,
-	},
-	preventClip: {
-		type: Boolean as PropType<boolean>,
-		default: true,
-	},
-	...pressYLayerProps({
-		coordinateStrategy: "levitation" as const,
-		scrollStrategy: "reposition" as const,
-		openOnHover: true,
-		align: "center",
-		offset: 8,
-	}),
-	...pressPolyTransitionPropsOptions({
-		transition: "fade",
-	}),
+  tooltipClasses: {
+    type: [Array, String, Object] as PropType<
+      string[] | string | Record<string, any>
+    >,
+  },
+  preventClip: {
+    type: Boolean as PropType<boolean>,
+    default: true,
+  },
+  closeCondition: {
+    type: [Boolean, Function],
+    default: undefined,
+  },
+  preventCloseBubble: Boolean as PropType<boolean>,
+  ...pressYLayerProps({
+    coordinateStrategy: 'levitation' as const,
+    scrollStrategy: 'reposition' as const,
+    openOnHover: true,
+    align: 'center',
+    offset: 8,
+  }),
+  ...pressPolyTransitionPropsOptions({
+    transition: 'fade',
+  }),
 };
 
 export const pressYTooltipPropsOptions = propsFactory(
-	YTooltipPropOptions,
-	"YTooltip",
+  YTooltipPropOptions,
+  'YTooltip',
 );
 
 /**
  * #  Component
  */
 export const YTooltip = defineComponent<
-	ReturnType<typeof pressYTooltipPropsOptions>
+  ReturnType<typeof pressYTooltipPropsOptions>
 >({
-	name: NAME,
-	props: {
-		...pressYTooltipPropsOptions(),
-	},
-	emits: ["update:modelValue"],
-	setup(props, { slots, emit, expose }) {
-		const layer$ = ref<typeof YLayer>();
-		const contentEl = ref<HTMLElement>();
-		const baseEl = computed(() => {
-			return layer$.value?.baseEl;
-		});
+  name: NAME,
+  props: {
+    ...pressYTooltipPropsOptions(),
+  },
+  emits: ['update:modelValue'],
+  setup(props, { slots, emit, expose }) {
+    const layer$ = ref<typeof YLayer>();
+    const contentEl = ref<HTMLElement>();
+    const baseEl = computed(() => {
+      return layer$.value?.baseEl;
+    });
 
-		const classes = computed(() => {
-			const boundClasses = bindClasses(props.tooltipClasses);
-			return {
-				...boundClasses,
-				"y-tooltip": true,
-			};
-		});
+    const classes = computed(() => {
+      const boundClasses = bindClasses(props.tooltipClasses);
+      return {
+        ...boundClasses,
+        'y-tooltip': true,
+      };
+    });
 
-		const model = useModelDuplex(props);
+    const model = useModelDuplex(props);
 
-		const active = computed({
-			get: (): boolean => {
-				return !!model.value;
-			},
-			set: (v: boolean) => {
-				if (!(v && props.disabled)) model.value = v;
-			},
-		});
+    const active = computed({
+      get: (): boolean => {
+        return !!model.value;
+      },
+      set: (v: boolean) => {
+        if (!(v && props.disabled)) model.value = v;
+      },
+    });
 
-		const hovered = computed(() => !!layer$.value?.hovered);
+    const hovered = computed(() => !!layer$.value?.hovered);
 
-		watch(active, (neo) => {
-			if (neo) {
-				nextTick(() => {
-					const $content = layer$.value?.content$;
-					contentEl.value = $content;
-				});
-			}
-		});
+    const { children, parent } = useActiveStack(
+      layer$,
+      active,
+      toRef(props, 'preventCloseBubble'),
+    );
 
-		const { startOpenDelay, startCloseDelay } = useDelay(
-			props,
-			(changeActive) => {
-				if (!changeActive && props.openOnHover && !hovered.value) {
-					active.value = false;
-				} else if (changeActive) {
-					active.value = true;
-				}
-			},
-		);
+    watch(active, (neo) => {
+      if (neo) {
+        nextTick(() => {
+          const $content = layer$.value?.content$;
+          contentEl.value = $content;
+        });
+      }
+    });
 
-		function onMouseenter(e: MouseEvent) {
-			if (props.openOnHover) {
-				startOpenDelay();
-			}
-		}
+    const { startOpenDelay, startCloseDelay } = useDelay(
+      props,
+      (changeActive) => {
+        if (!changeActive && props.openOnHover && !hovered.value) {
+          active.value = false;
+        } else if (changeActive) {
+          active.value = true;
+        }
+      },
+    );
 
-		function onMouseleave(e: MouseEvent) {
-			if (props.openOnHover) {
-				startCloseDelay();
-			}
-		}
+    function onComplementClick(e: Event) {
+      if (props.closeCondition === false) {
+        return;
+      }
+      if (typeof props.closeCondition === 'function') {
+        if (props.closeCondition(e) === false) {
+          active.value = false;
+          return;
+        }
+      }
+      if (active.value) {
+        if (children.value.length === 0) {
+          active.value = false;
+        }
+        const parentContent = parent?.$el.value?.content$;
+        const parentModal = parent?.$el.value?.modal;
+        if (
+          !(parentContent && !hasElementMouseEvent(e, parentContent)) &&
+          !parentModal &&
+          !props.preventCloseBubble
+        ) {
+          parent?.clear();
+        }
+      }
+    }
 
-		watch(hovered, (value) => {
-			if (!value) {
-				startCloseDelay();
-			}
-		});
+    function onMouseenter(e: MouseEvent) {
+      if (props.openOnHover) {
+        startOpenDelay();
+      }
+    }
 
-		function bindHover(el: HTMLElement) {
-			el.addEventListener?.("mouseenter", onMouseenter);
-			el.addEventListener?.("mouseleave", onMouseleave);
-		}
+    function onMouseleave(e: MouseEvent) {
+      if (props.openOnHover) {
+        startCloseDelay();
+      }
+    }
 
-		function unbindHover(el: HTMLElement) {
-			el.removeEventListener?.("mouseenter", onMouseenter);
-			el.removeEventListener?.("mouseleave", onMouseleave);
-		}
+    watch(hovered, (value) => {
+      if (!value) {
+        startCloseDelay();
+      }
+    });
 
-		watch(
-			() => layer$.value?.baseEl,
-			(neo, old) => {
-				if (neo) {
-					bindHover(neo);
-				} else if (old) {
-					unbindHover(old);
-				}
-			},
-		);
+    function bindHover(el: HTMLElement) {
+      el.addEventListener?.('mouseenter', onMouseenter);
+      el.addEventListener?.('mouseleave', onMouseleave);
+    }
 
-		expose({
-			layer$,
-			baseEl,
-		});
+    function unbindHover(el: HTMLElement) {
+      el.removeEventListener?.('mouseenter', onMouseenter);
+      el.removeEventListener?.('mouseleave', onMouseleave);
+    }
 
-		useRender(() => {
-			return (
-				<YLayer
-					ref={layer$}
-					{...omit(chooseProps(props, YLayer.props), ["scrim"])}
-					classes={classes.value}
-					scrim={false}
-					transition={props.transition}
-					v-model={active.value}
-				>
-					{{
-						default: (...args: any) => {
-							return (
-								<>
-									<YPlate></YPlate>
-									<div class="y-tooltip__content">
-										{slots.default?.(...args) ?? ""}
-									</div>
-								</>
-							);
-						},
-						base: (...args: any[]) => slots.base?.(...args),
-					}}
-				</YLayer>
-			);
-		});
+    watch(
+      () => layer$.value?.baseEl,
+      (neo, old) => {
+        if (neo) {
+          bindHover(neo);
+        } else if (old) {
+          unbindHover(old);
+        }
+      },
+    );
 
-		return {
-			layer$,
-			el$: layer$,
-			baseEl,
-			active,
-		};
-	},
+    expose({
+      layer$,
+      baseEl,
+    });
+
+    useRender(() => {
+      return (
+        <YLayer
+          ref={layer$}
+          {...omit(chooseProps(props, YLayer.props), ['scrim'])}
+          classes={classes.value}
+          scrim={false}
+          transition={props.transition}
+          onClick:complement={onComplementClick}
+          v-model={active.value}
+        >
+          {{
+            default: (...args: any) => {
+              return (
+                <>
+                  <YPlate></YPlate>
+                  <div class="y-tooltip__content">
+                    {slots.default?.(...args) ?? ''}
+                  </div>
+                </>
+              );
+            },
+            base: (...args: any[]) => slots.base?.(...args),
+          }}
+        </YLayer>
+      );
+    });
+
+    return {
+      layer$,
+      el$: layer$,
+      baseEl,
+      active,
+    };
+  },
 });
 
 export type YTooltip = InstanceType<typeof YTooltip>;
