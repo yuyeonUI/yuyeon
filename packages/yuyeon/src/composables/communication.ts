@@ -18,12 +18,8 @@ export function useModelDuplex(
     props[property] !== undefined ? props[property] : defaultValue,
   );
 
-  function getProp() {
-    return props[property];
-  }
-
   const isDefinedProp = computed(() => {
-    getProp();
+    props[property];
     const registeredProps = vm.vnode.props;
     return (
       !!registeredProps &&
@@ -38,7 +34,7 @@ export function useModelDuplex(
     () => !isDefinedProp.value,
     () => {
       watch(
-        () => getProp(),
+        () => props[property],
         (value) => {
           txValue.value = value;
         },
@@ -52,7 +48,9 @@ export function useModelDuplex(
     },
     set(value) {
       const neo = setOut(value);
-      const current = toRaw(isDefinedProp.value ? getProp() : txValue.value);
+      const current = toRaw(
+        isDefinedProp.value ? props[property] : txValue.value,
+      );
       if (current === neo || getIn(current) === value) {
         return;
       }
@@ -62,7 +60,7 @@ export function useModelDuplex(
   }) as any as Ref<any> & { readonly rxValue: any };
 
   Object.defineProperty(model, 'rxValue', {
-    get: () => (isDefinedProp.value ? getProp() : txValue.value),
+    get: () => (isDefinedProp.value ? props[property] : txValue.value),
   });
 
   return model;
