@@ -5,6 +5,7 @@ import AlertCircleOutlineSvg from "@/assets/alert-circle-outline.svg?component";
 import VueSvg from "@/assets/vue.svg?component";
 
 const outlinedFieldInput = ref("");
+const ipv4 = ref("192.168.1.1");
 const displayInput = ref(0);
 const showDialog = ref(false);
 const loadingButton = ref(false);
@@ -346,6 +347,9 @@ const selectItems = [
               :label="'TEXTAREA'"
               rows="10"
             ></y-textarea>
+          </div>
+          <div class="d-flex pt-8 gap-2">
+            <y-ipv4-field v-model="ipv4" variation="outlined" label="IPv4"></y-ipv4-field>
           </div>
         </y-card-body>
       </y-card>
