@@ -57,7 +57,7 @@ export function useValidation(props: any, name: string, uid = getUid()) {
   );
 
   const validateOn = computed(() => {
-    let value = props.validateOn || 'input';
+    let value = props.validateOn || form?.validateOn?.value || 'input';
     if (value === 'lazy') value = 'input,lazy';
     const onSet = new Set(value?.split(',') ?? []);
 
