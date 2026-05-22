@@ -110,7 +110,12 @@ export const YTooltip = defineComponent<
     const { startOpenDelay, startCloseDelay } = useDelay(
       props,
       (changeActive) => {
-        if (!changeActive && props.openOnHover && !hovered.value) {
+        if (
+          !changeActive &&
+          props.openOnHover &&
+          !hovered.value &&
+          shouldClose()
+        ) {
           active.value = false;
         } else if (changeActive) {
           active.value = true;
@@ -118,15 +123,23 @@ export const YTooltip = defineComponent<
       },
     );
 
-    function onComplementClick(e: Event) {
+    function shouldClose(e?: Event) {
       if (props.closeCondition === false) {
-        return;
+        return false;
       }
-      if (typeof props.closeCondition === 'function') {
-        if (props.closeCondition(e) === false) {
-          active.value = false;
-          return;
-        }
+      if (
+        typeof props.closeCondition === 'function' &&
+        props.closeCondition(e) === false
+      ) {
+        return false;
+      }
+
+      return true;
+    }
+
+    function onComplementClick(e: Event) {
+      if (!shouldClose(e)) {
+        return;
       }
       if (active.value) {
         if (children.value.length === 0) {
@@ -151,7 +164,7 @@ export const YTooltip = defineComponent<
     }
 
     function onMouseleave(e: MouseEvent) {
-      if (props.openOnHover) {
+      if (props.openOnHover && shouldClose(e)) {
         startCloseDelay();
       }
     }
