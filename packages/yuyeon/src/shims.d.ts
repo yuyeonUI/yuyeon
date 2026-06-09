@@ -13,6 +13,7 @@ import type {
   YDataTableServer,
   YDateCalendar,
   YDatePicker,
+  YDialog,
   YDividePanel,
   YDivider,
   YExpandHTransition,
@@ -46,9 +47,9 @@ import type {
   YTooltip,
   YTreeView,
   YYearPicker,
-} from "yuyeon/components";
+} from 'yuyeon/components';
 
-declare module "vue" {
+declare module 'vue' {
   export interface GlobalComponents {
     // @define-components
     YApp: typeof YApp;
@@ -107,7 +108,7 @@ declare module "vue" {
   }
 
   export interface GlobalDirectives {
-    vPlateWave: (import("yuyeon/directives"))["PlateWave"];
-    vComplementClick: (import("yuyeon/directives"))["ComplementClick"];
+    vPlateWave: import('yuyeon/directives')['PlateWave'];
+    vComplementClick: import('yuyeon/directives')['ComplementClick'];
   }
 }
