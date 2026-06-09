@@ -1,4 +1,4 @@
-import { type PropType, computed, shallowRef } from 'vue';
+import { computed, type PropType } from 'vue';
 
 import { useRender } from '@/composables';
 import { useProgress } from '@/composables/progress';
@@ -68,7 +68,7 @@ export const YProgressBar = defineComponent({
     });
 
     const styles = computed(() => {
-      let minWidth;
+      let minWidth: any;
       if (props.innerText && numValue.value < 5 && numValue.value > 0) {
         minWidth = '2rem';
       }
@@ -111,6 +111,7 @@ export const YProgressBar = defineComponent({
                   </div>
                 )}
           </div>
+          {slots['tube-append'] && slots['tube-append']()}
         </div>
       </div>
     ));
