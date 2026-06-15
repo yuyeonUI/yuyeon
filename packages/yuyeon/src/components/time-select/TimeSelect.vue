@@ -96,8 +96,8 @@ const formatter = Intl.DateTimeFormat(dateUtil.locale, {
 });
 
 const time = defineModel({ type: Number });
-const itemRefs = useTemplateRef('item');
-const cardRefs = useTemplateRef('card');
+const itemRefs = useTemplateRef<any[]>('item');
+const cardRef = useTemplateRef<any>('card');
 const opened = shallowRef(false);
 const input = shallowRef('');
 const vFocusIndex = shallowRef(-1);
@@ -245,16 +245,14 @@ function onClickItem(event: Event, item: any) {
 }
 
 function focusItem(index: number) {
-  if (cardRefs.value && itemRefs.value) {
-    const itemRefIndex = itemRefs.value.findIndex?.((i) => {
+  if (cardRef.value && itemRefs.value) {
+    const itemRefIndex = (itemRefs.value as any[]).findIndex((i) => {
       const el = getHtmlElement(i!) as HTMLElement;
       return el.dataset.index === String(index);
     });
     if (itemRefIndex != null && itemRefIndex !== -1) {
-      const itemEl = getHtmlElement(itemRefs.value[itemRefIndex]!) as
-        | HTMLElement
-        | undefined;
-      const cardEl = getHtmlElement(cardRefs.value);
+      const itemEl = getHtmlElement(itemRefs.value[itemRefIndex]!);
+      const cardEl = getHtmlElement(cardRef.value);
       if (itemEl && cardEl) {
         cardEl.scrollTo({
           top: itemEl.offsetTop - cardEl.offsetHeight / 2,

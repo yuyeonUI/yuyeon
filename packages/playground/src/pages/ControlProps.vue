@@ -53,6 +53,7 @@ function toggleThemeMode() {
 }
 
 const innerMenu = shallowRef(false);
+const switchInput = shallowRef(false);
 const defaultSelectV = ref([]);
 
 function onCloseMenuIn() {
@@ -131,6 +132,7 @@ const selectItems = [
         <y-card-header>VALIDATION</y-card-header>
         <y-card-body class="pv-4">
           <div class="d-flex gap-2">
+            <y-switch v-model="switchInput"></y-switch>
             <y-field-input
               v-model="outlinedFieldInput"
               variation="outlined"
