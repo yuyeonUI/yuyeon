@@ -7,8 +7,8 @@ import {
   ref,
   shallowRef,
   Teleport,
-  Transition,
   toRef,
+  Transition,
 } from 'vue';
 
 import { useModelDuplex } from '@/composables/communication';
@@ -40,8 +40,14 @@ import {
 } from './scroll-strategies';
 
 import './YLayer.scss';
+
+import { useActiveStack } from '@/components/layer/active-stack';
 import type { CssProperties } from '@/types';
 import { noop } from '@/util';
+import {
+  pressActiveEventProps,
+  useActiveEvent,
+} from '@/components/layer/active-event';
 
 export const pressYLayerProps = propsFactory(
   {
@@ -81,10 +87,6 @@ export const pressYLayerProps = propsFactory(
     maximized: {
       type: Boolean as PropType<boolean>,
     },
-    openOnHover: {
-      type: Boolean as PropType<boolean>,
-      default: false,
-    },
     openDelay: {
       type: Number as PropType<number>,
       default: 200,
@@ -99,6 +101,7 @@ export const pressYLayerProps = propsFactory(
     },
     contained: Boolean,
     layerGroup: [String, Object] as PropType<string | Element>,
+    ...pressActiveEventProps(),
     ...pressThemePropsOptions(),
     ...pressPolyTransitionPropsOptions(),
     ...pressBasePropsOptions(),
@@ -106,6 +109,11 @@ export const pressYLayerProps = propsFactory(
     ...pressCoordinateProps(),
     ...pressScrollStrategyProps(),
     ...pressDimensionPropsOptions(),
+    preventCloseBubble: Boolean as PropType<boolean>,
+    closeCondition: {
+      type: [Boolean, Function],
+      default: undefined,
+    },
   },
   'YLayer',
 );
@@ -148,23 +156,32 @@ export const YLayer = defineComponent({
       },
     });
     // Frags
-    const { base, base$, baseEl, baseSlot, baseFromSlotEl } = useBase(props);
+    const { base, base$, baseEl, baseSlot, baseFromSlotEl, pivot } =
+      useBase(props);
     const { contentEvents } = useContent(props, active);
     const { themeClasses } = useLocalTheme(props);
     const { layerGroup, layerGroupState, getActiveLayers } =
       useLayerGroup(props);
+    const { children, parent } = useActiveStack(
+      props,
+      active,
+      toRef(props, 'preventCloseBubble'),
+    );
+    const { hovered, focused } = useActiveEvent(props, {
+      active,
+      children,
+      base,
+    });
     const { polyTransitionBindProps } = usePolyTransition(props);
     const { dimensionStyles } = useDimension(props);
-
     const { lazyValue, onAfterUpdate } = useLazy(toRef(props, 'eager'), active);
+
     // States
     const finish = shallowRef(false);
-    const hovered = ref(false);
-    const focused = ref(false);
     const disabled = toRef(props, 'disabled');
     const maximized = toRef(props, 'maximized');
 
-    const rendered = computed<boolean>(
+    const isRendering = computed<boolean>(
       () => !disabled.value && (lazyValue.value || active.value),
     );
 
@@ -174,6 +191,7 @@ export const YLayer = defineComponent({
         contentEl: content$,
         base,
         active,
+        pivot,
       },
     );
     useScrollStrategies(props, {
@@ -186,6 +204,9 @@ export const YLayer = defineComponent({
 
     function onClickComplementLayer(mouseEvent: MouseEvent) {
       emit('click:complement', mouseEvent);
+      if (!shouldClose(mouseEvent)) {
+        return;
+      }
       if (!props.modal) {
         if (
           scrim$.value !== null &&
@@ -205,6 +226,20 @@ export const YLayer = defineComponent({
         active.value &&
         finish.value
       ); // TODO: && groupTopLevel.value;
+    }
+
+    function shouldClose(e?: Event) {
+      if (props.closeCondition === false) {
+        return false;
+      }
+      if (
+        typeof props.closeCondition === 'function' &&
+        props.closeCondition(e) === false
+      ) {
+        return false;
+      }
+
+      return true;
     }
 
     const complementClickOption = reactive<ComplementClickBindingOptions>({
@@ -276,6 +311,7 @@ export const YLayer = defineComponent({
       onAfterUpdate,
       updateCoordinate,
       hovered,
+      focused,
       finish,
       modal: computed(() => props.modal),
       getActiveLayers,
@@ -283,6 +319,8 @@ export const YLayer = defineComponent({
         return vnode === vm;
       },
       coordination,
+      children,
+      parent,
     });
 
     useRender(() => {
@@ -302,7 +340,7 @@ export const YLayer = defineComponent({
         <>
           {slotBase}
           <Teleport disabled={!layerGroup.value} to={layerGroup.value as any}>
-            {rendered.value && (
+            {isRendering.value && (
               <div
                 class={[
                   {
@@ -371,7 +409,7 @@ export const YLayer = defineComponent({
       layerGroup,
       active,
       finish,
-      rendered,
+      rendered: isRendering,
       lazyValue,
       onAfterUpdate: onAfterUpdate as () => void,
       scrim$,

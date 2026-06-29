@@ -29,12 +29,12 @@ export function applyLevitation(
   coordination: Ref<any>,
   coordinateStyles: Ref<CSSProperties>,
 ) {
-  const { contentEl, base } = state;
+  const { contentEl, pivot } = state;
 
   const isRtl = ref(false);
   const isFlipped = ref([false, false]);
 
-  /* Content Limitations */
+  // Content dimention and limitations
   const [minWidth, minHeight, maxWidth, maxHeight] = (
     ['minWidth', 'minHeight', 'maxWidth', 'maxHeight'] as const
   ).map((key) => {
@@ -71,17 +71,14 @@ export function applyLevitation(
     }
   });
 
-  /* Offset */
   const offset = computed(() => {
     return parseCoordProp(props.offset);
   });
 
-  /* Viewport Margin */
   const viewportMargin = computed(() => {
     return parseCoordProp(props.viewportMargin);
   });
 
-  /* Observing Update */
   let observe = false;
   const resizeObserver = new ResizeObserver(() => {
     if (observe) updateCoordinate();
@@ -114,7 +111,7 @@ export function applyLevitation(
 
   function updateCoordinate(): any {
     observe = false;
-    const $base = base.value;
+    const $pivot = pivot.value;
     const $content = contentEl.value;
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
@@ -122,16 +119,16 @@ export function applyLevitation(
       });
     });
 
-    if (!$base || !$content) return;
+    if (!$pivot || !$content) return;
 
-    const baseRect = Array.isArray($base)
+    const baseRect = Array.isArray($pivot)
       ? new MutableRect({
-          x: $base?.[0] ?? 0,
-          y: $base?.[1] ?? 0,
+          x: $pivot?.[0] ?? 0,
+          y: $pivot?.[1] ?? 0,
           width: 0,
           height: 0,
         })
-      : $base.getBoundingClientRect();
+      : $pivot.getBoundingClientRect();
     const contentRect = getIgnoreInsetRect($content);
     const scrollParents = getScrollParents($content);
 
@@ -430,5 +427,5 @@ function parseCoordProp(prop: string | number | (string | number)[]) {
     margins = [prop, 0];
   }
 
-  return margins.slice(0, 2).map((v) => (Number.isNaN(v) ? 0 : v));
+  return margins.slice(0, 2).map((v) => (Number.isNaN(v) || v == null ? 0 : v));
 }

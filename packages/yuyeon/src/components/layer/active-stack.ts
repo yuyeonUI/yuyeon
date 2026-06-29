@@ -8,20 +8,17 @@ import {
   watchPostEffect,
 } from 'vue';
 
-import { YLayer } from './YLayer';
-
 export interface ActiveStackProvide {
   push: (instance: any) => void;
   pop: (instance?: any) => void;
   clear: () => void;
-  $el: Ref<typeof YLayer | undefined>;
 }
 
 export const YUYEON_ACTIVE_STACK_KEY: InjectionKey<ActiveStackProvide> =
   Symbol.for('yuyeon.active-stack');
 
 export function useActiveStack(
-  $el: Ref<typeof YLayer | undefined>,
+  props: { modal?: boolean },
   active: Ref<boolean>,
   sequential?: Ref<boolean | undefined>,
 ) {
@@ -45,7 +42,7 @@ export function useActiveStack(
   }
 
   function clear() {
-    if ($el.value?.modal) return;
+    if (props?.modal) return;
     active.value = false;
     const bubble = () => {
       if (children.value.length === 0) {
@@ -69,7 +66,6 @@ export function useActiveStack(
     push,
     pop,
     clear,
-    $el,
   });
 
   return {

@@ -12,12 +12,11 @@ import {
 } from '@/util/component';
 
 import { pressYLayerProps, YLayer } from '../layer';
-import { useDelay } from '../layer/active-delay';
 import { YPlate } from '../plate';
 
 import './YTooltip.scss';
+
 import { hasElementMouseEvent } from '@/util';
-import { useActiveStack } from '@/components/layer/active-stack';
 
 const NAME = 'YTooltip';
 
@@ -31,11 +30,6 @@ const YTooltipPropOptions = {
     type: Boolean as PropType<boolean>,
     default: true,
   },
-  closeCondition: {
-    type: [Boolean, Function],
-    default: undefined,
-  },
-  preventCloseBubble: Boolean as PropType<boolean>,
   ...pressYLayerProps({
     coordinateStrategy: 'levitation' as const,
     scrollStrategy: 'reposition' as const,
@@ -65,8 +59,24 @@ export const YTooltip = defineComponent<
   },
   emits: ['update:modelValue'],
   setup(props, { slots, emit, expose }) {
+    const model = useModelDuplex(props);
+
     const layer$ = ref<typeof YLayer>();
     const contentEl = ref<HTMLElement>();
+
+    const active = computed({
+      get: (): boolean => {
+        return !!model.value;
+      },
+      set: (v: boolean) => {
+        if (!(v && props.disabled)) model.value = v;
+      },
+    });
+
+    const children = computed(() => layer$.value?.children || []);
+
+    const parent = computed(() => layer$.value?.parent);
+
     const baseEl = computed(() => {
       return layer$.value?.baseEl;
     });
@@ -79,24 +89,7 @@ export const YTooltip = defineComponent<
       };
     });
 
-    const model = useModelDuplex(props);
-
-    const active = computed({
-      get: (): boolean => {
-        return !!model.value;
-      },
-      set: (v: boolean) => {
-        if (!(v && props.disabled)) model.value = v;
-      },
-    });
-
     const hovered = computed(() => !!layer$.value?.hovered);
-
-    const { children, parent } = useActiveStack(
-      layer$,
-      active,
-      toRef(props, 'preventCloseBubble'),
-    );
 
     watch(active, (neo) => {
       if (neo) {
@@ -107,94 +100,22 @@ export const YTooltip = defineComponent<
       }
     });
 
-    const { startOpenDelay, startCloseDelay } = useDelay(
-      props,
-      (changeActive) => {
-        if (
-          !changeActive &&
-          props.openOnHover &&
-          !hovered.value &&
-          shouldClose()
-        ) {
-          active.value = false;
-        } else if (changeActive) {
-          active.value = true;
-        }
-      },
-    );
-
-    function shouldClose(e?: Event) {
-      if (props.closeCondition === false) {
-        return false;
-      }
-      if (
-        typeof props.closeCondition === 'function' &&
-        props.closeCondition(e) === false
-      ) {
-        return false;
-      }
-
-      return true;
-    }
-
     function onComplementClick(e: Event) {
-      if (!shouldClose(e)) {
-        return;
-      }
       if (active.value) {
         if (children.value.length === 0) {
           active.value = false;
         }
-        const parentContent = parent?.$el.value?.content$;
-        const parentModal = parent?.$el.value?.modal;
+        const parentContent = parent.value?.$el.value?.content$;
+        const parentModal = parent.value?.$el.value?.modal;
         if (
+          !props.preventCloseBubble &&
           !(parentContent && !hasElementMouseEvent(e, parentContent)) &&
-          !parentModal &&
-          !props.preventCloseBubble
+          !parentModal
         ) {
-          parent?.clear();
+          parent.value?.clear();
         }
       }
     }
-
-    function onMouseenter(e: MouseEvent) {
-      if (props.openOnHover) {
-        startOpenDelay();
-      }
-    }
-
-    function onMouseleave(e: MouseEvent) {
-      if (props.openOnHover && shouldClose(e)) {
-        startCloseDelay();
-      }
-    }
-
-    watch(hovered, (value) => {
-      if (!value) {
-        startCloseDelay();
-      }
-    });
-
-    function bindHover(el: HTMLElement) {
-      el.addEventListener?.('mouseenter', onMouseenter);
-      el.addEventListener?.('mouseleave', onMouseleave);
-    }
-
-    function unbindHover(el: HTMLElement) {
-      el.removeEventListener?.('mouseenter', onMouseenter);
-      el.removeEventListener?.('mouseleave', onMouseleave);
-    }
-
-    watch(
-      () => layer$.value?.baseEl,
-      (neo, old) => {
-        if (neo) {
-          bindHover(neo);
-        } else if (old) {
-          unbindHover(old);
-        }
-      },
-    );
 
     expose({
       layer$,
