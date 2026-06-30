@@ -5,7 +5,6 @@ import {
   onScopeDispose,
   type PropType,
   ref,
-  shallowRef,
   watch,
 } from 'vue';
 
@@ -246,23 +245,21 @@ export const YDialog = defineComponent({
 
     useRender(() => {
       return (
-        <>
-          <YLayer
-            v-model={active.value}
-            classes={classes.value}
-            content-styles={styles.value}
-            modal
-            ref={layer$}
-            {...omit(chooseProps(props, YLayer.props), ['contentStyles'])}
-            onAfterEnter={onAfterEnter}
-            onAfterLeave={onAfterLeave}
-          >
-            {{
-              default: (...args: any[]) => slots.default?.(...args),
-              base: slots.base,
-            }}
-          </YLayer>
-        </>
+        <YLayer
+          ref={layer$}
+          v-model={active.value}
+          classes={classes.value}
+          content-styles={styles.value}
+          modal
+          {...omit(chooseProps(props, YLayer.props), ['contentStyles'])}
+          onAfterEnter={onAfterEnter}
+          onAfterLeave={onAfterLeave}
+        >
+          {{
+            default: (...args: any[]) => slots.default?.(...args),
+            base: (...args: any[]) => slots.base?.(...args),
+          }}
+        </YLayer>
       );
     });
 

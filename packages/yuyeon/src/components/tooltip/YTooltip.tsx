@@ -105,8 +105,8 @@ export const YTooltip = defineComponent<
         if (children.value.length === 0) {
           active.value = false;
         }
-        const parentContent = parent.value?.$el.value?.content$;
-        const parentModal = parent.value?.$el.value?.modal;
+        const parentContent = parent.value?.content$;
+        const parentModal = parent.value?.modal;
         if (
           !props.preventCloseBubble &&
           !(parentContent && !hasElementMouseEvent(e, parentContent)) &&

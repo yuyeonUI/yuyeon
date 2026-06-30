@@ -535,7 +535,7 @@ const selectItems = [
                   <template #base="{ props: tooltipProps }">
                     <y-button
                       class="mr-2"
-                      v-bind="{ ...tooltipProps, ...menuProps }"
+                      v-bind="mergeProps(tooltipProps, menuProps)"
                     >
                       MENU TOOLTIP
                     </y-button>

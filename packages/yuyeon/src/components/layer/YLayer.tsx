@@ -1,14 +1,18 @@
-import type { ComponentInternalInstance, PropType, SlotsType } from 'vue';
 import {
+  type ComponentInternalInstance,
+  cloneVNode,
   computed,
   getCurrentInstance,
   mergeProps,
+  type PropType,
   reactive,
   ref,
+  type SlotsType,
   shallowRef,
   Teleport,
-  toRef,
   Transition,
+  toRef,
+  watch,
 } from 'vue';
 
 import { useModelDuplex } from '@/composables/communication';
@@ -41,13 +45,14 @@ import {
 
 import './YLayer.scss';
 
-import { useActiveStack } from '@/components/layer/active-stack';
-import type { CssProperties } from '@/types';
-import { noop } from '@/util';
 import {
   pressActiveEventProps,
   useActiveEvent,
 } from '@/components/layer/active-event';
+import { useActiveStack } from '@/components/layer/active-stack';
+import type { CssProperties } from '@/types';
+import { noop } from '@/util';
+import { isEventsApplied } from '@/util/component/vnode-event';
 
 export const pressYLayerProps = propsFactory(
   {
@@ -143,6 +148,9 @@ export const YLayer = defineComponent({
   }>,
   setup(props, { emit, expose, attrs, slots }) {
     const vm = getCurrentInstance();
+    const finish = shallowRef(false);
+    const disabled = toRef(props, 'disabled');
+    const maximized = toRef(props, 'maximized');
     const scrim$ = ref<HTMLElement>();
     const content$ = ref<HTMLElement>();
     const root$ = ref<HTMLElement>();
@@ -167,19 +175,16 @@ export const YLayer = defineComponent({
       active,
       toRef(props, 'preventCloseBubble'),
     );
-    const { hovered, focused } = useActiveEvent(props, {
+    const { hovered, focused, baseEvents } = useActiveEvent(props, {
       active,
       children,
       base,
+      finish,
+      baseSlotEl: baseFromSlotEl,
     });
     const { polyTransitionBindProps } = usePolyTransition(props);
     const { dimensionStyles } = useDimension(props);
     const { lazyValue, onAfterUpdate } = useLazy(toRef(props, 'eager'), active);
-
-    // States
-    const finish = shallowRef(false);
-    const disabled = toRef(props, 'disabled');
-    const maximized = toRef(props, 'maximized');
 
     const isRendering = computed<boolean>(
       () => !disabled.value && (lazyValue.value || active.value),
@@ -200,6 +205,13 @@ export const YLayer = defineComponent({
       active,
       baseEl: base,
       updateCoordinate,
+    });
+
+    watch(active, (neo) => {
+      if (!neo) {
+        finish.value = false;
+        hovered.value = false;
+      }
     });
 
     function onClickComplementLayer(mouseEvent: MouseEvent) {
@@ -265,11 +277,11 @@ export const YLayer = defineComponent({
       }
     }
 
-    function onMouseenter(event: Event) {
+    function onMouseenterLayer(event: Event) {
       hovered.value = true;
     }
 
-    function onMouseleave(event: Event) {
+    function onMouseleaveLayer(event: Event) {
       hovered.value = false;
     }
 
@@ -326,22 +338,38 @@ export const YLayer = defineComponent({
     useRender(() => {
       const slotBase = slots.base?.({
         active: active.value,
-        props: mergeProps({
-          ref: base$,
-          class: {
-            'y-layer-base': true,
-            'y-layer-base--active': active.value,
+        props: mergeProps(
+          {
+            ref: base$,
+            class: {
+              'y-layer-base': true,
+              'y-layer-base--active': active.value,
+            },
           },
-          ...(props.baseProps ?? {}),
-        }),
+          baseEvents.value,
+          props.baseProps ?? {},
+        ),
       });
-      baseSlot.value = slotBase;
+      const baseNode = slotBase?.[0];
+      const applied = isEventsApplied(baseNode, baseEvents.value);
+
+      baseSlot.value =
+        baseNode && !applied
+          ? [
+              cloneVNode(
+                baseNode,
+                mergeProps(baseNode.props ?? {}, baseEvents.value),
+              ),
+            ]
+          : slotBase;
+
       return (
         <>
-          {slotBase}
+          {baseSlot.value}
           <Teleport disabled={!layerGroup.value} to={layerGroup.value as any}>
             {isRendering.value && (
               <div
+                ref={root$}
                 class={[
                   {
                     'y-layer': true,
@@ -351,23 +379,21 @@ export const YLayer = defineComponent({
                   },
                   themeClasses.value,
                 ]}
-                onMouseenter={onMouseenter}
-                onMouseleave={onMouseleave}
+                onMouseenter={onMouseenterLayer}
+                onMouseleave={onMouseleaveLayer}
                 style={computedStyle.value}
-                ref={root$}
                 {...attrs}
               >
                 <Transition name="fade" appear>
                   {active.value && props.scrim && (
-                    // biome-ignore lint/a11y/noStaticElementInteractions: <explanation>
                     // biome-ignore lint/a11y/useKeyWithClickEvents: <explanation>
                     <div
+                      ref="scrim$"
                       class="y-layer__scrim"
                       style={{ '--y-layer-scrim-opacity': props.scrimOpacity }}
                       onClick={onClickScrim}
                       onKeydown={noop()}
                       onKeyup={noop()}
-                      ref="scrim$"
                     ></div>
                   )}
                 </Transition>
@@ -378,6 +404,7 @@ export const YLayer = defineComponent({
                   {...polyTransitionBindProps.value}
                 >
                   <div
+                    ref={content$}
                     v-show={active.value}
                     v-complement-click={{ ...complementClickOption }}
                     class={{
@@ -392,7 +419,6 @@ export const YLayer = defineComponent({
                       },
                     ]}
                     {...contentEvents.value}
-                    ref={content$}
                   >
                     {slots.default?.({ active: active.value, close })}
                   </div>
@@ -423,6 +449,7 @@ export const YLayer = defineComponent({
       layerGroupState,
       getActiveLayers,
       coordination,
+      baseEvents,
     };
   },
 });

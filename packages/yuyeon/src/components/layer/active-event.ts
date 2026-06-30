@@ -60,10 +60,14 @@ export function useActiveEvent(
     active,
     children,
     base,
+    finish,
+    baseSlotEl,
   }: {
     active: Ref<boolean>;
     children: Ref<HTMLElement[]>;
     base: Ref<any>;
+    finish: Ref<boolean>;
+    baseSlotEl: Ref<HTMLElement | null | undefined>;
   },
 ) {
   const vm = getCurrentInstance()!;
@@ -95,24 +99,20 @@ export function useActiveEvent(
 
   const eventCatalog = {
     onMouseenter: (e: Event) => {
-      console.log(e);
+      hovered.value = true;
       startOpenDelay();
     },
     onMouseleave: (e: Event) => {
+      hovered.value = false;
       startCloseDelay();
     },
     onClick: (e: Event) => {
       e.stopPropagation();
-      if (!props.openOnClickBase) {
+      const currentActive = active.value;
+      if (props.disabled || (hovered.value && !finish.value)) {
         return;
       }
-      const currentActive = active.value;
-      if (!props.disabled) {
-        if (props.openOnHover && currentActive) {
-          return;
-        }
-        active.value = !currentActive;
-      }
+      active.value = !currentActive;
     },
     onFocus: (e: FocusEvent) => {
       startOpenDelay();
@@ -154,9 +154,10 @@ export function useActiveEvent(
         });
       }
     },
+    { immediate: true, flush: 'post' },
   );
 
-  return { hovered, focused };
+  return { hovered, focused, baseEvents };
 }
 
 function _useActiveEventBinder(
@@ -170,14 +171,18 @@ function _useActiveEventBinder(
     baseEvents: Ref<Partial<BaseEvent>>;
   },
 ) {
-  watch(base, (neo, old) => {
-    if (old && neo !== old) {
-      unbindActiveEvent(old);
-    }
-    if (neo) {
-      nextTick(() => bindActiveEvent(neo));
-    }
-  });
+  watch(
+    base,
+    (neo, old) => {
+      if (old && neo !== old) {
+        unbindActiveEvent(old);
+      }
+      if (neo) {
+        nextTick(() => bindActiveEvent(neo));
+      }
+    },
+    { immediate: true },
+  );
 
   onScopeDispose(() => {
     unbindActiveEvent();

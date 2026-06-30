@@ -37,6 +37,10 @@
     }
   }
 
+  &__no-options {
+    padding: 8px 10px;
+  }
+
   &:not(&--selected) &__selection {
     color: rgba(var(--y-theme-on-background-rgb), 0.6);
   }

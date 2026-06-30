@@ -61,6 +61,7 @@ export const YMenu = defineComponent({
   expose: ['layer$', 'baseEl'],
   setup(props, { slots, emit, expose }) {
     const vm = getCurrentInstance();
+    const active = useModelDuplex(props);
     const layer$ = ref<typeof YLayer>();
 
     const classes = computed(() => {
@@ -71,12 +72,22 @@ export const YMenu = defineComponent({
       };
     });
 
-    const active = useModelDuplex(props);
     const hovered = computed(() => !!layer$.value?.hovered);
-    const finish = computed(() => !!layer$.value?.finish);
+
+    const parent = computed(() => layer$.value?.parent);
 
     const children = computed(() => layer$.value?.children || []);
-    const parent = computed(() => layer$.value?.parent);
+
+    const computedContentClasses = computed<Record<string, boolean>>(() => {
+      const boundClasses = bindClasses(props.contentClasses);
+      return {
+        ...boundClasses,
+      };
+    });
+
+    const baseEl = computed(() => {
+      return layer$.value?.baseEl;
+    });
 
     watch(hovered, (value) => {
       emit('hoverContent', value);
@@ -98,17 +109,6 @@ export const YMenu = defineComponent({
         }
       }
     }
-
-    const computedContentClasses = computed<Record<string, boolean>>(() => {
-      const boundClasses = bindClasses(props.contentClasses);
-      return {
-        ...boundClasses,
-      };
-    });
-
-    const baseEl = computed(() => {
-      return layer$.value?.baseEl;
-    });
 
     expose({
       layer$,
