@@ -638,12 +638,12 @@ const selectItems = [
           </div>
           <div class="d-flex mv-3 gap-2" style="align-items: flex-end">
             <y-tooltip position="top">
-              <template #base="{ props }">
+              <template #base="{ props: tooltipProps }">
                 <y-select
                   :items="dropdownItems"
                   variation="outlined"
                   style="max-width: 120px"
-                  v-bind="mergeProps(props)"
+                  v-bind="tooltipProps"
                 ></y-select>
               </template>
               <span>tooltip + select</span>

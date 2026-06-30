@@ -4,8 +4,6 @@ import {
   type PropType,
   ref,
   type SlotsType,
-  toRef,
-  unref,
   watch,
 } from 'vue';
 
@@ -13,17 +11,12 @@ import { useModelDuplex } from '@/composables/communication';
 import { useRender } from '@/composables/component';
 import { pressPolyTransitionPropsOptions } from '@/composables/transition';
 import { bindClasses, chooseProps, defineComponent } from '@/util/component';
-import { hasElementMouseEvent } from '@/util/dom';
-import { toKebabCase } from '@/util/string';
 
 import { pressYLayerProps, YLayer } from '../layer';
-import { useDelay } from '../layer/active-delay';
-import { useActiveStack } from '../layer/active-stack';
 
 import './YMenu.scss';
 
 const NAME = 'YMenu';
-const CLASS_NAME = toKebabCase(NAME);
 
 export const YMenuPropOptions = {
   menuClasses: {
@@ -94,20 +87,8 @@ export const YMenu = defineComponent({
     });
 
     function onComplementClick(e: Event) {
-      if (active.value) {
-        if (children.value.length === 0) {
-          active.value = false;
-        }
-        const parentContent = unref(parent.value?.content$);
-        const parentModal = unref(parent.value?.modal);
-        if (
-          !props.preventCloseBubble &&
-          !(parentContent && !hasElementMouseEvent(e, parentContent)) &&
-          !parentModal
-        ) {
-          parent.value?.clear();
-        }
-      }
+      if (!active.value) return;
+      layer$.value?.handleOutsideClick(e);
     }
 
     expose({

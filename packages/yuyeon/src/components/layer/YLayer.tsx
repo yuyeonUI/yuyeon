@@ -1,17 +1,17 @@
 import {
-  type ComponentInternalInstance,
   cloneVNode,
+  type ComponentInternalInstance,
   computed,
   getCurrentInstance,
   mergeProps,
   type PropType,
   reactive,
   ref,
-  type SlotsType,
   shallowRef,
+  type SlotsType,
   Teleport,
-  Transition,
   toRef,
+  Transition,
   watch,
 } from 'vue';
 
@@ -170,11 +170,7 @@ export const YLayer = defineComponent({
     const { themeClasses } = useLocalTheme(props);
     const { layerGroup, layerGroupState, getActiveLayers } =
       useLayerGroup(props);
-    const { children, parent } = useActiveStack(
-      props,
-      active,
-      toRef(props, 'preventCloseBubble'),
-    );
+    const { children, parent, handleOutsideClick } = useActiveStack(active);
     const { hovered, focused, baseEvents } = useActiveEvent(props, {
       active,
       children,
@@ -225,6 +221,7 @@ export const YLayer = defineComponent({
           scrim$.value === mouseEvent.target &&
           props.closeClickScrim
         ) {
+          console.log('layer outside close');
           active.value = false;
         }
       } else {
@@ -326,6 +323,8 @@ export const YLayer = defineComponent({
       focused,
       finish,
       modal: computed(() => props.modal),
+      preventCloseBubble: props.preventCloseBubble,
+      handleOutsideClick,
       getActiveLayers,
       isMe: (vnode: ComponentInternalInstance) => {
         return vnode === vm;

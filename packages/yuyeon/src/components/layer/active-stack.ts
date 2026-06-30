@@ -1,30 +1,47 @@
-import type { InjectionKey, Ref } from 'vue';
+import type { ComponentInternalInstance, InjectionKey, Ref } from 'vue';
 import {
   getCurrentInstance,
   inject,
   provide,
   shallowRef,
+  unref,
   watch,
-  watchPostEffect,
 } from 'vue';
+
+import { registerRelay, relayOutsideClick, isTopRelay } from './relay-stack';
 
 export interface ActiveStackProvide {
   push: (instance: any) => void;
   pop: (instance?: any) => void;
   clear: () => void;
+  vm: ComponentInternalInstance;
 }
 
 export const YUYEON_ACTIVE_STACK_KEY: InjectionKey<ActiveStackProvide> =
   Symbol.for('yuyeon.active-stack');
 
+interface YLayerExposed {
+  base$?: any;
+  content$?: any;
+  baseEl?: any;
+  active?: Ref<boolean>;
+  modal?: boolean;
+  preventCloseBubble?: boolean;
+}
+
 export function useActiveStack(
-  props: { modal?: boolean },
   active: Ref<boolean>,
   sequential?: Ref<boolean | undefined>,
 ) {
   const parent = inject(YUYEON_ACTIVE_STACK_KEY, null);
   const children = shallowRef<any[]>([]);
-  const vm = getCurrentInstance();
+  const vm = getCurrentInstance()!;
+
+  let relayHandle: ReturnType<typeof registerRelay> | null = null;
+
+  function exposed(): YLayerExposed | undefined {
+    return vm.exposed as YLayerExposed | undefined;
+  }
 
   function push(instance: any) {
     children.value.push(instance);
@@ -42,23 +59,31 @@ export function useActiveStack(
   }
 
   function clear() {
-    if (props?.modal) return;
+    if (unref(exposed()?.modal)) return;
     active.value = false;
-    const bubble = () => {
-      if (children.value.length === 0) {
-        parent?.clear();
-      }
-    };
-    if (!sequential?.value) {
-      watchPostEffect(bubble);
-    }
+  }
+
+  function handleOutsideClick(e: Event) {
+    if (!relayHandle || !isTopRelay(relayHandle.id)) return;
+    relayOutsideClick(e);
   }
 
   watch(active, (neo) => {
     if (neo) {
       parent?.push(vm);
+      relayHandle = registerRelay({
+        els: () => {
+          const ex = exposed();
+          return [unref(ex?.baseEl), unref(ex?.content$)];
+        },
+        modal: () => !!unref(exposed()?.modal),
+        preventCloseBubble: () => !!exposed()?.preventCloseBubble,
+        close: clear,
+      });
     } else {
       parent?.pop(vm);
+      relayHandle?.unregister();
+      relayHandle = null;
     }
   });
 
@@ -66,6 +91,7 @@ export function useActiveStack(
     push,
     pop,
     clear,
+    vm,
   });
 
   return {
@@ -73,5 +99,6 @@ export function useActiveStack(
     pop,
     parent,
     children,
+    handleOutsideClick,
   };
 }
