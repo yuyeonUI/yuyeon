@@ -221,7 +221,6 @@ export const YLayer = defineComponent({
           scrim$.value === mouseEvent.target &&
           props.closeClickScrim
         ) {
-          console.log('layer outside close');
           active.value = false;
         }
       } else {

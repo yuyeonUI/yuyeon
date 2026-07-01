@@ -85,12 +85,12 @@ export function applyLevitation(
   });
 
   watch(
-    [state.base, state.contentEl],
-    ([neoBaseEl, neoContentEl], [oldBaseEl, oldContentEl]) => {
-      if (oldBaseEl && !Array.isArray(oldBaseEl) && oldBaseEl.nodeType === 1)
-        resizeObserver.unobserve(oldBaseEl);
-      if (neoBaseEl && !Array.isArray(neoBaseEl) && neoBaseEl.nodeType === 1)
-        resizeObserver.observe(neoBaseEl);
+    [state.pivot, state.contentEl],
+    ([neoPivotEl, neoContentEl], [oldPivotEl, oldContentEl]) => {
+      if (oldPivotEl && !Array.isArray(oldPivotEl) && oldPivotEl.nodeType === 1)
+        resizeObserver.unobserve(oldPivotEl);
+      if (neoPivotEl && !Array.isArray(neoPivotEl) && neoPivotEl.nodeType === 1)
+        resizeObserver.observe(neoPivotEl);
 
       if (oldContentEl) resizeObserver.unobserve(oldContentEl);
       if (neoContentEl) resizeObserver.observe(neoContentEl);

@@ -8,7 +8,7 @@ import {
   watch,
 } from 'vue';
 
-import { registerRelay, relayOutsideClick, isTopRelay } from './relay-stack';
+import { registerRelay } from './relay-stack';
 
 export interface ActiveStackProvide {
   push: (instance: any) => void;
@@ -29,10 +29,7 @@ interface YLayerExposed {
   preventCloseBubble?: boolean;
 }
 
-export function useActiveStack(
-  active: Ref<boolean>,
-  sequential?: Ref<boolean | undefined>,
-) {
+export function useActiveStack(active: Ref<boolean>) {
   const parent = inject(YUYEON_ACTIVE_STACK_KEY, null);
   const children = shallowRef<any[]>([]);
   const vm = getCurrentInstance()!;
@@ -64,8 +61,8 @@ export function useActiveStack(
   }
 
   function handleOutsideClick(e: Event) {
-    if (!relayHandle || !isTopRelay(relayHandle.id)) return;
-    relayOutsideClick(e);
+    // if (!relayHandle || !isTopRelay(relayHandle.id)) return;
+    // relayOutsideClick(e);
   }
 
   watch(active, (neo) => {
@@ -77,7 +74,7 @@ export function useActiveStack(
           return [unref(ex?.baseEl), unref(ex?.content$)];
         },
         modal: () => !!unref(exposed()?.modal),
-        preventCloseBubble: () => !!exposed()?.preventCloseBubble,
+        preventCloseBubble: () => !!unref(exposed()?.preventCloseBubble),
         close: clear,
       });
     } else {

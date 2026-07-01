@@ -1,11 +1,4 @@
-import {
-  computed,
-  getCurrentInstance,
-  type PropType,
-  ref,
-  type SlotsType,
-  watch,
-} from 'vue';
+import { computed, type PropType, ref, type SlotsType, watch } from 'vue';
 
 import { useModelDuplex } from '@/composables/communication';
 import { useRender } from '@/composables/component';
@@ -53,7 +46,6 @@ export const YMenu = defineComponent({
   }>,
   expose: ['layer$', 'baseEl'],
   setup(props, { slots, emit, expose }) {
-    const vm = getCurrentInstance();
     const active = useModelDuplex(props);
     const layer$ = ref<typeof YLayer>();
 

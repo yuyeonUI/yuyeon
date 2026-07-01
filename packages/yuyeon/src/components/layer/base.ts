@@ -71,7 +71,7 @@ export function useBase(props: BaseProps) {
     if (props.pivot === 'cursor' && cursorPoint.value) {
       return cursorPoint.value;
     }
-    return base.value;
+    return getBase(props.pivot, vm) || base.value;
   });
 
   watchEffect(
