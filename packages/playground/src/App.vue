@@ -6,8 +6,8 @@ const mainSnackbar = ref(false);
 
 <template>
   <y-app>
-    <nav style="height: 56px; background-color: #4f97dc;"></nav>
-    <main>
+    <nav id="app-header"></nav>
+    <main id="app-main">
       <router-view>
         <template #default="{ Component }">
           <Transition mode="out-in" name="fade">
@@ -24,4 +24,19 @@ const mainSnackbar = ref(false);
 
 <style lang="scss">
 @use './styles/app.scss';
+
+#app-header {
+  height: 56px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background-color: rgba(79, 151, 220, 0.5);
+  backdrop-filter: blur(12px);
+}
+
+#app-main {
+  padding-top: 56px;
+}
 </style>

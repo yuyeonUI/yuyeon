@@ -1,8 +1,9 @@
 import {
   computed,
   getCurrentInstance,
-  onMounted,
-  onScopeDispose,
+  nextTick,
+  onBeforeMount,
+  onBeforeUnmount,
   type PropType,
   ref,
   watch,
@@ -23,6 +24,13 @@ import { YCard } from '../card';
 import { pressYLayerProps, YLayer } from '../layer';
 
 import './YDialog.scss';
+
+import {
+  hasActiveModal,
+  hasMaximizedModal,
+  isTopModal,
+  updateRelayEntry,
+} from '@/components/layer/relay-stack';
 
 export const pressYDialogPropsOptions = propsFactory(
   {
@@ -89,10 +97,37 @@ export const YDialog = defineComponent({
 
     const children = computed(() => layer$.value?.children || []);
 
-    function onFocusin(e: FocusEvent) {
-      if (props.focusTrap === false) {
-        return;
+    const relayId = computed(() => layer$.value?.relayId);
+
+    watch(active, (neo) => {
+      neo ? installFocusTrap() : uninstallFocusTrap();
+      preventInteractionBackground(neo);
+    });
+
+    watch(relayId, (id) => {
+      if (id != null) {
+        updateRelayEntry(id, { maximized: () => props.maximized ?? false });
       }
+    });
+
+    onBeforeMount(() => {
+      if (active.value) {
+        installFocusTrap();
+        preventInteractionBackground(true);
+      }
+    });
+
+    onBeforeUnmount(() => {
+      uninstallFocusTrap();
+      if (active.value) {
+        preventInteractionBackground(false);
+      }
+    });
+
+    function onFocusin(e: FocusEvent) {
+      if (props.focusTrap === false) return;
+
+      if (relayId.value == null || isTopModal() !== relayId.value) return;
 
       const prevTarget = e.relatedTarget as HTMLElement | null;
       const target = e.target as HTMLElement | null;
@@ -164,7 +199,7 @@ export const YDialog = defineComponent({
       document.addEventListener('focusin', onFocusin);
     }
 
-    function dismantleFocusTrap() {
+    function uninstallFocusTrap() {
       document.removeEventListener('focusin', onFocusin);
     }
 
@@ -173,42 +208,37 @@ export const YDialog = defineComponent({
 
     function preventInteractionBackground(toggle: boolean) {
       const root$ = $yuyeon.root as HTMLElement;
-      const activeLayers = layer$.value?.getActiveLayers();
+      const myId = relayId.value ?? undefined;
+
       if (toggle) {
         if (props.maximized) {
           document.documentElement.classList.add('y-dialog--prevent-scroll');
         }
-        const filtered = activeLayers?.filter((layer: any) => {
-          return layer.ctx.modal;
-        });
-        if (
-          (filtered && !filtered.length) ||
-          !root$.classList.contains('y-dialog--virtual-scroll')
-        ) {
-          const scrollTop = document.documentElement.scrollTop;
-          const scrollLeft = document.documentElement.scrollLeft;
-          tempScrollTop.value = scrollTop;
-          tempScrollLeft.value = scrollLeft;
-
+        // 이미 다른 modal이 scroll lock 중이면 스크롤 위치 저장 스킵
+        if (!root$.classList.contains('y-dialog--virtual-scroll')) {
+          tempScrollTop.value = document.documentElement.scrollTop;
+          tempScrollLeft.value = document.documentElement.scrollLeft;
           root$.classList.add('y-dialog--virtual-scroll');
-          root$.style.top = toStyleSizeValue(-1 * scrollTop) || '';
-          root$.style.left = toStyleSizeValue(-1 * scrollLeft) || '';
+          root$.style.top = toStyleSizeValue(-1 * tempScrollTop.value) || '';
+          root$.style.left = toStyleSizeValue(-1 * tempScrollLeft.value) || '';
         }
       } else {
-        const filtered = activeLayers?.filter((layer: any) => {
-          return !layer$.value?.isMe(layer) && layer.ctx.modal;
-        });
-
-        if (!filtered?.length && root$) {
+        if (!hasActiveModal(myId)) {
+          // 다른 modal 없음 → 전체 해제 + 스크롤 복원
           document.documentElement.classList.remove('y-dialog--prevent-scroll');
           root$.classList.remove('y-dialog--virtual-scroll');
           root$.style.top = '';
           root$.style.left = '';
-          requestAnimationFrame(() => {
-            document.documentElement.scrollTop = tempScrollTop.value;
-            document.documentElement.scrollLeft = tempScrollLeft.value;
+          nextTick(() => {
+            if (tempScrollTop.value) {
+              document.documentElement.scrollTop = tempScrollTop.value;
+            }
+            if (tempScrollLeft.value) {
+              document.documentElement.scrollLeft = tempScrollLeft.value;
+            }
           });
-        } else if (filtered.every((layer: any) => !layer.ctx?.maximized)) {
+        } else if (!hasMaximizedModal(myId)) {
+          // 다른 modal은 있지만 maximized 아님 → prevent-scroll만 해제
           document.documentElement.classList.remove('y-dialog--prevent-scroll');
         }
       }
@@ -221,27 +251,6 @@ export const YDialog = defineComponent({
     function onAfterLeave() {
       emit('afterLeave');
     }
-
-    if (active.value) {
-      installFocusTrap();
-      preventInteractionBackground(true);
-    }
-
-    watch(active, (neo) => {
-      neo ? installFocusTrap() : dismantleFocusTrap();
-      preventInteractionBackground(neo);
-    });
-
-    onMounted(() => {
-      if (active.value) {
-        preventInteractionBackground(true);
-      }
-    });
-
-    onScopeDispose(() => {
-      dismantleFocusTrap();
-      preventInteractionBackground(false);
-    });
 
     useRender(() => {
       return (
@@ -268,6 +277,7 @@ export const YDialog = defineComponent({
       layer: layer$,
       classes,
       children,
+      relayId,
     };
   },
 });

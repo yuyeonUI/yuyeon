@@ -1,17 +1,17 @@
 import {
-  cloneVNode,
   type ComponentInternalInstance,
+  cloneVNode,
   computed,
   getCurrentInstance,
   mergeProps,
   type PropType,
   reactive,
   ref,
-  shallowRef,
   type SlotsType,
+  shallowRef,
   Teleport,
-  toRef,
   Transition,
+  toRef,
   watch,
 } from 'vue';
 
@@ -163,14 +163,18 @@ export const YLayer = defineComponent({
         if (!(v && props.disabled)) model.value = v;
       },
     });
-    // Frags
+    // __ Composition
+    const { themeClasses } = useLocalTheme(props);
+    const { polyTransitionBindProps } = usePolyTransition(props);
+    const { dimensionStyles } = useDimension(props);
+    // base -> content -> layerGroup -> activeStack -> activeEvent;
     const { base, base$, baseEl, baseSlot, baseFromSlotEl, pivot } =
       useBase(props);
     const { contentEvents } = useContent(props, active);
-    const { themeClasses } = useLocalTheme(props);
     const { layerGroup, layerGroupState, getActiveLayers } =
       useLayerGroup(props);
-    const { children, parent, handleOutsideClick } = useActiveStack(active);
+    const { children, parent, handleOutsideClick, relayId } =
+      useActiveStack(active);
     const { hovered, focused, baseEvents } = useActiveEvent(props, {
       active,
       children,
@@ -178,14 +182,14 @@ export const YLayer = defineComponent({
       finish,
       baseSlotEl: baseFromSlotEl,
     });
-    const { polyTransitionBindProps } = usePolyTransition(props);
-    const { dimensionStyles } = useDimension(props);
+    // Render timing
     const { lazyValue, onAfterUpdate } = useLazy(toRef(props, 'eager'), active);
 
     const isRendering = computed<boolean>(
       () => !disabled.value && (lazyValue.value || active.value),
     );
-
+    // #Content to Pivot
+    // coordinate -> scroll
     const { coordination, coordinateStyles, updateCoordinate } = useCoordinate(
       props,
       {
@@ -195,6 +199,7 @@ export const YLayer = defineComponent({
         pivot,
       },
     );
+
     useScrollStrategies(props, {
       root: root$,
       contentEl: content$,
@@ -331,6 +336,7 @@ export const YLayer = defineComponent({
       coordination,
       children,
       parent,
+      relayId,
     });
 
     useRender(() => {

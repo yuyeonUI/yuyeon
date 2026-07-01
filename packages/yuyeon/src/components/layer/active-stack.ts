@@ -1,8 +1,11 @@
-import type { ComponentInternalInstance, InjectionKey, Ref } from 'vue';
 import {
+  ComponentInternalInstance,
   getCurrentInstance,
   inject,
+  InjectionKey,
   provide,
+  ref,
+  Ref,
   shallowRef,
   unref,
   watch,
@@ -21,10 +24,8 @@ export const YUYEON_ACTIVE_STACK_KEY: InjectionKey<ActiveStackProvide> =
   Symbol.for('yuyeon.active-stack');
 
 interface YLayerExposed {
-  base$?: any;
   content$?: any;
   baseEl?: any;
-  active?: Ref<boolean>;
   modal?: boolean;
   preventCloseBubble?: boolean;
 }
@@ -33,7 +34,7 @@ export function useActiveStack(active: Ref<boolean>) {
   const parent = inject(YUYEON_ACTIVE_STACK_KEY, null);
   const children = shallowRef<any[]>([]);
   const vm = getCurrentInstance()!;
-
+  const relayId = ref<number>();
   let relayHandle: ReturnType<typeof registerRelay> | null = null;
 
   function exposed(): YLayerExposed | undefined {
@@ -77,6 +78,7 @@ export function useActiveStack(active: Ref<boolean>) {
         preventCloseBubble: () => !!unref(exposed()?.preventCloseBubble),
         close: clear,
       });
+      relayId.value = relayHandle.id;
     } else {
       parent?.pop(vm);
       relayHandle?.unregister();
@@ -97,5 +99,7 @@ export function useActiveStack(active: Ref<boolean>) {
     parent,
     children,
     handleOutsideClick,
+    relayHandle: relayHandle as ReturnType<typeof registerRelay> | null,
+    relayId,
   };
 }

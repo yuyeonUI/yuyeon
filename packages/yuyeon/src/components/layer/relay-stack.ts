@@ -3,6 +3,7 @@ interface RelayEntry {
   els: () => (Element | null | undefined)[];
   modal: () => boolean;
   preventCloseBubble: () => boolean;
+  maximized?: () => boolean;
   close: () => void;
 }
 
@@ -38,6 +39,31 @@ export function registerRelay(entry: Omit<RelayEntry, 'id'>) {
       if (stack.length === 0) teardownListener();
     },
   };
+}
+
+export function updateRelayEntry(
+  id: number,
+  updates: Partial<Pick<RelayEntry, 'maximized'>>,
+) {
+  const entry = stack.find((e) => e.id === id);
+  if (entry) Object.assign(entry, updates);
+}
+
+export function isTopModal() {
+  for (let i = stack.length - 1; i >= 0; i--) {
+    if (stack[i].modal()) return stack[i].id;
+  }
+  return null;
+}
+
+export function hasActiveModal(excludeId?: number) {
+  return stack.some((e) => e.modal() && e.id !== excludeId);
+}
+
+export function hasMaximizedModal(excludeId?: number) {
+  return stack.some(
+    (e) => e.modal() && (e.maximized?.() ?? false) && e.id !== excludeId,
+  );
 }
 
 function isInside(
