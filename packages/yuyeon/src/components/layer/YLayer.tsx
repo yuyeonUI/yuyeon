@@ -174,7 +174,10 @@ export const YLayer = defineComponent({
     const { contentEvents } = useContent(props, active);
     const { layerGroup, layerGroupState, getActiveLayers } =
       useLayerGroup(props);
-    const { children, parent, relayId } = useActiveStack(props, active);
+    const { children, parent, relayId, handleOutsideClick } = useActiveStack(
+      props,
+      active,
+    );
     const { hovered, focused, baseEvents } = useActiveEvent(props, {
       active,
       children,
@@ -215,13 +218,14 @@ export const YLayer = defineComponent({
       }
     });
 
-    function onClickComplementLayer(mouseEvent: MouseEvent) {
+    function onClickOutsideLayer(mouseEvent: MouseEvent) {
       emit('click:complement', mouseEvent);
+
       if (!shouldClose(mouseEvent)) {
         return;
       }
 
-      if (!props.modal) {
+      if (props.modal) {
         if (
           scrim$.value !== null &&
           scrim$.value === mouseEvent.target &&
@@ -230,7 +234,7 @@ export const YLayer = defineComponent({
           active.value = false;
         }
       } else {
-        // TODO: shrug ani
+        handleOutsideClick(mouseEvent);
       }
     }
 
@@ -257,7 +261,7 @@ export const YLayer = defineComponent({
     }
 
     const complementClickOption = reactive<ComplementClickBindingOptions>({
-      handler: onClickComplementLayer,
+      handler: onClickOutsideLayer,
       determine: closeConditional,
       include: () => [baseEl.value],
     });

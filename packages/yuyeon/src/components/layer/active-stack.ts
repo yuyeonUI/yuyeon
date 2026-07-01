@@ -10,7 +10,7 @@ import {
   watch,
 } from 'vue';
 
-import { registerRelay } from './relay-stack';
+import { isTopRelay, registerRelay, relayOutsideClick } from './relay-stack';
 
 export interface ActiveStackProvide {
   push: (instance: any) => void;
@@ -40,30 +40,6 @@ export function useActiveStack(props: ActiveStackProps, active: Ref<boolean>) {
   const relayId = ref<number>();
   let relayHandle: ReturnType<typeof registerRelay> | null = null;
 
-  function exposed(): YLayerExposed | undefined {
-    return vm.exposed as YLayerExposed | undefined;
-  }
-
-  function push(instance: any) {
-    children.value.push(instance);
-  }
-
-  function pop(instance?: any) {
-    if (instance) {
-      const index = children.value.findIndex((child) => child === instance);
-      if (index > -1) {
-        children.value.splice(index, 1);
-        return;
-      }
-    }
-    children.value.pop();
-  }
-
-  function clear() {
-    if (unref(exposed()?.modal)) return;
-    active.value = false;
-  }
-
   watch(active, (neo) => {
     if (neo) {
       parent?.push(vm);
@@ -90,6 +66,35 @@ export function useActiveStack(props: ActiveStackProps, active: Ref<boolean>) {
     }
   });
 
+  function exposed(): YLayerExposed | undefined {
+    return vm.exposed as YLayerExposed | undefined;
+  }
+
+  function push(instance: any) {
+    children.value.push(instance);
+  }
+
+  function pop(instance?: any) {
+    if (instance) {
+      const index = children.value.findIndex((child) => child === instance);
+      if (index > -1) {
+        children.value.splice(index, 1);
+        return;
+      }
+    }
+    children.value.pop();
+  }
+
+  function clear() {
+    if (unref(exposed()?.modal)) return;
+    active.value = false;
+  }
+
+  function handleOutsideClick(e: Event) {
+    if (!relayHandle || !isTopRelay(relayHandle.id)) return;
+    relayOutsideClick(e);
+  }
+
   provide(YUYEON_ACTIVE_STACK_KEY, {
     push,
     pop,
@@ -103,5 +108,6 @@ export function useActiveStack(props: ActiveStackProps, active: Ref<boolean>) {
     parent,
     children,
     relayId,
+    handleOutsideClick,
   };
 }

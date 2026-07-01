@@ -214,14 +214,6 @@ export const YSelect = defineComponent<
       }
     }
 
-    function closeCondition(event: MouseEvent) {
-      if (event.target && (menuRef.value as any)?.layer$?.content$) {
-        return (event.target as HTMLElement)?.contains(
-          (menuRef.value as any)?.layer$?.content$,
-        );
-      }
-    }
-
     function select(item: ListItem, e?: Event) {
       let value: any[];
       if (props.multiple) {
@@ -334,11 +326,9 @@ export const YSelect = defineComponent<
                     origin={props.origin}
                     content-classes={['y-select__content']}
                     maxHeight={props.maxHeight}
-                    open-on-click-base={false}
                     onAfterLeave={onAfterLeave}
                     open-delay={props.openDelay}
                     close-delay={props.closeDelay}
-                    closeCondition={closeCondition}
                     base="parent"
                     {...extraMenuProps.value}
                     v-model={opened.value}

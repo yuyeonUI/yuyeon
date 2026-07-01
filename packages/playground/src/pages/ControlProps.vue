@@ -528,7 +528,6 @@ const selectItems = [
               height="80"
               eager
               open-on-hover
-              :close-condition="onCloseMenuIn"
               prevent-close-bubble
             >
               <template #base="{ props: menuProps }">

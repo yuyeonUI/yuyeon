@@ -49,6 +49,10 @@ export function updateRelayEntry(
   if (entry) Object.assign(entry, updates);
 }
 
+export function isTopRelay(id: number) {
+  return stack.length > 0 && stack[stack.length - 1].id === id;
+}
+
 export function isTopModal() {
   for (let i = stack.length - 1; i >= 0; i--) {
     if (stack[i].modal()) return stack[i].id;
@@ -74,7 +78,7 @@ function isInside(
   return els.some((el) => el?.contains(target));
 }
 
-function relayOutsideClick(e: Event) {
+export function relayOutsideClick(e: Event) {
   if (stack.length === 0) return;
   const target = e.target;
 
