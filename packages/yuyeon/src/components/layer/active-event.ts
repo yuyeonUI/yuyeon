@@ -190,6 +190,7 @@ function _useActiveEventBinder(
 
   function bindActiveEvent(el = base.value, _props = baseEvents.value) {
     if (!el) return;
+    console.log(el);
     bindProps(el, _props);
   }
 

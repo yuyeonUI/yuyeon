@@ -80,7 +80,6 @@ export const YMenu = defineComponent({
 
     function onComplementClick(e: Event) {
       if (!active.value) return;
-      layer$.value?.handleOutsideClick(e);
     }
 
     expose({
@@ -94,6 +93,7 @@ export const YMenu = defineComponent({
           ref={layer$}
           transition={props.transition}
           onClick:complement={onComplementClick}
+          relayStack
           onAfterLeave={() => emit('afterLeave')}
           {...{
             ...chooseProps(props, YLayer.props),

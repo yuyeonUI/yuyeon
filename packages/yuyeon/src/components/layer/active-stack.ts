@@ -1,11 +1,11 @@
 import {
-  ComponentInternalInstance,
+  type ComponentInternalInstance,
   getCurrentInstance,
+  type InjectionKey,
   inject,
-  InjectionKey,
   provide,
+  type Ref,
   ref,
-  Ref,
   shallowRef,
   unref,
   watch,
@@ -30,7 +30,11 @@ interface YLayerExposed {
   preventCloseBubble?: boolean;
 }
 
-export function useActiveStack(active: Ref<boolean>) {
+interface ActiveStackProps {
+  relayStack?: boolean;
+}
+
+export function useActiveStack(props: ActiveStackProps, active: Ref<boolean>) {
   const parent = inject(YUYEON_ACTIVE_STACK_KEY, null);
   const children = shallowRef<any[]>([]);
   const vm = getCurrentInstance()!;
@@ -61,28 +65,29 @@ export function useActiveStack(active: Ref<boolean>) {
     active.value = false;
   }
 
-  function handleOutsideClick(e: Event) {
-    // if (!relayHandle || !isTopRelay(relayHandle.id)) return;
-    // relayOutsideClick(e);
-  }
-
   watch(active, (neo) => {
     if (neo) {
       parent?.push(vm);
-      relayHandle = registerRelay({
-        els: () => {
-          const ex = exposed();
-          return [unref(ex?.baseEl), unref(ex?.content$)];
-        },
-        modal: () => !!unref(exposed()?.modal),
-        preventCloseBubble: () => !!unref(exposed()?.preventCloseBubble),
-        close: clear,
-      });
-      relayId.value = relayHandle.id;
+      if (props.relayStack !== false) {
+        relayHandle = registerRelay({
+          els: () => {
+            const ex = exposed();
+            return [unref(ex?.baseEl), unref(ex?.content$)];
+          },
+          modal: () => !!unref(exposed()?.modal),
+          preventCloseBubble: () => !!unref(exposed()?.preventCloseBubble),
+          close: clear,
+        });
+        relayId.value = relayHandle.id;
+      }
     } else {
+      if (!props.relayStack) {
+        clear();
+      }
       parent?.pop(vm);
       relayHandle?.unregister();
       relayHandle = null;
+      relayId.value = undefined;
     }
   });
 
@@ -98,8 +103,6 @@ export function useActiveStack(active: Ref<boolean>) {
     pop,
     parent,
     children,
-    handleOutsideClick,
-    relayHandle: relayHandle as ReturnType<typeof registerRelay> | null,
     relayId,
   };
 }

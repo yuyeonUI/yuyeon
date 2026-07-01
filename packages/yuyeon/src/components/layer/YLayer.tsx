@@ -134,6 +134,7 @@ export const YLayer = defineComponent({
   },
   props: {
     modal: Boolean as PropType<boolean>,
+    relayStack: Boolean,
     ...pressYLayerProps(),
   },
   emits: {
@@ -173,8 +174,7 @@ export const YLayer = defineComponent({
     const { contentEvents } = useContent(props, active);
     const { layerGroup, layerGroupState, getActiveLayers } =
       useLayerGroup(props);
-    const { children, parent, handleOutsideClick, relayId } =
-      useActiveStack(active);
+    const { children, parent, relayId } = useActiveStack(props, active);
     const { hovered, focused, baseEvents } = useActiveEvent(props, {
       active,
       children,
@@ -220,6 +220,7 @@ export const YLayer = defineComponent({
       if (!shouldClose(mouseEvent)) {
         return;
       }
+
       if (!props.modal) {
         if (
           scrim$.value !== null &&
@@ -238,7 +239,7 @@ export const YLayer = defineComponent({
         (!props.openOnHover || (props.openOnHover && !hovered.value)) &&
         active.value &&
         finish.value
-      ); // TODO: && groupTopLevel.value;
+      );
     }
 
     function shouldClose(e?: Event) {
@@ -328,7 +329,6 @@ export const YLayer = defineComponent({
       finish,
       modal: computed(() => props.modal),
       preventCloseBubble: props.preventCloseBubble,
-      handleOutsideClick,
       getActiveLayers,
       isMe: (vnode: ComponentInternalInstance) => {
         return vnode === vm;

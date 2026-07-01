@@ -260,6 +260,7 @@ export const YDialog = defineComponent({
           classes={classes.value}
           content-styles={styles.value}
           modal
+          relayStack
           {...omit(chooseProps(props, YLayer.props), ['contentStyles'])}
           onAfterEnter={onAfterEnter}
           onAfterLeave={onAfterLeave}
