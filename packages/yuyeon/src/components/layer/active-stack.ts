@@ -6,7 +6,6 @@ import {
   provide,
   type Ref,
   ref,
-  shallowRef,
   unref,
   watch,
 } from 'vue';
@@ -36,7 +35,7 @@ interface ActiveStackProps {
 
 export function useActiveStack(props: ActiveStackProps, active: Ref<boolean>) {
   const parent = inject(YUYEON_ACTIVE_STACK_KEY, null);
-  const children = shallowRef<any[]>([]);
+  const children = ref<any[]>([]);
   const vm = getCurrentInstance()!;
   const relayId = ref<number>();
   let relayHandle: ReturnType<typeof registerRelay> | null = null;

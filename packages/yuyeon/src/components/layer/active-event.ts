@@ -190,12 +190,13 @@ function _useActiveEventBinder(
 
   function bindActiveEvent(el = base.value, _props = baseEvents.value) {
     if (!el) return;
-    console.log(el);
+    if (Array.isArray(el)) return;
     bindProps(el, _props);
   }
 
   function unbindActiveEvent(el = base.value, _props = baseEvents.value) {
     if (!el) return;
+    if (Array.isArray(el)) return;
     unbindProps(el, _props);
   }
 }

@@ -160,19 +160,29 @@ export const YDialog = defineComponent({
         }
       }
 
-      function testChildrenContains(layers: YLayer[]) {
-        return layers.some((layer) => {
-          return !layer.content$?.contains(target);
+      function testChildrenContains(layers: any[]): boolean {
+        return layers.some((layer: any) => {
+          const content$ = layer?.exposeProxy?.content$;
+          if (content$?.contains(target)) return true;
+
+          const grandChildren = layer?.exposeProxy?.children ?? [];
+          return testChildrenContains(grandChildren);
         });
       }
 
-      if (
-        prevTarget !== target &&
-        layer$.value?.content$ &&
-        ![document, layer$.value?.content$].includes(target) &&
-        !layer$.value?.content$.contains(target) &&
-        !testChildrenContains(children.value)
-      ) {
+      if (prevTarget === target) {
+        return;
+      }
+      if (!layer$.value?.content$) {
+        return;
+      }
+      if ([document, layer$.value?.content$].includes(target)) {
+        return;
+      }
+      if (layer$.value?.content$.contains(target)) {
+        return;
+      }
+      if (!testChildrenContains(children.value)) {
         const focusableSelector =
           'button, [href], input:not([type="hidden"]), select, textarea, [tabindex]:not([tabindex="-1"])';
         const focusables = [
