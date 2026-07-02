@@ -37,7 +37,6 @@ import {
 import { bindClasses, defineComponent, propsFactory } from '@/util/component';
 
 import { pressBasePropsOptions, useBase } from './base';
-import { pressContentPropsOptions, useContent } from './content';
 import {
   pressScrollStrategyProps,
   useScrollStrategies,
@@ -47,6 +46,7 @@ import './YLayer.scss';
 
 import {
   pressActiveEventProps,
+  pressContentPropsOptions,
   useActiveEvent,
 } from '@/components/layer/active-event';
 import { useActiveStack } from '@/components/layer/active-stack';
@@ -58,6 +58,10 @@ export const pressYLayerProps = propsFactory(
   {
     modelValue: {
       type: Boolean as PropType<boolean>,
+    },
+    pinned: {
+      type: Boolean as PropType<boolean>,
+      default: undefined,
     },
     scrim: {
       type: Boolean as PropType<boolean>,
@@ -139,6 +143,7 @@ export const YLayer = defineComponent({
   },
   emits: {
     'update:modelValue': (value: boolean) => true,
+    'update:pinned': (value: boolean) => true,
     'click:complement': (mouseEvent: MouseEvent) => true,
     afterLeave: () => true,
     afterEnter: () => true,
@@ -156,6 +161,7 @@ export const YLayer = defineComponent({
     const content$ = ref<HTMLElement>();
     const root$ = ref<HTMLElement>();
     const model = useModelDuplex(props);
+    const pinned = useModelDuplex(props, 'pinned', false);
     const active = computed({
       get: (): boolean => {
         return !!model.value;
@@ -168,23 +174,27 @@ export const YLayer = defineComponent({
     const { themeClasses } = useLocalTheme(props);
     const { polyTransitionBindProps } = usePolyTransition(props);
     const { dimensionStyles } = useDimension(props);
-    // base -> content -> layerGroup -> activeStack -> activeEvent;
+    // base -> layerGroup -> activeStack -> activeEvent;
     const { base, base$, baseEl, baseSlot, baseFromSlotEl, pivot } =
       useBase(props);
-    const { contentEvents } = useContent(props, active);
     const { layerGroup, layerGroupState, getActiveLayers } =
       useLayerGroup(props);
     const { children, parent, relayId, handleOutsideClick } = useActiveStack(
       props,
       active,
+      pinned,
     );
-    const { hovered, focused, baseEvents } = useActiveEvent(props, {
-      active,
-      children,
-      base,
-      finish,
-      baseSlotEl: baseFromSlotEl,
-    });
+    const { hovered, focused, baseEvents, contentEvents } = useActiveEvent(
+      props,
+      {
+        active,
+        pinned,
+        children,
+        base,
+        finish,
+        baseSlotEl: baseFromSlotEl,
+      },
+    );
     // Render timing
     const { lazyValue, onAfterUpdate } = useLazy(toRef(props, 'eager'), active);
 
@@ -302,6 +312,7 @@ export const YLayer = defineComponent({
       const boundClasses = bindClasses(classes);
       return {
         ...boundClasses,
+        'y-layer--pinned': !!pinned.value,
         'y-layer--active': !!active.value,
       };
     });
@@ -326,11 +337,13 @@ export const YLayer = defineComponent({
       content$: computed(() => content$.value),
       baseEl,
       active,
+      pinned,
       onAfterUpdate,
       updateCoordinate,
       hovered,
       focused,
       finish,
+      maximized,
       modal: computed(() => props.modal),
       preventCloseBubble: props.preventCloseBubble,
       getActiveLayers,

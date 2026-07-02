@@ -1,4 +1,4 @@
-import { computed, nextTick, type PropType, ref, toRef, watch } from 'vue';
+import { computed, type PropType, ref } from 'vue';
 
 import { useModelDuplex } from '@/composables/communication';
 import { useRender } from '@/composables/component';
@@ -15,8 +15,6 @@ import { pressYLayerProps, YLayer } from '../layer';
 import { YPlate } from '../plate';
 
 import './YTooltip.scss';
-
-import { hasElementMouseEvent } from '@/util';
 
 const NAME = 'YTooltip';
 
@@ -62,7 +60,6 @@ export const YTooltip = defineComponent<
     const model = useModelDuplex(props);
 
     const layer$ = ref<typeof YLayer>();
-    const contentEl = ref<HTMLElement>();
 
     const active = computed({
       get: (): boolean => {
@@ -72,10 +69,6 @@ export const YTooltip = defineComponent<
         if (!(v && props.disabled)) model.value = v;
       },
     });
-
-    const children = computed(() => layer$.value?.children || []);
-
-    const parent = computed(() => layer$.value?.parent);
 
     const baseEl = computed(() => {
       return layer$.value?.baseEl;
@@ -88,34 +81,6 @@ export const YTooltip = defineComponent<
         'y-tooltip': true,
       };
     });
-
-    const hovered = computed(() => !!layer$.value?.hovered);
-
-    watch(active, (neo) => {
-      if (neo) {
-        nextTick(() => {
-          const $content = layer$.value?.content$;
-          contentEl.value = $content;
-        });
-      }
-    });
-
-    function onComplementClick(e: Event) {
-      if (active.value) {
-        if (children.value.length === 0) {
-          active.value = false;
-        }
-        const parentContent = parent.value?.content$;
-        const parentModal = parent.value?.modal;
-        if (
-          !props.preventCloseBubble &&
-          !(parentContent && !hasElementMouseEvent(e, parentContent)) &&
-          !parentModal
-        ) {
-          parent.value?.clear();
-        }
-      }
-    }
 
     expose({
       layer$,
@@ -130,7 +95,6 @@ export const YTooltip = defineComponent<
           classes={classes.value}
           scrim={false}
           transition={props.transition}
-          onClick:complement={onComplementClick}
           v-model={active.value}
         >
           {{

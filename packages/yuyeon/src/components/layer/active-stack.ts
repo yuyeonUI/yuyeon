@@ -34,7 +34,11 @@ interface ActiveStackProps {
   relayStack?: boolean;
 }
 
-export function useActiveStack(props: ActiveStackProps, active: Ref<boolean>) {
+export function useActiveStack(
+  props: ActiveStackProps,
+  active: Ref<boolean>,
+  pinned: Ref<boolean>,
+) {
   const parent = inject(YUYEON_ACTIVE_STACK_KEY, null);
   const children = ref<any[]>([]);
   const vm = getCurrentInstance()!;
@@ -98,6 +102,7 @@ export function useActiveStack(props: ActiveStackProps, active: Ref<boolean>) {
   function clear() {
     if (unref(exposed()?.modal)) return;
     active.value = false;
+    pinned.value = false;
   }
 
   function handleOutsideClick(e: Event) {

@@ -54,16 +54,31 @@ export const pressActiveEventProps = propsFactory(
   'YLayer.active-event',
 );
 
+export const pressContentPropsOptions = propsFactory(
+  {
+    closeClickContent: {
+      type: Boolean as PropType<boolean>,
+    },
+  },
+  'YLayer.content',
+);
+
+export interface ContentProps {
+  closeClickContent: boolean | undefined;
+}
+
 export function useActiveEvent(
   props: any,
   {
     active,
+    pinned,
     children,
     base,
     finish,
     baseSlotEl,
   }: {
     active: Ref<boolean>;
+    pinned: Ref<boolean>;
     children: Ref<HTMLElement[]>;
     base: Ref<any>;
     finish: Ref<boolean>;
@@ -104,15 +119,20 @@ export function useActiveEvent(
     },
     onMouseleave: (e: Event) => {
       hovered.value = false;
+      if (pinned.value) return;
       startCloseDelay();
     },
     onClick: (e: Event) => {
       e.stopPropagation();
-      const currentActive = active.value;
-      if (props.disabled || (hovered.value && !finish.value)) {
+      if (props.disabled) return;
+      if (isOpenClick.value && props.openOnHover) {
+        pinned.value = !pinned.value;
+        if (!active.value) active.value = true;
         return;
       }
-      active.value = !currentActive;
+      if (hovered.value && !finish.value) return;
+
+      active.value = !active.value;
     },
     onFocus: (e: FocusEvent) => {
       startOpenDelay();
@@ -139,6 +159,30 @@ export function useActiveEvent(
     return events;
   });
 
+  const contentEvents = computed(() => {
+    const events: Record<string, EventListener> = {};
+
+    if (props.openOnHover) {
+      events.onMouseenter = (e: Event) => {
+        hovered.value = true;
+        startOpenDelay();
+      };
+      events.onMouseleave = (e: Event) => {
+        hovered.value = false;
+        if (pinned.value) return;
+        startCloseDelay();
+      };
+    }
+
+    if (props.closeClickContent) {
+      events.onClick = (e: Event) => {
+        active.value = false;
+      };
+    }
+
+    return events;
+  });
+
   let scope: EffectScope | undefined;
 
   watch(
@@ -157,7 +201,7 @@ export function useActiveEvent(
     { immediate: true, flush: 'post' },
   );
 
-  return { hovered, focused, baseEvents };
+  return { hovered, focused, baseEvents, contentEvents };
 }
 
 function _useActiveEventBinder(
