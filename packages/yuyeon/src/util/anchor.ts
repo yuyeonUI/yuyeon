@@ -1,12 +1,9 @@
-const includes = <T, A extends T>(
-  array: ReadonlyArray<A>,
-  item: T,
-): item is A => array.includes(item as A);
+import { includes } from './array';
 
-const block = ['top', 'bottom'] as const;
-const inline = ['start', 'end', 'left', 'right'] as const;
-type Tblock = (typeof block)[number];
-type Tinline = (typeof inline)[number];
+export const BLOCK = ['top', 'bottom'] as const;
+export const INLINE = ['start', 'end', 'left', 'right'] as const;
+export type Tblock = (typeof BLOCK)[number];
+export type Tinline = (typeof INLINE)[number];
 export type Anchor =
   | Tblock
   | Tinline
@@ -26,9 +23,9 @@ export function parseAnchor(anchor: Anchor, isRtl: boolean) {
     Tblock | Tinline | 'center' | undefined,
   ];
   if (!align) {
-    align = includes(block, side)
+    align = includes(BLOCK, side)
       ? 'start'
-      : includes(inline, side)
+      : includes(INLINE, side)
         ? 'top'
         : 'center';
   }
@@ -79,5 +76,5 @@ export function flipCorner(anchor: ParsedAnchor) {
 }
 
 export function getAxis(anchor: ParsedAnchor) {
-  return includes(block, anchor.side) ? 'y' : 'x';
+  return includes(BLOCK, anchor.side) ? 'y' : 'x';
 }

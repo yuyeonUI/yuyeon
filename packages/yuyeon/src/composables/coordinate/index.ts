@@ -1,7 +1,7 @@
 import type { PropType, Ref } from 'vue';
 import { onScopeDispose, ref, watch } from 'vue';
 
-import type { CssProperties } from '@/types';
+import type { CssProperties, LiteralUnion } from '@/types';
 import { propsFactory } from '@/util/component';
 
 import { useToggleScope } from '../scope';
@@ -12,6 +12,7 @@ import type { CoordinateState } from './types';
 const coordinateStrategies = {
   levitation: applyLevitation,
   arrangement: applyArrangement,
+  none: null,
 };
 
 export type CoordinateStrategyFn = (
@@ -27,20 +28,24 @@ export const pressCoordinateProps = propsFactory(
       type: [String, Function] as PropType<
         keyof typeof coordinateStrategies | CoordinateStrategyFn
       >,
-      default: 'arrangement',
+      default: 'none',
     },
     position: {
       type: String as PropType<
-        'default' | 'top' | 'end' | 'right' | 'bottom' | 'left' | 'start'
+        LiteralUnion<
+          'default' | 'top' | 'right' | 'bottom' | 'left' | 'start' | 'end'
+        >
       >,
       default: 'default',
     },
     align: {
-      type: String as PropType<'start' | 'center' | 'end' | 'top' | 'bottom'>,
+      type: String as PropType<
+        LiteralUnion<'start' | 'center' | 'end' | 'top' | 'bottom'>
+      >,
       default: 'start',
     },
     origin: {
-      type: String,
+      type: String as PropType<LiteralUnion<'auto' | 'overlap'>>,
       default: 'auto',
     },
     offset: {

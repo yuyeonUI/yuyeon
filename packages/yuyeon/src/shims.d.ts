@@ -16,6 +16,7 @@ import type {
   YDialog,
   YDividePanel,
   YDivider,
+  YDrawer,
   YExpandHTransition,
   YExpandVTransition,
   YFieldInput,
@@ -105,6 +106,7 @@ declare module 'vue' {
     YTextEllipsis: typeof YTextEllipsis;
     YImg: typeof YImg;
     YYearPicker: typeof YYearPicker;
+    YDrawer: typeof YDrawer;
   }
 
   export interface GlobalDirectives {

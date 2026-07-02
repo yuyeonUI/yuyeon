@@ -1,7 +1,6 @@
 import {
   computed,
   getCurrentInstance,
-  nextTick,
   onBeforeMount,
   onBeforeUnmount,
   type PropType,
@@ -23,22 +22,16 @@ import { toStyleSizeValue } from '@/util/ui';
 import { YCard } from '../card';
 import { pressYLayerProps, YLayer } from '../layer';
 
-import './YDialog.scss';
+import './YDrawer.scss';
 
-import {
-  hasActiveModal,
-  hasMaximizedModal,
-  isTopModal,
-  updateRelayEntry,
-} from '@/components/layer/relay-stack';
+import { isTopModal, updateRelayEntry } from '@/components/layer/relay-stack';
 
-export const pressYDialogPropsOptions = propsFactory(
+export const pressYDrawerPropsOptions = propsFactory(
   {
     persistent: {
       type: Boolean as PropType<boolean>,
-      default: true,
     },
-    dialogClasses: {
+    drawerClasses: {
       type: [Array, String, Object] as PropType<
         string[] | string | Record<string, any>
       >,
@@ -56,34 +49,34 @@ export const pressYDialogPropsOptions = propsFactory(
       pressYLayerProps({
         scrim: true,
         openOnClick: true,
+        coordinateStrategy: null,
         scrollStrategy: null,
+        position: 'right' as const,
       }),
       ['offset', 'classes'],
     ),
   },
-  'YDialog',
+  'YDrawer',
 );
 
-export const YDialog = defineComponent({
-  name: 'YDialog',
+export const YDrawer = defineComponent({
+  name: 'YDrawer',
   components: {
     YLayer,
     YCard,
   },
-  props: pressYDialogPropsOptions(),
+  props: pressYDrawerPropsOptions(),
   emits: ['update:modelValue', 'afterEnter', 'afterLeave'],
   setup(props, { emit, slots }) {
     const vm = getCurrentInstance();
     const $yuyeon = vm?.appContext.config.globalProperties.$yuyeon;
     const active = useModelDuplex(props);
-    const layer$ = ref<typeof YLayer>();
 
     const classes = computed(() => {
-      const boundClasses = bindClasses(props.dialogClasses);
+      const boundClasses = bindClasses(props.drawerClasses);
       return {
         ...boundClasses,
-        'y-dialog': true,
-        'y-dialog--maximized': props.maximized,
+        'y-drawer': true,
       };
     });
 
@@ -94,13 +87,14 @@ export const YDialog = defineComponent({
       };
     });
 
+    const layer$ = ref<typeof YLayer>();
+
     const children = computed(() => layer$.value?.children || []);
 
     const relayId = computed(() => layer$.value?.relayId);
 
     watch(active, (neo) => {
       neo ? installFocusTrap() : uninstallFocusTrap();
-      preventInteractionBackground(neo);
     });
 
     watch(relayId, (id) => {
@@ -112,14 +106,12 @@ export const YDialog = defineComponent({
     onBeforeMount(() => {
       if (active.value) {
         installFocusTrap();
-        preventInteractionBackground(true);
       }
     });
 
     onBeforeUnmount(() => {
       active.value = false;
       uninstallFocusTrap();
-      preventInteractionBackground(false);
     });
 
     function onFocusin(e: FocusEvent) {
@@ -209,47 +201,6 @@ export const YDialog = defineComponent({
 
     function uninstallFocusTrap() {
       document.removeEventListener('focusin', onFocusin);
-    }
-
-    const tempScrollTop = ref(0);
-    const tempScrollLeft = ref(0);
-
-    function preventInteractionBackground(toggle: boolean) {
-      const root$ = $yuyeon.root as HTMLElement;
-      const myId = relayId.value ?? undefined;
-
-      if (toggle) {
-        if (props.maximized) {
-          document.documentElement.classList.add('y-dialog--prevent-scroll');
-        }
-        // 이미 다른 modal이 scroll lock 중이면 스크롤 위치 저장 스킵
-        if (!root$.classList.contains('y-dialog--virtual-scroll')) {
-          tempScrollTop.value = document.documentElement.scrollTop;
-          tempScrollLeft.value = document.documentElement.scrollLeft;
-          root$.classList.add('y-dialog--virtual-scroll');
-          root$.style.top = toStyleSizeValue(-1 * tempScrollTop.value) || '';
-          root$.style.left = toStyleSizeValue(-1 * tempScrollLeft.value) || '';
-        }
-      } else {
-        if (!hasActiveModal(myId)) {
-          // 다른 modal 없음 → 전체 해제 + 스크롤 복원
-          document.documentElement.classList.remove('y-dialog--prevent-scroll');
-          root$.classList.remove('y-dialog--virtual-scroll');
-          root$.style.top = '';
-          root$.style.left = '';
-          nextTick(() => {
-            if (tempScrollTop.value) {
-              document.documentElement.scrollTop = tempScrollTop.value;
-            }
-            if (tempScrollLeft.value) {
-              document.documentElement.scrollLeft = tempScrollLeft.value;
-            }
-          });
-        } else if (!hasMaximizedModal(myId)) {
-          // 다른 modal은 있지만 maximized 아님 → prevent-scroll만 해제
-          document.documentElement.classList.remove('y-dialog--prevent-scroll');
-        }
-      }
     }
 
     function onAfterEnter() {
