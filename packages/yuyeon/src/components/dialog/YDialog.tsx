@@ -118,10 +118,11 @@ export const YDialog = defineComponent({
     });
 
     onBeforeUnmount(() => {
+      active.value = false;
       uninstallFocusTrap();
-      if (active.value) {
-        preventInteractionBackground(false);
-      }
+      // if (active.value) {
+      preventInteractionBackground(false);
+      // }
     });
 
     function onFocusin(e: FocusEvent) {

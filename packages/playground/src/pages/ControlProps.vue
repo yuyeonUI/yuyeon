@@ -1,55 +1,55 @@
 <script setup lang="ts">
-import { mergeProps, ref, shallowRef } from "vue";
-import { useTheme } from "yuyeon";
-import AlertCircleOutlineSvg from "@/assets/alert-circle-outline.svg?component";
-import VueSvg from "@/assets/vue.svg?component";
+import { mergeProps, ref, shallowRef } from 'vue';
+import { useTheme } from 'yuyeon';
+import AlertCircleOutlineSvg from '@/assets/alert-circle-outline.svg?component';
+import VueSvg from '@/assets/vue.svg?component';
 
-const outlinedFieldInput = ref("");
-const ipv4 = ref("192.168.1.1");
+const outlinedFieldInput = ref('');
+const ipv4 = ref('192.168.1.1');
 const displayInput = ref(0);
 const showDialog = ref(false);
 const loadingButton = ref(false);
 
 function onClickLoadingButton() {
-	loadingButton.value = true;
-	setTimeout(() => {
-		loadingButton.value = false;
-	}, 5000);
+  loadingButton.value = true;
+  setTimeout(() => {
+    loadingButton.value = false;
+  }, 5000);
 }
 
 const progress0 = ref(40);
 const progress0Reverse = shallowRef(false);
 const chipsSectionIndeterminate = shallowRef(false);
 const dropdownItems = [
-	{
-		key: "cut",
-		text: "잘라내기",
-	},
-	{
-		key: "copy",
-		text: "복사하기",
-	},
+  {
+    key: 'cut',
+    text: '잘라내기',
+  },
+  {
+    key: 'copy',
+    text: '복사하기',
+  },
 ];
 const theme = useTheme();
 
 function toggleThemeMode() {
-	console.log(theme);
-	if (theme) {
-		let to = "light" as "dark" | "light" | "auto";
-		switch (theme.scheme.value) {
-			case "dark":
-				to = "auto";
-				break;
-			case "light":
-				to = "dark";
-				break;
-			case "auto":
-			default:
-				to = "light";
-		}
+  console.log(theme);
+  if (theme) {
+    let to = 'light' as 'dark' | 'light' | 'auto';
+    switch (theme.scheme.value) {
+      case 'dark':
+        to = 'auto';
+        break;
+      case 'light':
+        to = 'dark';
+        break;
+      case 'auto':
+      default:
+        to = 'light';
+    }
 
-		theme.scheme.value = to;
-	}
+    theme.scheme.value = to;
+  }
 }
 
 const innerMenu = shallowRef(false);
@@ -57,75 +57,75 @@ const switchInput = shallowRef(false);
 const defaultSelectV = ref([]);
 
 function onCloseMenuIn() {
-	return innerMenu.value;
+  return innerMenu.value;
 }
 
 const tab = ref();
-const focusTrapTest = ref("");
+const focusTrapTest = ref('');
 const parentDialog = ref(false);
 const childDialog = ref(false);
 const maximizedDialog = ref(false);
-const textarea = ref("content");
+const textarea = ref('content');
 const validSelectValue = ref();
 const progress1 = shallowRef(50);
 
 function onClickFieldWrap() {
-	console.log("activate my trap");
+  console.log('activate my trap');
 }
 
 const selectItems = [
-	{
-		key: "1",
-		text: "1",
-	},
-	{
-		key: "2",
-		text: "2",
-	},
-	{
-		key: "3",
-		text: "3",
-	},
-	{
-		key: "4",
-		text: "4",
-	},
-	{
-		key: "5",
-		text: "5",
-	},
-	{
-		key: "6",
-		text: "6",
-	},
-	{
-		key: "7",
-		text: "7",
-	},
-	{
-		key: "8",
-		text: "8",
-	},
-	{
-		key: "9",
-		text: "9",
-	},
-	{
-		key: "10",
-		text: "10",
-	},
-	{
-		key: "11",
-		text: "11",
-	},
+  {
+    key: '1',
+    text: '1',
+  },
+  {
+    key: '2',
+    text: '2',
+  },
+  {
+    key: '3',
+    text: '3',
+  },
+  {
+    key: '4',
+    text: '4',
+  },
+  {
+    key: '5',
+    text: '5',
+  },
+  {
+    key: '6',
+    text: '6',
+  },
+  {
+    key: '7',
+    text: '7',
+  },
+  {
+    key: '8',
+    text: '8',
+  },
+  {
+    key: '9',
+    text: '9',
+  },
+  {
+    key: '10',
+    text: '10',
+  },
+  {
+    key: '11',
+    text: '11',
+  },
 ];
 </script>
 
 <template>
   <div class="pa-4">
     <y-alert class="mb-4">
-      <template #title> Alert!! </template>
-      <template #default> Alert Alert Alert Alert! </template>
+      <template #title> Alert!!</template>
+      <template #default> Alert Alert Alert Alert!</template>
     </y-alert>
     <section class="mv-2">
       <y-card class="pa-2">
@@ -180,7 +180,7 @@ const selectItems = [
     <!--  Alerts  -->
     <section class="pv-2">
       <y-card>
-        <y-card-header> ALERTS </y-card-header>
+        <y-card-header> ALERTS</y-card-header>
         <y-card-body class="pv-4">
           <div class="d-flex flex-wrap" style="gap: 10px">
             <y-alert :semantic="'info'" style="width: 40%">
@@ -213,7 +213,7 @@ const selectItems = [
                   style="width: 24px; height: 24px"
                 ></AlertCircleOutlineSvg>
               </template>
-              <template #title> Alert!! </template>
+              <template #title> Alert!!</template>
               자정 넘으면 낯설음도 뼈아픔도 다 설원인데 단풍잎 같은 몇 잎의
               차장을 달고 밤열차는 또 어디로 흘러가는지
             </y-alert>
@@ -247,14 +247,16 @@ const selectItems = [
     <section class="pv-2" style="height: 200px">
       <y-card class="h-100 contain-paint">
         <y-card-header
-          ><y-tabs
+        >
+          <y-tabs
             v-model="tab"
             :items="[
               { text: '첫번째', value: 'first' },
               { text: '두번째', value: 'second' },
             ]"
           ></y-tabs
-        ></y-card-header>
+          >
+        </y-card-header>
         <y-card-body class="pt-4">
           <y-tabs
             v-model="tab"
@@ -273,10 +275,10 @@ const selectItems = [
     <!--  BUTTONS  -->
     <section class="pv-2" style="height: 200px">
       <y-card class="h-100 contain-paint">
-        <y-card-header> BUTTONS </y-card-header>
+        <y-card-header> BUTTONS</y-card-header>
         <y-card-body class="pt-4">
           <div class="d-flex" style="gap: 4px">
-            <y-button loading outlined> 계속 로딩 </y-button>
+            <y-button loading outlined> 계속 로딩</y-button>
             <y-button
               @click="onClickLoadingButton"
               :loading="loadingButton"
@@ -325,7 +327,7 @@ const selectItems = [
               placeholder="variation outlined"
             >
               <template #helper-text>
-                {{ "HELPER TEXT text" }}
+                {{ 'HELPER TEXT text' }}
               </template>
             </y-field-input>
             <y-field-input
@@ -363,18 +365,17 @@ const selectItems = [
           :reverse="progress0Reverse"
           :value="progress0"
         ></y-progress-bar>
-        <y-card-header> LAYER BASE </y-card-header>
+        <y-card-header> LAYER BASE</y-card-header>
         <y-card-body class="pt-4">
-          <div class="d-flex align-center" style="gap: 8px">
+          <div class="d-flex align-center gap-2 flex-wrap">
             <y-select></y-select>
-            <!-- -->
-
+            <!-- dialog in menu -->
             <y-dialog
               v-model="showDialog"
               :dialog-classes="['playground-dialog--showcase']"
             >
               <template #base>
-                <y-button variation="outlined" class="mr-2"> DIALOG </y-button>
+                <y-button variation="outlined" class="mr-2"> DIALOG</y-button>
               </template>
               <y-card style="width: 400px">
                 <div
@@ -442,7 +443,7 @@ const selectItems = [
                 </y-card-footer>
               </y-card>
             </y-dialog>
-            <!-- -->
+            <!-- dialog parent -->
             <y-dialog
               v-model="parentDialog"
               :dialog-classes="['playground-dialog--showcase']"
@@ -487,7 +488,7 @@ const selectItems = [
                 </y-card-footer>
               </y-card>
             </y-dialog>
-            <!-- -->
+            <!-- dialog max -->
             <y-dialog
               v-model="maximizedDialog"
               maximized
@@ -503,7 +504,7 @@ const selectItems = [
                 <y-card-header>
                   <div class="y-card-title">SETTINGS</div>
                   <div class="flex-spacer"></div>
-                  <y-button @click="maximizedDialog = false"> CLOSE </y-button>
+                  <y-button @click="maximizedDialog = false"> CLOSE</y-button>
                 </y-card-header>
                 <y-card-body class="pv-8">
                   <y-field-input variation="outlined"></y-field-input>
@@ -513,14 +514,14 @@ const selectItems = [
                 </y-card-body>
               </y-card>
             </y-dialog>
-            <!--  -->
+            <!-- tooltip base slot -->
             <y-tooltip :position="'top'">
               <template #base>
                 <y-chip>TOOLTIP</y-chip>
               </template>
               <span>어서와 처음이지?</span>
             </y-tooltip>
-            <!--  -->
+            <!-- menu with tooltip -->
             <y-menu
               position="right"
               align="top"
@@ -565,7 +566,7 @@ const selectItems = [
                 </y-card-body>
               </y-card>
             </y-menu>
-            <!--            -->
+            <!-- menu in menu -->
             <y-menu position="right" align="top" offset="8" height="400">
               <template #base="{ props: menuProps }">
                 <y-button class="mr-2" v-bind="{ ...menuProps }">
@@ -573,7 +574,7 @@ const selectItems = [
                 </y-button>
               </template>
               <y-card>
-                <y-card-body>
+                <y-card-body class="d-flex flex-column gap-4">
                   <y-menu v-model="innerMenu" height="80">
                     <template #base>
                       <y-button>hello</y-button>
@@ -596,7 +597,7 @@ const selectItems = [
                 </y-card-body>
               </y-card>
             </y-menu>
-            <!--  -->
+            <!-- dropdown -->
             <y-dropdown
               :items="dropdownItems"
               class="ml-2 elevation-1"
@@ -614,7 +615,7 @@ const selectItems = [
             >
               드롭다운
             </y-dropdown>
-            <!--  -->
+            <!-- select item slot -->
             <y-select
               v-model="defaultSelectV"
               :items="dropdownItems"
@@ -635,8 +636,7 @@ const selectItems = [
                 </div>
               </template>
             </y-select>
-          </div>
-          <div class="d-flex mv-3 gap-2" style="align-items: flex-end">
+            <!-- select with tooltip -->
             <y-tooltip position="top">
               <template #base="{ props: tooltipProps }">
                 <y-select
@@ -648,12 +648,13 @@ const selectItems = [
               </template>
               <span>tooltip + select</span>
             </y-tooltip>
+            <!-- menu origin overlap -->
             <y-menu origin="overlap">
               <template #base>
                 <y-button>menu overlap</y-button>
               </template>
               <y-card>
-                <y-card-header> 테스트 </y-card-header>
+                <y-card-header> 테스트</y-card-header>
                 <y-list>
                   <y-list-item
                     @click="
@@ -667,6 +668,7 @@ const selectItems = [
                 </y-list>
               </y-card>
             </y-menu>
+            <!-- select origin overlap -->
             <y-select
               v-model="defaultSelectV"
               :items="selectItems"
@@ -675,7 +677,6 @@ const selectItems = [
               default-select
               style="max-width: 140px"
             ></y-select>
-
           </div>
         </y-card-body>
       </y-card>
@@ -690,7 +691,7 @@ const selectItems = [
           no-rewind-transition
           :indeterminate="chipsSectionIndeterminate"
         ></y-progress-bar>
-        <y-card-header> CHIPS </y-card-header>
+        <y-card-header> CHIPS</y-card-header>
         <y-card-body class="pt-4">
           <div class="pv-4">
             <y-chip small class="mr-2 font-weight-700">LABEL</y-chip>
@@ -699,7 +700,8 @@ const selectItems = [
               :color="'#1489ce'"
               class="mr-2"
               @click="chipsSectionIndeterminate = !chipsSectionIndeterminate"
-              >INDETERMINATE Toggle</y-chip
+            >INDETERMINATE Toggle
+            </y-chip
             >
             <y-badge content="3">
               <y-chip small class="mr-2 font-weight-700">BADGE CHIP</y-chip>
@@ -715,9 +717,11 @@ const selectItems = [
 .y-table {
   height: 100%;
 }
+
 .playground-dialog--showcase {
   filter: drop-shadow(4px 4px 12px rgba(0, 0, 0, 0.4));
 }
+
 .gap-2 {
   gap: 8px;
 }

@@ -8,6 +8,7 @@ import {
   ref,
   unref,
   watch,
+  onBeforeUnmount,
 } from 'vue';
 
 import { isTopRelay, registerRelay, relayOutsideClick } from './relay-stack';
@@ -40,30 +41,39 @@ export function useActiveStack(props: ActiveStackProps, active: Ref<boolean>) {
   const relayId = ref<number>();
   let relayHandle: ReturnType<typeof registerRelay> | null = null;
 
-  watch(active, (neo) => {
-    if (neo) {
-      parent?.push(vm);
-      if (props.relayStack !== false) {
-        relayHandle = registerRelay({
-          els: () => {
-            const ex = exposed();
-            return [unref(ex?.baseEl), unref(ex?.content$)];
-          },
-          modal: () => !!unref(exposed()?.modal),
-          preventCloseBubble: () => !!unref(exposed()?.preventCloseBubble),
-          close: clear,
-        });
-        relayId.value = relayHandle.id;
+  watch(
+    active,
+    (neo) => {
+      if (neo) {
+        parent?.push(vm);
+        if (props.relayStack !== false) {
+          relayHandle = registerRelay({
+            els: () => {
+              const ex = exposed();
+              return [unref(ex?.baseEl), unref(ex?.content$)];
+            },
+            modal: () => !!unref(exposed()?.modal),
+            preventCloseBubble: () => !!unref(exposed()?.preventCloseBubble),
+            close: clear,
+          });
+          relayId.value = relayHandle.id;
+        }
+      } else {
+        if (!props.relayStack) {
+          clear();
+        }
+        parent?.pop(vm);
+        relayHandle?.unregister();
+        relayHandle = null;
+        relayId.value = undefined;
       }
-    } else {
-      if (!props.relayStack) {
-        clear();
-      }
-      parent?.pop(vm);
-      relayHandle?.unregister();
-      relayHandle = null;
-      relayId.value = undefined;
-    }
+    },
+    { immediate: true },
+  );
+
+  onBeforeUnmount(() => {
+    relayHandle?.unregister();
+    relayHandle = null;
   });
 
   function exposed(): YLayerExposed | undefined {
