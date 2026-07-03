@@ -74,6 +74,10 @@ const selectItems = [
 function onClickNoBaseMenu() {
   noBaseMenu.value = true;
 }
+
+function onClickOpenDrawer() {
+  openDrawer.value = true;
+}
 </script>
 
 <template>
@@ -99,10 +103,8 @@ function onClickNoBaseMenu() {
               <!-- select blank -->
               <y-select></y-select>
               <!-- drawer -->
+              <y-button @click="onClickOpenDrawer()">Drawer</y-button>
               <y-drawer v-model="openDrawer" width="300">
-                <template #base>
-                  <y-button>Drawer</y-button>
-                </template>
                 <y-card>
                   <y-card-header>
                     Drawer Header

@@ -75,7 +75,6 @@ export const YDrawer = defineComponent({
   emits: ['update:modelValue', 'afterEnter', 'afterLeave'],
   setup(props, { emit, slots }) {
     const vm = getCurrentInstance();
-    const $yuyeon = vm?.appContext.config.globalProperties.$yuyeon;
     const active = useModelDuplex(props);
 
     const classes = computed(() => {

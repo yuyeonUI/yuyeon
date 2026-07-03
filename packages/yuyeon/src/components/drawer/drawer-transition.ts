@@ -1,11 +1,9 @@
 import { computed, type Ref } from 'vue';
 
-import {
-  YExpandHTransition,
-  YExpandVTransition,
-} from '@/components/transitions';
 import { BLOCK } from '@/util/anchor';
 import { includes } from '@/util/array';
+
+import { YExpandHTransition, YExpandVTransition } from '../transitions/index';
 
 export function useDrawerTransition(props: any, side: Ref<any>) {
   const transition = computed(() => {
@@ -14,10 +12,14 @@ export function useDrawerTransition(props: any, side: Ref<any>) {
       if (isBlockSide) {
         return {
           is: YExpandVTransition,
+          appear: true,
+          duration: 300,
         };
       } else {
         return {
           is: YExpandHTransition,
+          appear: true,
+          duration: 300,
         };
       }
     }
