@@ -1,21 +1,23 @@
 import {
   type Component,
+  computed,
   type FunctionalComponent,
+  h,
   type PropType,
   Transition,
   type TransitionProps,
-  computed,
-  h,
 } from 'vue';
 
 import { propsFactory } from '@/util/component/props';
 
+export type PolyTransitionProps =
+  | string
+  | (TransitionProps & { is?: Component });
+
 export const pressPolyTransitionPropsOptions = propsFactory(
   {
     transition: {
-      type: [String, Object] as PropType<
-        string | (TransitionProps & { is?: Component })
-      >,
+      type: [String, Object] as PropType<PolyTransitionProps>,
       default: 'slide-fade',
     },
   },

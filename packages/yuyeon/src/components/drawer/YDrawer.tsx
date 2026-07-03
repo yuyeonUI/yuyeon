@@ -25,6 +25,8 @@ import { pressYLayerProps, YLayer } from '../layer';
 import './YDrawer.scss';
 
 import { isTopModal, updateRelayEntry } from '@/components/layer/relay-stack';
+import { pressPolyTransitionPropsOptions } from '@/composables';
+import { useDrawerTransition } from '@/components/drawer/drawer-transition';
 
 export const pressYDrawerPropsOptions = propsFactory(
   {
@@ -48,13 +50,17 @@ export const pressYDrawerPropsOptions = propsFactory(
     ...omit(
       pressYLayerProps({
         scrim: true,
+        closeClickScrim: true,
         openOnClick: true,
-        coordinateStrategy: null,
+        coordinateStrategy: 'arrangement' as const,
         scrollStrategy: null,
         position: 'right' as const,
       }),
       ['offset', 'classes'],
     ),
+    ...pressPolyTransitionPropsOptions({
+      transition: null,
+    }),
   },
   'YDrawer',
 );
@@ -92,6 +98,10 @@ export const YDrawer = defineComponent({
     const children = computed(() => layer$.value?.children || []);
 
     const relayId = computed(() => layer$.value?.relayId);
+
+    const side = computed(() => layer$.value?.coordination?.side);
+
+    const { transition } = useDrawerTransition(props, side);
 
     watch(active, (neo) => {
       neo ? installFocusTrap() : uninstallFocusTrap();
@@ -220,7 +230,11 @@ export const YDrawer = defineComponent({
           content-styles={styles.value}
           modal
           relayStack
-          {...omit(chooseProps(props, YLayer.props), ['contentStyles'])}
+          transition={transition.value}
+          {...omit(chooseProps(props, YLayer.props), [
+            'contentStyles',
+            'transition',
+          ])}
           onAfterEnter={onAfterEnter}
           onAfterLeave={onAfterLeave}
         >
@@ -238,6 +252,8 @@ export const YDrawer = defineComponent({
       classes,
       children,
       relayId,
+      side,
+      transition,
     };
   },
 });

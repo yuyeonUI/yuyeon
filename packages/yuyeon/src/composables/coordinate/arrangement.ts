@@ -1,29 +1,37 @@
-import { computed, type CSSProperties, type Ref, ref, watch } from 'vue';
+import {
+  computed,
+  type CSSProperties,
+  nextTick,
+  onScopeDispose,
+  type Ref,
+  ref,
+  watch,
+} from 'vue';
 
 import {
   type Anchor,
   BLOCK,
   flipSide,
-  type ParsedAnchor,
-  parseAnchor,
-  toPhysical,
   getAxis,
+  parseAnchor,
+  type ParsedAnchor,
+  toPhysical,
 } from '@/util/anchor';
 import { includes } from '@/util/array';
-import { clamp } from '@/util/common';
 import { $computed } from '@/util/reactivity';
-import type { Rect } from '@/util/rect';
 
 import type { CoordinateState } from './types';
-import { pixelCeil, pixelRound, toStyleSizeValue } from '@/util/ui';
+import { getBoundingPureRect, toStyleSizeValue } from '@/util/ui';
 
 type BenchSide = 'top' | 'right' | 'bottom' | 'left';
 type BenchAlign = 'start' | 'center' | 'end' | 'top' | 'bottom';
 
+type Optional<T> = T | undefined;
+
 export function applyArrangement(
   props: any,
   state: CoordinateState,
-  coordinate: Ref<Rect | undefined>,
+  coordination: Ref<any>,
   coordinateStyles: Ref<CSSProperties>,
 ) {
   const isRtl = ref(false);
@@ -65,6 +73,20 @@ export function applyArrangement(
     };
   });
 
+  let observe = false;
+  const resizeObserver = new ResizeObserver(() => {
+    if (observe) updateCoordinate();
+  });
+
+  watch(
+    state.contentEl,
+    (neo, old) => {
+      if (old) resizeObserver.unobserve(old);
+      if (neo) resizeObserver.observe(neo);
+    },
+    { immediate: true },
+  );
+
   watch(
     () => [
       props.offset,
@@ -78,15 +100,42 @@ export function applyArrangement(
     () => updateCoordinate(),
   );
 
+  onScopeDispose(() => {
+    resizeObserver.disconnect();
+  });
+
   function updateCoordinate(): any {
+    const $content = state.contentEl.value;
+
+    if (!$content) return;
+
+    const contentRect = getIgnoreInsetRect($content);
+
     const placement = {
       anchor: preferredAnchor.value,
       origin: preferredOrigin.value,
     };
-    const axis = getAxis(placement.anchor);
+    const { side, align } = placement.anchor as {
+      side: BenchSide;
+      align: BenchAlign;
+    };
+    const axis = getAxis(placement.anchor); // !Perpendicular relation
     const available = { x: 0, y: 0 };
-    let x = 0;
-    let y = 0;
+    const insetProps = {
+      top: undefined,
+      bottom: undefined,
+      left: undefined,
+      right: undefined,
+    } as Record<BenchSide, Optional<number>>;
+    if (axis === 'x') {
+      insetProps.top = 0;
+      insetProps.bottom = 0;
+      insetProps[side] = 0;
+    } else {
+      insetProps.left = 0;
+      insetProps.right = 0;
+      insetProps[side] = 0;
+    }
 
     Object.assign(coordinateStyles.value, {
       transformOrigin: `${placement.origin.side} ${placement.origin.align}`,
@@ -94,6 +143,7 @@ export function applyArrangement(
       // bottom: 0,
       // left: isRtl.value ? undefined : toStyleSizeValue(pixelRound(x)),
       // right: isRtl.value ? toStyleSizeValue(pixelRound(-x)) : undefined,
+      ...insetProps,
 
       minWidth: toStyleSizeValue(
         axis === 'y' ? Math.min(minWidth.value, 0) : minWidth.value,
@@ -117,9 +167,49 @@ export function applyArrangement(
       //   ),
       // ),
     });
+
+    Object.assign(coordination.value, {
+      side: placement.anchor.side,
+      align: placement.anchor.align,
+      rect: {
+        x: 0,
+        y: 0,
+        width: contentRect.width,
+        height: contentRect.height,
+      },
+    });
+
+    return {
+      available,
+      placement,
+      contentRect,
+    };
   }
+
+  function getIgnoreInsetRect(el: HTMLElement) {
+    const rect = getBoundingPureRect(el);
+    rect.x -= parseFloat(el.style.left || '0');
+    rect.y -= parseFloat(el.style.top || '0');
+    return rect;
+  }
+
+  nextTick(() => {
+    const result = updateCoordinate();
+    if (!result) return;
+    const { available, contentRect } = result;
+    if (contentRect.height > available.y) {
+      requestAnimationFrame(() => {
+        updateCoordinate();
+        requestAnimationFrame(() => {
+          updateCoordinate();
+        });
+      });
+    }
+  });
 
   return {
     updateCoordinate,
+    preferredAnchor,
+    preferredOrigin,
   };
 }

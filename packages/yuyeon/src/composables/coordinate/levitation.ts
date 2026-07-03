@@ -131,7 +131,6 @@ export function applyLevitation(
       : $pivot.getBoundingClientRect();
     const contentRect = getIgnoreInsetRect($content);
     const scrollParents = getScrollParents($content);
-
     if (scrollParents.length < 1) {
       scrollParents.push(document.documentElement);
     }
