@@ -24,9 +24,9 @@ import { pressYLayerProps, YLayer } from '../layer';
 
 import './YDrawer.scss';
 
+import { useDrawerTransition } from '@/components/drawer/drawer-transition';
 import { isTopModal, updateRelayEntry } from '@/components/layer/relay-stack';
 import { pressPolyTransitionPropsOptions } from '@/composables';
-import { useDrawerTransition } from '@/components/drawer/drawer-transition';
 
 export const pressYDrawerPropsOptions = propsFactory(
   {
