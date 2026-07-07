@@ -35,6 +35,7 @@ export function createExpandTransition(isHorizon = false) {
   ): Record<string, any> {
     function resetStyle(el: HTMLExpandElement) {
       if (el._originStyle) {
+        // el.style.transition = el._originStyle.transition ?? '';
         el.style.overflow = el._originStyle.overflow;
         el.style.flex = el._originStyle.flex;
         const size = el._originStyle[sizeProperty];
@@ -73,11 +74,17 @@ export function createExpandTransition(isHorizon = false) {
         } else {
           el.style[sizeProperty] = '0';
         }
+        el.style.setProperty(
+          'transition',
+          'all 0.3s cubic-bezier(0.23, 0.3, 0.07, 0.97)',
+        );
         el.getBoundingClientRect();
-        el.style.transition = originStyle?.transition ?? '';
 
         requestAnimationFrame(() => {
-          el.style[sizeProperty] = offsetSize;
+          el.getBoundingClientRect();
+          requestAnimationFrame(() => {
+            el.style[sizeProperty] = offsetSize;
+          });
         });
       },
       onAfterEnter(el: HTMLExpandElement) {
@@ -102,7 +109,10 @@ export function createExpandTransition(isHorizon = false) {
         el.style[sizeProperty] = `${el[offsetProperty]}px`;
         el.getBoundingClientRect();
         requestAnimationFrame(() => {
-          el.style[sizeProperty] = '0';
+          el.getBoundingClientRect();
+          requestAnimationFrame(() => {
+            el.style[sizeProperty] = '0';
+          });
         });
       },
       onAfterLeave(el: HTMLExpandElement) {

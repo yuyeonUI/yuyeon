@@ -3,7 +3,7 @@ import { computed, type Ref } from 'vue';
 import { BLOCK } from '@/util/anchor';
 import { includes } from '@/util/array';
 
-import { YExpandHTransition, YExpandVTransition } from '../transitions/index';
+import { YSlideVTransition, YSlideHTransition } from '../transitions';
 
 export function useDrawerTransition(props: any, side: Ref<any>) {
   const transition = computed(() => {
@@ -11,15 +11,15 @@ export function useDrawerTransition(props: any, side: Ref<any>) {
       const isBlockSide = includes(BLOCK, side.value);
       if (isBlockSide) {
         return {
-          is: YExpandVTransition,
-          appear: true,
+          is: YSlideVTransition,
           duration: 300,
+          side: side.value,
         };
       } else {
         return {
-          is: YExpandHTransition,
-          appear: true,
+          is: YSlideHTransition,
           duration: 300,
+          side: side.value,
         };
       }
     }

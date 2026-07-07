@@ -45,9 +45,9 @@ export const PolyTransition: FunctionalComponent<
   TransitionProps & { is: string | Component; transitionProps: TransitionProps }
 > = (props, { slots }) => {
   const { is, transitionProps, ...forcedProps } = props;
-  const { component = Transition, ...rest } =
-    typeof is === 'object'
-      ? { component: is, ...transitionProps }
-      : { name: is };
-  return h(component, { ...rest, ...transitionProps, ...forcedProps }, slots);
+  const isComponent = typeof is !== 'string';
+  const { component = Transition, ...rest } = isComponent
+    ? { component: is, ...transitionProps }
+    : { name: is };
+  return h(component, { ...rest, ...forcedProps }, slots);
 };

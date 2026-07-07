@@ -10,6 +10,10 @@ const items = computed(() => {
       to: '/',
     },
     {
+      text: 'Layer',
+      to: { name: 'Layer' },
+    },
+    {
       text: 'DataTable',
       to: '/data-table',
     },
@@ -29,10 +33,7 @@ const items = computed(() => {
       text: 'MaxDialog',
       to: '/max-dialog',
     },
-    {
-      text: 'Menu',
-      to: '/menu',
-    },
+
   ];
 });
 </script>
