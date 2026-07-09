@@ -3,12 +3,13 @@ import {
   getCurrentInstance,
   type InjectionKey,
   inject,
+  nextTick,
+  onBeforeUnmount,
   provide,
   type Ref,
   ref,
   unref,
   watch,
-  onBeforeUnmount,
 } from 'vue';
 
 import { isTopRelay, registerRelay, relayOutsideClick } from './relay-stack';
@@ -32,12 +33,44 @@ interface YLayerExposed {
 
 interface ActiveStackProps {
   relayStack?: boolean;
+  openOnHover: boolean;
 }
+
+const activeLayers: ComponentInternalInstance[] = [];
+
+function pushActiveLayer(
+  vm: ComponentInternalInstance,
+  layerEl: () => Element | null | undefined,
+) {
+  activeLayers.push(vm);
+  nextTick(() => {
+    const el = layerEl();
+    if (el?.parentElement) {
+      el.parentElement.appendChild(el);
+    }
+  });
+}
+
+function popActiveLayer(vm: ComponentInternalInstance) {
+  const idx = activeLayers.indexOf(vm);
+  if (idx > -1) activeLayers.splice(idx, 1);
+}
+
+/*
+ * YLayer -> ActiveStack -> RelayStack
+ * */
 
 export function useActiveStack(
   props: ActiveStackProps,
-  active: Ref<boolean>,
-  pinned: Ref<boolean>,
+  {
+    active,
+    pinned,
+    rootEl,
+  }: {
+    active: Ref<boolean>;
+    pinned: Ref<boolean>;
+    rootEl: Ref<HTMLElement | null | undefined>;
+  },
 ) {
   const parent = inject(YUYEON_ACTIVE_STACK_KEY, null);
   const children = ref<any[]>([]);
@@ -50,12 +83,14 @@ export function useActiveStack(
     (neo) => {
       if (neo) {
         parent?.push(vm);
+        pushActiveLayer(vm, () => unref(rootEl));
         if (props.relayStack !== false) {
           relayHandle = registerRelay({
             els: () => {
               const ex = exposed();
               return [unref(ex?.baseEl), unref(ex?.content$)];
             },
+            layerEl: () => unref(rootEl),
             modal: () => !!unref(exposed()?.modal),
             preventCloseBubble: () => !!unref(exposed()?.preventCloseBubble),
             close: clear,
@@ -66,6 +101,7 @@ export function useActiveStack(
         if (!props.relayStack) {
           clear();
         }
+        popActiveLayer(vm);
         parent?.pop(vm);
         relayHandle?.unregister();
         relayHandle = null;
@@ -106,6 +142,11 @@ export function useActiveStack(
   }
 
   function handleOutsideClick(e: Event) {
+    if (!relayHandle && props.openOnHover) {
+      active.value = false;
+      pinned.value = false;
+      return;
+    }
     if (!relayHandle || !isTopRelay(relayHandle.id)) return;
     relayOutsideClick(e);
   }

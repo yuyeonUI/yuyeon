@@ -37,6 +37,7 @@ import {
 import { bindClasses, defineComponent, propsFactory } from '@/util/component';
 
 import { pressBasePropsOptions, useBase } from './base';
+import { BASE_Z_INDEX } from './relay-stack';
 import {
   pressScrollStrategyProps,
   useScrollStrategies,
@@ -106,7 +107,6 @@ export const pressYLayerProps = propsFactory(
     },
     zIndex: {
       type: [Number, String] as PropType<number | string>,
-      default: 2000,
     },
     contained: Boolean,
     layerGroup: [String, Object] as PropType<string | Element>,
@@ -181,8 +181,7 @@ export const YLayer = defineComponent({
       useLayerGroup(props);
     const { children, parent, relayId, handleOutsideClick } = useActiveStack(
       props,
-      active,
-      pinned,
+      { active, pinned, rootEl: root$ },
     );
     const { hovered, focused, baseEvents, contentEvents } = useActiveEvent(
       props,
@@ -303,7 +302,7 @@ export const YLayer = defineComponent({
 
     const computedStyle = computed(() => {
       return {
-        zIndex: (props.zIndex ?? '2000').toString(),
+        zIndex: (props.zIndex ?? BASE_Z_INDEX).toString(),
       };
     });
 
@@ -455,6 +454,7 @@ export const YLayer = defineComponent({
       complementClickOption,
       layerGroup,
       active,
+      pinned,
       finish,
       rendered: isRendering,
       lazyValue,

@@ -1,12 +1,14 @@
 interface RelayEntry {
   id: number;
   els: () => (Element | null | undefined)[];
+  layerEl: () => Element | null | undefined;
   modal: () => boolean;
   preventCloseBubble: () => boolean;
   maximized?: () => boolean;
   close: () => void;
 }
 
+export const BASE_Z_INDEX = 2000;
 let uid = 0;
 const stack: RelayEntry[] = [];
 let listening = false;
@@ -31,6 +33,7 @@ export function registerRelay(entry: Omit<RelayEntry, 'id'>) {
   const id = ++uid;
   stack.push({ id, ...entry });
   ensureListener();
+
   return {
     id,
     unregister: () => {
