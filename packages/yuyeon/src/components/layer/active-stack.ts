@@ -66,10 +66,12 @@ export function useActiveStack(
     active,
     pinned,
     rootEl,
+    shouldClose,
   }: {
     active: Ref<boolean>;
     pinned: Ref<boolean>;
     rootEl: Ref<HTMLElement | null | undefined>;
+    shouldClose: (e?: Event) => boolean;
   },
 ) {
   const parent = inject(YUYEON_ACTIVE_STACK_KEY, null);
@@ -94,6 +96,7 @@ export function useActiveStack(
             modal: () => !!unref(exposed()?.modal),
             preventCloseBubble: () => !!unref(exposed()?.preventCloseBubble),
             close: clear,
+            shouldClose
           });
           relayId.value = relayHandle.id;
         }

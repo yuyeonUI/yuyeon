@@ -181,7 +181,7 @@ export const YLayer = defineComponent({
       useLayerGroup(props);
     const { children, parent, relayId, handleOutsideClick } = useActiveStack(
       props,
-      { active, pinned, rootEl: root$ },
+      { active, pinned, rootEl: root$, shouldClose },
     );
     const { hovered, focused, baseEvents, contentEvents } = useActiveEvent(
       props,

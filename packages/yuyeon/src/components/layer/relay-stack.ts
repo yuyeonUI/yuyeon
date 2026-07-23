@@ -5,6 +5,7 @@ interface RelayEntry {
   modal: () => boolean;
   preventCloseBubble: () => boolean;
   maximized?: () => boolean;
+  shouldClose: (e?: Event) => boolean;
   close: () => void;
 }
 
@@ -86,6 +87,7 @@ export function relayOutsideClick(e: Event) {
   const target = e.target;
 
   for (let i = stack.length - 1; i >= 0; i--) {
+    if (!stack[i].shouldClose(e)) return;
     if (isInside(target, stack[i].els())) {
       closeAbove(i);
       return;
