@@ -125,7 +125,7 @@ export function useChoiceItem(
     );
   }
 
-  const id = getUid() as number;
+  const id = +getUid();
 
   provide(Symbol.for(`${injectKey.description}:id`), id);
 
