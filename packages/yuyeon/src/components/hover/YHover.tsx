@@ -27,7 +27,7 @@ export const pressYHoverPropsOptions = propsFactory(
 export const YHover = defineComponent({
 	name: "YHover",
 	props: pressYHoverPropsOptions(),
-	emits: ["update:modelValue", "hover"],
+	emits: ["update:modelValue", "hover", "mouseenter", "mouseleave", "focus"],
 	setup(props, { slots, emit }) {
 		const isHovering = useModelDuplex(props, "modelValue");
 		const { startOpenDelay, startCloseDelay } = useDelay(
