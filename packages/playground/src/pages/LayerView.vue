@@ -119,8 +119,8 @@ function onClickOpenDrawer() {
                 v-model="showDialog"
                 :dialog-classes="['playground-dialog--showcase']"
               >
-                <template #base>
-                  <y-button variation="outlined" class="mr-2"> DIALOG</y-button>
+                <template #base="{ props }">
+                  <y-button variation="outlined" class="mr-2" v-bind="props"> DIALOG</y-button>
                 </template>
                 <y-card style="width: 400px">
                   <div
@@ -261,8 +261,8 @@ function onClickOpenDrawer() {
               </y-dialog>
               <!-- tooltip base slot -->
               <y-tooltip :position="'top'">
-                <template #base>
-                  <y-chip>TOOLTIP</y-chip>
+                <template #base="{ props }">
+                  <y-chip v-bind="props">TOOLTIP</y-chip>
                 </template>
                 <span>어서와 처음이지?</span>
               </y-tooltip>

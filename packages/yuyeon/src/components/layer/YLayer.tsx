@@ -367,7 +367,7 @@ export const YLayer = defineComponent({
     });
 
     useRender(() => {
-      const ariaBaseProps = props.baseAriaAttr && active.value
+      const ariaBaseProps = props.baseAriaAttr
         ? { [`aria-${props.baseAriaAttr}`]: layerContentId.value }
         : {};
       const slotBase = slots.base?.({

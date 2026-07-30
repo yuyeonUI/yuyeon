@@ -1,4 +1,11 @@
-import { computed, type PropType, ref, type SlotsType, watch } from 'vue';
+import {
+  computed,
+  mergeProps,
+  type PropType,
+  ref,
+  type SlotsType,
+  watch,
+} from 'vue';
 
 import { useModelDuplex } from '@/composables/communication';
 import { useRender } from '@/composables/component';
@@ -91,18 +98,18 @@ export const YMenu = defineComponent({
       return (
         <YLayer
           ref={layer$}
-          v-model={active.value}
           transition={props.transition}
           onClick:complement={onComplementClick}
           relayStack
-          baseProps={{
-            'aria-haspopup': 'menu',
-            'aria-expanded': active.value,
-          }}
           baseAriaAttr="controls"
           onAfterLeave={() => emit('afterLeave')}
           {...{
-            ...chooseProps(props, YLayer.props),
+            ...mergeProps(chooseProps(props, YLayer.props), {
+              baseProps: {
+                'aria-haspopup': 'menu',
+                'aria-expanded': active.value,
+              },
+            }),
             classes: classes.value,
             scrim: false,
             contentClasses: {
@@ -110,6 +117,7 @@ export const YMenu = defineComponent({
               ...computedContentClasses.value,
             },
           }}
+          v-model={active.value}
         >
           {{
             default: (slotProps: any) => {

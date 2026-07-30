@@ -197,7 +197,7 @@ export const YDialog = defineComponent({
         return;
       }
       if (!testChildrenContains(children.value)) {
-        const focusables = getFocusableElements(layer$.value.content$)
+        const focusables = getFocusableElements(layer$.value.content$);
         if (!focusables.length) return;
         const firstChild = focusables[0];
         const lastChild = focusables[focusables.length - 1];
@@ -273,8 +273,7 @@ export const YDialog = defineComponent({
       const focusableSelector =
         'button, [href], input:not([type="hidden"]), select, textarea, [tabindex]:not([tabindex="-1"])';
       return [...target.querySelectorAll(focusableSelector)].filter(
-        (el) =>
-          !el.hasAttribute('disabled') && !el.matches('[tabindex="-1"]'),
+        (el) => !el.hasAttribute('disabled') && !el.matches('[tabindex="-1"]'),
       ) as HTMLElement[];
     }
 
@@ -284,17 +283,22 @@ export const YDialog = defineComponent({
           ref={layer$}
           v-model={active.value}
           classes={classes.value}
-          content-styles={styles.value}
           modal
           relayStack
           role={props.persistent ? 'alertdialog' : 'dialog'}
+          content-styles={styles.value}
           contentProps={{
             'aria-modal': 'true',
             ...(props.ariaLabel ? { 'aria-label': props.ariaLabel } : {}),
-            ...(props.ariaLabelledby ? { 'aria-labelledby': props.ariaLabelledby } : {}),
+            ...(props.ariaLabelledby
+              ? { 'aria-labelledby': props.ariaLabelledby }
+              : {}),
             ...props.contentProps,
           }}
-          {...omit(chooseProps(props, YLayer.props), ['contentStyles', 'contentProps'])}
+          {...omit(chooseProps(props, YLayer.props), [
+            'contentStyles',
+            'contentProps',
+          ])}
           onAfterEnter={onAfterEnter}
           onAfterLeave={onAfterLeave}
         >
