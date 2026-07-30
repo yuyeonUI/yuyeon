@@ -52,6 +52,8 @@ export const pressYDialogPropsOptions = propsFactory(
     offset: {
       type: String as PropType<string>,
     },
+    ariaLabel: String as PropType<string>,
+    ariaLabelledby: String as PropType<string>,
     ...omit(
       pressYLayerProps({
         scrim: true,
@@ -98,9 +100,23 @@ export const YDialog = defineComponent({
 
     const relayId = computed(() => layer$.value?.relayId);
 
+    let restoreFocusEl: HTMLElement | null = null;
+
     watch(active, (neo) => {
-      neo ? installFocusTrap() : uninstallFocusTrap();
-      preventInteractionBackground(neo);
+      if (neo) {
+        restoreFocusEl = document.activeElement as HTMLElement;
+        installFocusTrap();
+        preventInteractionBackground(true);
+        nextTick(() => {
+          const content = layer$.value?.content$;
+          const focusable = getFocusableElements(content)?.[0];
+          (focusable ?? content)?.focus();
+        });
+      } else {
+        uninstallFocusTrap();
+        preventInteractionBackground(false);
+        restoreFocusEl?.focus();
+      }
     });
 
     watch(relayId, (id) => {
@@ -181,14 +197,7 @@ export const YDialog = defineComponent({
         return;
       }
       if (!testChildrenContains(children.value)) {
-        const focusableSelector =
-          'button, [href], input:not([type="hidden"]), select, textarea, [tabindex]:not([tabindex="-1"])';
-        const focusables = [
-          ...layer$.value.content$.querySelectorAll(focusableSelector),
-        ].filter(
-          (el) =>
-            !el.hasAttribute('disabled') && !el.matches('[tabindex="-1"]'),
-        ) as HTMLElement[];
+        const focusables = getFocusableElements(layer$.value.content$)
         if (!focusables.length) return;
         const firstChild = focusables[0];
         const lastChild = focusables[focusables.length - 1];
@@ -260,6 +269,15 @@ export const YDialog = defineComponent({
       emit('afterLeave');
     }
 
+    function getFocusableElements(target: Element) {
+      const focusableSelector =
+        'button, [href], input:not([type="hidden"]), select, textarea, [tabindex]:not([tabindex="-1"])';
+      return [...target.querySelectorAll(focusableSelector)].filter(
+        (el) =>
+          !el.hasAttribute('disabled') && !el.matches('[tabindex="-1"]'),
+      ) as HTMLElement[];
+    }
+
     useRender(() => {
       return (
         <YLayer
@@ -269,7 +287,14 @@ export const YDialog = defineComponent({
           content-styles={styles.value}
           modal
           relayStack
-          {...omit(chooseProps(props, YLayer.props), ['contentStyles'])}
+          role={props.persistent ? 'alertdialog' : 'dialog'}
+          contentProps={{
+            'aria-modal': 'true',
+            ...(props.ariaLabel ? { 'aria-label': props.ariaLabel } : {}),
+            ...(props.ariaLabelledby ? { 'aria-labelledby': props.ariaLabelledby } : {}),
+            ...props.contentProps,
+          }}
+          {...omit(chooseProps(props, YLayer.props), ['contentStyles', 'contentProps'])}
           onAfterEnter={onAfterEnter}
           onAfterLeave={onAfterLeave}
         >

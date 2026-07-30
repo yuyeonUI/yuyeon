@@ -59,6 +59,9 @@ export const pressContentPropsOptions = propsFactory(
     closeClickContent: {
       type: Boolean as PropType<boolean>,
     },
+    contentProps: {
+      type: Object as PropType<Record<string, any>>,
+    }
   },
   'YLayer.content',
 );

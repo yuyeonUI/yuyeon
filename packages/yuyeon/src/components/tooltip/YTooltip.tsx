@@ -34,6 +34,7 @@ const YTooltipPropOptions = {
     openOnHover: true,
     align: 'center',
     offset: 8,
+    baseAriaAttr: 'describedby'
   }),
   ...pressPolyTransitionPropsOptions({
     transition: 'fade',
@@ -102,7 +103,7 @@ export const YTooltip = defineComponent<
               return (
                 <>
                   <YPlate></YPlate>
-                  <div class="y-tooltip__content">
+                  <div role="tooltip" class="y-tooltip__content">
                     {slots.default?.(...args) ?? ''}
                   </div>
                 </>

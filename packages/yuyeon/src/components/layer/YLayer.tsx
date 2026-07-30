@@ -34,7 +34,7 @@ import {
   ComplementClick,
   type ComplementClickBindingOptions,
 } from '@/directives/complement-click';
-import { bindClasses, defineComponent, propsFactory } from '@/util/component';
+import { bindClasses, defineComponent, getUid, propsFactory } from '@/util/component';
 
 import { pressBasePropsOptions, useBase } from './base';
 import { BASE_Z_INDEX } from './relay-stack';
@@ -123,6 +123,13 @@ export const pressYLayerProps = propsFactory(
       type: [Boolean, Function],
       default: undefined,
     },
+    // for a11y
+    contentId: String as PropType<string>,
+    baseAriaAttr: {
+      type: String as PropType<'describedby' | 'labelledby' | 'controls' | undefined>,
+      default: undefined,
+    },
+    role: String as PropType<string>,
   },
   'YLayer',
 );
@@ -154,6 +161,7 @@ export const YLayer = defineComponent({
   }>,
   setup(props, { emit, expose, attrs, slots }) {
     const vm = getCurrentInstance();
+    const UID = getUid();
     const finish = shallowRef(false);
     const disabled = toRef(props, 'disabled');
     const maximized = toRef(props, 'maximized');
@@ -211,6 +219,9 @@ export const YLayer = defineComponent({
         pivot,
       },
     );
+
+    //
+    const layerContentId = computed(() => props.contentId ?? `y-layer-${UID}`);
 
     useScrollStrategies(props, {
       root: root$,
@@ -356,6 +367,9 @@ export const YLayer = defineComponent({
     });
 
     useRender(() => {
+      const ariaBaseProps = props.baseAriaAttr && active.value
+        ? { [`aria-${props.baseAriaAttr}`]: layerContentId.value }
+        : {};
       const slotBase = slots.base?.({
         active: active.value,
         props: mergeProps(
@@ -367,6 +381,7 @@ export const YLayer = defineComponent({
             },
           },
           baseEvents.value,
+          ariaBaseProps,
           props.baseProps ?? {},
         ),
       });
@@ -438,7 +453,11 @@ export const YLayer = defineComponent({
                         ...props.contentStyles,
                       },
                     ]}
+                    id={layerContentId.value}
+                    role={props.role}
+                    tabindex={props.modal ? -1 : undefined}
                     {...contentEvents.value}
+                    {...(props.contentProps ?? {})}
                   >
                     {slots.default?.({ active: active.value, close })}
                   </div>

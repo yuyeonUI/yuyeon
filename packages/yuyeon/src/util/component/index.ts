@@ -32,7 +32,7 @@ export function getSlot(
 
 export function getUid() {
   const vm = getCurrentInstance();
-  return vm?.uid;
+  return vm?.uid?.toString() ?? Math.random().toString(36).slice(2);
 }
 
 export function bindClasses(

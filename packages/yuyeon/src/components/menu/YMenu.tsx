@@ -91,9 +91,15 @@ export const YMenu = defineComponent({
       return (
         <YLayer
           ref={layer$}
+          v-model={active.value}
           transition={props.transition}
           onClick:complement={onComplementClick}
           relayStack
+          baseProps={{
+            'aria-haspopup': 'menu',
+            'aria-expanded': active.value,
+          }}
+          baseAriaAttr="controls"
           onAfterLeave={() => emit('afterLeave')}
           {...{
             ...chooseProps(props, YLayer.props),
@@ -104,7 +110,6 @@ export const YMenu = defineComponent({
               ...computedContentClasses.value,
             },
           }}
-          v-model={active.value}
         >
           {{
             default: (slotProps: any) => {
