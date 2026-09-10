@@ -1,13 +1,49 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, ref } from 'vue';
 
 const mainSnackbar = ref(false);
+
+const items = computed(() => {
+  return [
+    {
+      text: 'Home',
+      to: '/',
+    },
+    {
+      text: 'Layer',
+      to: { name: 'Layer' },
+    },
+    {
+      text: 'DataTable',
+      to: '/data-table',
+    },
+    {
+      text: 'DataTableServer',
+      to: '/data-table-server',
+    },
+    {
+      text: 'TreeView',
+      to: '/tree-view',
+    },
+    {
+      text: 'DatePicker',
+      to: '/date-picker',
+    },
+    {
+      text: 'MaxDialog',
+      to: '/max-dialog',
+    },
+
+  ];
+});
 </script>
 
 <template>
   <y-app>
-    <nav style="height: 56px; background-color: #4f97dc;"></nav>
-    <main>
+    <nav id="app-bar">
+      <y-tabs :items="items"></y-tabs>
+    </nav>
+    <main id="app-main">
       <router-view>
         <template #default="{ Component }">
           <Transition mode="out-in" name="fade">
@@ -24,4 +60,26 @@ const mainSnackbar = ref(false);
 
 <style lang="scss">
 @use './styles/app.scss';
+
+#app-bar {
+  height: 56px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background-color: rgba(79, 151, 220, 0.5);
+  backdrop-filter: blur(12px);
+
+  display: flex;
+  padding: 0 24px;
+
+  .y-tabs {
+    align-self: flex-end;
+  }
+}
+
+#app-main {
+  padding-top: 56px;
+}
 </style>

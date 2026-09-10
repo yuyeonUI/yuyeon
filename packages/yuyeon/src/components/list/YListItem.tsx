@@ -12,7 +12,7 @@ export const pressYListItemProps = propsFactory(
       type: [String, Object],
       default: 'div',
     },
-    onClick: Function,
+    onClick: [Function, Array],
     disabled: Boolean,
     ...pressThemePropsOptions(),
   },

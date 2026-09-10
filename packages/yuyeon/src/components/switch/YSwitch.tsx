@@ -1,7 +1,7 @@
 import {
-  type PropType,
   computed,
   nextTick,
+  type PropType,
   ref,
   watch,
   withModifiers,

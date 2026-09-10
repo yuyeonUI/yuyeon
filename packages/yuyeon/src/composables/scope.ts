@@ -1,9 +1,8 @@
-// vuetify/@/composables/toggleScope.ts
 import {
   type EffectScope,
-  type WatchSource,
   effectScope,
   onScopeDispose,
+  type WatchSource,
   watch,
 } from 'vue';
 

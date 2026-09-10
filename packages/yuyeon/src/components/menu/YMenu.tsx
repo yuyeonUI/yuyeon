@@ -1,10 +1,9 @@
 import {
   computed,
-  getCurrentInstance,
+  mergeProps,
   type PropType,
   ref,
   type SlotsType,
-  toRef,
   watch,
 } from 'vue';
 
@@ -12,17 +11,12 @@ import { useModelDuplex } from '@/composables/communication';
 import { useRender } from '@/composables/component';
 import { pressPolyTransitionPropsOptions } from '@/composables/transition';
 import { bindClasses, chooseProps, defineComponent } from '@/util/component';
-import { hasElementMouseEvent } from '@/util/dom';
-import { toKebabCase } from '@/util/string';
 
 import { pressYLayerProps, YLayer } from '../layer';
-import { useDelay } from '../layer/active-delay';
-import { useActiveStack } from '../layer/active-stack';
 
 import './YMenu.scss';
 
 const NAME = 'YMenu';
-const CLASS_NAME = toKebabCase(NAME);
 
 export const YMenuPropOptions = {
   menuClasses: {
@@ -30,23 +24,15 @@ export const YMenuPropOptions = {
       string[] | string | Record<string, any>
     >,
   },
-  openOnClickBase: {
-    type: Boolean as PropType<boolean>,
-    default: true,
-  },
-  closeCondition: {
-    type: [Boolean, Function],
-    default: undefined,
-  },
   preventClip: {
     type: Boolean as PropType<boolean>,
     default: true,
   },
   ...pressYLayerProps({
+    openOnClick: true,
     coordinateStrategy: 'levitation' as const,
     scrollStrategy: 'reposition' as const,
   }),
-  preventCloseBubble: Boolean as PropType<boolean>,
 };
 
 /**
@@ -67,7 +53,7 @@ export const YMenu = defineComponent({
   }>,
   expose: ['layer$', 'baseEl'],
   setup(props, { slots, emit, expose }) {
-    const vm = getCurrentInstance();
+    const active = useModelDuplex(props);
     const layer$ = ref<typeof YLayer>();
 
     const classes = computed(() => {
@@ -78,114 +64,11 @@ export const YMenu = defineComponent({
       };
     });
 
-    const active = useModelDuplex(props);
     const hovered = computed(() => !!layer$.value?.hovered);
-    const finish = computed(() => !!layer$.value?.finish);
-    const { children, parent } = useActiveStack(
-      layer$,
-      active,
-      toRef(props, 'preventCloseBubble'),
-    );
-    const { startOpenDelay, startCloseDelay } = useDelay(
-      props,
-      (changeActive) => {
-        if (
-          !changeActive &&
-          props.openOnHover &&
-          !hovered.value &&
-          children.value.length === 0
-        ) {
-          active.value = false;
-        } else if (changeActive) {
-          active.value = true;
-        }
-      },
-    );
 
-    function onMouseenter(e: MouseEvent) {
-      if (props.openOnHover) {
-        startOpenDelay();
-      }
-    }
+    const parent = computed(() => layer$.value?.parent);
 
-    function onMouseleave(e: MouseEvent) {
-      if (props.openOnHover) {
-        startCloseDelay();
-      }
-    }
-
-    watch(hovered, (value) => {
-      emit('hoverContent', value);
-      if (!value) {
-        startCloseDelay();
-      }
-    });
-
-    function onClick(e: MouseEvent) {
-      e.stopPropagation();
-      if (!props.openOnClickBase) {
-        return;
-      }
-      const currentActive = active.value;
-      if (!props.disabled) {
-        if (props.openOnHover && finish.value && currentActive) {
-          return;
-        }
-        active.value = !currentActive;
-      }
-    }
-
-    function onComplementClick(e: Event) {
-      if (props.closeCondition === false) {
-        return;
-      }
-      if (typeof props.closeCondition === 'function') {
-        if (props.closeCondition(e) === false) {
-          active.value = false;
-          return;
-        }
-      }
-      if (active.value) {
-        if (children.value.length === 0) {
-          active.value = false;
-        }
-        const parentContent = parent?.$el.value?.content$;
-        const parentModal = parent?.$el.value?.modal;
-        if (
-          !(parentContent && !hasElementMouseEvent(e, parentContent)) &&
-          !parentModal &&
-          !props.preventCloseBubble
-        ) {
-          parent?.clear();
-        }
-      }
-    }
-
-    function bindHover(el: HTMLElement) {
-      el.addEventListener('mouseenter', onMouseenter);
-      el.addEventListener('mouseleave', onMouseleave);
-    }
-
-    function unbindHover(el: HTMLElement) {
-      el.removeEventListener('mouseenter', onMouseenter);
-      el.removeEventListener('mouseleave', onMouseleave);
-    }
-
-    watch(
-      () => layer$.value?.baseEl,
-      (neo, old) => {
-        if (neo) {
-          bindHover(neo);
-          neo.addEventListener('click', onClick);
-        } else if (old) {
-          unbindHover(old);
-          old.removeEventListener('click', onClick);
-        }
-      },
-      {
-        immediate: true,
-      },
-    );
+    const children = computed(() => layer$.value?.children || []);
 
     const computedContentClasses = computed<Record<string, boolean>>(() => {
       const boundClasses = bindClasses(props.contentClasses);
@@ -198,6 +81,14 @@ export const YMenu = defineComponent({
       return layer$.value?.baseEl;
     });
 
+    watch(hovered, (value) => {
+      emit('hoverContent', value);
+    });
+
+    function onComplementClick(e: Event) {
+      if (!active.value) return;
+    }
+
     expose({
       layer$,
       baseEl,
@@ -209,9 +100,16 @@ export const YMenu = defineComponent({
           ref={layer$}
           transition={props.transition}
           onClick:complement={onComplementClick}
+          relayStack
+          baseAriaAttr="controls"
           onAfterLeave={() => emit('afterLeave')}
           {...{
-            ...chooseProps(props, YLayer.props),
+            ...mergeProps(chooseProps(props, YLayer.props), {
+              baseProps: {
+                'aria-haspopup': 'menu',
+                'aria-expanded': active.value,
+              },
+            }),
             classes: classes.value,
             scrim: false,
             contentClasses: {

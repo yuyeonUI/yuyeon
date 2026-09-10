@@ -78,14 +78,14 @@ export const YIpv4Field = defineComponent({
       const pass =
         id < 4 ? IP_PART_REGEX.test(neoValue) : testSubnetRange(neoValue);
       const neo = neoValue !== '' ? Number(neoValue).toString() : '';
-      parts[id] = neo;
+      parts[id] = neo.replace(/\./g, '');
       if (!pass && neoValue !== '') {
-        nextChange(id, oldValue);
+        nextChange(id, oldValue.replace(/\./g, ''));
       } else {
         if (neoValue.length > 2) {
           focusNextPart(id);
         }
-        lazyParts[id] = neo;
+        lazyParts[id] = neo.replace(/\./g, '');
         emitInput();
       }
     }
@@ -153,6 +153,11 @@ export const YIpv4Field = defineComponent({
           }
         }
       }
+      if (event.key === '.') {
+        event.preventDefault();
+        focusNextPart(id);
+        return;
+      }
       if (
         ((event.key === 'Tab' && !event.shiftKey && $target.value !== '') ||
           event.key === 'Enter' ||
@@ -166,9 +171,9 @@ export const YIpv4Field = defineComponent({
     }
 
     function onKeyup(id: PartId, event: KeyboardEvent) {
-      if (event.key === '.') {
-        focusNextPart(id);
-      }
+      // if (event.key === '.') {
+      //   focusNextPart(id);
+      // }
     }
 
     function putParts(neo: string | undefined) {
@@ -228,7 +233,7 @@ export const YIpv4Field = defineComponent({
     /// Actions
     function nextChange(id: PartId, value: any) {
       nextTick(() => {
-        parts[id] = value;
+        parts[id] = value.replace(/\./g, '');
         emitInput();
       });
     }
@@ -237,6 +242,10 @@ export const YIpv4Field = defineComponent({
       const nextId = currentId + 1;
       if (nextId < 4) {
         const $input = input$.value[nextId] as HTMLInputElement;
+        if (parts[nextId as PartId] === '') {
+          parts[nextId as PartId] = '0';
+          emitInput();
+        }
         $input.focus();
         $input.selectionStart = 0;
       }
@@ -264,6 +273,7 @@ export const YIpv4Field = defineComponent({
       ) {
         return '';
       }
+
       return `${parts[0]}.${parts[1]}.${parts[2]}.${parts[3]}${
         props.subnet ? '/' + parts[4] : ''
       }`;
@@ -336,6 +346,7 @@ export const YIpv4Field = defineComponent({
                             class={[`${INHERIT_NAME}__part-input`]}
                             readonly={props.readonly || props.loading}
                             disabled={props.disabled}
+                            // biome-ignore lint/a11y/useValidAutocomplete: ip
                             autocomplete="false"
                             maxlength={id === 4 ? 2 : 3}
                             onInput={($event) => onInput(id, $event)}
@@ -368,7 +379,12 @@ export const YIpv4Field = defineComponent({
       );
     });
 
-    return {};
+    return {
+      parts,
+      lazyParts,
+      isFocused,
+      fieldFocused,
+    };
   },
 });
 

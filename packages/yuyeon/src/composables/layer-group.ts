@@ -1,12 +1,15 @@
 import {
-  type MaybeRef,
+  type ComponentInternalInstance,
   computed,
   getCurrentInstance,
+  type MaybeRef,
+  nextTick,
   onBeforeUnmount,
+  onMounted,
+  ref,
   unref,
   watch,
 } from 'vue';
-import type { ComponentInternalInstance, Ref } from 'vue';
 
 import { useYuyeon } from '@/index';
 
@@ -19,8 +22,11 @@ export function useLayerGroup(props: {
 }) {
   const vm = getCurrentInstance()!;
   const yuyeon = useYuyeon();
+  const mountTick = ref(0);
 
   const layerGroup = computed<HTMLElement>(() => {
+    mountTick.value;
+
     let targetEl: Element = document.body;
     const rootEl = vm.root.proxy?.$el;
     if (rootEl) {
@@ -61,6 +67,12 @@ export function useLayerGroup(props: {
     },
     { immediate: true },
   );
+
+  onMounted(() => {
+    nextTick(() => {
+      mountTick.value++;
+    });
+  });
 
   function getActiveLayers() {
     const activeLayers: ComponentInternalInstance[] = [];

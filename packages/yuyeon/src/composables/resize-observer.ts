@@ -21,11 +21,13 @@ export function useResizeObserver(callback?: ResizeObserverCallback) {
       resizeObservedRef,
       (neo, old) => {
         if (old) {
-          observer.unobserve(getHtmlElement(old));
+          const el = getHtmlElement(old);
+          if (el) observer.unobserve(el);
           contentRect.value = undefined;
         }
         if (neo) {
-          observer.observe(getHtmlElement(neo));
+          const el = getHtmlElement(neo);
+          if (el) observer.observe(el);
         }
       },
       { flush: 'post' },

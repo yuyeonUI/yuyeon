@@ -1,11 +1,10 @@
 @use 'ress';
 @use 'palette';
+@use 'helper';
 @use './yuyeon';
-$notosanskr-font-path: '@/assets/fonts/NotoSansKR/';
-@import '@/assets/fonts/NotoSansKR';
 
 :root {
-  font-family: 'Noto Sans KR', 'Noto Sans', Helvetica, Arial, sans-serif;
+  font-family: 'Pretendard', 'Noto Sans KR', 'Noto Sans', Helvetica, Arial, sans-serif;
   font-size: 16px;
   font-weight: 400;
 

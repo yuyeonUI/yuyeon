@@ -1,21 +1,23 @@
 import {
   type Component,
+  computed,
   type FunctionalComponent,
+  h,
   type PropType,
   Transition,
   type TransitionProps,
-  computed,
-  h,
 } from 'vue';
 
 import { propsFactory } from '@/util/component/props';
 
+export type PolyTransitionProps =
+  | string
+  | (TransitionProps & { is?: Component });
+
 export const pressPolyTransitionPropsOptions = propsFactory(
   {
     transition: {
-      type: [String, Object] as PropType<
-        string | (TransitionProps & { is?: Component })
-      >,
+      type: [String, Object] as PropType<PolyTransitionProps>,
       default: 'slide-fade',
     },
   },
@@ -43,9 +45,9 @@ export const PolyTransition: FunctionalComponent<
   TransitionProps & { is: string | Component; transitionProps: TransitionProps }
 > = (props, { slots }) => {
   const { is, transitionProps, ...forcedProps } = props;
-  const { component = Transition, ...rest } =
-    typeof is === 'object'
-      ? { component: is, ...transitionProps }
-      : { name: is };
-  return h(component, { ...rest, ...transitionProps, ...forcedProps }, slots);
+  const isComponent = typeof is !== 'string';
+  const { component = Transition, ...rest } = isComponent
+    ? { component: is, ...transitionProps }
+    : { name: is };
+  return h(component, { ...rest, ...forcedProps }, slots);
 };

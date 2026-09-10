@@ -39,12 +39,14 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import("@/pages/DatePicker.vue"),
   },
   {
+    name: "MaxDialog",
     path: "/max-dialog",
     component: () => import("@/pages/MaxDialog.vue"),
   },
   {
-    path: "/menu",
-    component: () => import("@/pages/MenuIsolation.vue"),
+    name: "Layer",
+    path: "/layer",
+    component: () => import("@/pages/LayerView.vue"),
   },
 ];
 

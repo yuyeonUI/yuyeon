@@ -1,14 +1,18 @@
-import type { ComponentInternalInstance, PropType, SlotsType } from 'vue';
 import {
+  type ComponentInternalInstance,
+  cloneVNode,
   computed,
   getCurrentInstance,
   mergeProps,
+  type PropType,
   reactive,
   ref,
+  type SlotsType,
   shallowRef,
   Teleport,
   Transition,
   toRef,
+  watch,
 } from 'vue';
 
 import { useModelDuplex } from '@/composables/communication';
@@ -30,23 +34,35 @@ import {
   ComplementClick,
   type ComplementClickBindingOptions,
 } from '@/directives/complement-click';
-import { bindClasses, defineComponent, propsFactory } from '@/util/component';
+import { bindClasses, defineComponent, getUid, propsFactory } from '@/util/component';
 
 import { pressBasePropsOptions, useBase } from './base';
-import { pressContentPropsOptions, useContent } from './content';
+import { BASE_Z_INDEX } from './relay-stack';
 import {
   pressScrollStrategyProps,
   useScrollStrategies,
 } from './scroll-strategies';
 
 import './YLayer.scss';
+
+import {
+  pressActiveEventProps,
+  pressContentPropsOptions,
+  useActiveEvent,
+} from '@/components/layer/active-event';
+import { useActiveStack } from '@/components/layer/active-stack';
 import type { CssProperties } from '@/types';
 import { noop } from '@/util';
+import { isEventsApplied } from '@/util/component/vnode-event';
 
 export const pressYLayerProps = propsFactory(
   {
     modelValue: {
       type: Boolean as PropType<boolean>,
+    },
+    pinned: {
+      type: Boolean as PropType<boolean>,
+      default: undefined,
     },
     scrim: {
       type: Boolean as PropType<boolean>,
@@ -81,10 +97,6 @@ export const pressYLayerProps = propsFactory(
     maximized: {
       type: Boolean as PropType<boolean>,
     },
-    openOnHover: {
-      type: Boolean as PropType<boolean>,
-      default: false,
-    },
     openDelay: {
       type: Number as PropType<number>,
       default: 200,
@@ -95,10 +107,10 @@ export const pressYLayerProps = propsFactory(
     },
     zIndex: {
       type: [Number, String] as PropType<number | string>,
-      default: 2000,
     },
     contained: Boolean,
     layerGroup: [String, Object] as PropType<string | Element>,
+    ...pressActiveEventProps(),
     ...pressThemePropsOptions(),
     ...pressPolyTransitionPropsOptions(),
     ...pressBasePropsOptions(),
@@ -106,6 +118,18 @@ export const pressYLayerProps = propsFactory(
     ...pressCoordinateProps(),
     ...pressScrollStrategyProps(),
     ...pressDimensionPropsOptions(),
+    preventCloseBubble: Boolean as PropType<boolean>,
+    closeCondition: {
+      type: [Boolean, Function],
+      default: undefined,
+    },
+    // for a11y
+    contentId: String as PropType<string>,
+    baseAriaAttr: {
+      type: String as PropType<'describedby' | 'labelledby' | 'controls' | undefined>,
+      default: undefined,
+    },
+    role: String as PropType<string>,
   },
   'YLayer',
 );
@@ -121,10 +145,12 @@ export const YLayer = defineComponent({
   },
   props: {
     modal: Boolean as PropType<boolean>,
+    relayStack: Boolean,
     ...pressYLayerProps(),
   },
   emits: {
     'update:modelValue': (value: boolean) => true,
+    'update:pinned': (value: boolean) => true,
     'click:complement': (mouseEvent: MouseEvent) => true,
     afterLeave: () => true,
     afterEnter: () => true,
@@ -135,10 +161,15 @@ export const YLayer = defineComponent({
   }>,
   setup(props, { emit, expose, attrs, slots }) {
     const vm = getCurrentInstance();
+    const UID = getUid();
+    const finish = shallowRef(false);
+    const disabled = toRef(props, 'disabled');
+    const maximized = toRef(props, 'maximized');
     const scrim$ = ref<HTMLElement>();
     const content$ = ref<HTMLElement>();
     const root$ = ref<HTMLElement>();
     const model = useModelDuplex(props);
+    const pinned = useModelDuplex(props, 'pinned', false);
     const active = computed({
       get: (): boolean => {
         return !!model.value;
@@ -147,35 +178,51 @@ export const YLayer = defineComponent({
         if (!(v && props.disabled)) model.value = v;
       },
     });
-    // Frags
-    const { base, base$, baseEl, baseSlot, baseFromSlotEl } = useBase(props);
-    const { contentEvents } = useContent(props, active);
+    // __ Composition
     const { themeClasses } = useLocalTheme(props);
-    const { layerGroup, layerGroupState, getActiveLayers } =
-      useLayerGroup(props);
     const { polyTransitionBindProps } = usePolyTransition(props);
     const { dimensionStyles } = useDimension(props);
-
+    // base -> layerGroup -> activeStack -> activeEvent;
+    const { base, base$, baseEl, baseSlot, baseFromSlotEl, pivot } =
+      useBase(props);
+    const { layerGroup, layerGroupState, getActiveLayers } =
+      useLayerGroup(props);
+    const { children, parent, relayId, handleOutsideClick } = useActiveStack(
+      props,
+      { active, pinned, rootEl: root$, shouldClose },
+    );
+    const { hovered, focused, baseEvents, contentEvents } = useActiveEvent(
+      props,
+      {
+        active,
+        pinned,
+        children,
+        base,
+        finish,
+        baseSlotEl: baseFromSlotEl,
+      },
+    );
+    // Render timing
     const { lazyValue, onAfterUpdate } = useLazy(toRef(props, 'eager'), active);
-    // States
-    const finish = shallowRef(false);
-    const hovered = ref(false);
-    const focused = ref(false);
-    const disabled = toRef(props, 'disabled');
-    const maximized = toRef(props, 'maximized');
 
-    const rendered = computed<boolean>(
+    const isRendering = computed<boolean>(
       () => !disabled.value && (lazyValue.value || active.value),
     );
-
+    // #Content to Pivot
+    // coordinate -> scroll
     const { coordination, coordinateStyles, updateCoordinate } = useCoordinate(
       props,
       {
         contentEl: content$,
         base,
         active,
+        pivot,
       },
     );
+
+    //
+    const layerContentId = computed(() => props.contentId ?? `y-layer-${UID}`);
+
     useScrollStrategies(props, {
       root: root$,
       contentEl: content$,
@@ -184,9 +231,21 @@ export const YLayer = defineComponent({
       updateCoordinate,
     });
 
-    function onClickComplementLayer(mouseEvent: MouseEvent) {
+    watch(active, (neo) => {
+      if (!neo) {
+        finish.value = false;
+        hovered.value = false;
+      }
+    });
+
+    function onClickOutsideLayer(mouseEvent: MouseEvent) {
       emit('click:complement', mouseEvent);
-      if (!props.modal) {
+
+      if (!shouldClose(mouseEvent)) {
+        return;
+      }
+
+      if (props.modal) {
         if (
           scrim$.value !== null &&
           scrim$.value === mouseEvent.target &&
@@ -195,7 +254,7 @@ export const YLayer = defineComponent({
           active.value = false;
         }
       } else {
-        // TODO: shrug ani
+        handleOutsideClick(mouseEvent);
       }
     }
 
@@ -204,11 +263,25 @@ export const YLayer = defineComponent({
         (!props.openOnHover || (props.openOnHover && !hovered.value)) &&
         active.value &&
         finish.value
-      ); // TODO: && groupTopLevel.value;
+      );
+    }
+
+    function shouldClose(e?: Event) {
+      if (props.closeCondition === false) {
+        return false;
+      }
+      if (
+        typeof props.closeCondition === 'function' &&
+        props.closeCondition(e) === false
+      ) {
+        return false;
+      }
+
+      return true;
     }
 
     const complementClickOption = reactive<ComplementClickBindingOptions>({
-      handler: onClickComplementLayer,
+      handler: onClickOutsideLayer,
       determine: closeConditional,
       include: () => [baseEl.value],
     });
@@ -230,17 +303,17 @@ export const YLayer = defineComponent({
       }
     }
 
-    function onMouseenter(event: Event) {
+    function onMouseenterLayer(event: Event) {
       hovered.value = true;
     }
 
-    function onMouseleave(event: Event) {
+    function onMouseleaveLayer(event: Event) {
       hovered.value = false;
     }
 
     const computedStyle = computed(() => {
       return {
-        zIndex: (props.zIndex ?? '2000').toString(),
+        zIndex: (props.zIndex ?? BASE_Z_INDEX).toString(),
       };
     });
 
@@ -249,6 +322,7 @@ export const YLayer = defineComponent({
       const boundClasses = bindClasses(classes);
       return {
         ...boundClasses,
+        'y-layer--pinned': !!pinned.value,
         'y-layer--active': !!active.value,
       };
     });
@@ -273,37 +347,64 @@ export const YLayer = defineComponent({
       content$: computed(() => content$.value),
       baseEl,
       active,
+      pinned,
       onAfterUpdate,
       updateCoordinate,
       hovered,
+      focused,
       finish,
+      maximized,
       modal: computed(() => props.modal),
+      preventCloseBubble: props.preventCloseBubble,
       getActiveLayers,
       isMe: (vnode: ComponentInternalInstance) => {
         return vnode === vm;
       },
       coordination,
+      children,
+      parent,
+      relayId,
     });
 
     useRender(() => {
+      const ariaBaseProps = props.baseAriaAttr
+        ? { [`aria-${props.baseAriaAttr}`]: layerContentId.value }
+        : {};
       const slotBase = slots.base?.({
         active: active.value,
-        props: mergeProps({
-          ref: base$,
-          class: {
-            'y-layer-base': true,
-            'y-layer-base--active': active.value,
+        props: mergeProps(
+          {
+            ref: base$,
+            class: {
+              'y-layer-base': true,
+              'y-layer-base--active': active.value,
+            },
           },
-          ...(props.baseProps ?? {}),
-        }),
+          baseEvents.value,
+          ariaBaseProps,
+          props.baseProps ?? {},
+        ),
       });
-      baseSlot.value = slotBase;
+      const baseNode = slotBase?.[0];
+      const applied = isEventsApplied(baseNode, baseEvents.value);
+
+      baseSlot.value =
+        baseNode && !applied
+          ? [
+              cloneVNode(
+                baseNode,
+                mergeProps(baseNode.props ?? {}, baseEvents.value),
+              ),
+            ]
+          : slotBase;
+
       return (
         <>
-          {slotBase}
+          {baseSlot.value}
           <Teleport disabled={!layerGroup.value} to={layerGroup.value as any}>
-            {rendered.value && (
+            {isRendering.value && (
               <div
+                ref={root$}
                 class={[
                   {
                     'y-layer': true,
@@ -313,23 +414,21 @@ export const YLayer = defineComponent({
                   },
                   themeClasses.value,
                 ]}
-                onMouseenter={onMouseenter}
-                onMouseleave={onMouseleave}
+                onMouseenter={onMouseenterLayer}
+                onMouseleave={onMouseleaveLayer}
                 style={computedStyle.value}
-                ref={root$}
                 {...attrs}
               >
                 <Transition name="fade" appear>
                   {active.value && props.scrim && (
-                    // biome-ignore lint/a11y/noStaticElementInteractions: <explanation>
                     // biome-ignore lint/a11y/useKeyWithClickEvents: <explanation>
                     <div
+                      ref="scrim$"
                       class="y-layer__scrim"
                       style={{ '--y-layer-scrim-opacity': props.scrimOpacity }}
                       onClick={onClickScrim}
                       onKeydown={noop()}
                       onKeyup={noop()}
-                      ref="scrim$"
                     ></div>
                   )}
                 </Transition>
@@ -340,6 +439,7 @@ export const YLayer = defineComponent({
                   {...polyTransitionBindProps.value}
                 >
                   <div
+                    ref={content$}
                     v-show={active.value}
                     v-complement-click={{ ...complementClickOption }}
                     class={{
@@ -353,8 +453,11 @@ export const YLayer = defineComponent({
                         ...props.contentStyles,
                       },
                     ]}
+                    id={layerContentId.value}
+                    role={props.role}
+                    tabindex={props.modal ? -1 : undefined}
                     {...contentEvents.value}
-                    ref={content$}
+                    {...(props.contentProps ?? {})}
                   >
                     {slots.default?.({ active: active.value, close })}
                   </div>
@@ -370,8 +473,9 @@ export const YLayer = defineComponent({
       complementClickOption,
       layerGroup,
       active,
+      pinned,
       finish,
-      rendered,
+      rendered: isRendering,
       lazyValue,
       onAfterUpdate: onAfterUpdate as () => void,
       scrim$,
@@ -385,6 +489,7 @@ export const YLayer = defineComponent({
       layerGroupState,
       getActiveLayers,
       coordination,
+      baseEvents,
     };
   },
 });

@@ -11,7 +11,7 @@ const frameScheduler = new FrameScheduler();
 export interface ScrollStrategyData {
   root: Ref<HTMLElement | undefined>;
   contentEl: Ref<HTMLElement | undefined>;
-  baseEl: Ref<HTMLElement | undefined>;
+  baseEl: Ref<Element | undefined>;
   active: Ref<boolean>;
   updateCoordinate: Ref<((e: Event) => void) | undefined>;
 }
@@ -78,7 +78,10 @@ function closeScrollStrategy(data: ScrollStrategyData) {
     data.active.value = false;
   }
 
-  bindScroll(data.baseEl.value ?? data.contentEl.value, onScroll);
+  bindScroll(
+    (data.baseEl.value as HTMLElement) ?? data.contentEl.value,
+    onScroll,
+  );
 }
 
 const BLOCKER_LAYER_CLASS = 'y-layer--scroll-blocked';
@@ -170,22 +173,25 @@ function repositionScrollStrategy(
       : requestIdleCallback
   )(() => {
     scope.run(() => {
-      bindScroll(data.baseEl.value ?? data.contentEl.value, (e) => {
-        if (slow) {
-          // If the position calculation is slow,
-          // defer updates until scrolling is finished.
-          // Browsers usually fire one scroll event per frame so
-          // we just wait until we've got two frames without an event
-          cancelAnimationFrame(raf);
-          raf = requestAnimationFrame(() => {
+      bindScroll(
+        (data.baseEl.value as HTMLElement) ?? data.contentEl.value,
+        (e) => {
+          if (slow) {
+            // If the position calculation is slow,
+            // defer updates until scrolling is finished.
+            // Browsers usually fire one scroll event per frame so
+            // we just wait until we've got two frames without an event
+            cancelAnimationFrame(raf);
             raf = requestAnimationFrame(() => {
-              update(e);
+              raf = requestAnimationFrame(() => {
+                update(e);
+              });
             });
-          });
-        } else {
-          update(e);
-        }
-      });
+          } else {
+            update(e);
+          }
+        },
+      );
     });
   });
 

@@ -1,3 +1,4 @@
+import type { IfAny } from '@vue/shared';
 import type {
   ComponentObjectPropsOptions,
   ExtractPropTypes,
@@ -6,7 +7,6 @@ import type {
   VNode,
 } from 'vue';
 import { capitalize } from 'vue';
-import type { IfAny } from '@vue/shared';
 
 import { toKebabCase } from '../string';
 
@@ -53,6 +53,8 @@ export function chooseProps<PropsOptions extends ComponentObjectPropsOptions>(
     {} as ExtractPropTypes<PropsOptions>,
   );
 }
+
+export const isPropEventName = (name: string) => /^on[^a-z]/.test(name);
 
 export function hasEventProp(props: Record<string, any>, type: string) {
   const onType = `on${capitalize(type)}`;
@@ -112,8 +114,8 @@ type InferPropType<T> = [T] extends [null]
         ? boolean
         : [T] extends [DateConstructor | { type: DateConstructor }]
           ? Date
-          // biome-ignore lint/suspicious/noRedeclare: <explanation>
-          : [T] extends [(infer U)[] | { type: (infer U)[] }]
+          : // biome-ignore lint/suspicious/noRedeclare: <explanation>
+            [T] extends [(infer U)[] | { type: (infer U)[] }]
             ? U extends DateConstructor
               ? Date | InferPropType<U>
               : InferPropType<U>

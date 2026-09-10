@@ -89,29 +89,32 @@ export function init(options: any = defaultOptions) {
     if (options?.credit) {
       console.log(YUYEON_LOGO);
     }
+
     const { unmount, mount } = app;
+
     app.mount = (...args) => {
       const vm = mount(...args);
-      if (!yuyeon.app) {
-        yuyeon.app = app._instance as any;
-      }
-      if (!yuyeon.root) {
-        nextTick(() => {
-          yuyeon.root = app._container;
-          if (yuyeon.root) {
-            yuyeon.root.classList.add('y-root');
-            yuyeon.root.setAttribute('data-y-root', '');
-            themeModule.init(yuyeon);
-          }
-        });
-      }
-      app.mount = mount;
+
+      yuyeon.app = app._instance as any;
+
+      nextTick(() => {
+        yuyeon.root = app._container;
+        if (yuyeon.root) {
+          yuyeon.root.classList.add('y-root');
+          yuyeon.root.setAttribute('data-y-root', '');
+          themeModule.init(yuyeon);
+        }
+      });
+
       return vm;
     };
+
     app.unmount = () => {
       unmount();
       themeModule.scope.stop();
-      app.unmount = unmount;
+
+      yuyeon.app = null;
+      yuyeon.root = null;
     };
   };
 

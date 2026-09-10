@@ -32,7 +32,7 @@ export function getSlot(
 
 export function getUid() {
   const vm = getCurrentInstance();
-  return vm?.uid;
+  return vm?.uid?.toString() ?? Math.random().toString(36).slice(2);
 }
 
 export function bindClasses(
@@ -55,17 +55,22 @@ export function bindClasses(
   return boundClasses;
 }
 
-export function getHtmlElement<N extends object | undefined>(
-  node: N,
-): Exclude<N, ComponentPublicInstance> | HTMLElement {
-  if (node && '$el' in node) {
-    const el = (node as ComponentPublicInstance).$el as HTMLElement;
-    if (el.nodeType === Node.TEXT_NODE) {
-      return el.nextElementSibling as HTMLElement;
-    }
-    return el;
+export function getHtmlElement(
+  node: ComponentPublicInstance | Element | undefined,
+): HTMLElement | undefined {
+  if (!node) {
+    return undefined;
   }
-  return node as HTMLElement;
+
+  const el = '$el' in node ? (node.$el as HTMLElement) : node;
+
+  if (el.nodeType === Node.TEXT_NODE || el.nodeType === Node.COMMENT_NODE) {
+    return el.nextElementSibling instanceof HTMLElement
+      ? el.nextElementSibling
+      : undefined;
+  }
+
+  return el instanceof HTMLElement ? el : undefined;
 }
 
 export function findChildrenWithProvide(

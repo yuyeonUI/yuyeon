@@ -1,0 +1,16 @@
+.y-drawer {
+  display: flex;
+
+  .y-layer {
+    &__content > div {
+      position: relative;
+      height: 100%;
+    }
+  }
+
+  &.y-layer--finish {
+    .y-layer__content > .y-card > .y-card__footer {
+      position: relative;
+    }
+  }
+}

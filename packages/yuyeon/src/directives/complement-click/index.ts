@@ -1,4 +1,4 @@
-import { DirectiveBinding } from 'vue';
+import type { DirectiveBinding } from 'vue';
 
 import { documentRoot } from '../../util/dom';
 
@@ -19,7 +19,7 @@ declare global {
 export interface ComplementClickBindingOptions {
   handler: (mouseEvent: MouseEvent) => void;
   determine?: (event: Event) => boolean;
-  include?: () => (HTMLElement | undefined)[];
+  include?: () => (Element | undefined)[];
 }
 
 export interface ComplementClickBinding extends DirectiveBinding {

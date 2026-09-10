@@ -20,7 +20,9 @@ export const pressYIconPropsOptions = propsFactory(
     size: {
       type: [String, Number],
     },
-    class: [String, Array] as PropType<string | string[] | Record<string, any>[]>,
+    class: [String, Array, Object] as PropType<
+      string | string[] | Record<string, any>[] | Record<string, any>
+    >,
     ...pressThemePropsOptions(),
   },
   'YIcon',

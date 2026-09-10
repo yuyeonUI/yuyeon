@@ -9,35 +9,48 @@ import {
   watchEffect,
 } from 'vue';
 
+import type { LiteralUnion, XYPoint } from '@/types';
 import { propsFactory } from '@/util/component';
 
 export type BaseType =
   | string
   | Element
   | ComponentPublicInstance
-  | [x: number, y: number]
+  | XYPoint
   | undefined;
-
-export const pressBasePropsOptions = propsFactory(
-  {
-    base: [String, Object, Array] as PropType<BaseType>,
-    baseProps: Object as PropType<Record<string, any>>,
-  },
-  'YLayer.base',
-);
 
 interface BaseProps {
   base: BaseType;
   baseProps: Record<string, any> | undefined;
   modelValue?: boolean;
+  pivot:
+    | LiteralUnion<'parent' | 'cursor'>
+    | Element
+    | ComponentPublicInstance
+    | undefined;
 }
+
+export const pressBasePropsOptions = propsFactory(
+  {
+    base: [String, Object, Array] as PropType<BaseType>,
+    baseProps: Object as PropType<Record<string, any>>,
+    pivot: {
+      type: [String, Object, Array] as PropType<BaseProps['pivot']>,
+    },
+  },
+  'YLayer.base',
+);
 
 export function useBase(props: BaseProps) {
   const vm = getCurrentInstance()!;
 
+  /**
+   * baseRef
+   */
   const base$ = ref();
   const baseSlot = ref();
-  const baseEl = ref<HTMLElement>();
+  const baseEl = ref<Element>();
+  const cursorPoint = ref<[x: number, y: number]>();
 
   const baseFromSlotEl = computed(() => {
     const el = baseSlot.value?.[0]?.el;
@@ -52,6 +65,13 @@ export function useBase(props: BaseProps) {
       return baseEl.value;
     }
     return getBase(props.base, vm);
+  });
+
+  const pivot = computed(() => {
+    if (props.pivot === 'cursor' && cursorPoint.value) {
+      return cursorPoint.value;
+    }
+    return getBase(props.pivot, vm) || base.value;
   });
 
   watchEffect(
@@ -89,19 +109,21 @@ export function useBase(props: BaseProps) {
   });
 
   return {
-    /**
-     * for templateRef from base slot
-     */
     base$,
     baseEl,
     baseSlot,
     base,
     baseFromSlotEl,
+    pivot,
+    cursorPoint,
   };
 }
 
-function getBase(selector: BaseType, vm: ComponentInternalInstance) {
-  if (!selector) return;
+function getBase(
+  selector: BaseType,
+  vm: ComponentInternalInstance,
+): undefined | Element {
+  if (!selector) return undefined;
 
   let ret: any;
 

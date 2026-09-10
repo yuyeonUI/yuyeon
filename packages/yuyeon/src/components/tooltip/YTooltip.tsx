@@ -1,4 +1,4 @@
-import { computed, nextTick, type PropType, ref, toRef, watch } from 'vue';
+import { computed, type PropType, ref } from 'vue';
 
 import { useModelDuplex } from '@/composables/communication';
 import { useRender } from '@/composables/component';
@@ -12,12 +12,9 @@ import {
 } from '@/util/component';
 
 import { pressYLayerProps, YLayer } from '../layer';
-import { useDelay } from '../layer/active-delay';
 import { YPlate } from '../plate';
 
 import './YTooltip.scss';
-import { hasElementMouseEvent } from '@/util';
-import { useActiveStack } from '@/components/layer/active-stack';
 
 const NAME = 'YTooltip';
 
@@ -31,17 +28,13 @@ const YTooltipPropOptions = {
     type: Boolean as PropType<boolean>,
     default: true,
   },
-  closeCondition: {
-    type: [Boolean, Function],
-    default: undefined,
-  },
-  preventCloseBubble: Boolean as PropType<boolean>,
   ...pressYLayerProps({
     coordinateStrategy: 'levitation' as const,
     scrollStrategy: 'reposition' as const,
     openOnHover: true,
     align: 'center',
     offset: 8,
+    baseAriaAttr: 'describedby'
   }),
   ...pressPolyTransitionPropsOptions({
     transition: 'fade',
@@ -65,8 +58,19 @@ export const YTooltip = defineComponent<
   },
   emits: ['update:modelValue'],
   setup(props, { slots, emit, expose }) {
+    const model = useModelDuplex(props);
+
     const layer$ = ref<typeof YLayer>();
-    const contentEl = ref<HTMLElement>();
+
+    const active = computed({
+      get: (): boolean => {
+        return !!model.value;
+      },
+      set: (v: boolean) => {
+        if (!(v && props.disabled)) model.value = v;
+      },
+    });
+
     const baseEl = computed(() => {
       return layer$.value?.baseEl;
     });
@@ -78,110 +82,6 @@ export const YTooltip = defineComponent<
         'y-tooltip': true,
       };
     });
-
-    const model = useModelDuplex(props);
-
-    const active = computed({
-      get: (): boolean => {
-        return !!model.value;
-      },
-      set: (v: boolean) => {
-        if (!(v && props.disabled)) model.value = v;
-      },
-    });
-
-    const hovered = computed(() => !!layer$.value?.hovered);
-
-    const { children, parent } = useActiveStack(
-      layer$,
-      active,
-      toRef(props, 'preventCloseBubble'),
-    );
-
-    watch(active, (neo) => {
-      if (neo) {
-        nextTick(() => {
-          const $content = layer$.value?.content$;
-          contentEl.value = $content;
-        });
-      }
-    });
-
-    const { startOpenDelay, startCloseDelay } = useDelay(
-      props,
-      (changeActive) => {
-        if (!changeActive && props.openOnHover && !hovered.value) {
-          active.value = false;
-        } else if (changeActive) {
-          active.value = true;
-        }
-      },
-    );
-
-    function onComplementClick(e: Event) {
-      if (props.closeCondition === false) {
-        return;
-      }
-      if (typeof props.closeCondition === 'function') {
-        if (props.closeCondition(e) === false) {
-          active.value = false;
-          return;
-        }
-      }
-      if (active.value) {
-        if (children.value.length === 0) {
-          active.value = false;
-        }
-        const parentContent = parent?.$el.value?.content$;
-        const parentModal = parent?.$el.value?.modal;
-        if (
-          !(parentContent && !hasElementMouseEvent(e, parentContent)) &&
-          !parentModal &&
-          !props.preventCloseBubble
-        ) {
-          parent?.clear();
-        }
-      }
-    }
-
-    function onMouseenter(e: MouseEvent) {
-      if (props.openOnHover) {
-        startOpenDelay();
-      }
-    }
-
-    function onMouseleave(e: MouseEvent) {
-      if (props.openOnHover) {
-        startCloseDelay();
-      }
-    }
-
-    watch(hovered, (value) => {
-      if (!value) {
-        startCloseDelay();
-      }
-    });
-
-    function bindHover(el: HTMLElement) {
-      el.addEventListener?.('mouseenter', onMouseenter);
-      el.addEventListener?.('mouseleave', onMouseleave);
-    }
-
-    function unbindHover(el: HTMLElement) {
-      el.removeEventListener?.('mouseenter', onMouseenter);
-      el.removeEventListener?.('mouseleave', onMouseleave);
-    }
-
-    watch(
-      () => layer$.value?.baseEl,
-      (neo, old) => {
-        if (neo) {
-          bindHover(neo);
-        } else if (old) {
-          unbindHover(old);
-        }
-      },
-    );
 
     expose({
       layer$,
@@ -196,7 +96,6 @@ export const YTooltip = defineComponent<
           classes={classes.value}
           scrim={false}
           transition={props.transition}
-          onClick:complement={onComplementClick}
           v-model={active.value}
         >
           {{
@@ -204,7 +103,7 @@ export const YTooltip = defineComponent<
               return (
                 <>
                   <YPlate></YPlate>
-                  <div class="y-tooltip__content">
+                  <div role="tooltip" class="y-tooltip__content">
                     {slots.default?.(...args) ?? ''}
                   </div>
                 </>
