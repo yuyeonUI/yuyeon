@@ -1,5 +1,5 @@
 import { DateUtil } from '../built-in';
-import { DateAdapter, DateFormatOptions } from '../types';
+import type { DateAdapter, DateFormatOptions } from '../types';
 
 export class YuyeonDateAdapter implements DateAdapter<Date> {
   public locale = 'ko-kr';
@@ -146,7 +146,7 @@ export class YuyeonDateAdapter implements DateAdapter<Date> {
     return DateUtil.setMinute(date, minute);
   }
 
-  public parseTime(time:string): {hours: number, minutes: number} | null {
+  public parseTime(time: string): { hours: number; minutes: number } | null {
     return DateUtil.parseTime(this.locale, time);
   }
 }
