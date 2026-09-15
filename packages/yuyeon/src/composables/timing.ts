@@ -1,57 +1,51 @@
 import {
-  type MaybeRef,
-  type Ref,
   computed,
+  getCurrentScope,
+  type MaybeRef,
+  onScopeDispose,
+  type Ref,
   ref,
+  shallowRef,
   unref,
   watch,
-  onMounted,
-  onUnmounted,
 } from 'vue';
 
-export function useLazy(eager: Ref<boolean | undefined>, updated: Ref<any>) {
-  const tick = ref(false);
-  const tack = ref();
-  tack.value = updated.value;
+export function useLazy<T>(
+  eager: MaybeRef<boolean | undefined>,
+  source: Ref<T>,
+) {
+  const isLocked = ref(false);
+  const cachedValue = shallowRef<T>(source.value);
 
-  const lazyValue = computed(() => {
-    if (eager.value) return updated.value;
-    return tack.value;
-  });
+  const lazyValue = computed(() =>
+    unref(eager) ? source.value : cachedValue.value,
+  );
 
-  watch(updated, () => {
-    if (!tick.value) {
-      tack.value = updated.value;
-    }
-    if (!eager.value) {
-      tick.value = true;
-    }
-  });
+  watch(
+    [source, () => Boolean(unref(eager))],
+    ([value, isEager], [, wasEager]) => {
+      // 즉시 반영 모드이거나 모드가 전환되면 동기화하고 고정 해제
+      if (isEager || isEager !== wasEager) {
+        cachedValue.value = value;
+        isLocked.value = false;
+        return;
+      }
+
+      // 첫 변경값을 반영한 뒤 후속 변경은 보류
+      if (!isLocked.value) {
+        cachedValue.value = value;
+        isLocked.value = true;
+      }
+    },
+  );
 
   function onAfterUpdate() {
-    tack.value = updated.value;
-    if (!eager.value) {
-      tick.value = false;
-    }
+    cachedValue.value = source.value;
+    isLocked.value = false;
   }
-
-  function onVisibilityChange() {
-    if (document.visibilityState === 'visible') {
-      tack.value = updated.value;
-      tick.value = false;
-    }
-  }
-
-  onMounted(() => {
-    document.addEventListener('visibilitychange', onVisibilityChange);
-  });
-
-  onUnmounted(() => {
-    document.removeEventListener('visibilitychange', onVisibilityChange);
-  });
 
   return {
-    entered: tick,
+    entered: isLocked,
     lazyValue,
     onAfterUpdate,
   };
@@ -60,54 +54,70 @@ export function useLazy(eager: Ref<boolean | undefined>, updated: Ref<any>) {
 export function useTimer(
   cb: () => void,
   duration: MaybeRef<number>,
-  options?: { tickDuration: number },
+  options?: { tickDuration?: number },
 ) {
-  const { tickDuration } = options ?? {};
-  let tickInterval = tickDuration ?? 100;
-  let timer = -1;
+  const tickInterval = normalizeDelay(options?.tickDuration, 100, 1);
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  let deadline = 0;
+  let runId = 0;
 
-  const tickStart = ref(0);
-  const drift = ref(unref(duration));
+  const drift = ref(normalizeDelay(unref(duration)));
   const isWork = ref(false);
 
-  function tick() {
-    const now = Date.now();
-    const realTick = now - tickStart.value;
-    let nextInterval = tickInterval;
-    const left = drift.value - realTick;
+  function clearTimer() {
+    if (timer !== undefined) {
+      clearTimeout(timer);
+      timer = undefined;
+    }
+  }
+
+  function schedule(id: number, delay: number) {
+    timer = setTimeout(() => tick(id), delay);
+  }
+
+  function tick(id: number) {
+    if (!isWork.value || id !== runId) return;
+
+    const left = deadline - Date.now();
     drift.value = left;
-    if (left < 1) {
+
+    if (left <= 0) {
+      timer = undefined;
+      isWork.value = false;
       cb();
       return;
     }
-    const tickDelta = realTick - tickInterval;
-    if (tickDelta > 0) {
-      nextInterval -= tickDelta;
-    } else if (tickDelta < 0) {
-      nextInterval += tickDelta;
-    }
-    if (left >= 1) {
-      tickStart.value = now;
-      timer = window.setTimeout(tick, nextInterval);
-    }
+
+    schedule(id, Math.min(tickInterval, left));
   }
 
   function start() {
     if (isWork.value) return;
+
     isWork.value = true;
-    tickStart.value = Date.now();
-    timer = window.setTimeout(tick, tickInterval);
+    runId += 1;
+    deadline = Date.now() + Math.max(0, finiteOrZero(drift.value));
+    const remaining = Math.max(0, finiteOrZero(drift.value));
+    schedule(runId, Math.min(tickInterval, remaining));
   }
 
   function stop() {
-    window.clearTimeout(timer);
-    timer = -1;
+    if (isWork.value) {
+      drift.value = deadline - Date.now();
+    }
+
+    runId += 1;
+    clearTimer();
     isWork.value = false;
   }
 
   function reset() {
     stop();
-    drift.value = unref(duration);
+    drift.value = normalizeDelay(unref(duration));
+  }
+
+  if (getCurrentScope()) {
+    onScopeDispose(stop);
   }
 
   return {
@@ -120,20 +130,47 @@ export function useTimer(
 }
 
 type DelayType = 'closeDelay' | 'openDelay';
+type DelayProps = Partial<Record<DelayType, unknown>>;
+type DelayHandle = ReturnType<typeof setTimeout>;
 
-export function useDelay(props: any, callback?: (active: boolean) => void) {
-  const state: Partial<Record<DelayType, number>> = {};
+interface PendingDelay {
+  timer: DelayHandle;
+  resolve: (active: boolean) => void;
+}
+
+export function useDelay(
+  props: DelayProps,
+  callback?: (active: boolean) => void,
+) {
+  const state: Partial<Record<DelayType, PendingDelay>> = {};
 
   function clearDelay(propKey: DelayType) {
-    state[propKey] && window.clearTimeout(state[propKey]);
+    const pending = state[propKey];
+    if (!pending) return;
+
+    clearTimeout(pending.timer);
     delete state[propKey];
+    pending.resolve(false);
   }
 
-  function setDelay(propKey: DelayType, timeout: number, resolve: any) {
-    state[propKey] = window.setTimeout(() => {
+  function setDelay(
+    propKey: DelayType,
+    timeout: number,
+    resolve: (active: boolean) => void,
+  ) {
+    const pending = {
+      timer: undefined as unknown as DelayHandle,
+      resolve,
+    };
+    state[propKey] = pending;
+
+    pending.timer = setTimeout(() => {
+      if (state[propKey] !== pending) return;
+
+      delete state[propKey];
       const active = propKey === 'openDelay';
-      callback?.(active);
       resolve(active);
+      callback?.(active);
     }, timeout);
   }
 
@@ -142,13 +179,30 @@ export function useDelay(props: any, callback?: (active: boolean) => void) {
     clearDelay('closeDelay');
     const delayTime = props[propKey] ?? 0;
     return new Promise<boolean>((resolve) => {
-      const delay = parseInt(String(delayTime), 10);
+      const delay = normalizeDelay(delayTime);
       setDelay(propKey, delay, resolve);
     });
   };
+
+  if (getCurrentScope()) {
+    onScopeDispose(() => {
+      clearDelay('openDelay');
+      clearDelay('closeDelay');
+    });
+  }
 
   return {
     startOpenDelay: generateDelay('openDelay'),
     startCloseDelay: generateDelay('closeDelay'),
   };
+}
+
+function finiteOrZero(value: number) {
+  return Number.isFinite(value) ? value : 0;
+}
+
+function normalizeDelay(value: unknown, fallback = 0, minimum = 0): number {
+  const delay = Number(value);
+  if (!Number.isFinite(delay)) return fallback;
+  return Math.max(minimum, delay);
 }

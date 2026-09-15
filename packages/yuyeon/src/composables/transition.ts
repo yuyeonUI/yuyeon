@@ -3,6 +3,7 @@ import {
   computed,
   type FunctionalComponent,
   h,
+  mergeProps,
   type PropType,
   Transition,
   type TransitionProps,
@@ -49,5 +50,5 @@ export const PolyTransition: FunctionalComponent<
   const { component = Transition, ...rest } = isComponent
     ? { component: is, ...transitionProps }
     : { name: is };
-  return h(component, { ...rest, ...forcedProps }, slots);
+  return h(component, mergeProps(rest, forcedProps), slots);
 };
