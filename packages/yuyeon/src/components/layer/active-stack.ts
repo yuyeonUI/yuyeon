@@ -34,15 +34,74 @@ interface YLayerExposed {
 interface ActiveStackProps {
   relayStack?: boolean;
   openOnHover: boolean;
+  closeOnEscape: boolean;
 }
 
-const activeLayers: ComponentInternalInstance[] = [];
+interface ActiveLayer {
+  vm: ComponentInternalInstance;
+  close: () => void;
+  closeOnEscape: () => boolean;
+  shouldClose: (e?: Event) => boolean;
+}
+
+const activeLayers: ActiveLayer[] = [];
+let listening = false;
+
+function handleGlobalKeydown(e: KeyboardEvent) {
+  if (e.key !== 'Escape' || e.defaultPrevented) return;
+
+  const topLayer = activeLayers[activeLayers.length - 1];
+  if (!topLayer) return;
+
+  const canClose = topLayer.closeOnEscape() && topLayer.shouldClose(e);
+
+  // Consume Escape for the top layer even when it is persistent, so an
+  // underlying layer cannot react to the same key press.
+  e.preventDefault();
+  e.stopPropagation();
+
+  if (canClose) {
+    focusBaseIfContentFocused(topLayer.vm);
+    topLayer.close();
+  }
+}
+
+function focusBaseIfContentFocused(vm: ComponentInternalInstance) {
+  if (typeof document === 'undefined') return;
+
+  const exposed = vm.exposed as YLayerExposed | undefined;
+  const content = unref(exposed?.content$) as Element | undefined;
+  const activeElement = document.activeElement;
+
+  if (!content || !activeElement || !content.contains(activeElement)) {
+    return;
+  }
+
+  const base = unref(exposed?.baseEl) as HTMLElement | undefined;
+  base?.focus();
+}
+
+function ensureKeydownListener() {
+  if (listening || typeof document === 'undefined') return;
+
+  document.addEventListener('keydown', handleGlobalKeydown);
+  listening = true;
+}
+
+function teardownKeydownListener() {
+  if (!listening || typeof document === 'undefined') return;
+
+  document.removeEventListener('keydown', handleGlobalKeydown);
+  listening = false;
+}
 
 function pushActiveLayer(
   vm: ComponentInternalInstance,
   layerEl: () => Element | null | undefined,
+  layer: Omit<ActiveLayer, 'vm'>,
 ) {
-  activeLayers.push(vm);
+  activeLayers.push({ vm, ...layer });
+  ensureKeydownListener();
   nextTick(() => {
     const el = layerEl();
     if (el?.parentElement) {
@@ -52,8 +111,13 @@ function pushActiveLayer(
 }
 
 function popActiveLayer(vm: ComponentInternalInstance) {
-  const idx = activeLayers.indexOf(vm);
-  if (idx > -1) activeLayers.splice(idx, 1);
+  const idx = activeLayers.findIndex((layer) => layer.vm === vm);
+  if (idx > -1) {
+    activeLayers.splice(idx, 1);
+  }
+  if (activeLayers.length === 0) {
+    teardownKeydownListener();
+  }
 }
 
 /*
@@ -85,7 +149,14 @@ export function useActiveStack(
     (neo) => {
       if (neo) {
         parent?.push(vm);
-        pushActiveLayer(vm, () => unref(rootEl));
+        pushActiveLayer(vm, () => unref(rootEl), {
+          close: () => {
+            active.value = false;
+            pinned.value = false;
+          },
+          closeOnEscape: () => props.closeOnEscape,
+          shouldClose,
+        });
         if (props.relayStack !== false) {
           relayHandle = registerRelay({
             els: () => {
@@ -117,6 +188,8 @@ export function useActiveStack(
   onBeforeUnmount(() => {
     relayHandle?.unregister();
     relayHandle = null;
+    popActiveLayer(vm);
+    parent?.pop(vm);
   });
 
   function exposed(): YLayerExposed | undefined {

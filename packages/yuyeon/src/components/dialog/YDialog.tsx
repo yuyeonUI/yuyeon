@@ -299,6 +299,10 @@ export const YDialog = defineComponent({
             'contentStyles',
             'contentProps',
           ])}
+          closeClickScrim={
+            props.persistent ? false : (props.closeClickScrim ?? true)
+          }
+          closeOnEscape={props.persistent ? false : props.closeOnEscape}
           onAfterEnter={onAfterEnter}
           onAfterLeave={onAfterLeave}
         >

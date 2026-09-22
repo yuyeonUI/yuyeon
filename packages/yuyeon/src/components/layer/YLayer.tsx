@@ -207,6 +207,7 @@ export const YLayer = defineComponent({
         base,
         finish,
         baseSlotEl: baseFromSlotEl,
+        content: content$,
       },
     );
     // Render timing

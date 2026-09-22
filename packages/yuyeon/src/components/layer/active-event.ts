@@ -50,6 +50,10 @@ export const pressActiveEventProps = propsFactory(
       type: Boolean as PropType<boolean>,
       default: undefined,
     },
+    closeOnEscape: {
+      type: Boolean as PropType<boolean>,
+      default: true,
+    },
   },
   'YLayer.active-event',
 );
@@ -79,6 +83,7 @@ export function useActiveEvent(
     base,
     finish,
     baseSlotEl,
+    content,
   }: {
     active: Ref<boolean>;
     pinned: Ref<boolean>;
@@ -86,11 +91,42 @@ export function useActiveEvent(
     base: Ref<any>;
     finish: Ref<boolean>;
     baseSlotEl: Ref<HTMLElement | null | undefined>;
+    content: Ref<HTMLElement | undefined>;
   },
 ) {
   const vm = getCurrentInstance()!;
   const hovered = shallowRef(false);
   const focused = shallowRef(false);
+  let focusCheckId = 0;
+
+  function isFocusWithin(target: EventTarget | null | undefined) {
+    if (!(target instanceof Node)) return false;
+
+    return [base.value, baseSlotEl.value, content.value].some((el) => {
+      return el instanceof Node && el.contains(target);
+    });
+  }
+
+  function updateFocusState(e: FocusEvent) {
+    if (isFocusWithin(e.relatedTarget)) {
+      focusCheckId++;
+      focused.value = true;
+      return;
+    }
+
+    const checkId = ++focusCheckId;
+    nextTick(() => {
+      if (checkId !== focusCheckId) return;
+
+      if (isFocusWithin(document.activeElement)) {
+        focused.value = true;
+        return;
+      }
+
+      focused.value = false;
+      startCloseDelay();
+    });
+  }
 
   const { startOpenDelay, startCloseDelay } = useDelay(props, (to) => {
     if (to) {
@@ -137,12 +173,12 @@ export function useActiveEvent(
       active.value = !active.value;
     },
     onFocus: (e: FocusEvent) => {
+      focusCheckId++;
       focused.value = true;
       startOpenDelay();
     },
     onBlur: (e: FocusEvent) => {
-      focused.value = false;
-      startCloseDelay();
+      updateFocusState(e);
     },
   };
 
@@ -176,6 +212,16 @@ export function useActiveEvent(
         hovered.value = false;
         if (pinned.value) return;
         startCloseDelay();
+      };
+    }
+
+    if (isOpenFocus.value) {
+      events.onFocusin = (e: Event) => {
+        focusCheckId++;
+        focused.value = true;
+      };
+      events.onFocusout = (e: Event) => {
+        updateFocusState(e as FocusEvent);
       };
     }
 
