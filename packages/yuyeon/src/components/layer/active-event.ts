@@ -93,15 +93,14 @@ export function useActiveEvent(
   const focused = shallowRef(false);
 
   const { startOpenDelay, startCloseDelay } = useDelay(props, (to) => {
-    if (
-      !to &&
-      props.openOnHover &&
+    if (to) {
+      active.value = true;
+    } else if (
       !hovered.value &&
+      !focused.value &&
       children.value.length === 0
     ) {
       active.value = false;
-    } else if (to) {
-      active.value = true;
     }
   });
 
@@ -138,9 +137,11 @@ export function useActiveEvent(
       active.value = !active.value;
     },
     onFocus: (e: FocusEvent) => {
+      focused.value = true;
       startOpenDelay();
     },
     onBlur: (e: FocusEvent) => {
+      focused.value = false;
       startCloseDelay();
     },
   };
@@ -153,6 +154,7 @@ export function useActiveEvent(
     }
     if (isOpenFocus.value) {
       events.onFocus = eventCatalog.onFocus;
+      events.onBlur = eventCatalog.onBlur;
     }
     if (props.openOnHover) {
       events.onMouseenter = eventCatalog.onMouseenter;
