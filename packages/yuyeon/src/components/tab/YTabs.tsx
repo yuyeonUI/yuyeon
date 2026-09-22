@@ -5,9 +5,9 @@ import { useRender } from '@/composables/component';
 import { useResizeObserver } from '@/composables/resize-observer';
 import { defineComponent, propsFactory } from '@/util/component';
 
-import { YTab } from './YTab';
 import { Y_TABS_KEY } from './shared';
-import { YTabPropItem } from './types';
+import type { YTabPropItem } from './types';
+import { YTab } from './YTab';
 
 import './YTabs.scss';
 
