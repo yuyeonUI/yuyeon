@@ -28,6 +28,9 @@ type BaseEvent = {
   onClick: (e: Event) => void;
   onFocus: (e: FocusEvent) => void;
   onBlur: (e: FocusEvent) => void;
+  onPointerdown: (e: PointerEvent) => void;
+  onPointerup: (e: PointerEvent) => void;
+  onPointercancel: (e: PointerEvent) => void;
   onMouseenter: (e: Event) => void;
   onMouseleave: (e: Event) => void;
 };
@@ -98,6 +101,7 @@ export function useActiveEvent(
   const hovered = shallowRef(false);
   const focused = shallowRef(false);
   let focusCheckId = 0;
+  let pointerDown = false;
 
   function isFocusWithin(target: EventTarget | null | undefined) {
     if (!(target instanceof Node)) return false;
@@ -146,8 +150,11 @@ export function useActiveEvent(
 
   const isOpenClick = computed(
     () =>
-      props.openOnClick ||
-      (props.openOnClick == null && !props.openOnHover && !isOpenFocus.value),
+      props.openOnClickBase !== false &&
+      (props.openOnClick ||
+        (props.openOnClick == null &&
+          !props.openOnHover &&
+          !isOpenFocus.value)),
   );
 
   const eventCatalog = {
@@ -161,8 +168,9 @@ export function useActiveEvent(
       startCloseDelay();
     },
     onClick: (e: Event) => {
+      if (!isOpenClick.value || props.disabled) return;
+
       e.stopPropagation();
-      if (props.disabled) return;
       if (isOpenClick.value && props.openOnHover) {
         pinned.value = !pinned.value;
         if (!active.value) active.value = true;
@@ -180,6 +188,15 @@ export function useActiveEvent(
     onBlur: (e: FocusEvent) => {
       updateFocusState(e);
     },
+    onPointerdown: (e: PointerEvent) => {
+      pointerDown = true;
+    },
+    onPointerup: (e: PointerEvent) => {
+      pointerDown = false;
+    },
+    onPointercancel: (e: PointerEvent) => {
+      pointerDown = false;
+    },
   };
 
   const baseEvents = computed(() => {
@@ -189,8 +206,18 @@ export function useActiveEvent(
       events.onClick = eventCatalog.onClick;
     }
     if (isOpenFocus.value) {
-      events.onFocus = eventCatalog.onFocus;
+      events.onFocus = (e: FocusEvent) => {
+        if (pointerDown) {
+          pointerDown = false;
+          return;
+        }
+
+        eventCatalog.onFocus(e);
+      };
       events.onBlur = eventCatalog.onBlur;
+      events.onPointerdown = eventCatalog.onPointerdown;
+      events.onPointerup = eventCatalog.onPointerup;
+      events.onPointercancel = eventCatalog.onPointercancel;
     }
     if (props.openOnHover) {
       events.onMouseenter = eventCatalog.onMouseenter;
@@ -267,13 +294,18 @@ function _useActiveEventBinder(
   },
 ) {
   watch(
-    base,
-    (neo, old) => {
-      if (old && neo !== old) {
-        unbindActiveEvent(old);
+    [base, baseEvents],
+    ([neo, neoProps], oldValue) => {
+      const [old, oldProps] = oldValue ?? [];
+
+      if (old) {
+        unbindActiveEvent(old, oldProps);
       }
       if (neo) {
-        nextTick(() => bindActiveEvent(neo));
+        nextTick(() => {
+          if (neo !== base.value || neoProps !== baseEvents.value) return;
+          bindActiveEvent(neo, neoProps);
+        });
       }
     },
     { immediate: true },
