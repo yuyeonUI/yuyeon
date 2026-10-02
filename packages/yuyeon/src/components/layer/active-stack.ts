@@ -201,12 +201,10 @@ export function useActiveStack(
   }
 
   function pop(instance?: any) {
-    if (instance) {
+    if (instance !== undefined) {
       const index = children.value.findIndex((child) => child === instance);
-      if (index > -1) {
-        children.value.splice(index, 1);
-        return;
-      }
+      if (index > -1) children.value.splice(index, 1);
+      return;
     }
     children.value.pop();
   }
