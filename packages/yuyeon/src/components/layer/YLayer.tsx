@@ -198,18 +198,22 @@ export const YLayer = defineComponent({
       props,
       { active, pinned, rootEl: root$, shouldClose },
     );
-    const { hovered, focused, baseEvents, contentEvents } = useActiveEvent(
-      props,
-      {
-        active,
-        pinned,
-        children,
-        base,
-        finish,
-        baseSlotEl: baseFromSlotEl,
-        content: content$,
-      },
-    );
+    const {
+      hovered,
+      focused,
+      baseEvents,
+      contentEvents,
+      cancelOpenDelay,
+      suppressNextFocusOpen,
+    } = useActiveEvent(props, {
+      active,
+      pinned,
+      children,
+      base,
+      finish,
+      baseSlotEl: baseFromSlotEl,
+      content: content$,
+    });
     // Render timing
     const { lazyValue, onAfterUpdate } = useLazy(toRef(props, 'eager'), active);
 
@@ -373,6 +377,8 @@ export const YLayer = defineComponent({
       children,
       parent,
       relayId,
+      cancelOpenDelay,
+      suppressNextFocusOpen,
     });
 
     useRender(() => {

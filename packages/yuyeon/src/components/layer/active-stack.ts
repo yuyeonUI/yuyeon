@@ -29,6 +29,8 @@ interface YLayerExposed {
   baseEl?: any;
   modal?: boolean;
   preventCloseBubble?: boolean;
+  cancelOpenDelay?: () => void;
+  suppressNextFocusOpen?: () => void;
 }
 
 interface ActiveStackProps {
@@ -78,7 +80,10 @@ function focusBaseIfContentFocused(vm: ComponentInternalInstance) {
   }
 
   const base = unref(exposed?.baseEl) as HTMLElement | undefined;
-  base?.focus();
+  if (base) {
+    exposed?.suppressNextFocusOpen?.();
+    base.focus();
+  }
 }
 
 function ensureKeydownListener() {
@@ -151,6 +156,7 @@ export function useActiveStack(
         parent?.push(vm);
         pushActiveLayer(vm, () => unref(rootEl), {
           close: () => {
+            exposed()?.cancelOpenDelay?.();
             active.value = false;
             pinned.value = false;
           },
@@ -211,6 +217,7 @@ export function useActiveStack(
 
   function clear() {
     if (unref(exposed()?.modal)) return;
+    exposed()?.cancelOpenDelay?.();
     active.value = false;
     pinned.value = false;
   }

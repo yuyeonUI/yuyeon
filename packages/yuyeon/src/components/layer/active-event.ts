@@ -102,6 +102,7 @@ export function useActiveEvent(
   const focused = shallowRef(false);
   let focusCheckId = 0;
   let pointerDown = false;
+  let suppressFocusOpen = false;
 
   function isFocusWithin(target: EventTarget | null | undefined) {
     if (!(target instanceof Node)) return false;
@@ -132,17 +133,31 @@ export function useActiveEvent(
     });
   }
 
-  const { startOpenDelay, startCloseDelay } = useDelay(props, (to) => {
-    if (to) {
-      active.value = true;
-    } else if (
-      !hovered.value &&
-      !focused.value &&
-      children.value.length === 0
-    ) {
-      active.value = false;
-    }
+  const { startOpenDelay, startCloseDelay, cancelOpenDelay } = useDelay(
+    props,
+    (to) => {
+      if (to) {
+        active.value = true;
+      } else if (
+        !hovered.value &&
+        !focused.value &&
+        children.value.length === 0
+      ) {
+        active.value = false;
+      }
+    },
+  );
+
+  watch(active, (to) => {
+    if (!to) cancelOpenDelay();
   });
+
+  function suppressNextFocusOpen() {
+    suppressFocusOpen = true;
+    nextTick(() => {
+      suppressFocusOpen = false;
+    });
+  }
 
   const isOpenFocus = computed(
     () => props.openOnFocus || (props.openOnFocus == null && props.openOnHover),
@@ -181,6 +196,11 @@ export function useActiveEvent(
       active.value = !active.value;
     },
     onFocus: (e: FocusEvent) => {
+      if (suppressFocusOpen) {
+        suppressFocusOpen = false;
+        return;
+      }
+
       focusCheckId++;
       focused.value = true;
       startOpenDelay();
@@ -279,7 +299,14 @@ export function useActiveEvent(
     { immediate: true, flush: 'post' },
   );
 
-  return { hovered, focused, baseEvents, contentEvents };
+  return {
+    hovered,
+    focused,
+    baseEvents,
+    contentEvents,
+    cancelOpenDelay,
+    suppressNextFocusOpen,
+  };
 }
 
 function _useActiveEventBinder(
