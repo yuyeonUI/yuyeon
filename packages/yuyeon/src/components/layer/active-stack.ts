@@ -8,6 +8,8 @@ import {
   provide,
   type Ref,
   ref,
+  shallowRef,
+  triggerRef,
   unref,
   watch,
 } from 'vue';
@@ -144,7 +146,7 @@ export function useActiveStack(
   },
 ) {
   const parent = inject(YUYEON_ACTIVE_STACK_KEY, null);
-  const children = ref<any[]>([]);
+  const children = shallowRef<ComponentInternalInstance[]>([]);
   const vm = getCurrentInstance()!;
   const relayId = ref<number>();
   let relayHandle: ReturnType<typeof registerRelay> | null = null;
@@ -202,17 +204,21 @@ export function useActiveStack(
     return vm.exposed as YLayerExposed | undefined;
   }
 
-  function push(instance: any) {
+  function push(instance: ComponentInternalInstance) {
     children.value.push(instance);
+    triggerRef(children);
   }
 
-  function pop(instance?: any) {
+  function pop(instance?: ComponentInternalInstance) {
     if (instance !== undefined) {
       const index = children.value.findIndex((child) => child === instance);
-      if (index > -1) children.value.splice(index, 1);
+      if (index > -1) {
+        children.value.splice(index, 1);
+        triggerRef(children);
+      }
       return;
     }
-    children.value.pop();
+    if (children.value.pop()) triggerRef(children);
   }
 
   function clear() {

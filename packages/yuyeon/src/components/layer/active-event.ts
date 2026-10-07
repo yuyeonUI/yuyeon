@@ -68,7 +68,7 @@ export const pressContentPropsOptions = propsFactory(
     },
     contentProps: {
       type: Object as PropType<Record<string, any>>,
-    }
+    },
   },
   'YLayer.content',
 );
@@ -90,7 +90,7 @@ export function useActiveEvent(
   }: {
     active: Ref<boolean>;
     pinned: Ref<boolean>;
-    children: Ref<HTMLElement[]>;
+    children: Ref<ComponentInternalInstance[]>;
     base: Ref<any>;
     finish: Ref<boolean>;
     baseSlotEl: Ref<HTMLElement | null | undefined>;

@@ -59,6 +59,7 @@ export const pressYDialogPropsOptions = propsFactory(
         scrim: true,
         openOnClick: true,
         scrollStrategy: null,
+        preventCloseBubble: true,
       }),
       ['offset', 'classes'],
     ),
