@@ -59,6 +59,7 @@ export const pressYDialogPropsOptions = propsFactory(
         scrim: true,
         openOnClick: true,
         scrollStrategy: null,
+        preventCloseBubble: true,
       }),
       ['offset', 'classes'],
     ),
@@ -299,6 +300,10 @@ export const YDialog = defineComponent({
             'contentStyles',
             'contentProps',
           ])}
+          closeClickScrim={
+            props.persistent ? false : (props.closeClickScrim ?? true)
+          }
+          closeOnEscape={props.persistent ? false : props.closeOnEscape}
           onAfterEnter={onAfterEnter}
           onAfterLeave={onAfterLeave}
         >

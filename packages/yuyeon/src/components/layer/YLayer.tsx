@@ -34,7 +34,12 @@ import {
   ComplementClick,
   type ComplementClickBindingOptions,
 } from '@/directives/complement-click';
-import { bindClasses, defineComponent, getUid, propsFactory } from '@/util/component';
+import {
+  bindClasses,
+  defineComponent,
+  getUid,
+  propsFactory,
+} from '@/util/component';
 
 import { pressBasePropsOptions, useBase } from './base';
 import { BASE_Z_INDEX } from './relay-stack';
@@ -126,7 +131,9 @@ export const pressYLayerProps = propsFactory(
     // for a11y
     contentId: String as PropType<string>,
     baseAriaAttr: {
-      type: String as PropType<'describedby' | 'labelledby' | 'controls' | undefined>,
+      type: String as PropType<
+        'describedby' | 'labelledby' | 'controls' | undefined
+      >,
       default: undefined,
     },
     role: String as PropType<string>,
@@ -191,17 +198,22 @@ export const YLayer = defineComponent({
       props,
       { active, pinned, rootEl: root$, shouldClose },
     );
-    const { hovered, focused, baseEvents, contentEvents } = useActiveEvent(
-      props,
-      {
-        active,
-        pinned,
-        children,
-        base,
-        finish,
-        baseSlotEl: baseFromSlotEl,
-      },
-    );
+    const {
+      hovered,
+      focused,
+      baseEvents,
+      contentEvents,
+      cancelOpenDelay,
+      suppressNextFocusOpen,
+    } = useActiveEvent(props, {
+      active,
+      pinned,
+      children,
+      base,
+      finish,
+      baseSlotEl: baseFromSlotEl,
+      content: content$,
+    });
     // Render timing
     const { lazyValue, onAfterUpdate } = useLazy(toRef(props, 'eager'), active);
 
@@ -287,6 +299,7 @@ export const YLayer = defineComponent({
     });
 
     function onAfterEnter() {
+      if (!active.value || finish.value) return;
       finish.value = true;
       emit('afterEnter');
     }
@@ -364,6 +377,8 @@ export const YLayer = defineComponent({
       children,
       parent,
       relayId,
+      cancelOpenDelay,
+      suppressNextFocusOpen,
     });
 
     useRender(() => {
@@ -433,10 +448,11 @@ export const YLayer = defineComponent({
                   )}
                 </Transition>
                 <PolyTransition
+                  {...polyTransitionBindProps.value}
                   onAfterEnter={onAfterEnter}
                   onAfterLeave={onAfterLeave}
                   appear
-                  {...polyTransitionBindProps.value}
+                  persisted
                 >
                   <div
                     ref={content$}

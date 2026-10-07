@@ -26,8 +26,13 @@ export function useDelay(props: any, callback?: (active: boolean) => void) {
     });
   };
 
+  function cancelOpenDelay() {
+    clearDelay('openDelay');
+  }
+
   return {
     startOpenDelay: generateDelay('openDelay'),
     startCloseDelay: generateDelay('closeDelay'),
+    cancelOpenDelay,
   };
 }

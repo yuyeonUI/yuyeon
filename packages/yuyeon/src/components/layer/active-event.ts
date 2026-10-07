@@ -28,6 +28,9 @@ type BaseEvent = {
   onClick: (e: Event) => void;
   onFocus: (e: FocusEvent) => void;
   onBlur: (e: FocusEvent) => void;
+  onPointerdown: (e: PointerEvent) => void;
+  onPointerup: (e: PointerEvent) => void;
+  onPointercancel: (e: PointerEvent) => void;
   onMouseenter: (e: Event) => void;
   onMouseleave: (e: Event) => void;
 };
@@ -50,6 +53,10 @@ export const pressActiveEventProps = propsFactory(
       type: Boolean as PropType<boolean>,
       default: undefined,
     },
+    closeOnEscape: {
+      type: Boolean as PropType<boolean>,
+      default: true,
+    },
   },
   'YLayer.active-event',
 );
@@ -61,7 +68,7 @@ export const pressContentPropsOptions = propsFactory(
     },
     contentProps: {
       type: Object as PropType<Record<string, any>>,
-    }
+    },
   },
   'YLayer.content',
 );
@@ -79,31 +86,78 @@ export function useActiveEvent(
     base,
     finish,
     baseSlotEl,
+    content,
   }: {
     active: Ref<boolean>;
     pinned: Ref<boolean>;
-    children: Ref<HTMLElement[]>;
+    children: Ref<ComponentInternalInstance[]>;
     base: Ref<any>;
     finish: Ref<boolean>;
     baseSlotEl: Ref<HTMLElement | null | undefined>;
+    content: Ref<HTMLElement | undefined>;
   },
 ) {
   const vm = getCurrentInstance()!;
   const hovered = shallowRef(false);
   const focused = shallowRef(false);
+  let focusCheckId = 0;
+  let pointerDown = false;
+  let suppressFocusOpen = false;
 
-  const { startOpenDelay, startCloseDelay } = useDelay(props, (to) => {
-    if (
-      !to &&
-      props.openOnHover &&
-      !hovered.value &&
-      children.value.length === 0
-    ) {
-      active.value = false;
-    } else if (to) {
-      active.value = true;
+  function isFocusWithin(target: EventTarget | null | undefined) {
+    if (!(target instanceof Node)) return false;
+
+    return [base.value, baseSlotEl.value, content.value].some((el) => {
+      return el instanceof Node && el.contains(target);
+    });
+  }
+
+  function updateFocusState(e: FocusEvent) {
+    if (isFocusWithin(e.relatedTarget)) {
+      focusCheckId++;
+      focused.value = true;
+      return;
     }
+
+    const checkId = ++focusCheckId;
+    nextTick(() => {
+      if (checkId !== focusCheckId) return;
+
+      if (isFocusWithin(document.activeElement)) {
+        focused.value = true;
+        return;
+      }
+
+      focused.value = false;
+      startCloseDelay();
+    });
+  }
+
+  const { startOpenDelay, startCloseDelay, cancelOpenDelay } = useDelay(
+    props,
+    (to) => {
+      if (to) {
+        active.value = true;
+      } else if (
+        !hovered.value &&
+        !focused.value &&
+        children.value.length === 0
+      ) {
+        active.value = false;
+      }
+    },
+  );
+
+  watch(active, (to) => {
+    if (!to) cancelOpenDelay();
   });
+
+  function suppressNextFocusOpen() {
+    suppressFocusOpen = true;
+    nextTick(() => {
+      suppressFocusOpen = false;
+    });
+  }
 
   const isOpenFocus = computed(
     () => props.openOnFocus || (props.openOnFocus == null && props.openOnHover),
@@ -111,8 +165,11 @@ export function useActiveEvent(
 
   const isOpenClick = computed(
     () =>
-      props.openOnClick ||
-      (props.openOnClick == null && !props.openOnHover && !isOpenFocus.value),
+      props.openOnClickBase !== false &&
+      (props.openOnClick ||
+        (props.openOnClick == null &&
+          !props.openOnHover &&
+          !isOpenFocus.value)),
   );
 
   const eventCatalog = {
@@ -126,8 +183,9 @@ export function useActiveEvent(
       startCloseDelay();
     },
     onClick: (e: Event) => {
+      if (!isOpenClick.value || props.disabled) return;
+
       e.stopPropagation();
-      if (props.disabled) return;
       if (isOpenClick.value && props.openOnHover) {
         pinned.value = !pinned.value;
         if (!active.value) active.value = true;
@@ -138,10 +196,26 @@ export function useActiveEvent(
       active.value = !active.value;
     },
     onFocus: (e: FocusEvent) => {
+      if (suppressFocusOpen) {
+        suppressFocusOpen = false;
+        return;
+      }
+
+      focusCheckId++;
+      focused.value = true;
       startOpenDelay();
     },
     onBlur: (e: FocusEvent) => {
-      startCloseDelay();
+      updateFocusState(e);
+    },
+    onPointerdown: (e: PointerEvent) => {
+      pointerDown = true;
+    },
+    onPointerup: (e: PointerEvent) => {
+      pointerDown = false;
+    },
+    onPointercancel: (e: PointerEvent) => {
+      pointerDown = false;
     },
   };
 
@@ -152,7 +226,18 @@ export function useActiveEvent(
       events.onClick = eventCatalog.onClick;
     }
     if (isOpenFocus.value) {
-      events.onFocus = eventCatalog.onFocus;
+      events.onFocus = (e: FocusEvent) => {
+        if (pointerDown) {
+          pointerDown = false;
+          return;
+        }
+
+        eventCatalog.onFocus(e);
+      };
+      events.onBlur = eventCatalog.onBlur;
+      events.onPointerdown = eventCatalog.onPointerdown;
+      events.onPointerup = eventCatalog.onPointerup;
+      events.onPointercancel = eventCatalog.onPointercancel;
     }
     if (props.openOnHover) {
       events.onMouseenter = eventCatalog.onMouseenter;
@@ -174,6 +259,16 @@ export function useActiveEvent(
         hovered.value = false;
         if (pinned.value) return;
         startCloseDelay();
+      };
+    }
+
+    if (isOpenFocus.value) {
+      events.onFocusin = (e: Event) => {
+        focusCheckId++;
+        focused.value = true;
+      };
+      events.onFocusout = (e: Event) => {
+        updateFocusState(e as FocusEvent);
       };
     }
 
@@ -204,7 +299,14 @@ export function useActiveEvent(
     { immediate: true, flush: 'post' },
   );
 
-  return { hovered, focused, baseEvents, contentEvents };
+  return {
+    hovered,
+    focused,
+    baseEvents,
+    contentEvents,
+    cancelOpenDelay,
+    suppressNextFocusOpen,
+  };
 }
 
 function _useActiveEventBinder(
@@ -219,13 +321,18 @@ function _useActiveEventBinder(
   },
 ) {
   watch(
-    base,
-    (neo, old) => {
-      if (old && neo !== old) {
-        unbindActiveEvent(old);
+    [base, baseEvents],
+    ([neo, neoProps], oldValue) => {
+      const [old, oldProps] = oldValue ?? [];
+
+      if (old) {
+        unbindActiveEvent(old, oldProps);
       }
       if (neo) {
-        nextTick(() => bindActiveEvent(neo));
+        nextTick(() => {
+          if (neo !== base.value || neoProps !== baseEvents.value) return;
+          bindActiveEvent(neo, neoProps);
+        });
       }
     },
     { immediate: true },

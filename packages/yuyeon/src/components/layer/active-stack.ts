@@ -8,6 +8,8 @@ import {
   provide,
   type Ref,
   ref,
+  shallowRef,
+  triggerRef,
   unref,
   watch,
 } from 'vue';
@@ -29,20 +31,84 @@ interface YLayerExposed {
   baseEl?: any;
   modal?: boolean;
   preventCloseBubble?: boolean;
+  cancelOpenDelay?: () => void;
+  suppressNextFocusOpen?: () => void;
 }
 
 interface ActiveStackProps {
   relayStack?: boolean;
   openOnHover: boolean;
+  closeOnEscape: boolean;
 }
 
-const activeLayers: ComponentInternalInstance[] = [];
+interface ActiveLayer {
+  vm: ComponentInternalInstance;
+  close: () => void;
+  closeOnEscape: () => boolean;
+  shouldClose: (e?: Event) => boolean;
+}
+
+const activeLayers: ActiveLayer[] = [];
+let listening = false;
+
+function handleGlobalKeydown(e: KeyboardEvent) {
+  if (e.key !== 'Escape' || e.defaultPrevented) return;
+
+  const topLayer = activeLayers[activeLayers.length - 1];
+  if (!topLayer) return;
+
+  const canClose = topLayer.closeOnEscape() && topLayer.shouldClose(e);
+
+  // Consume Escape for the top layer even when it is persistent, so an
+  // underlying layer cannot react to the same key press.
+  e.preventDefault();
+  e.stopPropagation();
+
+  if (canClose) {
+    focusBaseIfContentFocused(topLayer.vm);
+    topLayer.close();
+  }
+}
+
+function focusBaseIfContentFocused(vm: ComponentInternalInstance) {
+  if (typeof document === 'undefined') return;
+
+  const exposed = vm.exposed as YLayerExposed | undefined;
+  const content = unref(exposed?.content$) as Element | undefined;
+  const activeElement = document.activeElement;
+
+  if (!content || !activeElement || !content.contains(activeElement)) {
+    return;
+  }
+
+  const base = unref(exposed?.baseEl) as HTMLElement | undefined;
+  if (base) {
+    exposed?.suppressNextFocusOpen?.();
+    base.focus();
+  }
+}
+
+function ensureKeydownListener() {
+  if (listening || typeof document === 'undefined') return;
+
+  document.addEventListener('keydown', handleGlobalKeydown);
+  listening = true;
+}
+
+function teardownKeydownListener() {
+  if (!listening || typeof document === 'undefined') return;
+
+  document.removeEventListener('keydown', handleGlobalKeydown);
+  listening = false;
+}
 
 function pushActiveLayer(
   vm: ComponentInternalInstance,
   layerEl: () => Element | null | undefined,
+  layer: Omit<ActiveLayer, 'vm'>,
 ) {
-  activeLayers.push(vm);
+  activeLayers.push({ vm, ...layer });
+  ensureKeydownListener();
   nextTick(() => {
     const el = layerEl();
     if (el?.parentElement) {
@@ -52,8 +118,13 @@ function pushActiveLayer(
 }
 
 function popActiveLayer(vm: ComponentInternalInstance) {
-  const idx = activeLayers.indexOf(vm);
-  if (idx > -1) activeLayers.splice(idx, 1);
+  const idx = activeLayers.findIndex((layer) => layer.vm === vm);
+  if (idx > -1) {
+    activeLayers.splice(idx, 1);
+  }
+  if (activeLayers.length === 0) {
+    teardownKeydownListener();
+  }
 }
 
 /*
@@ -75,7 +146,7 @@ export function useActiveStack(
   },
 ) {
   const parent = inject(YUYEON_ACTIVE_STACK_KEY, null);
-  const children = ref<any[]>([]);
+  const children = shallowRef<ComponentInternalInstance[]>([]);
   const vm = getCurrentInstance()!;
   const relayId = ref<number>();
   let relayHandle: ReturnType<typeof registerRelay> | null = null;
@@ -85,7 +156,15 @@ export function useActiveStack(
     (neo) => {
       if (neo) {
         parent?.push(vm);
-        pushActiveLayer(vm, () => unref(rootEl));
+        pushActiveLayer(vm, () => unref(rootEl), {
+          close: () => {
+            exposed()?.cancelOpenDelay?.();
+            active.value = false;
+            pinned.value = false;
+          },
+          closeOnEscape: () => props.closeOnEscape,
+          shouldClose,
+        });
         if (props.relayStack !== false) {
           relayHandle = registerRelay({
             els: () => {
@@ -117,29 +196,34 @@ export function useActiveStack(
   onBeforeUnmount(() => {
     relayHandle?.unregister();
     relayHandle = null;
+    popActiveLayer(vm);
+    parent?.pop(vm);
   });
 
   function exposed(): YLayerExposed | undefined {
     return vm.exposed as YLayerExposed | undefined;
   }
 
-  function push(instance: any) {
+  function push(instance: ComponentInternalInstance) {
     children.value.push(instance);
+    triggerRef(children);
   }
 
-  function pop(instance?: any) {
-    if (instance) {
+  function pop(instance?: ComponentInternalInstance) {
+    if (instance !== undefined) {
       const index = children.value.findIndex((child) => child === instance);
       if (index > -1) {
         children.value.splice(index, 1);
-        return;
+        triggerRef(children);
       }
+      return;
     }
-    children.value.pop();
+    if (children.value.pop()) triggerRef(children);
   }
 
   function clear() {
     if (unref(exposed()?.modal)) return;
+    exposed()?.cancelOpenDelay?.();
     active.value = false;
     pinned.value = false;
   }

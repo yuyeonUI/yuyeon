@@ -17,33 +17,46 @@ import { YPlate } from '../plate';
 
 import './YSnackbar.scss';
 
+function snackbarTransform(transform: string | null, translateY: string) {
+  const baseTransform = (transform ?? '')
+    .replace(/\bnone\b|\btranslateY\([^)]*\)/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  return [baseTransform, `translateY(${translateY})`].filter(Boolean).join(' ');
+}
+
 const defaultSnackbarTransition = {
   name: 'y-snackbar',
   onBeforeEnter: (direction: 'top' | 'bottom') => (el: HTMLElement) => {
-    if (!el.getAttribute('data-transform')) {
+    if (!el.hasAttribute('data-transform')) {
       const cache = el.style.getPropertyValue('transform');
       el.setAttribute('data-transform', cache);
       el.setAttribute('data-direction', direction);
       el.style.setProperty(
         'transform',
-        `${cache.replace(/translateY(.+)/, '')} translateY(${direction === 'top' ? '-' : ''}40px)`,
+        snackbarTransform(cache, `${direction === 'top' ? '-' : ''}40px`),
       );
     }
   },
   onEnter(el: HTMLElement, done: () => void) {
     const cache = el.getAttribute('data-transform');
     const direction = el.getAttribute('data-direction');
-    if (!direction || !cache) {
+    if (!direction || cache === null) {
+      done();
       return;
     }
     animate(
       el,
       [
         {
-          transform: `${cache.replace(/translateY(.+)/, `translateY(${direction === 'top' ? '-' : ''}40px)`)}`,
+          transform: snackbarTransform(
+            cache,
+            `${direction === 'top' ? '-' : ''}40px`,
+          ),
         },
         {
-          transform: `${cache.replace(/translateY(.+)/, 'translateY(0)')}`,
+          transform: snackbarTransform(cache, '0'),
         },
       ],
       {
@@ -54,7 +67,7 @@ const defaultSnackbarTransition = {
     ).then(() => {
       el.removeAttribute('data-transform');
       el.removeAttribute('data-direction');
-      el.style.setProperty('transform', '');
+      el.style.setProperty('transform', cache);
       done();
     });
   },
@@ -149,10 +162,12 @@ export const YSnackbar = defineComponent({
     const proxyTransition = computed(() => {
       const { transition, position } = props;
       if (transition?.name === 'y-snackbar') {
-        transition.onBeforeEnter = defaultSnackbarTransition.onBeforeEnter(
-          position.includes('top') ? 'top' : 'bottom',
-        );
-        return { ...transition };
+        return {
+          ...transition,
+          onBeforeEnter: defaultSnackbarTransition.onBeforeEnter(
+            position.includes('top') ? 'top' : 'bottom',
+          ),
+        };
       }
       return props.transition;
     });

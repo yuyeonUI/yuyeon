@@ -234,6 +234,10 @@ export const YDrawer = defineComponent({
             'contentStyles',
             'transition',
           ])}
+          closeClickScrim={
+            props.persistent ? false : props.closeClickScrim
+          }
+          closeOnEscape={props.persistent ? false : props.closeOnEscape}
           onAfterEnter={onAfterEnter}
           onAfterLeave={onAfterLeave}
         >
