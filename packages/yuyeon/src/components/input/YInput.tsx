@@ -179,6 +179,9 @@ export const YInput = defineComponent({
       (neo) => {
         inValue.value = neo;
       },
+      {
+        immediate: true,
+      },
     );
 
     watch(
