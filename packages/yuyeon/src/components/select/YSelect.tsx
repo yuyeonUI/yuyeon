@@ -166,6 +166,7 @@ export const YSelect = defineComponent<
     const extraMenuProps = computed(() => {
       return {
         ...props.menuProps,
+        disabled: props.disabled || props.menuProps?.disabled,
         preventCloseBubble: true,
       };
     });
