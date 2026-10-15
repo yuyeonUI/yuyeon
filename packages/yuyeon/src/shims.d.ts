@@ -28,6 +28,7 @@ import type {
   YIpv4Field,
   YLayer,
   YList,
+  YListGroupHeader,
   YListItem,
   YMenu,
   YMonthPicker,
@@ -74,6 +75,7 @@ declare module 'vue' {
     YExpandHTransition: typeof YExpandHTransition;
     YDividePanel: typeof YDividePanel;
     YList: typeof YList;
+    YListGroupHeader: typeof YListGroupHeader;
     YListItem: typeof YListItem;
     YTreeView: typeof YTreeView;
     YTreeViewNode: typeof YTreeViewNode;

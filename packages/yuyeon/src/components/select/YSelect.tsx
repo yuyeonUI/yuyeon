@@ -32,9 +32,10 @@ import {
 import { getScrollParent } from '@/util/scroll';
 
 import { YCard } from '../card';
+import { YDivider } from '../divider';
 import { pressYFieldInputPropsOptions, YFieldInput } from '../field-input';
 import { YIcon, type YIconIconProp } from '../icon';
-import { YList, YListItem } from '../list';
+import { YList, YListGroupHeader, YListItem } from '../list';
 import { YMenu } from '../menu';
 
 import './YSelect.scss';
@@ -57,6 +58,9 @@ export const pressSelectPropsOptions = propsFactory(
     defaultSelect: Boolean,
     menuProps: {
       type: Object as PropType<YMenu['$props']>,
+    },
+    listItemProps: {
+      type: Object as PropType<any>,
     },
     ...pressListItemsPropsOptions(),
   },
@@ -134,6 +138,10 @@ export const YSelect = defineComponent<
 
     const { items, toRefineItems, toEmitItems } = useItems(props);
     const { t } = useI18n();
+    function isNonSelectableItem(item: ListItem) {
+      return item.raw?.type === 'header' || item.raw?.type === 'divider';
+    }
+
     const setOut = (v: any) => {
       const emitValue = toEmitItems(wrapInArray(v));
       return props.multiple ? emitValue : (emitValue[0] ?? null);
@@ -150,7 +158,10 @@ export const YSelect = defineComponent<
       const ret: ListItem<any>[] = [];
       for (const v of model.value) {
         const found = items.value.find((item) => {
-          return props.itemComparator(item.value, v.value);
+          return (
+            !isNonSelectableItem(item) &&
+            props.itemComparator(item.value, v.value)
+          );
         });
         if (found !== undefined) {
           ret.push(found);
@@ -343,6 +354,20 @@ export const YSelect = defineComponent<
                               {(items.value?.length ?? 0) > 0 ? (
                                 <YList ref={listRef}>
                                   {items.value.map((item) => {
+                                    if (item.raw?.type === 'divider') {
+                                      return withDirectives(
+                                        <YDivider />,
+                                        [[vShow, !item.hide]],
+                                      );
+                                    }
+                                    if (item.raw?.type === 'header') {
+                                      return withDirectives(
+                                        <YListGroupHeader>
+                                          {item.text}
+                                        </YListGroupHeader>,
+                                        [[vShow, !item.hide]],
+                                      );
+                                    }
                                     const itemProps = {
                                       item,
                                       selected: isSelected(item),
@@ -352,6 +377,7 @@ export const YSelect = defineComponent<
                                     };
                                     return withDirectives(
                                       <YListItem
+                                        {...props.listItemProps}
                                         onClick={(e) => onClickItem(item, e)}
                                         class={[
                                           {
@@ -429,7 +455,12 @@ export const YSelect = defineComponent<
           (Array.isArray(props.modelValue) && props.modelValue.length === 0)) &&
         items.value?.length
       ) {
-        select(items.value[0]);
+        const firstSelectableItem = items.value.find(
+          (item) => !isNonSelectableItem(item),
+        );
+        if (firstSelectableItem) {
+          select(firstSelectableItem);
+        }
       }
     });
 
