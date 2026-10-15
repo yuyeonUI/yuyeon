@@ -8,6 +8,7 @@ $button-disabled-background: #d3d3d3 !default;
   --y-button__color: var(--y-theme-primary);
   --y-button__text-color: var(--y-theme-on-primary);
   --y-button__disabled-background: #{$button-disabled-background};
+  --y-button__size: 48px;
 
   cursor: pointer;
   display: inline-flex;
@@ -106,13 +107,13 @@ $button-disabled-background: #d3d3d3 !default;
   }
 
   &--icon {
-    width: 48px;
-    height: 48px;
+    --y-button__size: 48px;
+    width: var(--y-button__size, 48px);
+    height: var(--y-button__size, 48px);
     border-radius: 50%;
 
     @at-root &.y-button--small {
-      width: 32px;
-      height: 32px;
+      --y-button__size: 32px;
 
       .y-button__content {
         padding: 4px;
@@ -120,8 +121,7 @@ $button-disabled-background: #d3d3d3 !default;
     }
 
     @at-root &.y-button--x-small {
-      width: 24px;
-      height: 24px;
+      --y-button__size: 24px;
 
       .y-button__content {
         padding: 4px;
@@ -133,5 +133,36 @@ $button-disabled-background: #d3d3d3 !default;
     display: flex;
     align-items: center;
     padding: 4px 8px;
+  }
+
+  &--tonal {
+    position: relative;
+    box-shadow: none;
+    --y-button__tonal-base: var(--y-theme-surface);
+
+    &:before {
+      opacity: 0.9;
+      background: color-mix(
+              in srgb,
+              var(--y-button__tonal-base) 90%,
+              var(--y-button__color)
+      );
+    }
+
+    &:not(:hover):before {
+      background: color-mix(in srgb, var(--y-button__tonal-base) 90%, currentColor);
+    }
+
+    &:hover:not(.y-button--loading)::before {
+      opacity: 0.5;
+    }
+
+    &:hover:active::before {
+      opacity: 1;
+    }
+
+    .y-button__content {
+      position: relative;
+    }
   }
 }
