@@ -42,6 +42,9 @@ export function useSelectMenu(
 
   const extraMenuProps = computed(() => ({
     ...props.menuProps,
+    ...(props.openOnFocus === undefined
+      ? {}
+      : { openOnFocus: props.openOnFocus }),
     ...(options.openOnClickBase === undefined
       ? {}
       : { openOnClickBase: options.openOnClickBase }),

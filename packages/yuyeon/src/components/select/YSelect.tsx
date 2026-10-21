@@ -77,10 +77,19 @@ export const YSelect = defineComponent<
       isNonSelectableItem,
       select,
     });
-    const { menuRef, opened, baseEl, onBlur, renderMenu } =
+    const { menuRef, opened, baseEl, onBlur: onMenuBlur, renderMenu } =
       selectMenu;
 
     // Field
+
+    function onFocus() {
+      focused.value = true;
+    }
+
+    function onBlur(event: FocusEvent) {
+      focused.value = false;
+      onMenuBlur(event);
+    }
 
     function onKeydownDisplay(event: KeyboardEvent) {
       if (props.disabled) return;
@@ -102,6 +111,7 @@ export const YSelect = defineComponent<
           modelValue={model.value.map((v: any) => v.props.value).join(', ')}
           validationValue={model.rxValue}
           onKeydown:display={onKeydownDisplay}
+          onFocus={onFocus}
           onBlur={onBlur}
           readonly
           class={[

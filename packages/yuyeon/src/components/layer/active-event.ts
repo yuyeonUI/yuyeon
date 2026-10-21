@@ -26,8 +26,8 @@ interface ActiveEventProps {
 
 type BaseEvent = {
   onClick: (e: Event) => void;
-  onFocus: (e: FocusEvent) => void;
-  onBlur: (e: FocusEvent) => void;
+  onFocusin: (e: FocusEvent) => void;
+  onFocusout: (e: FocusEvent) => void;
   onPointerdown: (e: PointerEvent) => void;
   onPointerup: (e: PointerEvent) => void;
   onPointercancel: (e: PointerEvent) => void;
@@ -226,7 +226,7 @@ export function useActiveEvent(
       events.onClick = eventCatalog.onClick;
     }
     if (isOpenFocus.value) {
-      events.onFocus = (e: FocusEvent) => {
+      events.onFocusin = (e: FocusEvent) => {
         if (pointerDown) {
           pointerDown = false;
           return;
@@ -234,7 +234,7 @@ export function useActiveEvent(
 
         eventCatalog.onFocus(e);
       };
-      events.onBlur = eventCatalog.onBlur;
+      events.onFocusout = eventCatalog.onBlur;
       events.onPointerdown = eventCatalog.onPointerdown;
       events.onPointerup = eventCatalog.onPointerup;
       events.onPointercancel = eventCatalog.onPointercancel;

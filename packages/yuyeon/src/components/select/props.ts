@@ -19,6 +19,10 @@ export const pressSelectPropsOptions = propsFactory(
   {
     opened: Boolean as PropType<boolean>,
     closeOnBlur: Boolean as PropType<boolean>,
+    openOnFocus: {
+      type: Boolean as PropType<boolean>,
+      default: undefined,
+    },
     multiple: Boolean,
     itemComparator: {
       type: Function as PropType<ItemComparator>,
