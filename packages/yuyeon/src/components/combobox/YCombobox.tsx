@@ -11,7 +11,7 @@ import {
 
 import { useModelDuplex } from '@/composables/communication';
 import { useRender } from '@/composables/component';
-import { type ListItem, refineListItem } from '@/composables/list-items';
+import { type ListItem } from '@/composables/list-items';
 import { useSelectItems } from '@/composables/select-items';
 import { useSelectMenu } from '@/composables/select-menu';
 import { chooseProps, defineComponent } from '@/util/component';
@@ -52,9 +52,24 @@ export const YCombobox = defineComponent<
     'menu-prepend': any;
     'menu-append': any;
     'dropdown-icon': any;
-    item: { item: any; selected: boolean; select: () => void };
-    'item-leading': { item: any; selected: boolean; select: () => void };
-    'item-trailing': { item: any; selected: boolean; select: () => void };
+    item: {
+      item: any;
+      selected: boolean;
+      focused: boolean;
+      select: () => void;
+    };
+    'item-leading': {
+      item: any;
+      selected: boolean;
+      focused: boolean;
+      select: () => void;
+    };
+    'item-trailing': {
+      item: any;
+      selected: boolean;
+      focused: boolean;
+      select: () => void;
+    };
   }>,
   setup(props, { slots, attrs, expose, emit }) {
     const search = useModelDuplex(props, 'search', '');
@@ -234,17 +249,21 @@ export const YCombobox = defineComponent<
       preserveFocusOnItemMousedown: true,
     });
 
-    watch(navigableItems, () => {
-      activeIndex.value = -1;
-    });
-
     const { menuRef, opened, baseEl, onBlur, renderMenu } = selectMenu;
 
-    watch(opened, (isOpened) => {
-      if (!isOpened) {
-        activeIndex.value = -1;
-      }
+    watch(navigableItems, () => {
+      activeIndex.value =
+        opened.value && navigableItems.value.length > 0 ? 0 : -1;
     });
+
+    watch(
+      opened,
+      (isOpened) => {
+        activeIndex.value =
+          isOpened && navigableItems.value.length > 0 ? 0 : -1;
+      },
+      { flush: 'sync' },
+    );
 
     watchPostEffect(() => {
       const input = (fieldInputRef.value as any)?.input$ as
@@ -387,23 +406,13 @@ export const YCombobox = defineComponent<
         return;
       }
 
-      const itemToSelect = activeItem.value ?? navigableItems.value[0];
-      if (itemToSelect) {
-        event.preventDefault();
-        selectItem(itemToSelect, event);
-        if (!props.multiple) {
-          opened.value = false;
-        }
-        return;
-      }
+      const itemToSelect = activeItem.value;
+      if (!itemToSelect) return;
 
-      if (!props.readonly && searchText.value.trim()) {
-        event.preventDefault();
-        const customItem = refineListItem(props, searchText.value.trim());
-        selectItem(customItem, event);
-        if (!props.multiple) {
-          opened.value = false;
-        }
+      event.preventDefault();
+      selectItem(itemToSelect, event);
+      if (!props.multiple) {
+        opened.value = false;
       }
     }
 
@@ -478,6 +487,7 @@ export const YCombobox = defineComponent<
 
     expose({
       fieldInputRef,
+      focused,
       baseEl,
       opened,
       search,

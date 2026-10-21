@@ -20,7 +20,7 @@ export const pressYComboboxPropsOptions = propsFactory(
     /** Pixel spacing above the active item when it is scrolled into view. */
     activeOffset: {
       type: Number as PropType<number>,
-      default: 0,
+      default: 8,
     },
     filter: Function as PropType<ComboboxFilter>,
   },

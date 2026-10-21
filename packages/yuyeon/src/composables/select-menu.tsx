@@ -146,6 +146,9 @@ export function useSelectMenu(
           const itemProps = {
             item,
             selected: isSelected(item),
+            ...(options.focusedItem
+              ? { focused: options.focusedItem.value === item }
+              : {}),
             select: (event?: Event) => options.select(item, event),
           };
 
