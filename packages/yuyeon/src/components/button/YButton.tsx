@@ -31,6 +31,9 @@ export const pressYButtonProps = propsFactory(
     variation: {
       type: String as PropType<string>,
     },
+    tabindex: {
+      type: [Number, String] as PropType<number | string>,
+    },
     small: Boolean,
     icon: Boolean,
     size: [String, Number],
@@ -167,6 +170,7 @@ export const YButton = defineComponent({
           ]}
           href={props.disabled ? undefined : link.href.value}
           style={styles.value}
+          tabindex={props.tabindex}
           onClick={onClick}
           disabled={props.disabled ? true : undefined}
           v-plate-wave={!props.noWave && !props.loading}

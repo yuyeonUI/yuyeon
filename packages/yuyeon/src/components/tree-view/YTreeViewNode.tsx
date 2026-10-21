@@ -117,6 +117,9 @@ export const YTreeViewNode = defineComponent({
     });
 
     const imLeaf = computed(() => children.value.length < 1);
+    const rovingFocus = computed(
+      () => treeView.focusedKey.value === myKey.value,
+    );
 
     const searchLoading = computed(() => {
       return treeView.searchLoading.value;
@@ -220,21 +223,135 @@ export const YTreeViewNode = defineComponent({
       toggleActive(e);
     }
 
-    function onClickExpand(e: MouseEvent) {
-      e.stopPropagation();
-      const to = !expanded.value;
-      expanded.value = to;
-      treeView.updateExpanded(myKey.value, to);
-      treeView.emitExpanded();
-    }
-
-    function onClickSelect(e: MouseEvent) {
-      e.stopPropagation();
+    function toggleSelected() {
       if (disabledSelect.value) return;
       const to = !isChecked.value;
       selected.value = to;
       treeView.updateSelected(myKey.value, to);
       treeView.emitSelected();
+    }
+
+    function setExpanded(to: boolean) {
+      if (expanded.value === to) return;
+      expanded.value = to;
+      treeView.updateExpanded(myKey.value, to);
+      treeView.emitExpanded();
+    }
+
+    function onClickExpand(e: MouseEvent) {
+      e.stopPropagation();
+      setExpanded(!expanded.value);
+    }
+
+    function onFocusin(e: FocusEvent) {
+      if (
+        (e.target as HTMLElement).closest('[role="treeitem"]') !==
+        e.currentTarget
+      ) {
+        return;
+      }
+      treeView.focusedKey.value = myKey.value;
+    }
+
+    function getVisibleTreeItems() {
+      const root = treeView.root$.value;
+      if (!root) return [];
+
+      function isVisible(item: HTMLElement) {
+        if (item.closest('[aria-hidden="true"]')) return false;
+
+        let ancestor = item.parentElement?.closest<HTMLElement>(
+          '[role="treeitem"]',
+        );
+        while (ancestor && ancestor !== root) {
+          if (ancestor.getAttribute('aria-expanded') === 'false') return false;
+          ancestor = ancestor.parentElement?.closest<HTMLElement>(
+            '[role="treeitem"]',
+          );
+        }
+
+        return true;
+      }
+
+      return Array.from(
+        root.querySelectorAll<HTMLElement>('[role="treeitem"]'),
+      ).filter(
+        (item) =>
+          item.closest('.y-tree-view') === root &&
+          isVisible(item),
+      );
+    }
+
+    function onKeydown(e: KeyboardEvent) {
+      const currentItem = e.currentTarget as HTMLElement;
+      const treeItems = getVisibleTreeItems();
+      const currentIndex = treeItems.indexOf(currentItem);
+
+      switch (e.key) {
+        case 'ArrowDown':
+          e.preventDefault();
+          treeItems[currentIndex + 1]?.focus();
+          break;
+        case 'ArrowUp':
+          e.preventDefault();
+          treeItems[currentIndex - 1]?.focus();
+          break;
+        case 'ArrowRight': {
+          e.preventDefault();
+          if (leaves.value.length === 0) break;
+
+          if (!expanded.value) {
+            setExpanded(true);
+          } else {
+            currentItem
+              .querySelector<HTMLElement>(
+                ':scope > .y-tree-view-node__leaves > [role="treeitem"]',
+              )
+              ?.focus();
+          }
+          break;
+        }
+        case 'ArrowLeft': {
+          e.preventDefault();
+          if (expanded.value) {
+            setExpanded(false);
+          } else {
+            currentItem.parentElement
+              ?.closest<HTMLElement>('[role="treeitem"]')
+              ?.focus();
+          }
+          break;
+        }
+        case ' ':
+        case 'Space':
+        case 'Spacebar':
+        case 'Enter': {
+          const target = e.target as HTMLElement;
+          if (target.closest('button, [role="checkbox"]')) return;
+
+          const isSpace = e.key !== 'Enter';
+          e.preventDefault();
+
+          if (props.enableActive && props.enableSelect) {
+            isSpace ? toggleActive() : toggleSelected();
+          } else if (props.enableActive) {
+            toggleActive();
+          } else if (props.enableSelect) {
+            toggleSelected();
+          }
+
+          break;
+        }
+        default:
+          return;
+      }
+
+      e.stopPropagation();
+    }
+
+    function onClickSelect(e: MouseEvent) {
+      e.stopPropagation();
+      toggleSelected();
     }
 
     function onMouseenterContainer(e: MouseEvent) {
@@ -276,6 +393,10 @@ export const YTreeViewNode = defineComponent({
           class={classes.value}
           style={styles.value}
           role="treeitem"
+          tabindex={rovingFocus.value ? 0 : -1}
+          aria-expanded={leaves.value.length > 0 ? expanded.value : undefined}
+          onFocusin={onFocusin}
+          onKeydown={onKeydown}
           data-level={props.level}
         >
           <div
@@ -296,6 +417,7 @@ export const YTreeViewNode = defineComponent({
               <YButton
                 class={'y-tree-view-node__expand-icon'}
                 variation={'icon'}
+                tabindex={-1}
                 onClick={onClickExpand}
               >
                 {slots['expand-icon'] ? (
@@ -362,7 +484,11 @@ export const YTreeViewNode = defineComponent({
           {children.value.length > 0 && (
             <YExpandVTransition disabled={props.disableTransition}>
               {expanded.value && (
-                <div class={['y-tree-view-node__leaves']} role="tree">
+                <div
+                  class={['y-tree-view-node__leaves']}
+                  role="group"
+                  aria-hidden={!expanded.value}
+                >
                   {leaves.value.map((item: any) => {
                     return (
                       <YTreeNode
