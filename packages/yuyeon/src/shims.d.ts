@@ -7,6 +7,7 @@ import type {
   YCardBody,
   YCardFooter,
   YCardHeader,
+  YCombobox,
   YCheckbox,
   YChip,
   YDataTable,
@@ -65,6 +66,7 @@ declare module 'vue' {
     YCardBody: typeof YCardBody;
     YCardHeader: typeof YCardHeader;
     YCardFooter: typeof YCardFooter;
+    YCombobox: typeof YCombobox;
     YDialog: typeof YDialog;
     YLayer: typeof YLayer;
     YSnackbar: typeof YSnackbar;
