@@ -16,6 +16,7 @@ type SelectSlots = Record<string, any>;
 type UseSelectMenuOptions = {
   items: { value: ListItem[] };
   selections: { value: ListItem[] };
+  opened?: { value: boolean };
   visibleItems?: { value: ListItem[] };
   focusedItem?: { value: ListItem | null };
   searchLoading?: { value: boolean };
@@ -37,7 +38,7 @@ export function useSelectMenu(
 ) {
   const menuRef = ref<InstanceType<typeof YMenu>>();
   const listRef = ref<InstanceType<typeof YList>>();
-  const opened = useModelDuplex(props, 'opened');
+  const opened = options.opened ?? useModelDuplex(props, 'opened');
   const { t } = useI18n();
 
   const extraMenuProps = computed(() => ({
@@ -172,6 +173,8 @@ export function useSelectMenu(
               class={[
                 {
                   'y-list-item--active': isSelected(item),
+                  'y-list-item--focused':
+                    options.focusedItem?.value === item,
                   'y-combobox__item--focused':
                     options.focusedItem?.value === item,
                 },

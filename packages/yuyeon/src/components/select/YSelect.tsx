@@ -5,10 +5,12 @@ import {
   shallowRef,
 } from 'vue';
 
+import { useModelDuplex } from '@/composables/communication';
 import { useRender } from '@/composables/component';
 import type { ListItem } from '@/composables/list-items';
 import { useSelectItems } from '@/composables/select-items';
 import { useSelectMenu } from '@/composables/select-menu';
+import { useVirtualFocus } from '@/composables/virtual-focus';
 import { chooseProps, defineComponent } from '@/util/component';
 
 import { YFieldInput } from '../field-input';
@@ -52,13 +54,29 @@ export const YSelect = defineComponent<
     'menu-prepend': any;
     'menu-append': any;
     'dropdown-icon': any;
-    item: { item: any; selected: boolean; select: () => void };
-    'item-leading': { item: any; selected: boolean; select: () => void };
-    'item-trailing': { item: any; selected: boolean; select: () => void };
+    item: {
+      item: any;
+      selected: boolean;
+      focused: boolean;
+      select: () => void;
+    };
+    'item-leading': {
+      item: any;
+      selected: boolean;
+      focused: boolean;
+      select: () => void;
+    };
+    'item-trailing': {
+      item: any;
+      selected: boolean;
+      focused: boolean;
+      select: () => void;
+    };
   }>,
   setup(props, { slots, attrs, expose, emit }) {
     const fieldInputRef = ref<InstanceType<typeof YFieldInput>>();
     const focused = shallowRef(false);
+    const opened = useModelDuplex(props, 'opened');
     const selectItems = useSelectItems(props, fieldInputRef, emit);
     const {
       items,
@@ -70,14 +88,42 @@ export const YSelect = defineComponent<
       isNonSelectableItem,
       select,
     } = selectItems;
+
+    const virtualFocus = useVirtualFocus({
+      items,
+      opened,
+      inputRef: fieldInputRef,
+      isNonSelectableItem,
+      idPrefix: 'y-select',
+      hasCustomMenu: !!slots.menu,
+      autocomplete: () => 'none',
+    });
+    const {
+      activeIndex,
+      activeItem,
+      listId,
+      openOrMoveActiveItem,
+      resetActiveItem,
+      setActiveItem,
+    } = virtualFocus;
+
+    function selectItem(item: ListItem, event?: Event) {
+      setActiveItem(item);
+      select(item, event);
+    }
+
     const selectMenu = useSelectMenu(props, slots, {
       items,
       selections,
+      opened,
+      focusedItem: activeItem,
       isSelected,
       isNonSelectableItem,
-      select,
+      select: selectItem,
+      listId,
+      getItemId: listId ? (_item, index) => `${listId}-${index}` : undefined,
     });
-    const { menuRef, opened, baseEl, onBlur: onMenuBlur, renderMenu } =
+    const { menuRef, baseEl, onBlur: onMenuBlur, renderMenu } =
       selectMenu;
 
     // Field
@@ -93,8 +139,32 @@ export const YSelect = defineComponent<
 
     function onKeydownDisplay(event: KeyboardEvent) {
       if (props.disabled) return;
-      if (event.key === 'Enter' || event.key === ' ') {
-        opened.value = !opened.value;
+
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+        event.preventDefault();
+        openOrMoveActiveItem(event.key === 'ArrowDown' ? 1 : -1);
+        return;
+      }
+
+      if (event.key === 'Escape' && opened.value) {
+        event.preventDefault();
+        opened.value = false;
+        resetActiveItem();
+        return;
+      }
+
+      if (event.key !== 'Enter' && event.key !== ' ') return;
+      event.preventDefault();
+
+      if (!opened.value) {
+        opened.value = true;
+        return;
+      }
+
+      if (!activeItem.value) return;
+      selectItem(activeItem.value, event);
+      if (!props.multiple) {
+        opened.value = false;
       }
     }
 
@@ -174,6 +244,8 @@ export const YSelect = defineComponent<
       fieldInputRef,
       baseEl,
       opened,
+      activeIndex,
+      activeItem,
     });
 
     return {
@@ -184,6 +256,8 @@ export const YSelect = defineComponent<
       menuRef,
       baseEl,
       opened,
+      activeIndex,
+      activeItem,
     };
   },
 });

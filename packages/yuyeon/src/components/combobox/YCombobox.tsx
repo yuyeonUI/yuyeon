@@ -1,12 +1,10 @@
 import {
   computed,
-  getCurrentInstance,
   mergeProps,
   ref,
   type SlotsType,
   shallowRef,
   watch,
-  watchPostEffect,
 } from 'vue';
 
 import { useModelDuplex } from '@/composables/communication';
@@ -14,6 +12,7 @@ import { useRender } from '@/composables/component';
 import { type ListItem } from '@/composables/list-items';
 import { useSelectItems } from '@/composables/select-items';
 import { useSelectMenu } from '@/composables/select-menu';
+import { useVirtualFocus } from '@/composables/virtual-focus';
 import { chooseProps, defineComponent } from '@/util/component';
 
 import { YFieldInput } from '../field-input';
@@ -73,10 +72,10 @@ export const YCombobox = defineComponent<
   }>,
   setup(props, { slots, attrs, expose, emit }) {
     const search = useModelDuplex(props, 'search', '');
+    const opened = useModelDuplex(props, 'opened');
 
     const fieldInputRef = ref<InstanceType<typeof YFieldInput>>();
     const focused = shallowRef(false);
-    const activeIndex = ref(-1);
 
     const selectItems = useSelectItems(props, fieldInputRef, emit, {
       allowUnmatchedSelection: true,
@@ -212,29 +211,27 @@ export const YCombobox = defineComponent<
       );
     });
 
-    const navigableItems = computed(() =>
-      visibleItems.value.filter(
-        (item) => !item.disabled && !item.hide && !isNonSelectableItem(item),
-      ),
-    );
-
-    const activeItem = computed(
-      () => navigableItems.value[activeIndex.value] ?? null,
-    );
-
-    const listId = slots.menu
-      ? undefined
-      : `y-combobox-${getCurrentInstance()?.uid ?? 0}-options`;
-
-    const activeOptionId = computed(() => {
-      if (!listId || !activeItem.value) return undefined;
-      const itemIndex = visibleItems.value.indexOf(activeItem.value);
-      return itemIndex < 0 ? undefined : `${listId}-${itemIndex}`;
+    const virtualFocus = useVirtualFocus({
+      items: visibleItems,
+      opened,
+      inputRef: fieldInputRef,
+      isNonSelectableItem,
+      idPrefix: 'y-combobox',
+      hasCustomMenu: !!slots.menu,
+      autocomplete: () => (props.readonly ? 'none' : 'list'),
     });
+    const {
+      activeIndex,
+      activeItem,
+      listId,
+      openOrMoveActiveItem,
+      resetActiveItem,
+    } = virtualFocus;
 
     const selectMenu = useSelectMenu(props, slots, {
       items,
       selections,
+      opened,
       visibleItems,
       searchLoading: computed(() => !!props.searchLoading),
       activeOffset: computed(() => props.activeOffset),
@@ -249,57 +246,10 @@ export const YCombobox = defineComponent<
       preserveFocusOnItemMousedown: true,
     });
 
-    const { menuRef, opened, baseEl, onBlur, renderMenu } = selectMenu;
-
-    watch(navigableItems, () => {
-      activeIndex.value =
-        opened.value && navigableItems.value.length > 0 ? 0 : -1;
-    });
-
-    watch(
-      opened,
-      (isOpened) => {
-        activeIndex.value =
-          isOpened && navigableItems.value.length > 0 ? 0 : -1;
-      },
-      { flush: 'sync' },
-    );
-
-    watchPostEffect(() => {
-      const input = (fieldInputRef.value as any)?.input$ as
-        | HTMLInputElement
-        | undefined;
-      if (!input) return;
-
-      input.setAttribute('role', 'combobox');
-      input.setAttribute('aria-autocomplete', props.readonly ? 'none' : 'list');
-      input.setAttribute('aria-expanded', String(opened.value));
-      input.setAttribute('aria-haspopup', 'listbox');
-      if (listId) {
-        input.setAttribute('aria-controls', listId);
-      } else {
-        input.removeAttribute('aria-controls');
-      }
-      if (activeOptionId.value) {
-        input.setAttribute('aria-activedescendant', activeOptionId.value);
-      } else {
-        input.removeAttribute('aria-activedescendant');
-      }
-    });
-
-    function moveActiveItem(direction: 1 | -1) {
-      const count = navigableItems.value.length;
-      if (count === 0) {
-        activeIndex.value = -1;
-      } else if (activeIndex.value === -1) {
-        activeIndex.value = direction === 1 ? 0 : count - 1;
-      } else {
-        activeIndex.value = (activeIndex.value + direction + count) % count;
-      }
-    }
+    const { menuRef, baseEl, onBlur, renderMenu } = selectMenu;
 
     function selectItem(item: ListItem, event?: Event) {
-      activeIndex.value = -1;
+      resetActiveItem();
       cacheItem(item);
       select(item, event);
       if (props.multiple) {
@@ -380,20 +330,18 @@ export const YCombobox = defineComponent<
       }
       if (event.key === 'ArrowDown') {
         event.preventDefault();
-        opened.value = true;
-        moveActiveItem(1);
+        openOrMoveActiveItem(1);
         return;
       }
       if (event.key === 'ArrowUp') {
         event.preventDefault();
-        opened.value = true;
-        moveActiveItem(-1);
+        openOrMoveActiveItem(-1);
         return;
       }
       if (event.key === 'Escape' && opened.value) {
         event.preventDefault();
         opened.value = false;
-        activeIndex.value = -1;
+        resetActiveItem();
         search.value = displayText.value;
         searchDirty.value = false;
         lastSyncedSearch.value = displayText.value;
