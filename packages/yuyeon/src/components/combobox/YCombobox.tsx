@@ -182,10 +182,28 @@ export const YCombobox = defineComponent<
     });
 
     const searchText = computed(() => String(search.value ?? ''));
+    const inputValue = computed(() => {
+      if (props.separateSearch && !searchDirty.value && !searchText.value) {
+        return displayText.value;
+      }
+
+      return searchText.value;
+    });
 
     watch(
-      [displayText, selections],
+      [displayText, selections, () => props.separateSearch],
       () => {
+        if (props.separateSearch) {
+          if (
+            lastSyncedSearch.value !== null &&
+            searchText.value === lastSyncedSearch.value
+          ) {
+            search.value = '';
+          }
+          lastSyncedSearch.value = null;
+          return;
+        }
+
         if (searchDirty.value) return;
 
         if (selections.value.length === 0) {
@@ -261,7 +279,11 @@ export const YCombobox = defineComponent<
       resetActiveItem();
       cacheItem(item);
       select(item, event);
-      if (props.multiple) {
+      if (props.separateSearch) {
+        search.value = '';
+        searchDirty.value = props.multiple;
+        lastSyncedSearch.value = null;
+      } else if (props.multiple) {
         search.value = '';
         searchDirty.value = true;
         lastSyncedSearch.value = null;
@@ -276,9 +298,15 @@ export const YCombobox = defineComponent<
       if (props.disabled) return;
       focused.value = true;
       if (!props.readonly) {
-        search.value = displayText.value;
-        searchDirty.value = false;
-        lastSyncedSearch.value = displayText.value;
+        if (props.separateSearch) {
+          if (!searchText.value && displayText.value) {
+            (fieldInputRef.value as any)?.select?.();
+          }
+        } else {
+          search.value = displayText.value;
+          searchDirty.value = false;
+          lastSyncedSearch.value = displayText.value;
+        }
       }
       opened.value = true;
     }
@@ -312,6 +340,7 @@ export const YCombobox = defineComponent<
         (event.target as HTMLInputElement | null)?.value ?? '',
       );
       searchDirty.value = true;
+      lastSyncedSearch.value = null;
       opened.value = true;
     }
 
@@ -320,9 +349,15 @@ export const YCombobox = defineComponent<
       onBlur(event);
       requestAnimationFrame(() => {
         if (!focused.value) {
-          search.value = displayText.value;
-          searchDirty.value = false;
-          lastSyncedSearch.value = displayText.value;
+          if (props.separateSearch) {
+            search.value = '';
+            searchDirty.value = false;
+            lastSyncedSearch.value = null;
+          } else {
+            search.value = displayText.value;
+            searchDirty.value = false;
+            lastSyncedSearch.value = displayText.value;
+          }
         }
       });
     }
@@ -386,7 +421,7 @@ export const YCombobox = defineComponent<
             ref={fieldInputRef}
             {...fieldInputProps}
             name={undefined}
-            modelValue={searchText.value}
+            modelValue={inputValue.value}
             validationValue={model.rxValue}
             onInput={onInput}
             onClick={onClick}
