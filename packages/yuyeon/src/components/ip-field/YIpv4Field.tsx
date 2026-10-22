@@ -1,8 +1,8 @@
 import {
-  type PropType,
   computed,
   mergeProps,
   nextTick,
+  type PropType,
   reactive,
   ref,
   toRef,
@@ -13,7 +13,7 @@ import { useModelDuplex } from '@/composables/communication';
 import { useRender } from '@/composables/component';
 import { chooseProps, defineComponent } from '@/util/component';
 
-import { YInput, pressYInputPropsOptions } from '../input';
+import { pressYInputPropsOptions, YInput } from '../input';
 
 import './YIpField.scss';
 
