@@ -416,7 +416,7 @@ export const YTreeViewNode = defineComponent({
             {!imLeaf.value && leaves.value.length > 0 ? (
               <YButton
                 class={'y-tree-view-node__expand-icon'}
-                variation={'icon'}
+                variant={'icon'}
                 tabindex={-1}
                 onClick={onClickExpand}
               >

@@ -42,9 +42,7 @@ export const pressYFieldInputPropsOptions = propsFactory(
 			default: "text",
 		},
 		inputStyle: Object as PropType<any>,
-		...pressYInputPropsOptions({
-			variation: "filled",
-		}),
+		...pressYInputPropsOptions(),
 	},
 	"YFieldInput",
 );
@@ -219,6 +217,7 @@ export const YFieldInput = defineComponent({
 				class={classes.value}
 				ref={yInput$}
 				{...chooseProps(props, YInput.props)}
+				variant={props.variant ?? props.variation ?? "filled"}
 				modelValue={inValue.value}
 				focused={focused.value}
 				extended={extended}

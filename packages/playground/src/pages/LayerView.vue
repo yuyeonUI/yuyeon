@@ -120,7 +120,7 @@ function onClickOpenDrawer() {
                 :dialog-classes="['playground-dialog--showcase']"
               >
                 <template #base="{ props }">
-                  <y-button variation="outlined" class="mr-2" v-bind="props"> DIALOG</y-button>
+                  <y-button variant="outlined" class="mr-2" v-bind="props"> DIALOG</y-button>
                 </template>
                 <y-card style="width: 400px">
                   <div
@@ -194,7 +194,7 @@ function onClickOpenDrawer() {
                 :dialog-classes="['playground-dialog--showcase']"
               >
                 <template #base>
-                  <y-button variation="filled" color="primary" class="mr-2">
+                  <y-button variant="filled" color="primary" class="mr-2">
                     DIALOG
                   </y-button>
                 </template>
@@ -241,7 +241,7 @@ function onClickOpenDrawer() {
                 offset="56"
               >
                 <template #base>
-                  <y-button variation="outlined" color="secondary" class="mr-2">
+                  <y-button variant="outlined" color="secondary" class="mr-2">
                     MAXIMIZED DIALOG
                   </y-button>
                 </template>
@@ -252,7 +252,7 @@ function onClickOpenDrawer() {
                     <y-button @click="maximizedDialog = false"> CLOSE</y-button>
                   </y-card-header>
                   <y-card-body class="pv-8">
-                    <y-field-input variation="outlined"></y-field-input>
+                    <y-field-input variant="outlined"></y-field-input>
                     <div class="pt-3"></div>
                     <y-checkbox :label="'Show startup'"></y-checkbox>
                     <div style="height: 2000px">a</div>
@@ -346,7 +346,7 @@ function onClickOpenDrawer() {
               <y-dropdown
                 :items="dropdownItems"
                 class="ml-2 elevation-1"
-                variation="filled"
+                variant="filled"
                 color="primary"
                 :expand-icon="{
                 name: '$expand',
@@ -386,7 +386,7 @@ function onClickOpenDrawer() {
                 <template #base="{ props: tooltipProps }">
                   <y-select
                     :items="dropdownItems"
-                    variation="outlined"
+                    variant="outlined"
                     style="max-width: 120px"
                     v-bind="tooltipProps"
                   ></y-select>

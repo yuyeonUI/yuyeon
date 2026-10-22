@@ -15,6 +15,8 @@ const YAlertPropOptions = {
   semantic: String as PropType<
     'info' | 'warning' | 'success' | 'error' | string
   >,
+  variant: String as PropType<'outlined' | 'filled' | string>,
+  /** @deprecated Use `variant` instead. */
   variation: String as PropType<'outlined' | 'filled' | string>,
   color: String as PropType<string>,
   textColor: String as PropType<string>,
@@ -38,10 +40,10 @@ export const YAlert = defineComponent({
   setup(props, { slots }) {
     const el$ = ref<HTMLElement>();
 
-    const variations = computed(() => {
-      const { variation } = props;
-      if (variation) {
-        return variation
+    const variants = computed(() => {
+      const variant = props.variant ?? props.variation;
+      if (variant) {
+        return variant
           .split(',')
           .map((value) => {
             return value.trim();
@@ -56,7 +58,7 @@ export const YAlert = defineComponent({
 
       if (props.color) {
         ret['--y-alert-surface-color'] = props.color;
-        if (variations.value.includes('filled')) {
+        if (variants.value.includes('filled')) {
           ret['--y-alert-surface-opacity'] = 1;
         } else {
           ret['--y-alert-text-color'] = props.color;
@@ -81,8 +83,8 @@ export const YAlert = defineComponent({
           KEBAB_NAME,
           {
             [`y-alert--${props.semantic}`]: props.semantic,
-            'y-alert--filled': variations.value.includes('filled'),
-            'y-alert--outlined': variations.value.includes('outlined'),
+            'y-alert--filled': variants.value.includes('filled'),
+            'y-alert--outlined': variants.value.includes('outlined'),
           },
         ]}
         style={cssVariables.value}

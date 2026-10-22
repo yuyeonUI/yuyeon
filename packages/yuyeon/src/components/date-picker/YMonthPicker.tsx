@@ -59,7 +59,7 @@ export const YMonthPicker = defineComponent({
 						return (
 							<div class={["y-month-picker__cell", "y-month-picker__month"]}>
 								<YButton
-									variation={["rounded", "text"].join(",")}
+									variant={["rounded", "text"].join(",")}
 									active={item.active}
 									color={props.color}
 									onClick={() => onClick(index)}

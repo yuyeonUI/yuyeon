@@ -28,6 +28,10 @@ export const pressYButtonProps = propsFactory(
     active: { type: Boolean, default: undefined },
     injectSymbol: { type: null, default: Y_TOGGLE_BUTTON_KEY },
     //
+    variant: {
+      type: String as PropType<string>,
+    },
+    /** @deprecated Use `variant` instead. */
     variation: {
       type: String as PropType<string>,
     },
@@ -88,10 +92,10 @@ export const YButton = defineComponent({
       return choice?.isSelected.value;
     });
 
-    const variations = computed(() => {
-      const { variation } = props;
-      if (typeof variation === 'string') {
-        return variation.split(',').map((value) => {
+    const variants = computed(() => {
+      const variant = props.variant ?? props.variation;
+      if (typeof variant === 'string') {
+        return variant.split(',').map((value) => {
           return value.trim();
         });
       }
@@ -102,14 +106,14 @@ export const YButton = defineComponent({
       const { outlined, rounded, filled, small, icon } = props;
       return {
         [`${NAME}--outlined`]:
-          variations.value.includes('outlined') || outlined,
-        [`${NAME}--rounded`]: variations.value.includes('rounded') || rounded,
-        [`${NAME}--filled`]: variations.value.includes('filled') || filled,
-        [`${NAME}--tonal`]: variations.value.includes('tonal'),
-        [`${NAME}--text`]: variations.value.includes('text'),
-        [`${NAME}--small`]: variations.value.includes('small') || small,
-        [`${NAME}--x-small`]: variations.value.includes('x-small') || small,
-        [`${NAME}--icon`]: variations.value.includes('icon') || icon,
+          variants.value.includes('outlined') || outlined,
+        [`${NAME}--rounded`]: variants.value.includes('rounded') || rounded,
+        [`${NAME}--filled`]: variants.value.includes('filled') || filled,
+        [`${NAME}--tonal`]: variants.value.includes('tonal'),
+        [`${NAME}--text`]: variants.value.includes('text'),
+        [`${NAME}--small`]: variants.value.includes('small') || small,
+        [`${NAME}--x-small`]: variants.value.includes('x-small') || small,
+        [`${NAME}--icon`]: variants.value.includes('icon') || icon,
         [`${NAME}--color`]: props.color,
         [`${NAME}--loading`]: props.loading,
         [`${NAME}--disabled`]: props.disabled,

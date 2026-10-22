@@ -332,7 +332,7 @@ export const YDateCalendar = defineComponent({
 																	: undefined
 															}
 															disabled={item.disabled}
-															variation={[
+											variant={[
 																"rounded",
 																item.selected
 																	? "filled"

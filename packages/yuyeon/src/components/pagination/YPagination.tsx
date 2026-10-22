@@ -45,7 +45,11 @@ export const pressYPaginationProps = propsFactory(
     },
     color: String,
     activeColor: String,
+    buttonVariant: String,
+    activeButtonVariant: String,
+    /** @deprecated Use `buttonVariant` instead. */
     buttonVariation: [String],
+    /** @deprecated Use `activeButtonVariant` instead. */
     activeButtonVariation: [String],
     align: {
       type: String as PropType<'start' | 'center' | 'end'>,
@@ -129,7 +133,7 @@ export const YPagination = defineComponent({
       return {
         first: {
           disabled: prevDisabled,
-          variation: props.buttonVariation,
+          variant: props.buttonVariant ?? props.buttonVariation,
           onClick: (e: MouseEvent) => {
             e.preventDefault();
             let to = page.value;
@@ -147,7 +151,7 @@ export const YPagination = defineComponent({
         },
         prev: {
           disabled: prevDisabled,
-          variation: props.buttonVariation,
+          variant: props.buttonVariant ?? props.buttonVariation,
           onClick: (e: MouseEvent) => {
             e.preventDefault();
             const to = Math.max(1, page.value - 1);
@@ -157,7 +161,7 @@ export const YPagination = defineComponent({
         },
         next: {
           disabled: nextDisabled,
-          variation: props.buttonVariation,
+          variant: props.buttonVariant ?? props.buttonVariation,
           onClick: (e: MouseEvent) => {
             e.preventDefault();
             const to = Math.min(+length.value, page.value + 1);
@@ -167,7 +171,7 @@ export const YPagination = defineComponent({
         },
         last: {
           disabled: nextDisabled,
-          variation: props.buttonVariation,
+          variant: props.buttonVariant ?? props.buttonVariation,
           onClick: (e: MouseEvent) => {
             e.preventDefault();
             let to = page.value;
@@ -268,9 +272,9 @@ export const YPagination = defineComponent({
               ellipsis: false,
               disabled: !!props.disabled || +props.length < 2,
               color: active ? props.activeColor : props.color,
-              variation: active
-                ? props.activeButtonVariation
-                : props.buttonVariation,
+              variant: active
+                ? props.activeButtonVariant ?? props.activeButtonVariation
+                : props.buttonVariant ?? props.buttonVariation,
               onClick: (e: MouseEvent) => changePage(e, item),
             },
           };

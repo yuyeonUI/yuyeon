@@ -54,14 +54,14 @@ function onClickPage(dir: number) {
       <y-card class="pa-2">
         <header class="d-flex pa-2">
           <div class="flex-spacer"></div>
-          <y-button variation="text" style="width: 32px">
+          <y-button variant="text" style="width: 32px">
             <YIconPageControl
               type="prev"
               class="icon-24"
               @click="onClickPage(-1)"
             ></YIconPageControl>
           </y-button>
-          <y-button variation="text" style="width: 32px">
+          <y-button variant="text" style="width: 32px">
             <YIconPageControl
               type="next"
               class="icon-24"

@@ -44,7 +44,9 @@ export const pressYInputPropsOptions = propsFactory(
     placeholder: String as PropType<string>,
     required: Boolean as PropType<boolean>,
     loading: Boolean as PropType<boolean>,
-    // variations
+    // variants
+    variant: String as PropType<string>,
+    /** @deprecated Use `variant` instead. */
     variation: String as PropType<string>,
     outlined: Boolean as PropType<boolean>,
     filled: Boolean as PropType<boolean>,
@@ -128,9 +130,10 @@ export const YInput = defineComponent({
     const lazyValue = ref();
     const hasMouseDown = shallowRef(false);
 
-    const variations = computed(() => {
-      if (props.variation) {
-        return props.variation.split(',').map((value) => {
+    const variants = computed(() => {
+      const variant = props.variant ?? props.variation;
+      if (variant) {
+        return variant.split(',').map((value) => {
           return value.trim();
         });
       }
@@ -153,9 +156,9 @@ export const YInput = defineComponent({
         'y-input--ceramic': !!props.ceramic,
         'y-input--outlined':
           !props.ceramic &&
-          (variations.value.includes('outlined') || !!props.outlined),
+          (variants.value.includes('outlined') || !!props.outlined),
         'y-input--filled':
-          variations.value.includes('filled') || !!props.filled,
+          variants.value.includes('filled') || !!props.filled,
         // Value
         'y-input--loading': isLoading.value,
         'y-input--has-value': !!inValue.value,

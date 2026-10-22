@@ -82,7 +82,7 @@ export const YYearPicker = defineComponent({
 						return (
 							<div class={["y-year-picker__cell"]}>
 								<YButton
-									variation={["rounded", "text"].join(",")}
+									variant={["rounded", "text"].join(",")}
 									active={year.active}
 									color={props.color}
 									onClick={() => onClick(year.value)}

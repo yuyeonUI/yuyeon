@@ -69,26 +69,26 @@ function onClickFieldWrap() {
             <y-switch v-model="switchInput"></y-switch>
             <y-field-input
               v-model="outlinedFieldInput"
-              variation="outlined"
+              variant="outlined"
               label="label slot"
-              placeholder="variation outlined"
+              placeholder="variant outlined"
               :validators="[(v: string) => !!v || 'REQUIRED']"
             >
             </y-field-input>
             <y-field-input
               v-model="displayInput"
-              variation="outlined"
+              variant="outlined"
               label="label slot"
-              placeholder="variation outlined"
+              placeholder="variant outlined"
               :validators="[(v: string) => !!v || 'REQUIRED']"
               :display-text="(v: string) => `${v}MHz`"
             >
             </y-field-input>
             <y-select
               v-model="validSelectValue"
-              variation="outlined"
+              variant="outlined"
               label="label slot"
-              placeholder="variation outlined"
+              placeholder="variant outlined"
               :items="[
                 { text: 'one', value: 1 },
                 { text: 'two', value: 2 },
@@ -97,9 +97,9 @@ function onClickFieldWrap() {
             >
             </y-select>
             <y-select
-              variation="outlined"
+              variant="outlined"
               label="label slot"
-              placeholder="variation outlined"
+              placeholder="variant outlined"
               :items="[
                 { text: '가지', value: 1 },
                 { text: '나무', value: 2 },
@@ -154,7 +154,7 @@ function onClickFieldWrap() {
             </y-alert>
             <y-alert
               :semantic="'success'"
-              variation="outlined"
+              variant="outlined"
               style="width: 40%"
             >
               별 하나에 추억과 별 하나에 사랑과 별 하나에 쓸쓸함과 별 하나에
@@ -162,7 +162,7 @@ function onClickFieldWrap() {
             </y-alert>
             <y-alert
               :semantic="'success'"
-              variation="filled, outlined"
+              variant="filled, outlined"
               color="transparent"
               :text-color="'#03838d'"
               style="width: 40%"
@@ -170,7 +170,7 @@ function onClickFieldWrap() {
               별 하나에 추억과 별 하나에 사랑과 별 하나에 쓸쓸함과 별 하나에
               동경과 별 하나에 시와 별 하나에 어머니, 어머니,
             </y-alert>
-            <y-alert :color="'#6f038d'" variation="outlined" style="width: 40%">
+            <y-alert :color="'#6f038d'" variant="outlined" style="width: 40%">
               별 하나에 추억과 별 하나에 사랑과 별 하나에 쓸쓸함과 별 하나에
               동경과 별 하나에 시와 별 하나에 어머니, 어머니,
             </y-alert>
@@ -237,11 +237,17 @@ function onClickFieldWrap() {
             <y-button variation="tonal" color="on-surface">
               Tonal button
             </y-button>
+            <y-button variant="tonal" color="primary">
+              Tonal button
+            </y-button>
+            <y-button variant="tonal" color="on-surface">
+              Tonal button
+            </y-button>
           </div>
         </y-card-body>
       </y-card>
     </section>
-    <y-button variation="filled" style="width: 20dvw; height: 100px;">styled</y-button>
+    <y-button variant="filled" style="width: 20dvw; height: 100px;">styled</y-button>
     <!--  Inputs  -->
     <section class="pv-2">
       <y-card class="pa-2">
@@ -263,9 +269,9 @@ function onClickFieldWrap() {
             </div>
             <y-field-input
               v-model="outlinedFieldInput"
-              variation="outlined"
+              variant="outlined"
               label="label slot"
-              placeholder="variation outlined"
+              placeholder="variant outlined"
             >
               <template #helper-text>
                 {{ 'HELPER TEXT text' }}
@@ -294,7 +300,7 @@ function onClickFieldWrap() {
             ></y-textarea>
           </div>
           <div class="d-flex pt-8 gap-2">
-            <y-ipv4-field v-model="ipv4" variation="outlined" label="IPv4"></y-ipv4-field>
+            <y-ipv4-field v-model="ipv4" variant="outlined" label="IPv4"></y-ipv4-field>
           </div>
         </y-card-body>
       </y-card>

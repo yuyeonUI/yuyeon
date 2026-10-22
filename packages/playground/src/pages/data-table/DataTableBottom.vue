@@ -35,7 +35,7 @@ const page = ref(props.bottomProps?.page ?? 0);
         show-end-button
         gap="4"
         :disabled="loading"
-        button-variations="outlined"
+        button-variant="outlined"
         align="end"
       >
         <template #prev-icon>

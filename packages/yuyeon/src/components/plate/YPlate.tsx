@@ -11,6 +11,8 @@ import './YPlate.scss';
 export const YPlate = defineComponent({
   name: 'YPlate',
   props: {
+    variant: Object as PropType<Record<string, any>>,
+    /** @deprecated Use `variant` instead. */
     variation: Object as PropType<Record<string, any>>,
   },
   setup() {

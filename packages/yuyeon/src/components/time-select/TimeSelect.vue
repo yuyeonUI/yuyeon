@@ -13,6 +13,8 @@ import { useDate } from '@/composables';
 import { validateDate } from '@/util/date/index';
 
 const props = defineProps({
+  variant: String as PropType<string>,
+  /** @deprecated Use `variant` instead. */
   variation: {
     type: String as PropType<string>,
     default: 'outlined',
@@ -84,6 +86,8 @@ const props = defineProps({
     default: 15,
   },
 });
+
+const variant = computed(() => props.variant ?? props.variation);
 
 const emit = defineEmits(['change']);
 
@@ -298,7 +302,7 @@ function getNextIndex(
       <template #base>
         <y-field-input
           v-model="input"
-          :variation="variation"
+          :variant="variant"
           :placeholder="placeholder"
           :disabled="disabled"
           autocomplete="off"

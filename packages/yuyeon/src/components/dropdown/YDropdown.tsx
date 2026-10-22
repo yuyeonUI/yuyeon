@@ -26,6 +26,8 @@ export const pressYDropdownPropsOptions = propsFactory(
   {
     ...omit(YMenuPropOptions, ['modelValue', 'coordinateStrategy']),
     modelValue: Boolean as PropType<boolean>,
+    variant: String as PropType<string>,
+    /** @deprecated Use `variant` instead. */
     variation: String as PropType<string>,
     color: String as PropType<string>,
     ...omit(pressCoordinateProps({ position: 'bottom' as 'bottom' }), [
@@ -99,7 +101,7 @@ export const YDropdown = defineComponent({
                   slots.base?.(...args)
                 ) : (
                   <YButton
-                    variation={props.variation}
+                    variant={props.variant ?? props.variation}
                     color={props.color}
                     class={[
                       'y-dropdown',
