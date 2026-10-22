@@ -53,18 +53,27 @@ export const YCombobox = defineComponent<
     'dropdown-icon': any;
     item: {
       item: any;
+      internalItem: ListItem;
+      value: any;
+      text: string;
       selected: boolean;
       focused: boolean;
       select: () => void;
     };
     'item-leading': {
       item: any;
+      internalItem: ListItem;
+      value: any;
+      text: string;
       selected: boolean;
       focused: boolean;
       select: () => void;
     };
     'item-trailing': {
       item: any;
+      internalItem: ListItem;
+      value: any;
+      text: string;
       selected: boolean;
       focused: boolean;
       select: () => void;

@@ -40,12 +40,11 @@ export const YDataTableLayerRow = defineComponent({
     default: (slotProps: YDataTableLayerRowDefaultSlotProps) => any;
   }>,
   setup(props, { slots }) {
-    const observer = shallowRef<ResizeObserver | null>(null);
-
     const layerRowRef = useTemplateRef<HTMLElement>('layerRowRef');
+
+    const observer = shallowRef<ResizeObserver | null>(null);
     const rect = shallowRef<DOMRectList | null>(null);
     const show = shallowRef(false);
-
     const rowEl = ref();
 
     const computedStyles = computed(() => {
@@ -114,11 +113,11 @@ export const YDataTableLayerRow = defineComponent({
         style={computedStyles.value}
       >
         {slots.default?.({
-            item: props.item,
-            width: props.width,
-            height: rect.value?.[0]?.height,
-            scrollTop: props.scrollTop,
-          })}
+          item: props.item,
+          width: props.width,
+          height: rect.value?.[0]?.height,
+          scrollTop: props.scrollTop,
+        })}
       </div>
     ));
   },
