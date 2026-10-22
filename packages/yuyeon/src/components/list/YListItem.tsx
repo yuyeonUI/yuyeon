@@ -1,4 +1,4 @@
-import { computed, SlotsType } from 'vue';
+import { computed, type SlotsType } from 'vue';
 
 import { useRender } from '@/composables/component';
 import { pressThemePropsOptions, useLocalTheme } from '@/composables/theme';

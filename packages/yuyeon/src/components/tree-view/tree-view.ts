@@ -16,6 +16,8 @@ import { getObjectValueByPath } from '@/util';
 
 export const Y_TREE_VIEW: InjectionKey<{
   register: (key: CandidateKey, vnode: any) => void;
+  root$: Ref<HTMLElement | undefined>;
+  focusedKey: Ref<CandidateKey | null>;
   updateExpanded: (key: CandidateKey, to: boolean) => void;
   updateActive: (key: CandidateKey, to: boolean, event?: MouseEvent) => void;
   updateSelected: (key: CandidateKey, to: boolean) => void;
@@ -44,6 +46,8 @@ export function provideTreeView(props: any) {
   const expandedSet = ref(new Set<CandidateKey>());
   const selectedSet = ref(new Set<CandidateKey>());
   const activeSet = ref(new Set<CandidateKey>());
+  const root$ = shallowRef<HTMLElement>();
+  const focusedKey = shallowRef<CandidateKey | null>(null);
   const searchLoading = shallowRef(false);
   const excludedSet = ref(new Set<CandidateKey>());
 
@@ -299,6 +303,8 @@ export function provideTreeView(props: any) {
 
   provide(Y_TREE_VIEW, {
     register,
+    root$,
+    focusedKey,
     updateExpanded,
     updateActive,
     updateSelected,
@@ -327,6 +333,8 @@ export function provideTreeView(props: any) {
     expandedSet,
     selectedSet,
     activeSet,
+    root$,
+    focusedKey,
     searchLoading,
     excludedSet,
     isExcluded,

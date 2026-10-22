@@ -104,6 +104,7 @@ function onClickFieldWrap() {
                 { text: '가지', value: 1 },
                 { text: '나무', value: 2 },
               ]"
+              disabled
               :validators="[(v: number) => v === 1 || 'REQUIRED']"
             >
             </y-select>
@@ -229,6 +230,12 @@ function onClickFieldWrap() {
             </y-button>
             <y-button @click="toggleThemeMode" style="width: 130px">
               THEME: {{ theme.scheme }}
+            </y-button>
+            <y-button variation="tonal" color="primary">
+              Tonal button
+            </y-button>
+            <y-button variation="tonal" color="on-surface">
+              Tonal button
             </y-button>
           </div>
         </y-card-body>

@@ -5,6 +5,7 @@ export * from './button';
 export * from './card';
 export * from './checkbox';
 export * from './chip';
+export * from './combobox';
 export * from './date-picker';
 export * from './dialog';
 export * from './divider';

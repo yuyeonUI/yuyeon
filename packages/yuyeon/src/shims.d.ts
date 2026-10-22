@@ -7,6 +7,7 @@ import type {
   YCardBody,
   YCardFooter,
   YCardHeader,
+  YCombobox,
   YCheckbox,
   YChip,
   YDataTable,
@@ -28,6 +29,7 @@ import type {
   YIpv4Field,
   YLayer,
   YList,
+  YListGroupHeader,
   YListItem,
   YMenu,
   YMonthPicker,
@@ -64,6 +66,7 @@ declare module 'vue' {
     YCardBody: typeof YCardBody;
     YCardHeader: typeof YCardHeader;
     YCardFooter: typeof YCardFooter;
+    YCombobox: typeof YCombobox;
     YDialog: typeof YDialog;
     YLayer: typeof YLayer;
     YSnackbar: typeof YSnackbar;
@@ -74,6 +77,7 @@ declare module 'vue' {
     YExpandHTransition: typeof YExpandHTransition;
     YDividePanel: typeof YDividePanel;
     YList: typeof YList;
+    YListGroupHeader: typeof YListGroupHeader;
     YListItem: typeof YListItem;
     YTreeView: typeof YTreeView;
     YTreeViewNode: typeof YTreeViewNode;

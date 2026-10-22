@@ -53,7 +53,7 @@ export const YTreeView = defineComponent({
     'mousemoveContainer',
     'dblclickContainer',
   ],
-  setup(props, { slots, expose }) {
+  setup(props, { attrs, slots, expose }) {
     const filterItemsFn = shallowRef(
       debounce(excludeItem, props.searchDebounceWait),
     );
@@ -67,6 +67,8 @@ export const YTreeView = defineComponent({
       expandedSet,
       selectedSet,
       activeSet,
+      root$,
+      focusedKey,
       searchLoading,
       excludedSet,
       issueVnodeState,
@@ -277,6 +279,42 @@ export const YTreeView = defineComponent({
       });
     });
 
+    function getVisibleTreeKeys() {
+      const keys: CandidateKey[] = [];
+
+      function visit(items: any[]) {
+        for (const item of items) {
+          const key = getObjectValueByPath(item, props.itemKey);
+          if (isExcluded(key)) continue;
+
+          keys.push(key);
+          if (expandedSet.value.has(key)) {
+            visit(
+              getObjectValueByPath(item, props.itemChildren as string) ?? [],
+            );
+          }
+        }
+      }
+
+      visit(renderLeaves.value);
+      return keys;
+    }
+
+    watch(
+      getVisibleTreeKeys,
+      (keys) => {
+        if (keys.length === 0) {
+          focusedKey.value = null;
+        } else if (
+          focusedKey.value == null ||
+          !keys.includes(focusedKey.value)
+        ) {
+          focusedKey.value = keys[0];
+        }
+      },
+      { immediate: true },
+    );
+
     const classes = computed(() => {
       return {
         'y-tree-view': true,
@@ -324,7 +362,17 @@ export const YTreeView = defineComponent({
     useRender(() => {
       return (
         <>
-          <div class={classes.value} style={styles.value} role="tree">
+          <div
+            ref={root$}
+            class={classes.value}
+            style={styles.value}
+            role="tree"
+            tabindex={
+              (attrs.tabindex as number | string) ??
+              (renderLeaves.value.length > 0 ? -1 : 0)
+            }
+            {...attrs}
+          >
             {searchLoading.value && <YProgressBar indeterminate />}
             {renderLeaves.value.length > 0 ? (
               renderLeaves.value.slice().map((leaf) => {

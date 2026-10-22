@@ -15,6 +15,10 @@
       padding-top: 8px;
       padding-bottom: 8px;
     }
+
+    .y-list-item.y-list-item--focused:before {
+      opacity: 0.14;
+    }
   }
 
   &__selection {

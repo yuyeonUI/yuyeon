@@ -6,5 +6,6 @@ export * from './focus';
 export * from './scope';
 export * from './timing';
 export * from './transition';
+export * from './virtual-focus';
 export * from './vue-router';
 export * from './theme';

@@ -1,4 +1,4 @@
-import { ref, withKeys } from "vue";
+import { ref } from "vue";
 
 import { useRender } from "@/composables/component";
 import {
@@ -20,7 +20,6 @@ export const YForm = defineComponent({
 	emits: {
 		"update:modelValue": (val: boolean | null) => true,
 		submit: (e: SubmitEventPromise) => true,
-		"keydown.enter": (e: Event) => true,
 	},
 	setup(props, { emit, slots, expose }) {
 		const form = createForm(props);
@@ -47,12 +46,6 @@ export const YForm = defineComponent({
 			e.preventDefault();
 		}
 
-		function onKeydown(e: Event) {
-			e.preventDefault();
-			e.stopImmediatePropagation();
-			emit("keydown.enter", e);
-		}
-
 		expose({
 			...form,
 		});
@@ -64,7 +57,6 @@ export const YForm = defineComponent({
 					class={[NAME]}
 					novalidate
 					onSubmit={onSubmit}
-					onKeydown={withKeys(onKeydown, ["enter"])}
 				>
 					{slots.default?.()}
 				</form>

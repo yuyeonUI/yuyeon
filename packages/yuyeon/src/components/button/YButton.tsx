@@ -31,8 +31,12 @@ export const pressYButtonProps = propsFactory(
     variation: {
       type: String as PropType<string>,
     },
+    tabindex: {
+      type: [Number, String] as PropType<number | string>,
+    },
     small: Boolean,
     icon: Boolean,
+    size: [String, Number],
     outlined: {
       type: Boolean,
       default: false,
@@ -101,6 +105,7 @@ export const YButton = defineComponent({
           variations.value.includes('outlined') || outlined,
         [`${NAME}--rounded`]: variations.value.includes('rounded') || rounded,
         [`${NAME}--filled`]: variations.value.includes('filled') || filled,
+        [`${NAME}--tonal`]: variations.value.includes('tonal'),
         [`${NAME}--text`]: variations.value.includes('text'),
         [`${NAME}--small`]: variations.value.includes('small') || small,
         [`${NAME}--x-small`]: variations.value.includes('x-small') || small,
@@ -119,9 +124,11 @@ export const YButton = defineComponent({
         color = `var(--y-theme-${color})`;
         textColor = `var(--y-theme-on-${props.color})`;
       }
+
       return {
         [`--y-button__color`]: color,
         [`--y-button__text-color`]: textColor,
+        [`--y-button__size`]: props.size,
       };
     });
 
@@ -163,6 +170,7 @@ export const YButton = defineComponent({
           ]}
           href={props.disabled ? undefined : link.href.value}
           style={styles.value}
+          tabindex={props.tabindex}
           onClick={onClick}
           disabled={props.disabled ? true : undefined}
           v-plate-wave={!props.noWave && !props.loading}

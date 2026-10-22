@@ -1,94 +1,29 @@
 import {
-  computed,
   mergeProps,
-  nextTick,
-  onMounted,
-  type PropType,
   ref,
   type SlotsType,
   shallowRef,
-  vShow,
-  watch,
-  withDirectives,
 } from 'vue';
 
 import { useModelDuplex } from '@/composables/communication';
 import { useRender } from '@/composables/component';
-import { pressCoordinateProps } from '@/composables/coordinate';
-import { useI18n } from '@/composables/i18n';
-import {
-  type ListItem,
-  pressListItemsPropsOptions,
-  useItems,
-} from '@/composables/list-items';
-import { wrapInArray } from '@/util/array';
-import { deepEqual, omit } from '@/util/common';
-import {
-  chooseProps,
-  defineComponent,
-  getHtmlElement,
-  propsFactory,
-} from '@/util/component';
-import { getScrollParent } from '@/util/scroll';
+import type { ListItem } from '@/composables/list-items';
+import { useSelectItems } from '@/composables/select-items';
+import { useSelectMenu } from '@/composables/select-menu';
+import { useVirtualFocus } from '@/composables/virtual-focus';
+import { chooseProps, defineComponent } from '@/util/component';
 
-import { YCard } from '../card';
-import { pressYFieldInputPropsOptions, YFieldInput } from '../field-input';
-import { YIcon, type YIconIconProp } from '../icon';
-import { YList, YListItem } from '../list';
-import { YMenu } from '../menu';
+import { YFieldInput } from '../field-input';
+import { YIcon } from '../icon';
+import { pressYSelectPropsOptions } from './props';
 
 import './YSelect.scss';
 
-export type ItemComparator = (
-  optionsItem: any,
-  valueItem: any,
-  valueKey?: string,
-) => boolean;
-
-export const pressSelectPropsOptions = propsFactory(
-  {
-    opened: Boolean as PropType<boolean>,
-    closeOnBlur: Boolean as PropType<boolean>,
-    multiple: Boolean,
-    itemComparator: {
-      type: Function as PropType<ItemComparator>,
-      default: deepEqual,
-    },
-    defaultSelect: Boolean,
-    menuProps: {
-      type: Object as PropType<YMenu['$props']>,
-    },
-    ...pressListItemsPropsOptions(),
-  },
-  'Select',
-);
-
-export const pressYSelectPropsOptions = propsFactory(
-  {
-    maxHeight: {
-      type: [Number, String],
-      default: 310,
-    },
-    dropdownIcon: {
-      type: [String, Array, Object] as PropType<YIconIconProp>,
-      default: '$dropdown',
-    },
-    openDelay: {
-      type: Number as PropType<number>,
-      default: 200,
-    },
-    closeDelay: {
-      type: Number as PropType<number>,
-      default: 200,
-    },
-    ...pressSelectPropsOptions(),
-    ...pressYFieldInputPropsOptions(),
-    ...omit(pressCoordinateProps({ position: 'bottom' as 'bottom' }), [
-      'coordinateStrategy',
-    ]),
-  },
-  'YSelect',
-);
+export {
+  type ItemComparator,
+  pressSelectPropsOptions,
+  pressYSelectPropsOptions,
+} from './props';
 
 export const YSelect = defineComponent<
   ReturnType<typeof pressYSelectPropsOptions>
@@ -119,160 +54,117 @@ export const YSelect = defineComponent<
     'menu-prepend': any;
     'menu-append': any;
     'dropdown-icon': any;
-    item: { item: any; selected: boolean; select: () => void };
-    'item-leading': { item: any; selected: boolean; select: () => void };
-    'item-trailing': { item: any; selected: boolean; select: () => void };
+    item: {
+      item: any;
+      selected: boolean;
+      focused: boolean;
+      select: () => void;
+    };
+    'item-leading': {
+      item: any;
+      selected: boolean;
+      focused: boolean;
+      select: () => void;
+    };
+    'item-trailing': {
+      item: any;
+      selected: boolean;
+      focused: boolean;
+      select: () => void;
+    };
   }>,
   setup(props, { slots, attrs, expose, emit }) {
     const fieldInputRef = ref<InstanceType<typeof YFieldInput>>();
-    const menuRef = ref<InstanceType<typeof YMenu>>();
-    const listRef = ref<InstanceType<typeof YList>>();
-    const cardRef = ref();
-
-    const opened = useModelDuplex(props, 'opened');
     const focused = shallowRef(false);
+    const opened = useModelDuplex(props, 'opened');
+    const selectItems = useSelectItems(props, fieldInputRef, emit);
+    const {
+      items,
+      model,
+      selections,
+      selected,
+      displayText,
+      isSelected,
+      isNonSelectableItem,
+      select,
+    } = selectItems;
 
-    const { items, toRefineItems, toEmitItems } = useItems(props);
-    const { t } = useI18n();
-    const setOut = (v: any) => {
-      const emitValue = toEmitItems(wrapInArray(v));
-      return props.multiple ? emitValue : (emitValue[0] ?? null);
-    };
-    const model = useModelDuplex(
-      props,
-      'modelValue',
-      [],
-      (v) => toRefineItems(v === null ? [null] : wrapInArray(v)),
-      setOut,
-    );
-
-    const selections = computed<ListItem[]>(() => {
-      const ret: ListItem<any>[] = [];
-      for (const v of model.value) {
-        const found = items.value.find((item) => {
-          return props.itemComparator(item.value, v.value);
-        });
-        if (found !== undefined) {
-          ret.push(found);
-        }
-      }
-      return ret;
+    const virtualFocus = useVirtualFocus({
+      items,
+      opened,
+      inputRef: fieldInputRef,
+      isNonSelectableItem,
+      idPrefix: 'y-select',
+      hasCustomMenu: !!slots.menu,
+      autocomplete: () => 'none',
     });
+    const {
+      activeIndex,
+      activeItem,
+      listId,
+      openOrMoveActiveItem,
+      resetActiveItem,
+      setActiveItem,
+    } = virtualFocus;
 
-    const selected = computed(() => {
-      return selections.value.map((selection) => selection?.props?.value);
-    });
-
-    const extraMenuProps = computed(() => {
-      return {
-        ...props.menuProps,
-        preventCloseBubble: true,
-      };
-    });
-
-    function isSelected(item: ListItem) {
-      return !!selections.value.find((selectedItem) => {
-        return selectedItem?.value === item.value;
-      });
+    function selectItem(item: ListItem, event?: Event) {
+      setActiveItem(item);
+      select(item, event);
     }
+
+    const selectMenu = useSelectMenu(props, slots, {
+      items,
+      selections,
+      opened,
+      focusedItem: activeItem,
+      isSelected,
+      isNonSelectableItem,
+      select: selectItem,
+      listId,
+      getItemId: listId ? (_item, index) => `${listId}-${index}` : undefined,
+    });
+    const { menuRef, baseEl, onBlur: onMenuBlur, renderMenu } =
+      selectMenu;
 
     // Field
 
+    function onFocus() {
+      focused.value = true;
+    }
+
+    function onBlur(event: FocusEvent) {
+      focused.value = false;
+      onMenuBlur(event);
+    }
+
     function onKeydownDisplay(event: KeyboardEvent) {
       if (props.disabled) return;
-      if (event.key === 'Enter' || event.key === ' ') {
-        opened.value = !opened.value;
-      }
-    }
 
-    function onBlur(_event: FocusEvent) {
-      requestAnimationFrame(() => {
-        const contentEl = (menuRef.value as any)?.layer$?.content$;
-        if (contentEl?.contains(document.activeElement)) {
-          return;
-        }
-        if (opened.value && props.closeOnBlur) {
-          opened.value = false;
-        }
-      });
-    }
-
-    // Menu Contents
-    function onClickItem(item: ListItem, e: MouseEvent) {
-      if (item.disabled) return;
-      select(item, e);
-      if (!props.multiple) {
-        setTimeout(() => {
-          opened.value = false;
-        }, 40);
-      }
-    }
-
-    function onAfterLeave() {
-      if (!focused.value) {
-        // fieldInputRef.value?.focus();
-      }
-    }
-
-    function select(item: ListItem, e?: Event) {
-      let value: any[];
-      if (props.multiple) {
-        const index = selections.value.findIndex((selectedItem) => {
-          return selectedItem.value === item.value;
-        });
-        if (index === -1) {
-          value = [...model.value, item];
-        } else {
-          const neo = model.value.slice();
-          neo.splice(index, 1);
-          value = neo;
-        }
-      } else {
-        value = [item];
-      }
-      model.value = value;
-      emit('change', setOut(value), e, fieldInputRef.value);
-    }
-
-    const displayText = computed(() => {
-      if (props.multiple) {
-        return selections.value.map((item) => item.text).join(', ');
-      }
-      return selections.value?.[0]?.text ?? '';
-    });
-
-    const baseEl = computed(() => {
-      return menuRef.value?.baseEl;
-    });
-
-    watch(opened, (neo) => {
-      if (neo) {
-        nextTick(() => {
-          scrollToActiveItem();
-        });
-      }
-    });
-
-    function scrollToActiveItem() {
-      if (selections.value.length === 0) {
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+        event.preventDefault();
+        openOrMoveActiveItem(event.key === 'ArrowDown' ? 1 : -1);
         return;
       }
-      const listEl = getHtmlElement(listRef.value);
-      if (listEl) {
-        const activeEl = listEl?.querySelector('.y-list-item--active') as
-          | HTMLElement
-          | undefined;
-        const contentEl = (menuRef.value as any)?.layer$
-          ?.content$ as HTMLElement;
-        if (activeEl && contentEl) {
-          const scrollEl = getScrollParent(activeEl);
-          if (
-            scrollEl &&
-            (contentEl.contains(scrollEl) || contentEl.isSameNode(scrollEl))
-          ) {
-            scrollEl.scrollTo({ top: activeEl.offsetTop, behavior: 'smooth' });
-          }
-        }
+
+      if (event.key === 'Escape' && opened.value) {
+        event.preventDefault();
+        opened.value = false;
+        resetActiveItem();
+        return;
+      }
+
+      if (event.key !== 'Enter' && event.key !== ' ') return;
+      event.preventDefault();
+
+      if (!opened.value) {
+        opened.value = true;
+        return;
+      }
+
+      if (!activeItem.value) return;
+      selectItem(activeItem.value, event);
+      if (!props.multiple) {
+        opened.value = false;
       }
     }
 
@@ -289,6 +181,7 @@ export const YSelect = defineComponent<
           modelValue={model.value.map((v: any) => v.props.value).join(', ')}
           validationValue={model.rxValue}
           onKeydown:display={onKeydownDisplay}
+          onFocus={onFocus}
           onBlur={onBlur}
           readonly
           class={[
@@ -318,81 +211,7 @@ export const YSelect = defineComponent<
                         ? displayText.value
                         : props.placeholder}
                   </div>
-                  <YMenu
-                    ref={menuRef}
-                    offset={props.offset}
-                    position={props.position}
-                    align={props.align}
-                    origin={props.origin}
-                    content-classes={['y-select__content']}
-                    maxHeight={props.maxHeight}
-                    onAfterLeave={onAfterLeave}
-                    open-delay={props.openDelay}
-                    close-delay={props.closeDelay}
-                    base="parent"
-                    {...extraMenuProps.value}
-                    v-model={opened.value}
-                  >
-                    {{
-                      default: slots.menu
-                        ? () => slots.menu?.()
-                        : () => (
-                            <YCard ref={cardRef}>
-                              {slots['menu-prepend']?.()}
-                              {(items.value?.length ?? 0) > 0 ? (
-                                <YList ref={listRef}>
-                                  {items.value.map((item) => {
-                                    const itemProps = {
-                                      item,
-                                      selected: isSelected(item),
-                                      select: (e?: Event) => {
-                                        select(item, e);
-                                      },
-                                    };
-                                    return withDirectives(
-                                      <YListItem
-                                        onClick={(e) => onClickItem(item, e)}
-                                        class={[
-                                          {
-                                            'y-list-item--active':
-                                              isSelected(item),
-                                          },
-                                        ]}
-                                        disabled={item.disabled}
-                                      >
-                                        {{
-                                          default: () =>
-                                            slots.item
-                                              ? slots.item?.(itemProps)
-                                              : item.text,
-                                          leading:
-                                            slots['item-leading'] &&
-                                            (() =>
-                                              slots['item-leading']?.(
-                                                itemProps,
-                                              )),
-                                          trailing:
-                                            slots['item-trailing'] &&
-                                            (() =>
-                                              slots['item-trailing']?.(
-                                                itemProps,
-                                              )),
-                                        }}
-                                      </YListItem>,
-                                      [[vShow, !item.hide]],
-                                    );
-                                  })}
-                                </YList>
-                              ) : (
-                                <div class="y-select__no-options">
-                                  {t('$yuyeon.noItems')}
-                                </div>
-                              )}
-                              {slots['menu-append']?.()}
-                            </YCard>
-                          ),
-                    }}
-                  </YMenu>
+                  {renderMenu()}
                 </>
               );
             },
@@ -421,21 +240,12 @@ export const YSelect = defineComponent<
       );
     });
 
-    onMounted(() => {
-      if (
-        props.defaultSelect &&
-        (props.modelValue === undefined ||
-          (Array.isArray(props.modelValue) && props.modelValue.length === 0)) &&
-        items.value?.length
-      ) {
-        select(items.value[0]);
-      }
-    });
-
     expose({
       fieldInputRef,
       baseEl,
       opened,
+      activeIndex,
+      activeItem,
     });
 
     return {
@@ -446,6 +256,8 @@ export const YSelect = defineComponent<
       menuRef,
       baseEl,
       opened,
+      activeIndex,
+      activeItem,
     };
   },
 });

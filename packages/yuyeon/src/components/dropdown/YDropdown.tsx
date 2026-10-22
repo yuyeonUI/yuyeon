@@ -15,8 +15,9 @@ import {
 
 import { pressYButtonProps, YButton } from '../button';
 import { YCard } from '../card';
+import { YDivider } from '../divider';
 import { YIcon, type YIconIconProp } from '../icon';
-import { YList, YListItem } from '../list';
+import { YList, YListGroupHeader, YListItem } from '../list';
 import { YMenu, YMenuPropOptions } from '../menu';
 
 import './YDropdown.scss';
@@ -137,6 +138,20 @@ export const YDropdown = defineComponent({
                             props.itemText,
                           );
                           const slotName = `item.${item.key}` as const;
+                          if (item.type === 'divider') {
+                            return <YDivider />;
+                          }
+                          if (item.type === 'header') {
+                            return (
+                              <YListGroupHeader>
+                                {slots.item
+                                  ? slots.item({ text, item })
+                                  : slots?.[slotName]
+                                    ? slots[slotName]({ text, item })
+                                    : text}
+                              </YListGroupHeader>
+                            );
+                          }
                           return (
                             <YListItem onClick={(e) => onClickItem(item)}>
                               {slots.item
