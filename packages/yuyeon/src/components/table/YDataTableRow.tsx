@@ -174,7 +174,7 @@ export const YDataTableRow = defineComponent({
                         return (
                           slots['item.data-table-select']?.(slotProps) ?? (
                             <YButton
-                              variation={'text,small'}
+                              variant={'text,small'}
                               disabled={!item.selectable}
                               onClick={(e: MouseEvent) => {
                                 e.stopPropagation();

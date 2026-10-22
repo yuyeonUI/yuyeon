@@ -26,9 +26,7 @@ export const pressYTextareaPropsOptions = propsFactory(
       string | ((value: any) => string)
     >,
     whenInputValid: [Boolean, Number] as PropType<boolean | number>,
-    ...pressYInputPropsOptions({
-      variation: 'filled',
-    }),
+    ...pressYInputPropsOptions(),
   },
   'YTextarea',
 );
@@ -150,6 +148,7 @@ export const YTextarea = defineComponent({
         <YInput
           class={[CLASS_NAME]}
           {...yInputProps}
+          variant={props.variant ?? props.variation ?? 'filled'}
           modelValue={inValue.value}
           onUpdate:modelValue={onUpdateModel}
           focused={focused.value}

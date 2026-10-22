@@ -87,7 +87,7 @@ export const YDatePickerControl = defineComponent({
 		useRender(() => (
 			<div class={["y-date-picker-control"]}>
 				<YButton
-					variation="text"
+					variant="text"
 					class="y-date-picker-control__display"
 					disabled={disableYear.value}
 					onClick={onClickYear}
@@ -95,7 +95,7 @@ export const YDatePickerControl = defineComponent({
 					{props.yearText}
 				</YButton>
 				<YButton
-					variation="text"
+					variant="text"
 					class="y-date-picker-control__display"
 					disabled={disableMonth.value}
 					onClick={onClickMonth}
@@ -105,7 +105,7 @@ export const YDatePickerControl = defineComponent({
 				<div class="flex-spacer"></div>
 				<YButton
 					class="y-date-picker-control__page-button"
-					variation="text"
+					variant="text"
 					disabled={disablePrev.value}
 					onClick={onClickPrev}
 				>
@@ -113,7 +113,7 @@ export const YDatePickerControl = defineComponent({
 				</YButton>
 				<YButton
 					class="y-date-picker-control__page-button"
-					variation="text"
+					variant="text"
 					disabled={disableNext.value}
 					onClick={onClickNext}
 				>

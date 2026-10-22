@@ -12,7 +12,7 @@ const open = ref(true);
           <div class="y-card-header__title">Settings</div>
         </y-card-header>
         <nav>
-          <y-button variation="filled,rounded">
+          <y-button variant="filled,rounded">
             back
           </y-button>
           <y-list>

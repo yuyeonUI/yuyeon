@@ -146,7 +146,7 @@ export const YDataTableHead = defineComponent({
                   slots['header.data-table-select']?.(headerSlotProps) ??
                   (showSelectAll && (
                     <YButton
-                      variation={'text,small'}
+                      variant={'text,small'}
                       disabled={selectables.value.length < 1}
                       onClick={(e: MouseEvent) => {
                         e.stopPropagation();
