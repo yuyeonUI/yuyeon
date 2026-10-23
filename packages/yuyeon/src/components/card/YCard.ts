@@ -1,4 +1,4 @@
-import { h, type PropType } from 'vue';
+import { h, type PropType, type SlotsType } from 'vue';
 
 import { useRender } from '@/composables/component';
 import { pressThemePropsOptions, useLocalTheme } from '@/composables/theme';
@@ -8,6 +8,9 @@ import './YCard.scss';
 
 export const YCard = defineComponent({
   name: 'YCard',
+  slots: Object as SlotsType<{
+    default: any;
+  }>,
   props: {
     outline: {
       type: Boolean as PropType<boolean>,

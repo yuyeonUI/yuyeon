@@ -27,9 +27,7 @@ const defaultFilter: ComboboxFilter = (item, search) => {
     .includes(search.toLocaleLowerCase());
 };
 
-export const YCombobox = defineComponent<
-  ReturnType<typeof pressYComboboxPropsOptions>
->({
+export const YCombobox = defineComponent({
   name: 'YCombobox',
   inheritAttrs: false,
   props: {
@@ -40,10 +38,16 @@ export const YCombobox = defineComponent<
     'update:opened': (opened: boolean) => true,
     'update:search': (search: string) => true,
     'click:item': (item: any, event: MouseEvent) => true,
-    change: (value: any) => true,
+    change: (value: any, event?: Event, fieldInput?: YFieldInput) => true,
   },
   slots: Object as SlotsType<{
     base: any;
+    selection: {
+      displayText: string;
+      placeholder: undefined | string;
+      items: any[];
+      internalItems: ListItem[];
+    };
     leading: any;
     label: any;
     'helper-text': any;
@@ -160,8 +164,8 @@ export const YCombobox = defineComponent<
       { immediate: true },
     );
 
-    const displayText = computed(() => {
-      const displayItems = selections.value.map((selection) => {
+    const displayItems = computed(() =>
+      selections.value.map((selection) => {
         const currentItem = items.value.find(
           (item) =>
             !isNonSelectableItem(item) &&
@@ -174,11 +178,13 @@ export const YCombobox = defineComponent<
             props.itemComparator(cached.value, selection.value),
           ) ?? selection
         );
-      });
+      }),
+    );
 
+    const displayText = computed(() => {
       return props.multiple
-        ? displayItems.map((item) => item.text).join(', ')
-        : displayItems[0]?.text ?? '';
+        ? displayItems.value.map((item) => item.text).join(', ')
+        : displayItems.value[0]?.text ?? '';
     });
 
     const searchText = computed(() => String(search.value ?? ''));
@@ -410,6 +416,7 @@ export const YCombobox = defineComponent<
 
     useRender(() => {
       const fieldInputProps = chooseProps(props, YFieldInput.props);
+      const showSelection = !!slots.selection && !focused.value;
       const dropdownIconProps = chooseProps(
         typeof props.dropdownIcon === 'object' ? props.dropdownIcon : {},
         YIcon.props,
@@ -435,13 +442,28 @@ export const YCombobox = defineComponent<
               {
                 'y-combobox--opened': opened.value,
                 'y-combobox--selected': selected.value.length > 0,
+                'y-combobox--custom-selection': showSelection,
               },
             ]}
             {...attrs}
             focused={focused.value}
           >
             {{
-              default: () => renderMenu(),
+              default: () => (
+                <>
+                  {showSelection && (
+                    <div class="y-combobox__selection">
+                      {slots.selection?.({
+                        displayText: displayText.value,
+                        placeholder: props.placeholder,
+                        items: displayItems.value.map((item) => item.raw),
+                        internalItems: displayItems.value,
+                      })}
+                    </div>
+                  )}
+                  {renderMenu()}
+                </>
+              ),
               leading: slots.leading
                 ? (...args: any[]) => slots.leading?.(...args)
                 : undefined,

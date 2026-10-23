@@ -1,4 +1,11 @@
-import { computed, type CSSProperties, defineComponent, ref, watch } from 'vue';
+import {
+  computed,
+  type CSSProperties,
+  defineComponent,
+  ref,
+  type SlotsType,
+  watch,
+} from 'vue';
 
 import { useRender } from '@/composables/component';
 
@@ -6,6 +13,10 @@ import './YDividePanel.scss';
 
 export const YDividePanel = defineComponent({
   name: 'YDividePanel',
+  slots: Object as SlotsType<{
+    default: any;
+    secondary: any;
+  }>,
   setup(props, { slots }) {
     const contentRate = ref(50);
     const isResizing = ref(false);

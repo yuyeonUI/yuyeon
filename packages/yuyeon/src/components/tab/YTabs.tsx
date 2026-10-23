@@ -1,4 +1,4 @@
-import { computed, type PropType } from 'vue';
+import { computed, type PropType, type SlotsType } from 'vue';
 
 import { pressChoicePropsOptions, useChoice } from '@/composables/choice';
 import { useRender } from '@/composables/component';
@@ -26,6 +26,12 @@ export const pressYTabsPropOptions = propsFactory(
 
 export const YTabs = defineComponent({
   name: 'YTabs',
+  slots: Object as SlotsType<{
+    default: Pick<
+      ReturnType<typeof useChoice>,
+      'next' | 'prev' | 'select' | 'isSelected'
+    >;
+  }>,
   props: {
     tag: {
       type: String as PropType<'div' | 'nav' | 'ol' | 'ul'>,

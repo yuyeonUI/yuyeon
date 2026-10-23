@@ -5,6 +5,7 @@ import {
   onBeforeUnmount,
   type PropType,
   ref,
+  type SlotsType,
   watch,
 } from 'vue';
 
@@ -67,6 +68,10 @@ export const pressYDrawerPropsOptions = propsFactory(
 
 export const YDrawer = defineComponent({
   name: 'YDrawer',
+  slots: Object as SlotsType<{
+    default: any;
+    base: any;
+  }>,
   components: {
     YLayer,
     YCard,

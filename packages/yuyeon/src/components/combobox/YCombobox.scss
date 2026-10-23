@@ -10,6 +10,23 @@
     transform: rotate3d(1, 0, 0, 180deg);
   }
 
+  &__selection {
+    height: 100%;
+    width: 100%;
+    padding: 8px var(--y-field-input-horizon-padding, 10px);
+    contain: content;
+  }
+
+  &--custom-selection .y-field-input__field > input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+  }
+
+  &:not(&--selected) &__selection {
+    color: rgba(var(--y-theme-on-background-rgb), 0.6);
+  }
+
   &__content {
     > .y-card {
       padding-top: 8px;

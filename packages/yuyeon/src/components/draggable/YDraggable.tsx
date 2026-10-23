@@ -5,6 +5,7 @@ import {
   type MaybeRef,
   type PropType,
   ref,
+  type SlotsType,
   unref,
 } from 'vue';
 
@@ -15,6 +16,9 @@ type Coord = { x: number; y: number };
 
 export const YDraggable = defineComponent({
   name: 'YDraggable',
+  slots: Object as SlotsType<{
+    default: { handle: HTMLElement | undefined };
+  }>,
   props: {
     as: [Object, String] as PropType<object | string>,
     handle: [Object, String] as PropType<MaybeRef<HTMLElement | string>>,

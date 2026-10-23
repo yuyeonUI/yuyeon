@@ -1,4 +1,4 @@
-import type { CSSProperties } from 'vue';
+import type { CSSProperties, SlotsType } from 'vue';
 
 import { useHeader } from '@/components/table/composables/header';
 import { useSelection } from '@/components/table/composables/selection';
@@ -12,6 +12,7 @@ import { YButton } from '../button/YButton';
 import { YIconCheckbox } from '../icons/YIconCheckbox';
 import { YIconSort } from '../icons/YIconSort';
 import type { FixedPropType, InternalDataTableHeader } from './types';
+import type { YDataTableHeadSlots } from './types/slots';
 import { YDataTableCell } from './YDataTableCell';
 
 export const pressYDataTableHeadProps = propsFactory(
@@ -33,6 +34,7 @@ export const pressYDataTableHeadProps = propsFactory(
 
 export const YDataTableHead = defineComponent({
   name: 'YDataTableHead',
+  slots: Object as SlotsType<YDataTableHeadSlots>,
   components: {
     YDataTableCell,
   },

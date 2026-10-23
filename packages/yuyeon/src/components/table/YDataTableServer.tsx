@@ -1,4 +1,12 @@
-import { Fragment, type PropType, computed, provide, ref, toRef } from 'vue';
+import {
+  Fragment,
+  type PropType,
+  type SlotsType,
+  computed,
+  provide,
+  ref,
+  toRef,
+} from 'vue';
 
 import { provideExpand } from '@/components/table/composables/expand';
 import { YDataTableInjectionKey } from '@/components/table/composables/provides';
@@ -25,6 +33,7 @@ import { createPagination, providePagination } from './composables/pagination';
 import { provideSelection } from './composables/selection';
 import { createSorting, provideSorting } from './composables/sorting';
 import { YDataTableSlotProps } from './types';
+import type { YDataTableSlots } from './types/slots';
 
 export const pressDataTableServerProps = propsFactory(
   {
@@ -44,6 +53,7 @@ export const pressDataTableServerProps = propsFactory(
 
 export const YDataTableServer = defineComponent({
   name: 'YDataTableServer',
+  slots: Object as SlotsType<Omit<YDataTableSlots, 'control.append'>>,
   components: {
     YTable,
     YDataTableLayer,
