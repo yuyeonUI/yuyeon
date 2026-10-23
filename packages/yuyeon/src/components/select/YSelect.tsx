@@ -25,9 +25,7 @@ export {
   pressYSelectPropsOptions,
 } from './props';
 
-export const YSelect = defineComponent<
-  ReturnType<typeof pressYSelectPropsOptions>
->({
+export const YSelect = defineComponent({
   name: 'YSelect',
   inheritAttrs: false,
   props: {
@@ -37,7 +35,7 @@ export const YSelect = defineComponent<
     'update:modelValue': () => true,
     'update:opened': (opened: boolean) => true,
     'click:item': (item: any, e: MouseEvent) => true,
-    change: (value: any) => true,
+    change: (value: any, event?: Event, fieldInput?: YFieldInput) => true,
   },
   slots: Object as SlotsType<{
     base: any;
@@ -56,18 +54,27 @@ export const YSelect = defineComponent<
     'dropdown-icon': any;
     item: {
       item: any;
+      internalItem: ListItem;
+      value: any;
+      text: string;
       selected: boolean;
       focused: boolean;
       select: () => void;
     };
     'item-leading': {
       item: any;
+      internalItem: ListItem;
+      value: any;
+      text: string;
       selected: boolean;
       focused: boolean;
       select: () => void;
     };
     'item-trailing': {
       item: any;
+      internalItem: ListItem;
+      value: any;
+      text: string;
       selected: boolean;
       focused: boolean;
       select: () => void;

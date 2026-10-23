@@ -1,4 +1,4 @@
-import { h } from 'vue';
+import { h, type SlotsType } from 'vue';
 
 import { defineComponent } from '@/util/component';
 
@@ -9,6 +9,9 @@ import './YApp.scss';
  */
 export const YApp = defineComponent({
   name: 'YApp',
+  slots: Object as SlotsType<{
+    default: any;
+  }>,
   setup(_props, { slots }) {
     return () =>
       h(

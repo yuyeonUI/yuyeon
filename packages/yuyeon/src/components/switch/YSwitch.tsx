@@ -3,6 +3,7 @@ import {
   nextTick,
   type PropType,
   ref,
+  type SlotsType,
   watch,
   withModifiers,
 } from 'vue';
@@ -54,6 +55,9 @@ export const pressYSwitchPropsOptions = propsFactory(
 
 export const YSwitch = defineComponent({
   name: 'YSwitch',
+  slots: Object as SlotsType<{
+    label: any;
+  }>,
   props: {
     ...pressYSwitchPropsOptions(),
   },

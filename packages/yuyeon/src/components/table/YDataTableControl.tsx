@@ -1,4 +1,4 @@
-import { type PropType } from 'vue';
+import { type PropType, type SlotsType } from 'vue';
 
 import { pressDataTablePaginationProps } from '@/components/table/composables/pagination';
 import { useRender } from '@/composables/component';
@@ -9,6 +9,7 @@ import { YButton } from '../button';
 import { YFieldInput } from '../field-input';
 import { YIconExpand, YIconPageControl } from '../icons';
 import { YPagination } from '../pagination';
+import type { YDataTableControlSlots } from './types/slots';
 
 import './YDataTableControl.scss';
 
@@ -27,6 +28,7 @@ export const pressYDataTableControlPropsOptions = propsFactory(
 
 export const YDataTableControl = defineComponent({
   name: 'YDataTableControl',
+  slots: Object as SlotsType<YDataTableControlSlots>,
   components: {
     YButton,
     YIconExpand,

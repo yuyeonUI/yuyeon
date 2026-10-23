@@ -1,4 +1,4 @@
-import { type PropType, type Ref, inject } from 'vue';
+import { type PropType, type Ref, type SlotsType, inject } from 'vue';
 
 import {
   YDataTableInjectionKey,
@@ -7,8 +7,11 @@ import {
 import { useRender } from '@/composables/component';
 import { defineComponent } from '@/util/component';
 
+import type { YDataTableLayerSlots } from './types/slots';
+
 export const YDataTableLayer = defineComponent({
   name: 'YDataTableLayer',
+  slots: Object as SlotsType<YDataTableLayerSlots>,
   props: {
     slotProps: Object as PropType<any>,
   },

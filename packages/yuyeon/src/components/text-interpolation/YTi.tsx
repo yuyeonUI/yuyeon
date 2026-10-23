@@ -1,4 +1,4 @@
-import { computed, type PropType } from 'vue';
+import { computed, type PropType, type SlotsType } from 'vue';
 
 import { useRender } from '@/composables/component';
 import { getObjectValueByPath } from '@/util/common';
@@ -7,6 +7,10 @@ import { simpleBraceParse } from '@/util/string';
 
 export const YTi = defineComponent({
   name: 'YTi',
+  slots: Object as SlotsType<{
+    default: { nodes: ReturnType<typeof simpleBraceParse> };
+    [name: string]: any;
+  }>,
   props: {
     text: String,
     item: Object,

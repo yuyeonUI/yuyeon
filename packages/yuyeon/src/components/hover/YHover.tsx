@@ -1,4 +1,4 @@
-import { ref, watch } from "vue";
+import { ref, type SlotsType, watch } from "vue";
 
 import { useModelDuplex } from "@/composables/communication";
 import { useRender } from "@/composables/component";
@@ -26,6 +26,15 @@ export const pressYHoverPropsOptions = propsFactory(
 
 export const YHover = defineComponent({
 	name: "YHover",
+	slots: Object as SlotsType<{
+		default: {
+			isHovering: boolean | undefined;
+			props: {
+				onMouseenter: () => void;
+				onMouseleave: () => void;
+			};
+		};
+	}>,
 	props: pressYHoverPropsOptions(),
 	emits: ["update:modelValue", "hover", "mouseenter", "mouseleave", "focus"],
 	setup(props, { slots, emit }) {

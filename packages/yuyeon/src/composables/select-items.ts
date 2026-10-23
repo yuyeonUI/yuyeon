@@ -7,7 +7,7 @@ import { wrapInArray } from '@/util/array';
 export function useSelectItems(
   props: any,
   fieldInputRef: Ref<any>,
-  emit: (event: string, ...args: any[]) => void,
+  emit: (event: 'change', ...args: any[]) => void,
   options: { allowUnmatchedSelection?: boolean } = {},
 ) {
   const { items, toRefineItems, toEmitItems } = useItems(props);

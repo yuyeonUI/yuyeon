@@ -1,4 +1,4 @@
-import { ref, shallowRef } from 'vue';
+import { ref, shallowRef, type SlotsType } from 'vue';
 
 import { useRender } from '@/composables/component';
 import { pressThemePropsOptions, useLocalTheme } from '@/composables/theme';
@@ -16,6 +16,9 @@ export const pressYListPropsOptions = propsFactory(
 
 export const YList = defineComponent({
   name: 'YList',
+  slots: Object as SlotsType<{
+    default: any;
+  }>,
   props: {
     ...pressYListPropsOptions(),
   },

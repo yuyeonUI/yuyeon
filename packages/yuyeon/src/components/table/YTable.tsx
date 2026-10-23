@@ -1,4 +1,4 @@
-import { type PropType, provide } from 'vue';
+import { type PropType, type SlotsType, provide } from 'vue';
 
 import { useRender } from '@/composables/component';
 import { defineComponent, propsFactory } from '@/util/component';
@@ -31,6 +31,17 @@ export const pressYTableProps = propsFactory(
 
 export const YTable = defineComponent({
   name: 'YTable',
+  slots: Object as SlotsType<{
+    top: any;
+    default: any;
+    leading: any;
+    trailing: any;
+    container: (
+      containerRef: ReturnType<typeof useRectMeasure>['containerRef'],
+      containerRect: ReturnType<typeof useRectMeasure>['containerRect'],
+    ) => any;
+    bottom: any;
+  }>,
   props: {
     ...pressYTableProps(),
   },
