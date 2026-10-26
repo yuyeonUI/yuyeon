@@ -2,8 +2,8 @@ import {
   computed,
   type PropType,
   ref,
-  shallowRef,
   type SlotsType,
+  shallowRef,
   type VNode,
   watch,
 } from 'vue';
@@ -157,8 +157,7 @@ export const YInput = defineComponent({
         'y-input--outlined':
           !props.ceramic &&
           (variants.value.includes('outlined') || !!props.outlined),
-        'y-input--filled':
-          variants.value.includes('filled') || !!props.filled,
+        'y-input--filled': variants.value.includes('filled') || !!props.filled,
         // Value
         'y-input--loading': isLoading.value,
         'y-input--has-value': !!inValue.value,
