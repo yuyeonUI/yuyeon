@@ -34,7 +34,7 @@ export const YCombobox = defineComponent({
     ...pressYComboboxPropsOptions(),
   },
   emits: {
-    'update:modelValue': () => true,
+    'update:modelValue': (_value: any) => true,
     'update:opened': (opened: boolean) => true,
     'update:search': (search: string) => true,
     'click:item': (item: any, event: MouseEvent) => true,
@@ -184,7 +184,7 @@ export const YCombobox = defineComponent({
     const displayText = computed(() => {
       return props.multiple
         ? displayItems.value.map((item) => item.text).join(', ')
-        : displayItems.value[0]?.text ?? '';
+        : (displayItems.value[0]?.text ?? '');
     });
 
     const searchText = computed(() => String(search.value ?? ''));
