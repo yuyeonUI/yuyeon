@@ -27,7 +27,7 @@ export const YSelect = defineComponent({
     ...pressYSelectPropsOptions(),
   },
   emits: {
-    'update:modelValue': () => true,
+    'update:modelValue': (value: any) => true,
     'update:opened': (opened: boolean) => true,
     'click:clear': (event: MouseEvent) => true,
     'click:item': (item: any, e: MouseEvent) => true,
