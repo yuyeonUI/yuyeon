@@ -140,7 +140,7 @@ export const YFieldInput = defineComponent({
 
 		function onKeydownClear(event: KeyboardEvent) {
 			if (event.code === "Space" || event.code === "Enter") {
-				clear();
+				event.stopPropagation();
 			}
 		}
 

@@ -1,9 +1,4 @@
-import {
-  mergeProps,
-  ref,
-  type SlotsType,
-  shallowRef,
-} from 'vue';
+import { mergeProps, ref, type SlotsType, shallowRef } from 'vue';
 
 import { useModelDuplex } from '@/composables/communication';
 import { useRender } from '@/composables/component';
@@ -34,8 +29,10 @@ export const YSelect = defineComponent({
   emits: {
     'update:modelValue': () => true,
     'update:opened': (opened: boolean) => true,
+    'click:clear': (event: MouseEvent) => true,
     'click:item': (item: any, e: MouseEvent) => true,
-    change: (value: any, event?: Event, fieldInput?: YFieldInput) => true,
+    change: (value: any, event?: Event, fieldInput?: typeof YFieldInput) =>
+      true,
   },
   slots: Object as SlotsType<{
     base: any;
@@ -81,7 +78,7 @@ export const YSelect = defineComponent({
     };
   }>,
   setup(props, { slots, attrs, expose, emit }) {
-    const fieldInputRef = ref<InstanceType<typeof YFieldInput>>();
+    const fieldInputRef = ref<typeof YFieldInput>();
     const focused = shallowRef(false);
     const opened = useModelDuplex(props, 'opened');
     const selectItems = useSelectItems(props, fieldInputRef, emit);
@@ -93,6 +90,7 @@ export const YSelect = defineComponent({
       displayText,
       isSelected,
       isNonSelectableItem,
+      setOut,
       select,
     } = selectItems;
 
@@ -130,8 +128,7 @@ export const YSelect = defineComponent({
       listId,
       getItemId: listId ? (_item, index) => `${listId}-${index}` : undefined,
     });
-    const { menuRef, baseEl, onBlur: onMenuBlur, renderMenu } =
-      selectMenu;
+    const { menuRef, baseEl, onBlur: onMenuBlur, renderMenu } = selectMenu;
 
     // Field
 
@@ -142,6 +139,15 @@ export const YSelect = defineComponent({
     function onBlur(event: FocusEvent) {
       focused.value = false;
       onMenuBlur(event);
+    }
+
+    function onClear(event: MouseEvent) {
+      event.stopPropagation();
+      model.value = [];
+      resetActiveItem();
+      fieldInputRef.value?.focus();
+      emit('change', setOut([]), event, fieldInputRef.value);
+      emit('click:clear', event);
     }
 
     function onKeydownDisplay(event: KeyboardEvent) {
@@ -187,6 +193,7 @@ export const YSelect = defineComponent({
           {...fieldInputProps}
           modelValue={model.value.map((v: any) => v.props.value).join(', ')}
           validationValue={model.rxValue}
+          onClick:clear={onClear}
           onKeydown:display={onKeydownDisplay}
           onFocus={onFocus}
           onBlur={onBlur}
