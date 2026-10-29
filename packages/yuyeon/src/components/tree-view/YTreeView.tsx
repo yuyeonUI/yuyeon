@@ -1,4 +1,14 @@
-import { computed, defineComponent, onMounted, type PropType, type Ref, ref, shallowRef, watch } from 'vue';
+import {
+  computed,
+  defineComponent,
+  onMounted,
+  type PropType,
+  type Ref,
+  ref,
+  shallowRef,
+  type SlotsType,
+  watch,
+} from 'vue';
 
 import { provideTreeView } from '@/components/tree-view/tree-view';
 import { useRender } from '@/composables/component';
@@ -20,6 +30,13 @@ const treeViewNodeProps = pressYTreeViewNodeProps();
 
 export const YTreeView = defineComponent({
   name: 'YTreeView',
+  slots: Object as SlotsType<{
+    default: any;
+    'expand-icon': any;
+    leading: any;
+    trailing: any;
+    'no-data': any;
+  }>,
   props: {
     expanded: {
       type: [Array] as PropType<CandidateKey[]>,

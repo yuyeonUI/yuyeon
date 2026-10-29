@@ -1,4 +1,10 @@
-import { defineComponent, h, type PropType, Transition } from 'vue';
+import {
+  defineComponent,
+  h,
+  type PropType,
+  type SlotsType,
+  Transition,
+} from 'vue';
 
 import { animate } from '@/util/animation';
 
@@ -20,6 +26,9 @@ export function createSlideDirectionTransition(direction: 'v' | 'h') {
 
   return defineComponent({
     name: `slide-${direction}-transition`,
+    slots: Object as SlotsType<{
+      default: any;
+    }>,
     props: {
       // v: 'top' | 'bottom', h: 'left' | 'right'
       side: {

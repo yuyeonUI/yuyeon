@@ -1,4 +1,4 @@
-import { computed, type PropType } from 'vue';
+import { computed, type PropType, type SlotsType } from 'vue';
 
 import { useRender } from '@/composables';
 import { useProgress } from '@/composables/progress';
@@ -9,6 +9,10 @@ import './YProgressBar.scss';
 
 export const YProgressBar = defineComponent({
   name: 'YProgressBar',
+  slots: Object as SlotsType<{
+    'lead-inner': any;
+    'tube-append': any;
+  }>,
   props: {
     modelValue: {
       type: Number as PropType<number>,

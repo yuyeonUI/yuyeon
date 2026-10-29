@@ -1,4 +1,4 @@
-import { Fragment, type PropType, mergeProps, ref } from 'vue';
+import { Fragment, type PropType, type SlotsType, mergeProps, ref } from 'vue';
 
 import { useExpand } from '@/components/table/composables/expand';
 import { useHeader } from '@/components/table/composables/header';
@@ -8,6 +8,7 @@ import { defineComponent, propsFactory } from '@/util/component';
 
 import { YDataTableRow } from './YDataTableRow';
 import { DataTableItem, RowProps } from './types';
+import type { YDataTableBodySlots } from './types/slots';
 
 export const pressYDataTableBodyProps = propsFactory(
   {
@@ -35,6 +36,7 @@ export const pressYDataTableBodyProps = propsFactory(
 
 export const YDataTableBody = defineComponent({
   name: 'YDataTableBody',
+  slots: Object as SlotsType<YDataTableBodySlots>,
   props: {
     ...pressYDataTableBodyProps(),
   },

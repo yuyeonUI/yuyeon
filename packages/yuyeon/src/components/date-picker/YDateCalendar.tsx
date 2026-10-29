@@ -1,4 +1,4 @@
-import { computed, type PropType, ref } from "vue";
+import { computed, type PropType, ref, type SlotsType } from "vue";
 
 import { useModelDuplex } from "@/composables/communication";
 import { useRender } from "@/composables/component";
@@ -36,6 +36,14 @@ export const pressYDateCalendarPropsOptions = propsFactory(
 
 export const YDateCalendar = defineComponent({
 	name: "YDateCalendar",
+	slots: Object as SlotsType<{
+		header: any;
+		day: {
+			props: { onClick: () => void };
+			item: any;
+			index: number;
+		};
+	}>,
 	props: pressYDateCalendarPropsOptions(),
 	emits: {
 		"update:modelValue": (date: any) => true,

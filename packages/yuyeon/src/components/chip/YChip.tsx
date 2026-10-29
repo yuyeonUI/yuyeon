@@ -1,4 +1,4 @@
-import { computed } from 'vue';
+import { computed, type SlotsType } from 'vue';
 
 import { useRender } from '@/composables';
 import {
@@ -19,6 +19,9 @@ export const pressYChipPropsOptions = propsFactory(
 
 export const YChip = defineComponent({
   name: 'YChip',
+  slots: Object as SlotsType<{
+    default: any;
+  }>,
   props: {
     ...pressYChipPropsOptions(),
   },
