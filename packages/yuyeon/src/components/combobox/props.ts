@@ -16,6 +16,8 @@ export const pressYComboboxPropsOptions = propsFactory(
     },
     /** Keep the selected label separate from the search query. */
     separateSearch: Boolean as PropType<boolean>,
+    /** Show a remove button on each selected chip in multiple mode. */
+    enableChipClear: Boolean as PropType<boolean>,
     search: String as PropType<string>,
     searchLoading: Boolean as PropType<boolean>,
     disableFilter: Boolean as PropType<boolean>,
