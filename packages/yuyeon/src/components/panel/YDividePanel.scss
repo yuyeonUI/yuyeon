@@ -34,11 +34,30 @@ $side-padding: 16px !default;
     }
   }
 
-  &--resizing &__divider {
+  &__divider--resizing {
     background: rgba(var(--y-theme-primary), 0.12);
 
-    &-line {
+    > .y-divide-panel__divider-line {
       background: var(--y-theme-primary);
+    }
+  }
+
+  &--horizontal.y-divide-panel--resizing {
+    cursor: ew-resize;
+  }
+
+  &--horizontal > &__divider {
+    width: 8px;
+    height: auto;
+    cursor: ew-resize;
+
+    > .y-divide-panel__divider-line {
+      top: 0;
+      right: 4px;
+      bottom: 0;
+      left: 4px;
+      width: 1px;
+      height: auto;
     }
   }
 }
