@@ -1,5 +1,8 @@
 import {
+  type ButtonHTMLAttributes,
   computed,
+  Fragment,
+  type HTMLAttributes,
   mergeProps,
   ref,
   type SlotsType,
@@ -49,6 +52,20 @@ export const YCombobox = defineComponent({
       placeholder: undefined | string;
       items: any[];
       internalItems: ListItem[];
+    };
+    chip: {
+      item: any;
+      internalItem: ListItem;
+      value: any;
+      text: string;
+      index: number;
+      disabled: boolean;
+      clearable: boolean;
+      clear: (event?: Event) => void;
+      /** Bind to the custom chip root to preserve layout and focus handling. */
+      props: HTMLAttributes & { small: boolean };
+      /** Bind to the custom chip's remove button. */
+      clearProps: ButtonHTMLAttributes;
     };
     leading: any;
     label: any;
@@ -350,8 +367,8 @@ export const YCombobox = defineComponent({
       emit('change', setOut([]), event, fieldInputRef.value);
     }
 
-    function onClearChip(item: ListItem, event: MouseEvent) {
-      event.stopPropagation();
+    function onClearChip(item: ListItem, event?: Event) {
+      event?.stopPropagation();
       if (
         !props.multiple ||
         !props.enableChipClear ||
@@ -384,9 +401,8 @@ export const YCombobox = defineComponent({
     function onInputBlur(event: FocusEvent) {
       const nextTarget = event.relatedTarget as HTMLElement | null;
       if (
-        nextTarget?.matches(
-          '.y-combobox__chip-clear, .y-field-input__field > input',
-        ) &&
+        (nextTarget?.closest('.y-combobox__chip') ||
+          nextTarget?.matches('.y-field-input__field > input')) &&
         fieldInputRef.value?.$el?.contains(nextTarget)
       )
         return;
@@ -454,6 +470,52 @@ export const YCombobox = defineComponent({
       }
     }
 
+    function renderChip(item: ListItem, index: number) {
+      const disabled =
+        props.disabled || props.readonly || props.loading || item.disabled;
+      const clear = (event?: Event) => onClearChip(item, event);
+      const chipProps = {
+        class: 'y-combobox__chip',
+        small: true,
+        onFocusout: onInputBlur,
+      };
+      const clearProps: ButtonHTMLAttributes = {
+        type: 'button',
+        class: 'y-combobox__chip-clear',
+        'aria-label': `Remove ${item.text}`,
+        disabled,
+        onClick: clear,
+      };
+
+      return (
+        <Fragment key={index}>
+          {slots.chip ? (
+            slots.chip({
+              item: item.raw,
+              internalItem: item,
+              value: item.value,
+              text: item.text,
+              index,
+              disabled,
+              clearable: !!props.enableChipClear,
+              clear,
+              props: chipProps,
+              clearProps,
+            })
+          ) : (
+            <YChip {...chipProps}>
+              <span class="y-combobox__chip-text">{item.text}</span>
+              {props.enableChipClear && (
+                <button {...clearProps}>
+                  <YIconClear />
+                </button>
+              )}
+            </YChip>
+          )}
+        </Fragment>
+      );
+    }
+
     useRender(() => {
       const fieldInputProps = chooseProps(props, YFieldInput.props);
       const showSelection = !!slots.selection && !focused.value;
@@ -514,31 +576,7 @@ export const YCombobox = defineComponent({
                       })}
                     </div>
                   )}
-                  {showChips &&
-                    displayItems.value.map((item, index) => (
-                      <YChip key={index} class="y-combobox__chip" small>
-                        <span class="y-combobox__chip-text">{item.text}</span>
-                        {props.enableChipClear && (
-                          <button
-                            type="button"
-                            class="y-combobox__chip-clear"
-                            aria-label={`Remove ${item.text}`}
-                            disabled={
-                              props.disabled ||
-                              props.readonly ||
-                              props.loading ||
-                              item.disabled
-                            }
-                            onClick={(event: MouseEvent) =>
-                              onClearChip(item, event)
-                            }
-                            onBlur={onInputBlur}
-                          >
-                            <YIconClear />
-                          </button>
-                        )}
-                      </YChip>
-                    ))}
+                  {showChips && displayItems.value.map(renderChip)}
                   {renderMenu()}
                 </>
               ),
