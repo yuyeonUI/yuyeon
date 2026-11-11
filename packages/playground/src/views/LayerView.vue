@@ -14,6 +14,7 @@ const childDialog = shallowRef(false);
 const maximizedDialog = shallowRef(false);
 const comboboxValue = shallowRef<string | null>(null);
 const multipleComboboxValue = shallowRef<string[]>(['apple', 'banana']);
+const customChipComboboxValue = shallowRef<string[]>(['grape', 'strawberry']);
 
 const comboboxItems = [
   { value: 'apple', text: '사과' },
@@ -465,6 +466,32 @@ function onClickOpenDrawer() {
               />
               <p class="mt-2">선택값: {{ multipleComboboxValue }}</p>
             </div>
+            <div class="combobox-example">
+              <y-combobox
+                v-model="customChipComboboxValue"
+                :items="comboboxItems"
+                label="chip 슬롯"
+                placeholder="과일 검색"
+                helper-text="chip 슬롯으로 색상과 내용을 바꿀 수 있습니다."
+                multiple
+                enable-clear
+                enable-chip-clear
+              >
+                <template
+                  #chip="{ index, text, props: chipProps, clearable, clearProps }"
+                >
+                  <y-chip v-bind="chipProps" color="primary">
+                    <span class="combobox-example__chip-text">
+                      {{ index + 1 }}. {{ text }}
+                    </span>
+                    <button v-if="clearable" v-bind="clearProps">
+                      <YIconClear />
+                    </button>
+                  </y-chip>
+                </template>
+              </y-combobox>
+              <p class="mt-2">선택값: {{ customChipComboboxValue }}</p>
+            </div>
           </y-card-body>
         </y-card>
       </section>
@@ -476,5 +503,12 @@ function onClickOpenDrawer() {
 .combobox-example {
   flex: 1 1 260px;
   min-width: 0;
+}
+
+.combobox-example__chip-text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 </style>
