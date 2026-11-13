@@ -1,10 +1,13 @@
 import { ComputedRef, Ref, UnwrapRef } from 'vue';
 
 import { SelectableItem } from '@/components/table/composables/selection';
+import type { useExpand } from '../composables/expand';
 import type { DataTableCompareFn } from './common';
 import type { DataTableHeader, InternalDataTableHeader } from './header';
 import type { DataTableItem, ItemKeySlot } from './item';
 import type { CellProps, RowProps } from './row';
+
+export type * from './slots';
 
 export type {
   ItemKeySlot,
@@ -55,9 +58,13 @@ export type YDataTableSlotProps = {
   pageSize: number;
   pageLength: number;
   setPageSize: DataTableProvidePaginationData['setPageSize'];
+  setPage: DataTableProvidePaginationData['setPage'];
   // sorting
   sortBy: UnwrapRef<DataTableProvideSortingData['sortBy']>;
   toggleSort: DataTableProvideSortingData['toggleSort'];
+  // expand
+  isExpanded: ReturnType<typeof useExpand>['isExpanded'];
+  toggleExpand: ReturnType<typeof useExpand>['toggleExpand'];
   // selection
   someSelected: boolean;
   allSelected: boolean;

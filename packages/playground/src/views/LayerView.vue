@@ -12,6 +12,18 @@ const focusTrapTest = shallowRef('');
 const parentDialog = shallowRef(false);
 const childDialog = shallowRef(false);
 const maximizedDialog = shallowRef(false);
+const comboboxValue = shallowRef<string | null>(null);
+const multipleComboboxValue = shallowRef<string[]>(['apple', 'banana']);
+const customChipComboboxValue = shallowRef<string[]>(['grape', 'strawberry']);
+
+const comboboxItems = [
+  { value: 'apple', text: '사과' },
+  { value: 'banana', text: '바나나' },
+  { value: 'grape', text: '포도' },
+  { value: 'strawberry', text: '딸기' },
+  { value: 'blueberry', text: '블루베리' },
+  { value: 'watermelon', text: '수박' },
+];
 
 const dropdownItems = [
   {
@@ -426,8 +438,77 @@ function onClickOpenDrawer() {
           </y-card-body>
         </y-card>
       </section>
+      <section class="pt-6">
+        <y-card>
+          <y-card-header>COMBOBOX</y-card-header>
+          <y-card-body class="d-flex flex-wrap gap-4">
+            <div class="combobox-example">
+              <y-combobox
+                v-model="comboboxValue"
+                :items="comboboxItems"
+                label="단일 선택"
+                placeholder="과일 검색"
+                helper-text="입력하여 검색하고 과일을 선택하세요."
+                enable-clear
+              />
+              <p class="mt-2">선택값: {{ comboboxValue ?? '없음' }}</p>
+            </div>
+            <div class="combobox-example">
+              <y-combobox
+                v-model="multipleComboboxValue"
+                :items="comboboxItems"
+                label="다중 선택 (chip)"
+                placeholder="과일 검색"
+                helper-text="chip의 × 버튼으로 선택한 과일을 하나씩 삭제할 수 있습니다."
+                multiple
+                enable-clear
+                enable-chip-clear
+              />
+              <p class="mt-2">선택값: {{ multipleComboboxValue }}</p>
+            </div>
+            <div class="combobox-example">
+              <y-combobox
+                v-model="customChipComboboxValue"
+                :items="comboboxItems"
+                label="chip 슬롯"
+                placeholder="과일 검색"
+                helper-text="chip 슬롯으로 색상과 내용을 바꿀 수 있습니다."
+                multiple
+                enable-clear
+                enable-chip-clear
+              >
+                <template
+                  #chip="{ index, text, props: chipProps, clearable, clearProps }"
+                >
+                  <y-chip v-bind="chipProps" color="primary">
+                    <span class="combobox-example__chip-text">
+                      {{ index + 1 }}. {{ text }}
+                    </span>
+                    <button v-if="clearable" v-bind="clearProps">
+                      <YIconClear />
+                    </button>
+                  </y-chip>
+                </template>
+              </y-combobox>
+              <p class="mt-2">선택값: {{ customChipComboboxValue }}</p>
+            </div>
+          </y-card-body>
+        </y-card>
+      </section>
     </y-card>
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.combobox-example {
+  flex: 1 1 260px;
+  min-width: 0;
+}
+
+.combobox-example__chip-text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+</style>

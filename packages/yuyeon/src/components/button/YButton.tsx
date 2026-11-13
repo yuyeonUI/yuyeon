@@ -1,4 +1,4 @@
-import type { PropType } from 'vue';
+import type { PropType, SlotsType } from 'vue';
 import { computed, mergeProps } from 'vue';
 
 import {
@@ -73,6 +73,11 @@ export const YButton = defineComponent({
     PlateWave,
   },
   props: pressYButtonProps(),
+  slots: Object as SlotsType<{
+    default: any;
+    loading: any;
+    append: any;
+  }>,
   emits: {
     click: (event: MouseEvent) => true,
     'choice:selected': (choice: { value: boolean }) => true,

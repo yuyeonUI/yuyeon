@@ -1,4 +1,4 @@
-import { ref } from "vue";
+import { ref, type SlotsType } from "vue";
 
 import { useRender } from "@/composables/component";
 import {
@@ -14,6 +14,9 @@ const NAME = "y-form";
 
 export const YForm = defineComponent({
 	name: "YForm",
+	slots: Object as SlotsType<{
+		default: any;
+	}>,
 	props: {
 		...pressFormPropsOptions(),
 	},

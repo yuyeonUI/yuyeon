@@ -12,6 +12,13 @@ import { getHtmlElement } from 'yuyeon/util';
 import { useDate } from '@/composables';
 import { validateDate } from '@/util/date/index';
 
+defineSlots<{
+  'item-text'(props: {
+    item: { text: string; value: number };
+    index: number;
+  }): any;
+}>();
+
 const props = defineProps({
   variant: String as PropType<string>,
   /** @deprecated Use `variant` instead. */

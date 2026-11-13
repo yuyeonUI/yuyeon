@@ -1,4 +1,12 @@
-import { Fragment, type PropType, computed, provide, ref, toRef } from 'vue';
+import {
+  Fragment,
+  type PropType,
+  type SlotsType,
+  computed,
+  provide,
+  ref,
+  toRef,
+} from 'vue';
 
 import {
   pressDataTableExpandProps,
@@ -45,6 +53,7 @@ import { YDataTableHead, pressYDataTableHeadProps } from './YDataTableHead';
 import { YDataTableLayer } from './YDataTableLayer';
 import { YTable, pressYTableProps } from './YTable';
 import { YDataTableSlotProps } from './types';
+import type { YDataTableSlots } from './types/slots';
 
 export const pressDataTableProps = propsFactory(
   {
@@ -65,6 +74,7 @@ export const pressDataTableProps = propsFactory(
 
 export const YDataTable = defineComponent({
   name: 'YDataTable',
+  slots: Object as SlotsType<YDataTableSlots>,
   props: {
     ...omit(pressYDataTableControlPropsOptions(), [
       'setPage',

@@ -120,6 +120,14 @@ $table-cell-border-bottom-color: rgba(
 
 .y-data-table-header--select,
 .y-data-table-data--select {
+  .y-button {
+    height: auto;
+
+    > .y-button__content {
+      padding: 2px;
+    }
+  }
+
   > .y-icon-checkbox {
     &:not(&--disabled) {
       cursor: pointer;

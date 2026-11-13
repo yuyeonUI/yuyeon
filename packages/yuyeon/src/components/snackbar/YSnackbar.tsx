@@ -1,4 +1,12 @@
-import { computed, type PropType, ref, toRef, watch, withModifiers } from 'vue';
+import {
+  computed,
+  type PropType,
+  ref,
+  type SlotsType,
+  toRef,
+  watch,
+  withModifiers,
+} from 'vue';
 
 import { useModelDuplex } from '@/composables/communication';
 import { useRender } from '@/composables/component';
@@ -111,6 +119,9 @@ export const pressYSnackbarPropsOptions = propsFactory(
 
 export const YSnackbar = defineComponent({
   name: 'YSnackbar',
+  slots: Object as SlotsType<{
+    default: any;
+  }>,
   components: { YPlate, YLayer },
   emits: ['update:modelValue', 'click'],
   props: {

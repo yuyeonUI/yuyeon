@@ -4,6 +4,7 @@ import {
   type PropType,
   type Ref,
   ref,
+  type SlotsType,
   Transition,
 } from 'vue';
 
@@ -126,6 +127,9 @@ export function createExpandTransition(isHorizon = false) {
 
   return defineComponent({
     name,
+    slots: Object as SlotsType<{
+      default: any;
+    }>,
     props: {
       disabled: {
         type: Boolean as PropType<boolean>,

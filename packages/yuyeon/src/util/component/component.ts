@@ -4,11 +4,13 @@ import type {
   ComponentOptions,
   ComponentOptionsMixin,
   ComponentProvideOptions,
+  ComponentPropsOptions,
   ComputedOptions,
   DefineComponent,
   Directive,
   EmitsOptions,
   MethodOptions,
+  PublicProps,
   SlotsType,
 } from 'vue';
 import {
@@ -26,8 +28,9 @@ import {
 } from '../../composables/defaults';
 import { EmitsToProps } from './types';
 
-type ToResolvedProps<Props, Emits extends EmitsOptions> = Readonly<Props> &
-  Readonly<EmitsToProps<Emits>>;
+type ToResolvedProps<Props, Emits extends EmitsOptions> = Readonly<
+  Props extends ComponentPropsOptions ? ExtractPropTypes<Props> : Props
+> & ({} extends Emits ? {} : EmitsToProps<Emits>);
 
 // overload 1: no props from options
 function redefineComponent<
@@ -76,7 +79,11 @@ function redefineComponent<
   Mixin,
   Extends,
   E,
-  EE
+  EE,
+  PublicProps,
+  ToResolvedProps<PropsOptions, E>,
+  ExtractDefaultPropTypes<PropsOptions>,
+  Slots
 >;
 
 // overload 2: defineComponent with options object, infer props from options
@@ -126,7 +133,11 @@ function redefineComponent<
   Mixin,
   Extends,
   E,
-  EE
+  EE,
+  PublicProps,
+  ToResolvedProps<PropsOptions, E>,
+  ExtractDefaultPropTypes<PropsOptions>,
+  Slots
 >;
 
 function redefineComponent(options: ComponentOptions) {

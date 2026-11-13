@@ -1,4 +1,4 @@
-import { type PropType, h } from 'vue';
+import { type PropType, type SlotsType, h } from 'vue';
 
 import { defineComponent } from '@/util/component';
 
@@ -8,6 +8,9 @@ import './YInputCheckbox.scss';
 
 export default defineComponent({
   name: 'YInputCheckbox',
+  slots: Object as SlotsType<{
+    icon: { checked: boolean };
+  }>,
   components: { YIconCheckbox },
   props: {
     id: String as PropType<string>,

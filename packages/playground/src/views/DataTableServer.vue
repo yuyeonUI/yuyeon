@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import DataTableBottom from "@/pages/data-table/DataTableBottom.vue";
+import DataTableBottom from "@/views/data-table/DataTableBottom.vue";
 import { dataTableHeaders } from "@/settings/headers.ts";
 import { computed, ref } from "vue";
 

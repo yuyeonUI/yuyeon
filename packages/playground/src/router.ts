@@ -4,49 +4,49 @@ const routes: Array<RouteRecordRaw> = [
   {
     name: "Main",
     path: "/",
-    component: () => import("@/pages/ControlProps.vue"),
+    component: () => import("@/views/ControlProps.vue"),
     children: [
       {
         name: "MainTabFirst",
         path: "first",
-        component: () => import("@/pages/main/MainTabFirst.vue"),
+        component: () => import("@/views/main/MainTabFirst.vue"),
       },
       {
         name: "MainTabSecond",
         path: "second",
-        component: () => import("@/pages/main/MainTabSecond.vue"),
+        component: () => import("@/views/main/MainTabSecond.vue"),
       },
     ],
   },
   {
     name: "DataTable",
     path: "/data-table",
-    component: () => import("@/pages/DataTable.vue"),
+    component: () => import("@/views/DataTable.vue"),
   },
   {
     name: "DataTableServer",
     path: "/data-table-server",
-    component: () => import("@/pages/DataTableServer.vue"),
+    component: () => import("@/views/DataTableServer.vue"),
   },
   {
     name: "TreeView",
     path: "/tree-view",
-    component: () => import("@/pages/TreeView.vue"),
+    component: () => import("@/views/TreeView.vue"),
   },
   {
     name: "DatePicker",
     path: "/date-picker",
-    component: () => import("@/pages/DatePicker.vue"),
+    component: () => import("@/views/DatePicker.vue"),
   },
   {
     name: "MaxDialog",
     path: "/max-dialog",
-    component: () => import("@/pages/MaxDialog.vue"),
+    component: () => import("@/views/MaxDialog.vue"),
   },
   {
     name: "Layer",
     path: "/layer",
-    component: () => import("@/pages/LayerView.vue"),
+    component: () => import("@/views/LayerView.vue"),
   },
 ];
 

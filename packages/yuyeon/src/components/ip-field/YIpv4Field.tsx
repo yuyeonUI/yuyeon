@@ -1,10 +1,11 @@
 import {
-  type PropType,
   computed,
   mergeProps,
   nextTick,
+  type PropType,
   reactive,
   ref,
+  type SlotsType,
   toRef,
   watch,
 } from 'vue';
@@ -13,7 +14,7 @@ import { useModelDuplex } from '@/composables/communication';
 import { useRender } from '@/composables/component';
 import { chooseProps, defineComponent } from '@/util/component';
 
-import { YInput, pressYInputPropsOptions } from '../input';
+import { pressYInputPropsOptions, YInput } from '../input';
 
 import './YIpField.scss';
 
@@ -25,6 +26,12 @@ type PartId = 0 | 1 | 2 | 3 | 4;
 
 export const YIpv4Field = defineComponent({
   name: NAME,
+  slots: Object as SlotsType<{
+    leading: { error: boolean };
+    trailing: any;
+    label: any;
+    'helper-text': any;
+  }>,
   props: {
     fixedUntil: Number as PropType<0 | 1 | 2 | 3>,
     text: Boolean as PropType<boolean>,
@@ -326,7 +333,7 @@ export const YIpv4Field = defineComponent({
           {...chooseProps(props, YInput.props)}
         >
           {{
-            leading: (...args: any[]) => slots.leading?.(...args),
+            leading: (slotProps: { error: boolean }) => slots.leading?.(slotProps),
             default: (defaultProps: any) => {
               return (
                 <div

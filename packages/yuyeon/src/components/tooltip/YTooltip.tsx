@@ -1,4 +1,4 @@
-import { computed, type PropType, ref } from 'vue';
+import { computed, type PropType, ref, type SlotsType } from 'vue';
 
 import { useModelDuplex } from '@/composables/communication';
 import { useRender } from '@/composables/component';
@@ -49,10 +49,12 @@ export const pressYTooltipPropsOptions = propsFactory(
 /**
  * #  Component
  */
-export const YTooltip = defineComponent<
-  ReturnType<typeof pressYTooltipPropsOptions>
->({
+export const YTooltip = defineComponent({
   name: NAME,
+  slots: Object as SlotsType<{
+    default: any;
+    base: any;
+  }>,
   props: {
     ...pressYTooltipPropsOptions(),
   },

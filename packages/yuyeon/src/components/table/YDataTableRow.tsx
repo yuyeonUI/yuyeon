@@ -1,4 +1,4 @@
-import { type PropType, computed, getCurrentInstance } from 'vue';
+import { type PropType, type SlotsType, computed, getCurrentInstance } from 'vue';
 
 import { YButton } from '@/components/button/YButton';
 import { useExpand } from '@/components/table/composables/expand';
@@ -12,6 +12,7 @@ import { propsFactory } from '@/util/component';
 import { YIconCheckbox } from '../icons';
 import { YDataTableCell } from './YDataTableCell';
 import { CellProps, DataTableItem, type FixedPropType } from './types';
+import type { YDataTableRowSlots } from './types/slots';
 
 export const pressYDataTableRowProps = propsFactory(
   {
@@ -28,6 +29,7 @@ export const pressYDataTableRowProps = propsFactory(
 
 export const YDataTableRow = defineComponent({
   name: 'YDataTableRow',
+  slots: Object as SlotsType<YDataTableRowSlots>,
   props: {
     item: Object as PropType<DataTableItem>,
     cellProps: [Object, Function] as PropType<CellProps>,
@@ -164,7 +166,7 @@ export const YDataTableRow = defineComponent({
                 >
                   {{
                     default: () => {
-                      const slotName = `item.${column.key}`;
+                      const slotName = `item.${column.key}` as const;
 
                       if (slots[slotName]) {
                         return slots[slotName]?.(slotProps);

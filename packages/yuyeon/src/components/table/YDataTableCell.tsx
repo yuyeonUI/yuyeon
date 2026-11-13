@@ -1,4 +1,4 @@
-import { type CSSProperties, type PropType, computed } from 'vue';
+import { type CSSProperties, type PropType, type SlotsType, computed } from 'vue';
 
 import type { FixedPropType } from '@/components/table/types';
 import { useRender } from '@/composables/component';
@@ -7,6 +7,9 @@ import { toStyleSizeValue } from '@/util/ui';
 
 export const YDataTableCell = defineComponent({
   name: 'YDataTableCell',
+  slots: Object as SlotsType<{
+    default: any;
+  }>,
   functional: true,
   props: {
     type: {

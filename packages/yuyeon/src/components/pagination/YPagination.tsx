@@ -3,6 +3,7 @@ import {
   computed,
   type PropType,
   shallowRef,
+  type SlotsType,
 } from 'vue';
 
 import { useModelDuplex } from '@/composables/communication';
@@ -63,8 +64,25 @@ export const pressYPaginationProps = propsFactory(
   'YPagination',
 );
 
+type PaginationControlSlotProps = {
+  disabled: boolean;
+  variant: string | undefined;
+  onClick: (event: MouseEvent) => void;
+};
+
 export const YPagination = defineComponent({
   name: 'YPagination',
+  slots: Object as SlotsType<{
+    first: PaginationControlSlotProps;
+    prev: PaginationControlSlotProps;
+    next: PaginationControlSlotProps;
+    last: PaginationControlSlotProps;
+    'first-icon': any;
+    'prev-icon': any;
+    'next-icon': any;
+    'last-icon': any;
+    ellipsis: any;
+  }>,
   components: {
     YButton,
   },

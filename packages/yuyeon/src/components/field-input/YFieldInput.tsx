@@ -77,7 +77,11 @@ export const YFieldInput = defineComponent({
 		trailing: any;
 		"leading-out": any;
 		"trailing-out": any;
-		"helper-text": { error: boolean; errorResult: string | undefined };
+		"helper-text": {
+			error: boolean;
+			errorResult: string | undefined;
+			errors: any[];
+		};
 	}>,
 	setup(props, { attrs, expose, emit, slots }) {
 		const yInput$ = ref<YInput>();
@@ -136,7 +140,7 @@ export const YFieldInput = defineComponent({
 
 		function onKeydownClear(event: KeyboardEvent) {
 			if (event.code === "Space" || event.code === "Enter") {
-				clear();
+				event.stopPropagation();
 			}
 		}
 

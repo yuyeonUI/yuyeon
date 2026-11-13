@@ -6,6 +6,7 @@ import {
   onBeforeUnmount,
   type PropType,
   ref,
+  type SlotsType,
   watch,
 } from 'vue';
 
@@ -69,6 +70,10 @@ export const pressYDialogPropsOptions = propsFactory(
 
 export const YDialog = defineComponent({
   name: 'YDialog',
+  slots: Object as SlotsType<{
+    default: any;
+    base: any;
+  }>,
   components: {
     YLayer,
     YCard,

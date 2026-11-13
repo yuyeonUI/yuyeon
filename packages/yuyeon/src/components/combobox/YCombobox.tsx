@@ -1,5 +1,8 @@
 import {
+  type ButtonHTMLAttributes,
   computed,
+  Fragment,
+  type HTMLAttributes,
   mergeProps,
   ref,
   type SlotsType,
@@ -15,8 +18,10 @@ import { useSelectMenu } from '@/composables/select-menu';
 import { useVirtualFocus } from '@/composables/virtual-focus';
 import { chooseProps, defineComponent } from '@/util/component';
 
+import { YChip } from '../chip';
 import { YFieldInput } from '../field-input';
 import { YIcon } from '../icon';
+import { YIconClear } from '../icons/YIconClear';
 import { type ComboboxFilter, pressYComboboxPropsOptions } from './props';
 
 import './YCombobox.scss';
@@ -27,23 +32,41 @@ const defaultFilter: ComboboxFilter = (item, search) => {
     .includes(search.toLocaleLowerCase());
 };
 
-export const YCombobox = defineComponent<
-  ReturnType<typeof pressYComboboxPropsOptions>
->({
+export const YCombobox = defineComponent({
   name: 'YCombobox',
   inheritAttrs: false,
   props: {
     ...pressYComboboxPropsOptions(),
   },
   emits: {
-    'update:modelValue': () => true,
+    'update:modelValue': (_value: any) => true,
     'update:opened': (opened: boolean) => true,
     'update:search': (search: string) => true,
     'click:item': (item: any, event: MouseEvent) => true,
-    change: (value: any) => true,
+    change: (value: any, event?: Event, fieldInput?: YFieldInput) => true,
   },
   slots: Object as SlotsType<{
     base: any;
+    selection: {
+      displayText: string;
+      placeholder: undefined | string;
+      items: any[];
+      internalItems: ListItem[];
+    };
+    chip: {
+      item: any;
+      internalItem: ListItem;
+      value: any;
+      text: string;
+      index: number;
+      disabled: boolean;
+      clearable: boolean;
+      clear: (event?: Event) => void;
+      /** Bind to the custom chip root to preserve layout and focus handling. */
+      props: HTMLAttributes & { small: boolean };
+      /** Bind to the custom chip's remove button. */
+      clearProps: ButtonHTMLAttributes;
+    };
     leading: any;
     label: any;
     'helper-text': any;
@@ -53,18 +76,27 @@ export const YCombobox = defineComponent<
     'dropdown-icon': any;
     item: {
       item: any;
+      internalItem: ListItem;
+      value: any;
+      text: string;
       selected: boolean;
       focused: boolean;
       select: () => void;
     };
     'item-leading': {
       item: any;
+      internalItem: ListItem;
+      value: any;
+      text: string;
       selected: boolean;
       focused: boolean;
       select: () => void;
     };
     'item-trailing': {
       item: any;
+      internalItem: ListItem;
+      value: any;
+      text: string;
       selected: boolean;
       focused: boolean;
       select: () => void;
@@ -151,8 +183,8 @@ export const YCombobox = defineComponent<
       { immediate: true },
     );
 
-    const displayText = computed(() => {
-      const displayItems = selections.value.map((selection) => {
+    const displayItems = computed(() =>
+      selections.value.map((selection) => {
         const currentItem = items.value.find(
           (item) =>
             !isNonSelectableItem(item) &&
@@ -165,18 +197,46 @@ export const YCombobox = defineComponent<
             props.itemComparator(cached.value, selection.value),
           ) ?? selection
         );
-      });
+      }),
+    );
 
+    const displayText = computed(() => {
       return props.multiple
-        ? displayItems.map((item) => item.text).join(', ')
-        : displayItems[0]?.text ?? '';
+        ? displayItems.value.map((item) => item.text).join(', ')
+        : (displayItems.value[0]?.text ?? '');
     });
 
+    const separateSearch = computed(
+      () => props.separateSearch || props.multiple,
+    );
     const searchText = computed(() => String(search.value ?? ''));
+    const inputValue = computed(() => {
+      if (
+        props.separateSearch &&
+        !props.multiple &&
+        !searchDirty.value &&
+        !searchText.value
+      ) {
+        return displayText.value;
+      }
+
+      return searchText.value;
+    });
 
     watch(
-      [displayText, selections],
+      [displayText, selections, separateSearch],
       () => {
+        if (separateSearch.value) {
+          if (
+            lastSyncedSearch.value !== null &&
+            searchText.value === lastSyncedSearch.value
+          ) {
+            search.value = '';
+          }
+          lastSyncedSearch.value = null;
+          return;
+        }
+
         if (searchDirty.value) return;
 
         if (selections.value.length === 0) {
@@ -252,9 +312,9 @@ export const YCombobox = defineComponent<
       resetActiveItem();
       cacheItem(item);
       select(item, event);
-      if (props.multiple) {
+      if (separateSearch.value) {
         search.value = '';
-        searchDirty.value = true;
+        searchDirty.value = props.multiple;
         lastSyncedSearch.value = null;
       } else {
         search.value = item.text;
@@ -267,22 +327,31 @@ export const YCombobox = defineComponent<
       if (props.disabled) return;
       focused.value = true;
       if (!props.readonly) {
-        search.value = displayText.value;
-        searchDirty.value = false;
-        lastSyncedSearch.value = displayText.value;
+        if (separateSearch.value) {
+          if (!props.multiple && !searchText.value && displayText.value) {
+            (fieldInputRef.value as any)?.select?.();
+          }
+        } else {
+          search.value = displayText.value;
+          searchDirty.value = false;
+          lastSyncedSearch.value = displayText.value;
+        }
       }
       opened.value = true;
     }
 
     function onClick() {
       if (!props.disabled) {
+        if (props.multiple) {
+          (fieldInputRef.value as any)?.focus?.();
+        }
         opened.value = true;
       }
     }
 
     function onMousedownDisplay(event: MouseEvent) {
       const target = event.target as HTMLElement | null;
-      if (target?.closest('.y-field-input__clear')) {
+      if (target?.closest('.y-field-input__clear, .y-combobox__chip')) {
         event.preventDefault();
       }
     }
@@ -298,22 +367,59 @@ export const YCombobox = defineComponent<
       emit('change', setOut([]), event, fieldInputRef.value);
     }
 
+    function onClearChip(item: ListItem, event?: Event) {
+      event?.stopPropagation();
+      if (
+        !props.multiple ||
+        !props.enableChipClear ||
+        props.disabled ||
+        props.readonly ||
+        props.loading ||
+        item.disabled
+      )
+        return;
+
+      const value = model.value.filter(
+        (selection: ListItem) =>
+          !props.itemComparator(selection.value, item.value),
+      );
+      model.value = value;
+      resetActiveItem();
+      emit('change', setOut(value), event, fieldInputRef.value);
+      (fieldInputRef.value as any)?.focus?.();
+    }
+
     function onInput(event: Event) {
       search.value = String(
         (event.target as HTMLInputElement | null)?.value ?? '',
       );
       searchDirty.value = true;
+      lastSyncedSearch.value = null;
       opened.value = true;
     }
 
     function onInputBlur(event: FocusEvent) {
+      const nextTarget = event.relatedTarget as HTMLElement | null;
+      if (
+        (nextTarget?.closest('.y-combobox__chip') ||
+          nextTarget?.matches('.y-field-input__field > input')) &&
+        fieldInputRef.value?.$el?.contains(nextTarget)
+      )
+        return;
+
       focused.value = false;
       onBlur(event);
       requestAnimationFrame(() => {
         if (!focused.value) {
-          search.value = displayText.value;
-          searchDirty.value = false;
-          lastSyncedSearch.value = displayText.value;
+          if (separateSearch.value) {
+            search.value = '';
+            searchDirty.value = false;
+            lastSyncedSearch.value = null;
+          } else {
+            search.value = displayText.value;
+            searchDirty.value = false;
+            lastSyncedSearch.value = displayText.value;
+          }
         }
       });
     }
@@ -342,9 +448,9 @@ export const YCombobox = defineComponent<
         event.preventDefault();
         opened.value = false;
         resetActiveItem();
-        search.value = displayText.value;
+        search.value = props.multiple ? '' : displayText.value;
         searchDirty.value = false;
-        lastSyncedSearch.value = displayText.value;
+        lastSyncedSearch.value = props.multiple ? null : displayText.value;
         return;
       }
       if (event.key !== 'Enter') return;
@@ -364,8 +470,58 @@ export const YCombobox = defineComponent<
       }
     }
 
+    function renderChip(item: ListItem, index: number) {
+      const disabled =
+        props.disabled || props.readonly || props.loading || item.disabled;
+      const clear = (event?: Event) => onClearChip(item, event);
+      const chipProps = {
+        class: 'y-combobox__chip',
+        small: true,
+        onFocusout: onInputBlur,
+      };
+      const clearProps: ButtonHTMLAttributes = {
+        type: 'button',
+        class: 'y-combobox__chip-clear',
+        'aria-label': `Remove ${item.text}`,
+        disabled,
+        onClick: clear,
+      };
+
+      return (
+        <Fragment key={index}>
+          {slots.chip ? (
+            slots.chip({
+              item: item.raw,
+              internalItem: item,
+              value: item.value,
+              text: item.text,
+              index,
+              disabled,
+              clearable: !!props.enableChipClear,
+              clear,
+              props: chipProps,
+              clearProps,
+            })
+          ) : (
+            <YChip {...chipProps}>
+              <span class="y-combobox__chip-text">{item.text}</span>
+              {props.enableChipClear && (
+                <button {...clearProps}>
+                  <YIconClear />
+                </button>
+              )}
+            </YChip>
+          )}
+        </Fragment>
+      );
+    }
+
     useRender(() => {
       const fieldInputProps = chooseProps(props, YFieldInput.props);
+      const showSelection = !!slots.selection && !focused.value;
+      const showChips = props.multiple && !showSelection;
+      const showClear =
+        props.multiple && props.enableClear && selected.value.length > 0;
       const dropdownIconProps = chooseProps(
         typeof props.dropdownIcon === 'object' ? props.dropdownIcon : {},
         YIcon.props,
@@ -377,7 +533,16 @@ export const YCombobox = defineComponent<
             ref={fieldInputRef}
             {...fieldInputProps}
             name={undefined}
-            modelValue={searchText.value}
+            modelValue={inputValue.value}
+            placeholder={
+              props.multiple && selected.value.length > 0
+                ? undefined
+                : props.placeholder
+            }
+            enableClear={props.enableClear && !showClear}
+            floated={
+              props.floated || (props.multiple && selected.value.length > 0)
+            }
             validationValue={model.rxValue}
             onInput={onInput}
             onClick={onClick}
@@ -391,26 +556,57 @@ export const YCombobox = defineComponent<
               {
                 'y-combobox--opened': opened.value,
                 'y-combobox--selected': selected.value.length > 0,
+                'y-combobox--custom-selection': showSelection,
+                'y-combobox--chips': showChips,
               },
             ]}
             {...attrs}
             focused={focused.value}
           >
             {{
-              default: () => renderMenu(),
+              default: () => (
+                <>
+                  {showSelection && (
+                    <div class="y-combobox__selection">
+                      {slots.selection?.({
+                        displayText: displayText.value,
+                        placeholder: props.placeholder,
+                        items: displayItems.value.map((item) => item.raw),
+                        internalItems: displayItems.value,
+                      })}
+                    </div>
+                  )}
+                  {showChips && displayItems.value.map(renderChip)}
+                  {renderMenu()}
+                </>
+              ),
               leading: slots.leading
                 ? (...args: any[]) => slots.leading?.(...args)
                 : undefined,
-              trailing: () =>
-                slots['dropdown-icon'] ? (
-                  slots['dropdown-icon']()
-                ) : (
-                  <YIcon
-                    {...mergeProps(dropdownIconProps)}
-                    icon={props.dropdownIcon}
-                    class={['y-combobox__icon']}
-                  />
-                ),
+              trailing: () => (
+                <>
+                  {showClear && (
+                    <button
+                      type="button"
+                      class="y-field-input__clear y-combobox__clear"
+                      aria-label="Clear selections"
+                      disabled={props.disabled}
+                      onClick={onClear}
+                    >
+                      <YIconClear />
+                    </button>
+                  )}
+                  {slots['dropdown-icon'] ? (
+                    slots['dropdown-icon']()
+                  ) : (
+                    <YIcon
+                      {...mergeProps(dropdownIconProps)}
+                      icon={props.dropdownIcon}
+                      class={['y-combobox__icon']}
+                    />
+                  )}
+                </>
+              ),
               label: slots.label
                 ? (...args: any[]) => slots.label?.(...args)
                 : undefined,

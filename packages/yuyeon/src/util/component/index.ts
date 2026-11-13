@@ -56,7 +56,7 @@ export function bindClasses(
 }
 
 export function getHtmlElement(
-  node: ComponentPublicInstance | Element | undefined,
+  node: Pick<ComponentPublicInstance, '$el'> | Element | undefined,
 ): HTMLElement | undefined {
   if (!node) {
     return undefined;

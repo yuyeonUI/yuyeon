@@ -1,4 +1,4 @@
-import { computed, type PropType, ref } from 'vue';
+import { computed, type PropType, ref, type SlotsType, type VNode } from 'vue';
 
 import { useRender } from '@/composables/component';
 import { IconValue, useIcon } from '@/composables/icon';
@@ -31,6 +31,9 @@ export const pressYIconPropsOptions = propsFactory(
 export const YIcon = defineComponent({
   name: 'YIcon',
   props: pressYIconPropsOptions(),
+  slots: Object as SlotsType<{
+    default: () => VNode[];
+  }>,
   setup(props, { attrs, slots }) {
     const iconCode = ref<string>();
 

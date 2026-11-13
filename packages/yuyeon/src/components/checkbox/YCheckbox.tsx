@@ -1,4 +1,11 @@
-import { computed, type PropType, ref, watch, withModifiers } from 'vue';
+import {
+  computed,
+  type PropType,
+  ref,
+  type SlotsType,
+  watch,
+  withModifiers,
+} from 'vue';
 
 import { useRender } from '@/composables/component';
 import { defineComponent, getUid } from '@/util/component';
@@ -9,6 +16,12 @@ import './YCheckbox.scss';
 
 export const YCheckbox = defineComponent({
   name: 'YCheckbox',
+  slots: Object as SlotsType<{
+    leading: any;
+    icon: { checked: boolean };
+    label: any;
+    trailing: any;
+  }>,
   components: { YInputCheckbox },
   emits: ['focus', 'blur', 'click', 'update:modelValue', 'change'],
   props: {
@@ -143,7 +156,8 @@ export const YCheckbox = defineComponent({
               readonly={props.readonly}
             >
               {slots.icon && {
-                icon: (...args: any[]) => slots.icon?.(...args),
+                icon: (slotProps: { checked: boolean }) =>
+                  slots.icon?.(slotProps),
               }}
             </YInputCheckbox>
             {/** biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
