@@ -90,7 +90,7 @@ export const YTextHighlighter = defineComponent({
   },
   render(): VNode {
     const children = this.createSplitTexts();
-    return h('span', { staticClass: 'y-text-highlighter' }, children);
+    return h('span', { class: 'y-text-highlighter' }, children);
   },
 });
 
